@@ -8,7 +8,7 @@
 
 Esta pasta reúne exclusivamente os **arquivos declarativos de configuração** (`settings.json`, `extensions.txt`, configs standalone) dos editores de código utilizados no Host, organizados de forma **autocontida por editor**.
 
-> ℹ️ **Scripts de Instalação, Frameworks e Sincronização:** Os scripts para sincronizar extensões (`sync-extensions.sh`), clonar repositórios de editores ou instalar frameworks residem no repositório **[Setup](https://github.com/GabrielFrigo4/Setup)**.
+> ℹ️ **Scripts de Instalação, Frameworks e Sincronização:** Os scripts para sincronizar extensões (`sync-extensions.sh`), clonar repositórios de editores ou instalar frameworks residem no repositório **[Setup](https://github.com/GabrielFrigo4/setup)**.
 
 ---
 
@@ -31,7 +31,7 @@ Esta pasta reúne exclusivamente os **arquivos declarativos de configuração** 
 
 ```sh
 # Instala as extensões da IDE ativa via receita do Setup
-curl -fsSL https://raw.githubusercontent.com/GabrielFrigo4/Setup/main/bootstrap/common/editors/sync-extensions.sh | sh
+curl -fsSL https://raw.githubusercontent.com/GabrielFrigo4/setup/main/bootstrap/common/editors/sync-extensions.sh | sh
 ```
 
 ### 2. Configurações de Editores GUI

@@ -6,10 +6,10 @@
 
 ### 🏛️ O Quarteto de Produtividade
 
-[![Setup](https://img.shields.io/badge/📦_Setup-Sistema_%26_Cookbook-blue)](https://github.com/GabrielFrigo4/Setup)
-[![Profile](https://img.shields.io/badge/🎨_Profile-Dotfiles_%26_IA-green)](https://github.com/GabrielFrigo4/Profile)
-[![Shell](https://img.shields.io/badge/🐚_Shell-Terminal_Runtime-purple)](https://github.com/GabrielFrigo4/Shell)
-[![Vault](https://img.shields.io/badge/🔐_Vault-Cofre_Privado-red)](https://github.com/GabrielFrigo4/Vault)
+[![Setup](https://img.shields.io/badge/📦_Setup-Sistema_%26_Cookbook-blue)](https://github.com/GabrielFrigo4/setup)
+[![Shell](https://img.shields.io/badge/🐚_Shell-Terminal_Runtime-purple)](https://github.com/GabrielFrigo4/shell)
+[![Vault](https://img.shields.io/badge/🔐_Vault-Cofre_Privado-red)](https://github.com/GabrielFrigo4/vault)
+[![Profile](https://img.shields.io/badge/🎨_Profile-Dotfiles_%26_IA-green)](https://github.com/GabrielFrigo4/profile)
 
 > 📖 **Arquitetura Unificada do Ecossistema:** Conheça a matriz completa de responsabilidades, ciclo de boot e segregação de privilégios em [ENVIRONMENT.md](ENVIRONMENT.md).
 > 📜 **Princípios de Engenharia & Dotfiles:** Conheça os 18 princípios e diretrizes Clean Code em [PRINCIPLES.md](PRINCIPLES.md).
@@ -60,7 +60,7 @@ Diferente do **Setup** (que exige `sudo`/`root` para instalar pacotes no sistema
 
 ```sh
 # 1. Clonar o Profile no seu diretório de configurações do usuário
-git clone "https://github.com/GabrielFrigo4/Profile" "${HOME}/.config/profile"
+git clone "https://github.com/GabrielFrigo4/profile" "${HOME}/.config/profile"
 cd "${HOME}/.config/profile"
 
 # 2. Criar links simbólicos automáticos para todos os seus editores e formatadores
@@ -74,7 +74,7 @@ cd "${HOME}/.config/profile"
 
 ## 🔗 Integração com o Quarteto de Produtividade
 
-- 📦 **[Setup](https://github.com/GabrielFrigo4/Setup)**: Provisiona a máquina hospedeira e pacotes base com privilégios de sistema.
-- 🎨 **[Profile](https://github.com/GabrielFrigo4/Profile)**: Personaliza os aplicativos gráficos, linters e inteligência artificial no `$HOME`.
-- 🐚 **[Shell](https://github.com/GabrielFrigo4/Shell)**: Fornece prompts rápidos e o motor da linha de comando.
-- 🔐 **[Vault](https://github.com/GabrielFrigo4/Vault)**: Fornece chaves SSH e segredos privados.
+- 📦 **[Setup](https://github.com/GabrielFrigo4/setup)**: Provisiona a máquina hospedeira e pacotes base com privilégios de sistema.
+- 🐚 **[Shell](https://github.com/GabrielFrigo4/shell)**: Fornece prompts rápidos e o motor da linha de comando.
+- 🔐 **[Vault](https://github.com/GabrielFrigo4/vault)**: Fornece chaves SSH e segredos privados.
+- 🎨 **[Profile](https://github.com/GabrielFrigo4/profile)**: Personaliza os aplicativos gráficos, linters e inteligência artificial no `$HOME`.

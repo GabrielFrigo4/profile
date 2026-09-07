@@ -6,7 +6,7 @@
 
 ## 🎯 Visão Geral
 
-O repositório **[Setup](https://github.com/GabrielFrigo4/Setup)** é o pilar de infraestrutura do sistema hospedeiro (*Clean Host*). Ele é responsável por todas as tarefas que exigem **privilégios administrativos (`root` / `sudo` / `doas` / Admin)**:
+O repositório **[Setup](https://github.com/GabrielFrigo4/setup)** é o pilar de infraestrutura do sistema hospedeiro (*Clean Host*). Ele é responsável por todas as tarefas que exigem **privilégios administrativos (`root` / `sudo` / `doas` / Admin)**:
 
 - Instalação e atualização de pacotes do sistema via `dnf`, `apt`, `pkg` e `winget`.
 - Configuração de drivers de hardware, subsistema de som, aceleração gráfica e Wayland.
@@ -25,6 +25,6 @@ O repositório **[Setup](https://github.com/GabrielFrigo4/Setup)** é o pilar de
 
 ## 🔗 Referências
 
-- Repositório oficial: **[Setup no GitHub](https://github.com/GabrielFrigo4/Setup)**
+- Repositório oficial: **[Setup no GitHub](https://github.com/GabrielFrigo4/setup)**
 - Manifesto federado: **[ENVIRONMENT.md](../ENVIRONMENT.md)**
 - Princípios de engenharia: **[PRINCIPLES.md](../PRINCIPLES.md)**

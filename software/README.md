@@ -11,7 +11,7 @@ Para manter o ecossistema estritamente desacoplado, este repositório divide o s
 | Camada                                     | Papel Central                        | Tipo de Conteúdo                                                                                               | Escopo                                                                                                        |
 | :----------------------------------------- | :----------------------------------- | :------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------ |
 | **`software/`** _(esta pasta)_             | **O "O QUÊ" (Estado Declarativo)**   | Arquivos estáticos puros (`.json`, `.toml`, `.yaml`, `.el`, `.vim`, `.profile`, `.txt`) e dotfiles do usuário. | Espaço do usuário (`$HOME` / `~/.config` / `%APPDATA%`). **Zero sudo** / Zero gerenciadores de pacotes de SO. |
-| **[Setup](https://github.com/GabrielFrigo4/Setup)** | **O "COMO" (Provisionamento Ativo)** | Receitas atômicas de automação e scripts de sistema (`.sh`, `.cmd` e `.ps1`).                                  | Nível de sistema/máquina (`dnf`, `apt`, `pkg`, `winget`, drivers, containers, fontes do sistema).             |
+| **[Setup](https://github.com/GabrielFrigo4/setup)** | **O "COMO" (Provisionamento Ativo)** | Receitas atômicas de automação e scripts de sistema (`.sh`, `.cmd` e `.ps1`).                                  | Nível de sistema/máquina (`dnf`, `apt`, `pkg`, `winget`, drivers, containers, fontes do sistema).             |
 
 ---
 
@@ -28,10 +28,10 @@ Para manter o ecossistema estritamente desacoplado, este repositório divide o s
 
 ## 🚫 O Que NÃO Deve Ficar Aqui
 
-- **Scripts de Instalação e Frameworks**: Scripts de setup de editores, frameworks e controle de versão pertencem ao repositório **[Setup](https://github.com/GabrielFrigo4/Setup)**.
-- **Provisionamento de SO e Pacotes**: Instalação de binários via `apt`, `dnf`, `pkg` ou `winget`. Pertencem ao repositório **[Setup](https://github.com/GabrielFrigo4/Setup)**.
-- **Comportamento Dinâmico de Shell**: Scripts de inicialização interativa (`.zshrc`, `.bashrc`, aliases, prompts). Pertencem ao repositório **[Shell](https://github.com/GabrielFrigo4/Shell)**.
-- **Segredos e Credenciais**: Chaves SSH, senhas de redes Wi-Fi, credenciais e tokens. Pertencem ao repositório privado **[Vault](https://github.com/GabrielFrigo4/Vault)**.
+- **Scripts de Instalação e Frameworks**: Scripts de setup de editores, frameworks e controle de versão pertencem ao repositório **[Setup](https://github.com/GabrielFrigo4/setup)**.
+- **Provisionamento de SO e Pacotes**: Instalação de binários via `apt`, `dnf`, `pkg` ou `winget`. Pertencem ao repositório **[Setup](https://github.com/GabrielFrigo4/setup)**.
+- **Comportamento Dinâmico de Shell**: Scripts de inicialização interativa (`.zshrc`, `.bashrc`, aliases, prompts). Pertencem ao repositório **[Shell](https://github.com/GabrielFrigo4/shell)**.
+- **Segredos e Credenciais**: Chaves SSH, senhas de redes Wi-Fi, credenciais e tokens. Pertencem ao repositório privado **[Vault](https://github.com/GabrielFrigo4/vault)**.
 - **Ambientes de Desenvolvimento de Projetos**: Compiladores pesados e runtimes de projetos não poluem o host; rodam isolados em Containers ou Jails.
 
 ---

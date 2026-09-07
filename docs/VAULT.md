@@ -1,6 +1,6 @@
 # 🔒 The Vault
 
-O **[Vault](https://github.com/GabrielFrigo4/Vault)** é o repositório privado da **Tríade de Produtividade**, responsável pelo gerenciamento de credenciais confidenciais, chaves SSH/PuTTY, tokens de autenticação, mapeamento de servidores e credenciais de rede.
+O **[Vault](https://github.com/GabrielFrigo4/vault)** é o repositório privado da **Tríade de Produtividade**, responsável pelo gerenciamento de credenciais confidenciais, chaves SSH/PuTTY, tokens de autenticação, mapeamento de servidores e credenciais de rede.
 
 Sempre que um script de setup, configuração de Git ou ferramenta de terminal precisar de segredos, os dados serão lidos a partir do Vault local (`~/.vault`).
 
@@ -12,11 +12,11 @@ O Vault deve ser clonado e posicionado no seguinte caminho seguro:
 
 ```sh
 # UNIX (Linux, FreeBSD, macOS, WSL2)
-git clone "https://github.com/GabrielFrigo4/Vault" "${HOME}/.vault"
+git clone "https://github.com/GabrielFrigo4/vault" "${HOME}/.vault"
 chmod 0700 "${HOME}/.vault"
 
 # Windows Nativo (Prompt de Comando ou PowerShell)
-git clone "https://github.com/GabrielFrigo4/Vault" "%USERPROFILE%\.vault"
+git clone "https://github.com/GabrielFrigo4/vault" "%USERPROFILE%\.vault"
 ```
 
 > [!IMPORTANT]
