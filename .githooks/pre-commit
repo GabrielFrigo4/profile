@@ -1,0 +1,72 @@
+#!/usr/bin/env sh
+
+### ================================
+### PROFILE PRE-COMMIT HOOK
+### ================================
+
+set -e
+
+### --------------------------------
+### Setup & Repository Root
+### --------------------------------
+_repo_root="$(git rev-parse --show-toplevel 2> "/dev/null" || pwd)"
+cd "${_repo_root}"
+
+echo "🔍 [pre-commit] Executing Universal Profile quality & format gates..."
+
+### --------------------------------
+### Whitespace & Formatting Check
+### --------------------------------
+echo "  ↳ Checking whitespace and formatting (git diff --check)..."
+if ! git diff --check --cached; then
+	echo "❌ [pre-commit] Whitespace or EOF formatting error detected!" >&2
+	echo "   Run 'git diff --check --cached' to inspect issues." >&2
+	exit 1
+fi
+
+### --------------------------------
+### Shell Scripts Syntax Check
+### --------------------------------
+if [ -d "scripts/sync" ]; then
+	echo "  ↳ Validating shell scripts syntax (sh -n & bash -n)..."
+	find scripts -name "*.sh" -not -path "./.git/*" -exec sh -n {} +
+	if command -v bash > "/dev/null" 2>&1; then
+		find scripts -name "*.sh" -not -path "./.git/*" -exec bash -n {} +
+	fi
+fi
+
+### --------------------------------
+### Format Validation (JSON/YAML/TOML)
+### --------------------------------
+if [ -f "scripts/audit/formats.py" ] && command -v python3 > "/dev/null" 2>&1; then
+	echo "  ↳ Validating declarative formats (JSON, YAML, TOML)..."
+	if ! python3 scripts/audit/formats.py; then
+		echo "❌ [pre-commit] Declarative format validation failed!" >&2
+		exit 1
+	fi
+fi
+
+### --------------------------------
+### Markdown Links Integrity Check
+### --------------------------------
+if [ -f "scripts/audit/links.py" ] && command -v python3 > "/dev/null" 2>&1; then
+	echo "  ↳ Checking Markdown links integrity..."
+	if ! python3 scripts/audit/links.py; then
+		echo "❌ [pre-commit] Broken Markdown links detected!" >&2
+		exit 1
+	fi
+fi
+
+### --------------------------------
+### Quoting & Security Rules
+### --------------------------------
+echo "  ↳ Enforcing quoted redirects (> \"/dev/null\")..."
+_unquoted_null=$(git diff --cached -S "> /dev/null" --name-only | grep '\.sh$' 2> "/dev/null" || true)
+if [ -n "${_unquoted_null}" ]; then
+	echo "❌ [pre-commit] Unquoted redirect '> /dev/null' detected in: ${_unquoted_null}" >&2
+	echo "   Use '> \"/dev/null\"' with quotes as required by PRINCIPLES.md." >&2
+	exit 1
+fi
+
+echo "✅ [pre-commit] All Profile quality gates passed cleanly!"
+exit 0

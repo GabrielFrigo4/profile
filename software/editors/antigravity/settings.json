@@ -1,0 +1,118 @@
+{
+	// ==========================================
+	// INTERFACE
+	// ==========================================
+	"workbench.colorTheme": "One Dark Pro Darker",
+	"workbench.iconTheme": "material-icon-theme",
+	"window.autoDetectColorScheme": true,
+	"workbench.preferredDarkColorTheme": "One Dark Pro Darker",
+
+	// ==========================================
+	// APARÊNCIA
+	// ==========================================
+	"editor.fontFamily": "'JetBrainsMono Nerd Font Mono'",
+	"editor.fontLigatures": true,
+	"editor.fontSize": 16,
+	"editor.wordWrap": "off",
+	"diffEditor.wordWrap": "off",
+	"notebook.output.wordWrap": true,
+	"diffEditor.ignoreTrimWhitespace": false,
+
+	// ==========================================
+	// CORE
+	// ==========================================
+	"editor.formatOnSave": true,
+	"editor.tabCompletion": "on",
+	"editor.insertSpaces": false,
+	"files.autoGuessEncoding": true,
+	"security.workspace.trust.untrustedFiles": "open",
+
+	// ==========================================
+	// EXPLORER
+	// ==========================================
+	"explorer.confirmDelete": false,
+	"explorer.confirmDragAndDrop": false,
+
+	// ==========================================
+	// GIT
+	// ==========================================
+	"git.openRepositoryInParentFolders": "never",
+	"git.replaceTagsWhenPull": true,
+	"git.enableSmartCommit": true,
+	"git.confirmSync": false,
+
+	// ==========================================
+	// TERMINAL
+	// ==========================================
+	"terminal.integrated.profiles.windows": {
+		"MSYS2 UCRT64": {
+			"path": "cmd.exe",
+			"args": [
+				"/c",
+				"C:\\msys64\\msys2_shell.cmd -defterm -here -no-start -ucrt64 -shell bash",
+			],
+		},
+		"MSYS2 MSYS": {
+			"path": "cmd.exe",
+			"args": [
+				"/c",
+				"C:\\msys64\\msys2_shell.cmd -defterm -here -no-start -msys -shell bash",
+			],
+		},
+	},
+
+	// ==========================================
+	// SINTAXE
+	// ==========================================
+	"files.associations": {
+		"*.shader": "hlsl",
+		"*.arm": "arm",
+		"*.asm": "nasm",
+		"*.wlua": "lua",
+	},
+
+	// ==========================================
+	// FORMATACAO
+	// ==========================================
+	"editor.formatOnType": true,
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+
+	// ==========================================
+	// LINGUAGENS
+	// ==========================================
+	"[c]": { "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd" },
+	"[cpp]": { "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd" },
+	"[go]": { "editor.defaultFormatter": "golang.go" },
+	"[python]": { "editor.defaultFormatter": "ms-python.autopep8" },
+	"[lua]": { "editor.defaultFormatter": "sumneko.lua" },
+	"[xml]": { "editor.defaultFormatter": "redhat.vscode-xml" },
+	"[jsonc]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+	"[json]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+	"[html]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+	"[javascript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+	"[css]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+	"[dockerfile]": { "editor.defaultFormatter": "ms-azuretools.vscode-containers" },
+
+	// ==========================================
+	// LSP (LANGUAGE SERVERS)
+	// ==========================================
+	"python.languageServer": "Pylance",
+
+	// ==========================================
+	// FERRAMENTAS
+	// ==========================================
+	"makefile.configureOnOpen": false,
+	"redhat.telemetry.enabled": false,
+
+	// ==========================================
+	// IA
+	// ==========================================
+	"editor.inlineSuggest.enabled": false,
+	"git.autofetch": true,
+
+	// ==========================================
+	// Antigravity
+	// ==========================================
+	"antigravity.marketplaceGalleryItemURL": "https://marketplace.visualstudio.com/items",
+	"antigravity.marketplaceExtensionGalleryServiceURL": "https://marketplace.visualstudio.com/_apis/public/gallery",
+}

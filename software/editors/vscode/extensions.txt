@@ -1,0 +1,30 @@
+# ==============================================================================
+# Declarative Extensions List — VS Code
+# ==============================================================================
+
+# --- Interface, Themes & Icons ---
+zhuangtongfa.material-theme
+pkief.material-icon-theme
+
+# --- Formatters & Linters ---
+esbenp.prettier-vscode
+xaver.clang-format
+llvm-vs-code-extensions.vscode-clangd
+ms-python.autopep8
+sumneko.lua
+redhat.vscode-xml
+
+# --- Language Servers & Toolchains ---
+ms-python.python
+golang.go
+ziglang.vscode-zig
+ms-vscode.cmake-tools
+twxs.cmake
+ms-azuretools.vscode-containers
+
+# --- Syntax Highlighting & Assembly ---
+dan-c-underwood.arm
+thegreyghost.nasm
+
+# --- Version Control & Git ---
+eamodio.gitlens

@@ -1,0 +1,65 @@
+{
+	// ==========================================
+	// INTERFACE
+	// ==========================================
+	"window.autoDetectColorScheme": true,
+	// ==========================================
+	// APARÊNCIA
+	// ==========================================
+	"editor.fontFamily": "'JetBrainsMono Nerd Font Mono'",
+	"editor.fontLigatures": true,
+	"editor.fontSize": 16,
+	"editor.wordWrap": "off",
+	"diffEditor.wordWrap": "off",
+	"notebook.output.wordWrap": true,
+	"diffEditor.ignoreTrimWhitespace": false,
+	// ==========================================
+	// CORE
+	// ==========================================
+	"editor.formatOnSave": true,
+	"editor.formatOnType": true,
+	"editor.tabCompletion": "on",
+	"editor.insertSpaces": false,
+	"editor.inlineSuggest.enabled": false,
+	"files.autoGuessEncoding": true,
+	"security.workspace.trust.untrustedFiles": "open",
+	// ==========================================
+	// EXPLORER
+	// ==========================================
+	"explorer.confirmDelete": false,
+	"explorer.confirmDragAndDrop": false,
+	// ==========================================
+	// GIT
+	// ==========================================
+	"git.openRepositoryInParentFolders": "never",
+	"git.enableSmartCommit": true,
+	"git.confirmSync": false,
+	// ==========================================
+	// TERMINAL
+	// ==========================================
+	"terminal.integrated.profiles.windows": {
+		"MSYS2 UCRT64": {
+			"path": "cmd.exe",
+			"args": [
+				"/c",
+				"C:\\msys64\\msys2_shell.cmd -defterm -here -no-start -ucrt64 -shell bash",
+			],
+		},
+		"MSYS2 MSYS": {
+			"path": "cmd.exe",
+			"args": [
+				"/c",
+				"C:\\msys64\\msys2_shell.cmd -defterm -here -no-start -msys -shell bash",
+			],
+		},
+	},
+	// ==========================================
+	// SINTAXE
+	// ==========================================
+	"files.associations": {
+		"*.shader": "hlsl",
+		"*.arm": "arm",
+		"*.asm": "nasm",
+		"*.wlua": "lua",
+	},
+}

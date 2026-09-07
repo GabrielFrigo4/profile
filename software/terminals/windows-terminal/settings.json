@@ -1,0 +1,89 @@
+{
+	"$help": "https://aka.ms/terminal-documentation",
+	"$schema": "https://aka.ms/terminal-profiles-schema",
+	"actions": [],
+	"copyFormatting": "none",
+	"copyOnSelect": false,
+	"defaultProfile": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
+	"initialCols": 110,
+	"keybindings": [
+		{
+			"id": "Terminal.CopyToClipboard",
+			"keys": "ctrl+c"
+		},
+		{
+			"id": "Terminal.PasteFromClipboard",
+			"keys": "ctrl+v"
+		},
+		{
+			"id": "Terminal.DuplicatePaneAuto",
+			"keys": "alt+shift+d"
+		}
+	],
+	"newTabMenu": [
+		{
+			"type": "remainingProfiles"
+		}
+	],
+	"profiles": {
+		"defaults": {
+			"colorScheme": "Dark+",
+			"cursorShape": "filledBox",
+			"font": {
+				"face": "JetBrainsMono Nerd Font Propo",
+				"features": {
+					"liga": 1,
+					"calt": 1
+				}
+			},
+			"icon": "C:\\Program Files (x86)\\clink\\clink.ico",
+			"useAcrylic": true
+		},
+		"list": [
+			{
+				"commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+				"guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
+				"hidden": true,
+				"icon": "C:\\Program Files (x86)\\clink\\clink_cyan.ico",
+				"name": "Windows PowerShell"
+			},
+			{
+				"commandline": "%SystemRoot%\\System32\\cmd.exe",
+				"guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
+				"hidden": false,
+				"icon": "C:\\Program Files (x86)\\clink\\clink_gray.ico",
+				"name": "Prompt de Comando"
+			},
+			{
+				"guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
+				"hidden": false,
+				"icon": "C:\\Program Files (x86)\\clink\\clink_blue.ico",
+				"name": "PowerShell",
+				"source": "Windows.Terminal.PowershellCore"
+			},
+			{
+				"guid": "{47302f9c-1ac4-566c-aa3e-8cf29889d6ab}",
+				"hidden": false,
+				"icon": "C:\\Program Files (x86)\\clink\\clink_purple.ico",
+				"name": "Nushell",
+				"source": "nu"
+			},
+			{
+				"guid": "{95675bd3-f183-5663-85f6-a02625d3c135}",
+				"hidden": false,
+				"icon": "C:\\Program Files (x86)\\clink\\clink_red.ico",
+				"name": "Debian",
+				"source": "Microsoft.WSL"
+			},
+			{
+				"commandline": "ssh \"gabriel@192.168.64.128\"",
+				"guid": "{9fe3e0be-a3a9-40dd-b43e-9fd82a9588be}",
+				"hidden": false,
+				"icon": "C:\\Program Files (x86)\\clink\\clink_gold.ico",
+				"name": "VMWare"
+			}
+		]
+	},
+	"schemes": [],
+	"themes": []
+}

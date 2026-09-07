@@ -1,0 +1,8 @@
+{
+	"theme": "dark",
+	"themeVariables": {
+		"fontFamily": "\"JetBrainsMonoNL Nerd Font Mono\", Monospace, Consolas",
+		"fontSize": "24px",
+		"darkMode": true
+	}
+}
