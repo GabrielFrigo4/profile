@@ -12,17 +12,18 @@ Este diretório provê scripts de inicialização, atalhos do teclado e autocomp
 
 ## 📂 Catálogo de Arquivos
 
-| Arquivo | Tipo | Descrição |
-| :--- | :--- | :--- |
-| [`profile.cmd`](profile.cmd) | Script Batch | Script executado ao abrir uma nova sessão do CMD |
-| [`profile.lua`](profile.lua) | Script Lua Clink | Integração do Clink com histórico avançado e Git prompt |
-| [`setup-profile.reg`](setup-profile.reg) | Registro Windows | Injeção do `profile.cmd` no parâmetro `AutoRun` do CMD |
+| Arquivo                                  | Tipo             | Descrição                                               |
+| :--------------------------------------- | :--------------- | :------------------------------------------------------ |
+| [`profile.cmd`](profile.cmd)             | Script Batch     | Script executado ao abrir uma nova sessão do CMD        |
+| [`profile.lua`](profile.lua)             | Script Lua Clink | Integração do Clink com histórico avançado e Git prompt |
+| [`setup-profile.reg`](setup-profile.reg) | Registro Windows | Injeção do `profile.cmd` no parâmetro `AutoRun` do CMD  |
 
 ---
 
 ## 🚀 Como Usar no Windows
 
 Execute no CMD ou PowerShell:
+
 ```cmd
 reg import setup-profile.reg
 ```

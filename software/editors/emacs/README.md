@@ -12,8 +12,8 @@ Este diretório provê uma configuração minimalista, rápida e autocontida par
 
 ## 📂 Catálogo de Arquivos
 
-| Arquivo | Tipo | Descrição |
-| :--- | :--- | :--- |
+| Arquivo              | Tipo              | Descrição                                                   |
+| :------------------- | :---------------- | :---------------------------------------------------------- |
 | [`lite.el`](lite.el) | Elisp Declarativo | Configuração enxuta de interface, modos básicos e navegação |
 
 ---
@@ -21,12 +21,14 @@ Este diretório provê uma configuração minimalista, rápida e autocontida par
 ## 🚀 Como Usar / Sincronizar
 
 ### Linux & FreeBSD:
+
 ```sh
 mkdir -p "${HOME}/.emacs.d"
 ln -sf "$(pwd)/lite.el" "${HOME}/.emacs.d/init.el"
 ```
 
 ### Windows (PowerShell):
+
 ```powershell
 New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.emacs.d"
 New-Item -ItemType SymbolicLink -Force -Path "$env:USERPROFILE\.emacs.d\init.el" -Target "$((Get-Location).Path)\lite.el"

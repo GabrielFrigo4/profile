@@ -12,9 +12,9 @@ Este diretório centraliza o arquivo canônico `settings.json` e o manifesto `ex
 
 ## 📂 Catálogo de Arquivos
 
-| Arquivo | Tipo | Descrição |
-| :--- | :--- | :--- |
-| [`settings.json`](settings.json) | Declaração JSON | Preferências de interface, formatadores, LSP e renderização |
+| Arquivo                            | Tipo              | Descrição                                                        |
+| :--------------------------------- | :---------------- | :--------------------------------------------------------------- |
+| [`settings.json`](settings.json)   | Declaração JSON   | Preferências de interface, formatadores, LSP e renderização      |
 | [`extensions.txt`](extensions.txt) | Lista Declarativa | Lista de extensões para reproduzir o ambiente de desenvolvimento |
 
 ---
@@ -22,12 +22,14 @@ Este diretório centraliza o arquivo canônico `settings.json` e o manifesto `ex
 ## 🚀 Como Usar / Sincronizar
 
 ### Linux & FreeBSD:
+
 ```sh
 mkdir -p "${HOME}/.config/Code/User"
 ln -sf "$(pwd)/settings.json" "${HOME}/.config/Code/User/settings.json"
 ```
 
 ### Windows (PowerShell):
+
 ```powershell
 New-Item -ItemType Directory -Force -Path "$env:APPDATA\Code\User"
 New-Item -ItemType SymbolicLink -Force -Path "$env:APPDATA\Code\User\settings.json" -Target "$((Get-Location).Path)\settings.json"

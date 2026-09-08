@@ -39,12 +39,12 @@ flowchart TD
 
 ## 📋 Matriz de Papéis e Responsabilidades
 
-| Repositório | Visibilidade | Papel Central | Escopo & Privilégios | Modelo de Instalação | Local Canônico |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **[Setup](https://github.com/GabrielFrigo4/setup)** | Público | **1. O "COMO" (Sistema)**: Provisionamento de pacotes, drivers, containers, hypervisors e serviços base. | Nível SO / Privilegiado (`root` / `sudo` / `ELEVATE` / Admin) | **Cookbook Efêmero (Zero-Clone)**: Execução direta via GitHub web ou `curl \| sh`. | Efêmero / Não requer clone residente |
-| **[Shell](https://github.com/GabrielFrigo4/shell)** | Público | **2. A "INTERAÇÃO" (Linha de Comando)**: Prompts instantâneos, aliases, cascading de editores e funções POSIX. | Nível Shell / Sessão (disponível para todos os usuários e `root`) | **Residente do Sistema**: Clonado e atualizado via `git pull` contínuo. | `/usr/local/share/shell` ou `~/.shell` |
-| **[Vault](https://github.com/GabrielFrigo4/vault)** | **Privado** | **3. O "SEGREDO" (Cofre Criptográfico)**: Chaves SSH/PuTTY, tokens de API, credenciais Wi-Fi e endpoints de hosts. | Usuário Restrito (Permissões estritas `0700` e `0600`, zero-leakage) | **Residente Privado**: Clonado exclusivamente em máquinas autorizadas. | `${HOME}/.vault` |
-| **[Profile](https://github.com/GabrielFrigo4/profile)** | Público | **4. O "O QUÊ" (Identidade)**: Dotfiles declarativos, editores, terminais, linters, links de sync e skills portáteis de IA. | Nível Usuário (`$HOME`, zero privilégios administrativos) | **Residente Sincronizado**: Cloned no `$HOME`, sincronizado via links simbólicos (`ln -sf`). | `~/.config/profile` ou `~/.profile-repo` |
+| Repositório                                             | Visibilidade | Papel Central                                                                                                               | Escopo & Privilégios                                                 | Modelo de Instalação                                                                         | Local Canônico                           |
+| :------------------------------------------------------ | :----------- | :-------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------- | :------------------------------------------------------------------------------------------- | :--------------------------------------- |
+| **[Setup](https://github.com/GabrielFrigo4/setup)**     | Público      | **1. O "COMO" (Sistema)**: Provisionamento de pacotes, drivers, containers, hypervisors e serviços base.                    | Nível SO / Privilegiado (`root` / `sudo` / `ELEVATE` / Admin)        | **Cookbook Efêmero (Zero-Clone)**: Execução direta via GitHub web ou `curl \| sh`.           | Efêmero / Não requer clone residente     |
+| **[Shell](https://github.com/GabrielFrigo4/shell)**     | Público      | **2. A "INTERAÇÃO" (Linha de Comando)**: Prompts instantâneos, aliases, cascading de editores e funções POSIX.              | Nível Shell / Sessão (disponível para todos os usuários e `root`)    | **Residente do Sistema**: Clonado e atualizado via `git pull` contínuo.                      | `/usr/local/share/shell` ou `~/.shell`   |
+| **[Vault](https://github.com/GabrielFrigo4/vault)**     | **Privado**  | **3. O "SEGREDO" (Cofre Criptográfico)**: Chaves SSH/PuTTY, tokens de API, credenciais Wi-Fi e endpoints de hosts.          | Usuário Restrito (Permissões estritas `0700` e `0600`, zero-leakage) | **Residente Privado**: Clonado exclusivamente em máquinas autorizadas.                       | `${HOME}/.vault`                         |
+| **[Profile](https://github.com/GabrielFrigo4/profile)** | Público      | **4. O "O QUÊ" (Identidade)**: Dotfiles declarativos, editores, terminais, linters, links de sync e skills portáteis de IA. | Nível Usuário (`$HOME`, zero privilégios administrativos)            | **Residente Sincronizado**: Cloned no `$HOME`, sincronizado via links simbólicos (`ln -sf`). | `~/.config/profile` ou `~/.profile-repo` |
 
 ---
 
@@ -82,42 +82,48 @@ sequenceDiagram
 Todos os 4 repositórios aderem rigorosamente aos mesmos padrões arquiteturais de Clean Code e governança:
 
 ### 1. Os 18 Princípios de Engenharia
-Baseados nos 17 Princípios UNIX (*The Art of UNIX Programming*, Eric S. Raymond, 2003) somados ao 18º Princípio fundamental:
-- **A Regra da Soberania do Usuário (*Rule of User Sovereignty*):** Nenhuma automação, script ou loader deve sobrescrever variáveis ou configurações pré-existentes do usuário sem consentimento explícito. Ferramentas intencionais do usuário (`doas`, `paru`, `hx`, `eza`, `rg`, `bat`) têm prioridade sobre utilitários genéricos.
+
+Baseados nos 17 Princípios UNIX (_The Art of UNIX Programming_, Eric S. Raymond, 2003) somados ao 18º Princípio fundamental:
+
+- **A Regra da Soberania do Usuário (_Rule of User Sovereignty_):** Nenhuma automação, script ou loader deve sobrescrever variáveis ou configurações pré-existentes do usuário sem consentimento explícito. Ferramentas intencionais do usuário (`doas`, `paru`, `hx`, `eza`, `rg`, `bat`) têm prioridade sobre utilitários genéricos.
 
 ### 2. Arquitetura de Comentários em Três Camadas (Regra do Não-Vazamento)
+
 - **Zero Comentários Narrativos:** Comentários explicativos inline ("faz isso", "verifica aquilo") são expressamente proibidos em código, scripts, templates e exemplos de documentação. O código expressa sua intenção por meio de nomes semânticos e separação por linhas em branco.
 - **Camada 1 — Header Banner (64 `-`):** Exclusivo para o topo do arquivo (linhas 2 a 4), delimitando a identidade do script:
-  ```sh
-  # ----------------------------------------------------------------
-  # Recipe: [Nome do Software / Funcionalidade]
-  # ----------------------------------------------------------------
-  ```
+    ```sh
+    # ----------------------------------------------------------------
+    # Recipe: [Nome do Software / Funcionalidade]
+    # ----------------------------------------------------------------
+    ```
 - **Camada 2 — Delimitadores de Corpo (32 caracteres):**
-  - **Seções Principais (32 `=`):**
-    ```sh
-    ### ================================
-    ### NOME DA SECAO PRINCIPAL
-    ### ================================
-    ```
-  - **Subseções (32 `-`):**
-    ```sh
-    ### --------------------------------
-    ### Nome da Subsecao
-    ### --------------------------------
-    ```
-  - **Regra do Não-Vazamento:** O texto do título DEVE ter no máximo 32 caracteres (total de 36 colunas com `### `) e JAMAIS vazar além da régua divisora. Títulos concisos, sem parênteses e sem numerações redundantes.
+    - **Seções Principais (32 `=`):**
+        ```sh
+        ### ================================
+        ### NOME DA SECAO PRINCIPAL
+        ### ================================
+        ```
+    - **Subseções (32 `-`):**
+        ```sh
+        ### --------------------------------
+        ### Nome da Subsecao
+        ### --------------------------------
+        ```
+    - **Regra do Não-Vazamento:** O texto do título DEVE ter no máximo 32 caracteres (total de 36 colunas com `### `) e JAMAIS vazar além da régua divisora. Títulos concisos, sem parênteses e sem numerações redundantes.
 
 ### 3. Padrão Universal de Documentação (README Templates)
+
 - **README Raiz:** Portal institucional com título e emoji, blockquote de missão, badges do Quarteto de Produtividade, tecnologias suportadas, catálogo de primeiro nível e comandos de auditoria/CI.
 - **README de Subpastas:** Catálogo tabular padronizado (`| Arquivo / Receita | Descrição | Plataforma |`) e bloco de execução limpo sem comentários inline.
 
 ### 4. Taxonomia Estrita de Nomenclatura
+
 - **`kebab-case` público:** Comandos, aliases e funções destinados à invocação interativa (`vault-keys`, `vault-perms`, `update-all`, `open-helix`).
 - **`_snake_case` privado:** Funções internas de infraestrutura, bootstrapping e variáveis locais temporárias (`_as_root`, `_detect_os`, `_vault_dir`).
 - **`SNAKE_CASE` maiúsculo:** Variáveis globais de ambiente e constantes (`PATH`, `SHELL_REPO_DIR`, `VAULT_DIR`).
 
 ### 5. Permissões Canônicas em 4 Dígitos Octais
+
 - `chmod 0755`: Diretórios e scripts executáveis públicos (`Setup`, `Profile`, `Shell`).
 - `chmod 0644`: Dotfiles estáticos, documentações e arquivos de configuração públicos.
 - `chmod 0700`: Diretórios privados e scripts executáveis com dados sensíveis (`Vault`).
@@ -125,10 +131,11 @@ Baseados nos 17 Princípios UNIX (*The Art of UNIX Programming*, Eric S. Raymond
 - `chmod 0440`: Arquivos de autorização do sistema operacional (`/etc/sudoers.d/*`, `doas.conf`).
 
 ### 6. Governança Autônoma com IA e Quality Gates
+
 - Todo repositório do ecossistema possui:
-  - `.githooks/pre-commit` executável e atômico para validar integridade, sintaxe e formatação antes do commit.
-  - `.agents/rules/principles.md` com diretrizes de engenharia específicas do seu domínio.
-  - `.agents/skills/` com runbooks cognitivos padronizados (`universal-*`, `proactive-guardian`, `deep-investigation`).
+    - `.githooks/pre-commit` executável e atômico para validar integridade, sintaxe e formatação antes do commit.
+    - `.agents/rules/principles.md` com diretrizes de engenharia específicas do seu domínio.
+    - `.agents/skills/` com runbooks cognitivos padronizados (`universal-*`, `proactive-guardian`, `deep-investigation`).
 
 ---
 

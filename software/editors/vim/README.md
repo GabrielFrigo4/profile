@@ -12,8 +12,8 @@ Este diretório provê uma configuração canônica e essencial para o **Vim** e
 
 ## 📂 Catálogo de Arquivos
 
-| Arquivo | Tipo | Descrição |
-| :--- | :--- | :--- |
+| Arquivo                | Tipo                  | Descrição                                                 |
+| :--------------------- | :-------------------- | :-------------------------------------------------------- |
 | [`lite.vim`](lite.vim) | Vimscript Declarativo | Configuração enxuta e portátil de comportamento do editor |
 
 ---
@@ -21,6 +21,7 @@ Este diretório provê uma configuração canônica e essencial para o **Vim** e
 ## 🚀 Como Usar / Sincronizar
 
 ### Linux & FreeBSD:
+
 ```sh
 ln -sf "$(pwd)/lite.vim" "${HOME}/.vimrc"
 mkdir -p "${HOME}/.config/nvim"
@@ -28,6 +29,7 @@ ln -sf "$(pwd)/lite.vim" "${HOME}/.config/nvim/init.vim"
 ```
 
 ### Windows:
+
 ```powershell
 New-Item -ItemType SymbolicLink -Force -Path "$env:USERPROFILE\_vimrc" -Target "$((Get-Location).Path)\lite.vim"
 ```

@@ -12,10 +12,10 @@ Este diretório provê perfis declarativos para o **Konsole** do KDE Plasma, con
 
 ## 📂 Catálogo de Arquivos
 
-| Arquivo | Tipo | Descrição |
-| :--- | :--- | :--- |
-| [`Bash.profile`](Bash.profile) | Perfil KDE | Configuração de sessão inicializando o Bash |
-| [`Zsh.profile`](Zsh.profile) | Perfil KDE | Configuração de sessão inicializando o Zsh |
+| Arquivo                          | Tipo       | Descrição                                              |
+| :------------------------------- | :--------- | :----------------------------------------------------- |
+| [`Bash.profile`](Bash.profile)   | Perfil KDE | Configuração de sessão inicializando o Bash            |
+| [`Zsh.profile`](Zsh.profile)     | Perfil KDE | Configuração de sessão inicializando o Zsh             |
 | [`Shell.profile`](Shell.profile) | Perfil KDE | Configuração de sessão inicializando o Universal Shell |
 
 ---
@@ -23,6 +23,7 @@ Este diretório provê perfis declarativos para o **Konsole** do KDE Plasma, con
 ## 🚀 Como Usar / Sincronizar
 
 ### FreeBSD & Linux:
+
 ```sh
 mkdir -p "${HOME}/.local/share/konsole"
 ln -sf "$(pwd)/"*.profile "${HOME}/.local/share/konsole/"

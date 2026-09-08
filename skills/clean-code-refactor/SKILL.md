@@ -14,60 +14,60 @@ Esta habilidade orienta o agente de inteligência artificial na análise estáti
 Ao refatorar ou auditar qualquer arquivo no ecossistema:
 
 1. **Shebang Universal:**
-   - Utilize sempre `#!/usr/bin/env sh` para scripts de shell.
-   - Evite `#!/bin/sh` ou `#!/bin/bash` rígidos para garantir portabilidade em FreeBSD, Linux e macOS.
+    - Utilize sempre `#!/usr/bin/env sh` para scripts de shell.
+    - Evite `#!/bin/sh` ou `#!/bin/bash` rígidos para garantir portabilidade em FreeBSD, Linux e macOS.
 
 2. **Modo Defensivo:**
-   - Todo script executável de shell deve iniciar com `set -eu` (ou `set -euo pipefail` quando compatível com o parser).
+    - Todo script executável de shell deve iniciar com `set -eu` (ou `set -euo pipefail` quando compatível com o parser).
 
 3. **Orçamento de Linhas (Regra 8 - 128):**
-   - **Piso:** 8 linhas úteis. Scripts menores devem ser justificados ou consolidados.
-   - **Teto:** 128 linhas úteis. Scripts maiores devem ser modularizados em submódulos temáticos.
+    - **Piso:** 8 linhas úteis. Scripts menores devem ser justificados ou consolidados.
+    - **Teto:** 128 linhas úteis. Scripts maiores devem ser modularizados em submódulos temáticos.
 
 4. **Arquitetura de Comentários em Três Camadas (Regra do Não-Vazamento):**
-   - **Camada 1 (Header Banner - 64 `-`):** Exclusivo para as linhas 2 a 4 de scripts utilitários e receitas:
-     ```sh
-     # ----------------------------------------------------------------
-     # Recipe: [Nome do Software / Funcionalidade]
-     # ----------------------------------------------------------------
-     ```
-   - **Camada 2 (Delimitadores Estruturais de Corpo - 32 Caracteres):**
-     - Seções Principais (32 `=`):
-       ```sh
-       ### ================================
-       ### NOME DA SECAO PRINCIPAL
-       ### ================================
-       ```
-     - Subseções Internas (32 `-`):
-       ```sh
-       ### --------------------------------
-       ### Nome da Subsecao
-       ### --------------------------------
-       ```
-     - **Regra Estrita do Não-Vazamento:** O texto do título DEVE ter no máximo 32 caracteres (total de 36 colunas contando `### `) e JAMAIS vazar além da régua divisora. Títulos puramente semânticos, sem parênteses e sem numerações arbitrárias.
-   - **Camada 3 (Zero Comentários Narrativos):** É expressamente proibido o uso de comentários explicativos ou narrativos inline ("faz isso", "executa aquilo") em scripts, dotfiles, blocos de código markdown ou templates. O código deve ser autoexplicativo, utilizando separação lógica por linhas em branco.
+    - **Camada 1 (Header Banner - 64 `-`):** Exclusivo para as linhas 2 a 4 de scripts utilitários e receitas:
+        ```sh
+        # ----------------------------------------------------------------
+        # Recipe: [Nome do Software / Funcionalidade]
+        # ----------------------------------------------------------------
+        ```
+    - **Camada 2 (Delimitadores Estruturais de Corpo - 32 Caracteres):**
+        - Seções Principais (32 `=`):
+            ```sh
+            ### ================================
+            ### NOME DA SECAO PRINCIPAL
+            ### ================================
+            ```
+        - Subseções Internas (32 `-`):
+            ```sh
+            ### --------------------------------
+            ### Nome da Subsecao
+            ### --------------------------------
+            ```
+        - **Regra Estrita do Não-Vazamento:** O texto do título DEVE ter no máximo 32 caracteres (total de 36 colunas contando `### `) e JAMAIS vazar além da régua divisora. Títulos puramente semânticos, sem parênteses e sem numerações arbitrárias.
+    - **Camada 3 (Zero Comentários Narrativos):** É expressamente proibido o uso de comentários explicativos ou narrativos inline ("faz isso", "executa aquilo") em scripts, dotfiles, blocos de código markdown ou templates. O código deve ser autoexplicativo, utilizando separação lógica por linhas em branco.
 
 5. **Aspas em Variáveis & Quoting Defensivo:**
-   - Toda expansão de variável deve estar entre aspas duplas: `"${VAR}"`, `"${HOME}"`.
-   - Redirecionamentos para `/dev/null` sempre protegidos por aspas: `> "/dev/null"` e `2> "/dev/null"`.
+    - Toda expansão de variável deve estar entre aspas duplas: `"${VAR}"`, `"${HOME}"`.
+    - Redirecionamentos para `/dev/null` sempre protegidos por aspas: `> "/dev/null"` e `2> "/dev/null"`.
 
 6. **Nomenclatura Canônica:**
-   - Comandos e utilitários públicos: `kebab-case` (`vault-keys`, `update-all`).
-   - Helpers internos e variáveis locais: `_snake_case` (`_as_root`, `_repo_root`).
-   - Variáveis globais de ambiente e constantes: `SNAKE_CASE` (`PATH`, `SHELL_REPO_DIR`, `VAULT_DIR`).
+    - Comandos e utilitários públicos: `kebab-case` (`vault-keys`, `update-all`).
+    - Helpers internos e variáveis locais: `_snake_case` (`_as_root`, `_repo_root`).
+    - Variáveis globais de ambiente e constantes: `SNAKE_CASE` (`PATH`, `SHELL_REPO_DIR`, `VAULT_DIR`).
 
 7. **Elevação Canônica de Privilégios (POSIX):**
-   - Sempre utilize a forma compacta e defensiva de checagem do `ELEVATE`:
-     ```sh
-     ELEVATE="$( [ "$(id -u)" -ne 0 ] && { command -v doas > "/dev/null" 2>&1 && echo "doas" || { command -v sudo > "/dev/null" 2>&1 && echo "sudo"; }; } )"
-     ```
+    - Sempre utilize a forma compacta e defensiva de checagem do `ELEVATE`:
+        ```sh
+        ELEVATE="$( [ "$(id -u)" -ne 0 ] && { command -v doas > "/dev/null" 2>&1 && echo "doas" || { command -v sudo > "/dev/null" 2>&1 && echo "sudo"; }; } )"
+        ```
 
 8. **Permissões em 4 Dígitos Octais:**
-   - Scripts públicos (`Setup`, `Profile`, `Shell`): `chmod 0755`
-   - Configurações e documentações públicas: `chmod 0644`
-   - Scripts e diretórios restritos (`Vault`): `chmod 0700`
-   - Chaves privadas e segredos (`Vault`): `chmod 0600`
-   - Arquivos do sistema (`sudoers.d`): `chmod 0440`
+    - Scripts públicos (`Setup`, `Profile`, `Shell`): `chmod 0755`
+    - Configurações e documentações públicas: `chmod 0644`
+    - Scripts e diretórios restritos (`Vault`): `chmod 0700`
+    - Chaves privadas e segredos (`Vault`): `chmod 0600`
+    - Arquivos do sistema (`sudoers.d`): `chmod 0440`
 
 ---
 
@@ -137,19 +137,19 @@ endlocal
 
 ## 🏛️ O Quarteto de Produtividade
 
-| Repositório | Visibilidade | Papel Central | Escopo & Privilégios |
-| :--- | :--- | :--- | :--- |
-| **[Setup](https://github.com/GabrielFrigo4/setup)** | Público | Provisionamento ativo de SO e pacotes | Nível SO / Privilegiado (`root` / `ELEVATE`) |
-| **[Shell](https://github.com/GabrielFrigo4/shell)** | Público | Motor interativo de terminal e prompts | Nível Shell / Sessão do Terminal |
-| **[Vault](https://github.com/GabrielFrigo4/vault)** | Privado | Cofre criptográfico, chaves SSH e segredos | Usuário Restrito (`0700` / `0600`) |
-| **[Profile](https://github.com/GabrielFrigo4/profile)** | Público | Dotfiles declarativos, editores e IA | Nível Usuário (`$HOME`, sem privilégios) |
+| Repositório                                             | Visibilidade | Papel Central                              | Escopo & Privilégios                         |
+| :------------------------------------------------------ | :----------- | :----------------------------------------- | :------------------------------------------- |
+| **[Setup](https://github.com/GabrielFrigo4/setup)**     | Público      | Provisionamento ativo de SO e pacotes      | Nível SO / Privilegiado (`root` / `ELEVATE`) |
+| **[Shell](https://github.com/GabrielFrigo4/shell)**     | Público      | Motor interativo de terminal e prompts     | Nível Shell / Sessão do Terminal             |
+| **[Vault](https://github.com/GabrielFrigo4/vault)**     | Privado      | Cofre criptográfico, chaves SSH e segredos | Usuário Restrito (`0700` / `0600`)           |
+| **[Profile](https://github.com/GabrielFrigo4/profile)** | Público      | Dotfiles declarativos, editores e IA       | Nível Usuário (`$HOME`, sem privilégios)     |
 
 ---
 
 ## 📂 Catálogo de Diretórios
 
-| Diretório | Descrição |
-| :--- | :--- |
+| Diretório          | Descrição                                       |
+| :----------------- | :---------------------------------------------- |
 | [`pasta/`](pasta/) | Descrição do propósito dos arquivos nesta pasta |
 
 ---
@@ -178,8 +178,8 @@ python3 scripts/audit/all.py
 
 ## 📂 Catálogo de Arquivos
 
-| Arquivo / Receita | Descrição | Plataforma |
-| :--- | :--- | :--- |
+| Arquivo / Receita          | Descrição                             | Plataforma     |
+| :------------------------- | :------------------------------------ | :------------- |
 | [`exemplo.sh`](exemplo.sh) | Provisionamento do utilitário exemplo | Linux, FreeBSD |
 
 ---

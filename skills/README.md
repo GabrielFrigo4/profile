@@ -17,13 +17,13 @@
 
 No ecossistema do **Quarteto de Produtividade**, enquanto o repositório **Setup** provê receitas atômicas de provisionamento do SO e o repositório **Profile** mantém dotfiles declarativos em [`software/`](../software/README.md), a pasta **`skills/`** serve como o **Catálogo de Habilidades Portáteis** que você pode levar para qualquer máquina ou projeto:
 
-| Camada                                     | Papel Central                         | Tipo de Conteúdo                                                                     | Destinatário / Consumidor                                                                     |
-| :----------------------------------------- | :------------------------------------ | :----------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------- |
-| **[Setup](https://github.com/GabrielFrigo4/setup)** | **O "COMO" (Provisionamento Ativo)**  | Receitas atômicas de automação e scripts de sistema (`.sh`, `.cmd`, `.ps1`).         | **Sistema Operacional** (com privilégios de administrador / root).                            |
-| **[`software/`](../software/README.md)**   | **O "O QUÊ" (Estado Declarativo)**    | Arquivos estáticos puros (`.json`, `.toml`, `.yaml`, `.el`, `.vim`, `.profile`).     | **Usuário & Aplicações** (espaço do `$HOME`, zero sudo).                                     |
-| **`skills/`** _(esta pasta)_               | **O "COMO OPERAR" (Runbooks de IA)**  | Pacotes modulares de procedimentos guiados (`SKILL.md`, scripts, templates, guias).  | **Agentes de IA** (Antigravity, Gemini, OpenAI, Claude) para execução assistida e autônoma.  |
-| **[`scripts/`](../scripts/README.md)**     | **Utilitários & Auditoria**           | Compilação local, conversores e auditoria estática (`scripts/audit/`).               | **Desenvolvedor** (execução pontual em linha de comando).                                     |
-| **[`docs/`](../docs/README.md)**           | **Documentação Humana**               | Filosofia, arquitetura, manuais de SO e guias técnicos.                              | **Desenvolvedor** (leitura técnica e arquitetural).                                           |
+| Camada                                              | Papel Central                        | Tipo de Conteúdo                                                                    | Destinatário / Consumidor                                                                   |
+| :-------------------------------------------------- | :----------------------------------- | :---------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------ |
+| **[Setup](https://github.com/GabrielFrigo4/setup)** | **O "COMO" (Provisionamento Ativo)** | Receitas atômicas de automação e scripts de sistema (`.sh`, `.cmd`, `.ps1`).        | **Sistema Operacional** (com privilégios de administrador / root).                          |
+| **[`software/`](../software/README.md)**            | **O "O QUÊ" (Estado Declarativo)**   | Arquivos estáticos puros (`.json`, `.toml`, `.yaml`, `.el`, `.vim`, `.profile`).    | **Usuário & Aplicações** (espaço do `$HOME`, zero sudo).                                    |
+| **`skills/`** _(esta pasta)_                        | **O "COMO OPERAR" (Runbooks de IA)** | Pacotes modulares de procedimentos guiados (`SKILL.md`, scripts, templates, guias). | **Agentes de IA** (Antigravity, Gemini, OpenAI, Claude) para execução assistida e autônoma. |
+| **[`scripts/`](../scripts/README.md)**              | **Utilitários & Auditoria**          | Compilação local, conversores e auditoria estática (`scripts/audit/`).              | **Desenvolvedor** (execução pontual em linha de comando).                                   |
+| **[`docs/`](../docs/README.md)**                    | **Documentação Humana**              | Filosofia, arquitetura, manuais de SO e guias técnicos.                             | **Desenvolvedor** (leitura técnica e arquitetural).                                         |
 
 ---
 
@@ -48,16 +48,19 @@ flowchart TD
 ```
 
 ### 1. Escopo Global (`~/.gemini/config/skills/`)
-* **Onde fica:** Na pasta de configuração do usuário no `$HOME`.
-* **Como funciona:** O agente carrega essas skills em **qualquer projeto ou pasta** aberta no seu computador.
-* **Uso ideal:** Suas automações pessoais, rotinas universais de auditoria, formatação e preferências que você quer disponíveis em todo lugar.
+
+- **Onde fica:** Na pasta de configuração do usuário no `$HOME`.
+- **Como funciona:** O agente carrega essas skills em **qualquer projeto ou pasta** aberta no seu computador.
+- **Uso ideal:** Suas automações pessoais, rotinas universais de auditoria, formatação e preferências que você quer disponíveis em todo lugar.
 
 ### 2. Escopo Local do Projeto (`.agents/skills/`)
-* **Onde fica:** Na raiz do projeto específico (ex: `meu-projeto/.agents/skills/<skill>/SKILL.md`).
-* **Como funciona:** Carregada exclusivamente quando você estiver trabalhando naquele repositório.
-* **Vantagem de Equipe:** Você pode commitar a pasta `.agents/` no Git. Assim, toda a equipe ou outros ambientes de CI/CD terão acesso imediato aos mesmos runbooks autônomos.
+
+- **Onde fica:** Na raiz do projeto específico (ex: `meu-projeto/.agents/skills/<skill>/SKILL.md`).
+- **Como funciona:** Carregada exclusivamente quando você estiver trabalhando naquele repositório.
+- **Vantagem de Equipe:** Você pode commitar a pasta `.agents/` no Git. Assim, toda a equipe ou outros ambientes de CI/CD terão acesso imediato aos mesmos runbooks autônomos.
 
 ### 3. Regra de Precedência (Sobrescrita Inteligente)
+
 Se existir uma skill com o **mesmo nome** na sua Home global e na pasta do Projeto:
 
 $$\text{Skill do Projeto (.agents/skills/)} \quad \mathbf{> \text{ (sobrescreve)}} \quad \text{Skill Global da Home (~/.gemini/config/skills/)}$$
@@ -66,7 +69,7 @@ $$\text{Skill do Projeto (.agents/skills/)} \quad \mathbf{> \text{ (sobrescreve)
 
 ## 🔄 Fluxo de Descoberta & Progressive Disclosure
 
-Para evitar o consumo desnecessário da janela de contexto (*Context Window*) dos modelos de linguagem, as skills utilizam o padrão de **Divulgação Progressiva (*Progressive Disclosure*)**:
+Para evitar o consumo desnecessário da janela de contexto (_Context Window_) dos modelos de linguagem, as skills utilizam o padrão de **Divulgação Progressiva (_Progressive Disclosure_)**:
 
 ```mermaid
 flowchart TD
@@ -119,8 +122,8 @@ Todo arquivo `SKILL.md` inicia com o cabeçalho YAML delimitado por `---`:
 ---
 name: nome-da-skill
 description: >-
-  Explicação em terceira pessoa indicando O QUE a skill faz e EM QUAIS SITUAÇÕES
-  o agente de IA deve ativá-la automaticamente.
+    Explicação em terceira pessoa indicando O QUE a skill faz e EM QUAIS SITUAÇÕES
+    o agente de IA deve ativá-la automaticamente.
 ---
 
 # Título da Skill
@@ -134,8 +137,8 @@ Instruções claras e objetivas para o agente executar a tarefa.
 3. Valide a saída esperada.
 ```
 
-* **`name`**: Identificador único em minúsculas com hífens (`kebab-case`).
-* **`description`**: O gatilho de ativação da IA. O agente lê esta descrição para decidir se precisa ler o restante do arquivo.
+- **`name`**: Identificador único em minúsculas com hífens (`kebab-case`).
+- **`description`**: O gatilho de ativação da IA. O agente lê esta descrição para decidir se precisa ler o restante do arquivo.
 
 ---
 
@@ -174,8 +177,9 @@ cp -r /caminho/para/Configuration/skills/minha-skill .agents/skills/
 ### 3. Em Outros Ecossistemas (OpenAI / Claude / Copilot)
 
 Como o formato segue o padrão aberto Markdown + YAML Frontmatter:
-* **Copie a pasta da skill** para a pasta de prompts/instruções do seu projeto (ex: `.cursor/rules/`, `.github/copilot-instructions.md` ou `.agent/`).
-* Ou **anexe o `SKILL.md`** diretamente no contexto de ferramentas que suportam custom instructions ou GPTs com arquivos de conhecimento.
+
+- **Copie a pasta da skill** para a pasta de prompts/instruções do seu projeto (ex: `.cursor/rules/`, `.github/copilot-instructions.md` ou `.agent/`).
+- Ou **anexe o `SKILL.md`** diretamente no contexto de ferramentas que suportam custom instructions ou GPTs com arquivos de conhecimento.
 
 ---
 

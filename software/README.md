@@ -8,9 +8,9 @@
 
 Para manter o ecossistema estritamente desacoplado, este repositório divide o sistema em duas camadas bem delimitadas:
 
-| Camada                                     | Papel Central                        | Tipo de Conteúdo                                                                                               | Escopo                                                                                                        |
-| :----------------------------------------- | :----------------------------------- | :------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------ |
-| **`software/`** _(esta pasta)_             | **O "O QUÊ" (Estado Declarativo)**   | Arquivos estáticos puros (`.json`, `.toml`, `.yaml`, `.el`, `.vim`, `.profile`, `.txt`) e dotfiles do usuário. | Espaço do usuário (`$HOME` / `~/.config` / `%APPDATA%`). **Zero sudo** / Zero gerenciadores de pacotes de SO. |
+| Camada                                              | Papel Central                        | Tipo de Conteúdo                                                                                               | Escopo                                                                                                        |
+| :-------------------------------------------------- | :----------------------------------- | :------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------ |
+| **`software/`** _(esta pasta)_                      | **O "O QUÊ" (Estado Declarativo)**   | Arquivos estáticos puros (`.json`, `.toml`, `.yaml`, `.el`, `.vim`, `.profile`, `.txt`) e dotfiles do usuário. | Espaço do usuário (`$HOME` / `~/.config` / `%APPDATA%`). **Zero sudo** / Zero gerenciadores de pacotes de SO. |
 | **[Setup](https://github.com/GabrielFrigo4/setup)** | **O "COMO" (Provisionamento Ativo)** | Receitas atômicas de automação e scripts de sistema (`.sh`, `.cmd` e `.ps1`).                                  | Nível de sistema/máquina (`dnf`, `apt`, `pkg`, `winget`, drivers, containers, fontes do sistema).             |
 
 ---

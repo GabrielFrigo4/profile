@@ -12,8 +12,8 @@ Este diretório mantém os parâmetros de configuração declarativos do **Zed**
 
 ## 📂 Catálogo de Arquivos
 
-| Arquivo | Tipo | Descrição |
-| :--- | :--- | :--- |
+| Arquivo                          | Tipo            | Descrição                                                 |
+| :------------------------------- | :-------------- | :-------------------------------------------------------- |
 | [`settings.json`](settings.json) | Declaração JSON | Preferências de interface, LSP, fonte e telemetria do Zed |
 
 ---
@@ -21,6 +21,7 @@ Este diretório mantém os parâmetros de configuração declarativos do **Zed**
 ## 🚀 Como Usar / Sincronizar
 
 ### Linux, FreeBSD & macOS:
+
 ```sh
 mkdir -p "${HOME}/.config/zed"
 ln -sf "$(pwd)/settings.json" "${HOME}/.config/zed/settings.json"

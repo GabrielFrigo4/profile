@@ -1,9 +1,9 @@
 ---
 name: deep-investigation
 description: >-
-  Deep root-cause technical investigation and primary sources research for Universal Profile.
-  Use when diagnosing LSP server schema errors, editor extension configurations (VS Code, Zed, Antigravity),
-  terminal ANSI rendering, font glyph ligatures, and AI agent prompt contracts.
+    Deep root-cause technical investigation and primary sources research for Universal Profile.
+    Use when diagnosing LSP server schema errors, editor extension configurations (VS Code, Zed, Antigravity),
+    terminal ANSI rendering, font glyph ligatures, and AI agent prompt contracts.
 ---
 
 # Deep Investigation — Editor Schemas & AI Protocol Research
@@ -17,12 +17,12 @@ Quando nos deparamos com falhas de validação de schemas de editores, quebras d
 ## 1. Regra de Ouro: Fontes Primárias Atuais
 
 1. **Schemas de Editores:**
-   - **VS Code / Antigravity:** Consulte a documentação oficial da Microsoft para o schema de `settings.json` e a especificação da API de extensões.
-   - **Zed:** Consulte os releases oficiais do Zed e a documentação em `zed.dev/docs` para atualizações de syntax highlighting e language servers.
+    - **VS Code / Antigravity:** Consulte a documentação oficial da Microsoft para o schema de `settings.json` e a especificação da API de extensões.
+    - **Zed:** Consulte os releases oficiais do Zed e a documentação em `zed.dev/docs` para atualizações de syntax highlighting e language servers.
 2. **Formatadores e Linters:**
-   - Documentações oficiais de LLVM para `.clang-format` e `clangd`, Prettier docs e StyLua manual.
+    - Documentações oficiais de LLVM para `.clang-format` e `clangd`, Prettier docs e StyLua manual.
 3. **Padrões de IA e Agentes:**
-   - Especificação oficial de `SKILL.md` com YAML Frontmatter do Google Antigravity e modelos modernos.
+    - Especificação oficial de `SKILL.md` com YAML Frontmatter do Google Antigravity e modelos modernos.
 
 ---
 

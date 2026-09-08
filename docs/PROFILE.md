@@ -9,6 +9,7 @@
 O repositório **[Profile](https://github.com/GabrielFrigo4/profile)** é o santuário de configurações do usuário. Ele é projetado para operar com **zero privilégios de sistema (`zero-sudo`)** e viver residente no `$HOME`.
 
 ### Camadas de Responsabilidade:
+
 1. **[`software/`](../software/README.md):** Arquivos declarativos puros (`settings.json`, `.clang-format`, `.stylua.toml`, `config.nu`).
 2. **[`skills/`](../skills/README.md):** Runbooks e habilidades portáteis de IA (`SKILL.md` com YAML Frontmatter) para assistentes autônomos.
 3. **[`scripts/sync/`](../scripts/README.md):** Automações defensivas para criar links simbólicos atômicos (`ln -sf`).
@@ -18,6 +19,7 @@ O repositório **[Profile](https://github.com/GabrielFrigo4/profile)** é o sant
 ## 🔄 Modo de Sincronização Dinâmica
 
 Para manter seus editores e formatadores sempre atualizados:
+
 ```sh
 # Clone no diretório de configuração do usuário
 git clone "https://github.com/GabrielFrigo4/profile" "${HOME}/.config/profile"

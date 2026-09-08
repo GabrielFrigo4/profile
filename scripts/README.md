@@ -12,10 +12,10 @@ Este diretório centraliza scripts auxiliares executados no espaço do usuário 
 
 ## 📂 Catálogo de Subdiretórios
 
-| Diretório | Tipo | Descrição |
-| :--- | :--- | :--- |
-| [`sync/`](sync/) | Automação Shell | Scripts para vincular dotfiles e skills de IA no `$HOME` via `ln -sf` |
-| [`audit/`](audit/) | Suíte Python | Testes de integridade de links Markdown e validação de JSON, YAML e TOML |
+| Diretório          | Tipo            | Descrição                                                                |
+| :----------------- | :-------------- | :----------------------------------------------------------------------- |
+| [`sync/`](sync/)   | Automação Shell | Scripts para vincular dotfiles e skills de IA no `$HOME` via `ln -sf`    |
+| [`audit/`](audit/) | Suíte Python    | Testes de integridade de links Markdown e validação de JSON, YAML e TOML |
 
 ---
 

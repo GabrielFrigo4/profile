@@ -12,8 +12,8 @@ Este diretório mantém o arquivo `settings.json` do **Windows Terminal**, confi
 
 ## 📂 Catálogo de Arquivos
 
-| Arquivo | Tipo | Descrição |
-| :--- | :--- | :--- |
+| Arquivo                          | Tipo            | Descrição                                              |
+| :------------------------------- | :-------------- | :----------------------------------------------------- |
 | [`settings.json`](settings.json) | Declaração JSON | Preferências de interface e perfis do Windows Terminal |
 
 ---
@@ -21,6 +21,7 @@ Este diretório mantém o arquivo `settings.json` do **Windows Terminal**, confi
 ## 🚀 Como Usar no Windows
 
 ### PowerShell:
+
 ```powershell
 $wtPath = "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState"
 if (Test-Path $wtPath) {

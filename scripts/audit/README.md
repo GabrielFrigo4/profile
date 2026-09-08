@@ -15,14 +15,14 @@ Esta pasta centraliza os scripts de inspeção de código para manter o reposit�
 
 ## 📂 Catálogo de Ferramentas
 
-| Ferramenta                     | Linguagem | Descrição                                                                         |
-| :----------------------------- | :-------- | :-------------------------------------------------------------------------------- |
-| [`all.py`](all.py)             | Python 3  | **Runner mestre:** executa a suite completa e gera o dashboard consolidado        |
+| Ferramenta                     | Linguagem | Descrição                                                                        |
+| :----------------------------- | :-------- | :------------------------------------------------------------------------------- |
+| [`all.py`](all.py)             | Python 3  | **Runner mestre:** executa a suite completa e gera o dashboard consolidado       |
 | [`monoliths.py`](monoliths.py) | Python 3  | Detecta scripts que ultrapassam o limite de 128 linhas (com suporte a whitelist) |
-| [`nanos.py`](nanos.py)         | Python 3  | Detecta micro-scripts com menos de 8 linhas para sugerir consolidações temáticas  |
-| [`syntax.py`](syntax.py)       | Python 3  | Valida sintaxe POSIX (`sh -n`), shebangs, modo defensivo `set -eu` e `chmod`      |
-| [`links.py`](links.py)         | Python 3  | Valida integridade de 100% dos links relativos em arquivos Markdown (`.md`)       |
-| [`formats.py`](formats.py)     | Python 3  | Valida sintaxe de JSON, JSONC, YAML (multi-doc), PowerShell (`.ps1`) e `.reg`     |
+| [`nanos.py`](nanos.py)         | Python 3  | Detecta micro-scripts com menos de 8 linhas para sugerir consolidações temáticas |
+| [`syntax.py`](syntax.py)       | Python 3  | Valida sintaxe POSIX (`sh -n`), shebangs, modo defensivo `set -eu` e `chmod`     |
+| [`links.py`](links.py)         | Python 3  | Valida integridade de 100% dos links relativos em arquivos Markdown (`.md`)      |
+| [`formats.py`](formats.py)     | Python 3  | Valida sintaxe de JSON, JSONC, YAML (multi-doc), PowerShell (`.ps1`) e `.reg`    |
 
 ---
 

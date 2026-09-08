@@ -1,9 +1,9 @@
 ---
 name: proactive-guardian
 description: >-
-  Proactive health guardian and autonomous quality enforcement for Universal Profile.
-  Use to continuously audit JSON/YAML/TOML syntax, Markdown link integrity,
-  XDG compliance, symlink health, and enforce the presence of README.md in all directories.
+    Proactive health guardian and autonomous quality enforcement for Universal Profile.
+    Use to continuously audit JSON/YAML/TOML syntax, Markdown link integrity,
+    XDG compliance, symlink health, and enforce the presence of README.md in all directories.
 ---
 
 # Proactive Guardian — Autonomous Dotfiles & AI Quality Enforcement
@@ -17,10 +17,10 @@ O agente nunca deve agir de forma passiva diante de arquivos de configuração i
 ## 1. Filosofia de Ação Proativa
 
 1. **Ação Direta no Escopo de Dotfiles:**
-   - Se um arquivo JSON ou YAML contiver erro de formatação ou vírgulas soltas, **corrija imediatamente de acordo com o padrão canônico**.
-   - Se um script de sincronização estiver sem quoting em variáveis ou `> "/dev/null"`, **corrija imediatamente**.
+    - Se um arquivo JSON ou YAML contiver erro de formatação ou vírgulas soltas, **corrija imediatamente de acordo com o padrão canônico**.
+    - Se um script de sincronização estiver sem quoting em variáveis ou `> "/dev/null"`, **corrija imediatamente**.
 2. **Garantia de Documentação Universal:**
-   - Todo subdiretório DEVE possuir um `README.md`. Se uma nova ferramenta for adicionada em `software/`, crie o respectivo `README.md` imediatamente no mesmo ciclo de entrega.
+    - Todo subdiretório DEVE possuir um `README.md`. Se uma nova ferramenta for adicionada em `software/`, crie o respectivo `README.md` imediatamente no mesmo ciclo de entrega.
 
 ---
 
@@ -37,6 +37,7 @@ O agente nunca deve agir de forma passiva diante de arquivos de configuração i
 ## 3. Fluxo de Entrega com Qualidade
 
 Antes de finalizar qualquer modificação:
+
 1. `git diff --check`
 2. `python3 scripts/audit/all.py`
 3. `./.githooks/pre-commit`
