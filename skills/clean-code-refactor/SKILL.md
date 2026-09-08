@@ -20,9 +20,9 @@ Ao refatorar qualquer script ou configuração:
 2. **Modo Defensivo:**
    - Todo script executável deve iniciar com `set -eu` (ou `set -euo pipefail` quando compatível com o parser).
 
-3. **Orçamento de Linhas (Regra 16 - 128):**
+3. **Orçamento de Linhas (Regra 8 - 128):**
    - Scripts não devem ultrapassar 128 linhas úteis. Se uma receita estiver crescendo além desse limite, decomponha em módulos ou invoque submódulos em pastas específicas.
-   - Scripts com menos de 16 linhas devem ser avaliados quanto à real necessidade de existência ou consolidados.
+   - Scripts com menos de 8 linhas devem ser avaliados quanto à real necessidade de existência ou consolidados.
 
 4. **Regra de Comentários Estruturais (32 Caracteres):**
    - **Seções Principais:** Exatamente 32 caracteres de `=`

@@ -113,3 +113,6 @@ Para garantir elegância, reprodutibilidade e portabilidade sem fricção, toda 
 
 ### 4. Isolamento Absoluto de Segredos (Zero Secrets in Public Git)
 - O repositório `Profile` é 100% público. NUNCA comite tokens, senhas, chaves privadas ou dados pessoais. Todos os segredos pertencem exclusivamente ao `Vault`.
+
+### 5. Orçamento de Linhas (Regra 8 - 128)
+- Scripts de sincronização e automação não devem possuir menos de 8 linhas nem ultrapassar 128 linhas úteis (evitar monólitos e manter coesão temática).

@@ -31,7 +31,11 @@ Essas diretrizes são de aplicação obrigatória para qualquer modificação ou
 - `chmod 0644` para arquivos de configuração, dotfiles declarativos e Markdown.
 - Redirecionamentos para `/dev/null` sempre com aspas: `> "/dev/null"`.
 
-## 6. Checklist de Validação Obrigatório
+## 6. Limites de Linhas & Clean Code
+- **Piso:** Nenhum script isolado deve ter menos de 8 linhas.
+- **Teto:** Nenhum script deve ultrapassar 128 linhas (evitar monólitos).
+
+## 7. Checklist de Validação Obrigatório
 Antes de concluir qualquer alteração no Profile:
 1. `git diff --check` (deve retornar 0 erros).
 2. `./.githooks/pre-commit` (deve passar 100%).
