@@ -1,6 +1,7 @@
 <#
-.SYNOPSIS
-    Instalador e sincronizador canônico do Universal Profile para Microsoft Windows.
+# ----------------------------------------------------------------
+# Utility: Universal Profile Windows Installer
+# ----------------------------------------------------------------
 #>
 [CmdletBinding()]
 param(

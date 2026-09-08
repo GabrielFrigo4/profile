@@ -1,10 +1,7 @@
 <#
-.SYNOPSIS
-    Sincronizador declarativo de dotfiles para Microsoft Windows.
-.PARAMETER DryRun
-    Simula a criacao de links sem alterar o sistema de arquivos.
-.PARAMETER Backup
-    Gera copias .bak com timestamp antes de substituir arquivos existentes.
+# ----------------------------------------------------------------
+# Utility: Profile Dotfiles Windows Synchronizer
+# ----------------------------------------------------------------
 #>
 [CmdletBinding()]
 param(
