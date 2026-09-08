@@ -23,7 +23,7 @@ Se você precisa rodar os formatadores diretamente no terminal fora da IDE:
 
 ### 1. Prettier
 
-- **Receita Automática:** `curl -fsSL https://raw.githubusercontent.com/GabrielFrigo4/Configuration/main/bootstrap/common/linters/prettier.sh | sh`
+- **Receita Automática:** `curl -fsSL https://raw.githubusercontent.com/GabrielFrigo4/setup/main/common/linters/prettier.sh | sh`
 - **FreeBSD:** `doas pkg install node npm && npm install --global prettier`
 - **Fedora:** `sudo dnf install --assumeyes nodejs npm && sudo npm install --global prettier`
 - **Arch Linux:** `sudo pacman -S prettier`
@@ -58,5 +58,5 @@ Todas as ferramentas estão padronizadas para respeitar as mesmas diretrizes:
 Execute a receita canônica do repositório:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/GabrielFrigo4/Configuration/main/bootstrap/common/linters/linters.sh | sh
+curl -fsSL https://raw.githubusercontent.com/GabrielFrigo4/setup/main/common/linters/linters.sh | sh
 ```

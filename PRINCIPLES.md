@@ -15,7 +15,7 @@ Para garantir elegância, reprodutibilidade e portabilidade sem fricção, toda 
 
 > _Escreva partes simples conectadas por interfaces limpas._
 
-- A pasta `software/editors/` contém configurações autocontidas por editor (Antigravity, VS Code, VSCodium, Zed, Emacs, Vim). Ajustar um editor nunca afeta os demais.
+- A pasta `editors/` contém configurações autocontidas por editor (Antigravity, VS Code, VSCodium, Zed, Emacs, Vim). Ajustar um editor nunca afeta os demais.
 - Cada skill de IA em `skills/` é autocontida e independente.
 
 ### 2. Regra da Clareza (_Rule of Clarity_)
@@ -119,7 +119,7 @@ Para garantir elegância, reprodutibilidade e portabilidade sem fricção, toda 
 
 > _Projete para o futuro, porque ele chegará antes do que você imagina._
 
-- A adição de um novo editor em `software/editors/` ou de uma nova skill em `skills/` é 100% plugável sem alterar os demais componentes.
+- A adição de um novo editor em `editors/` ou de uma nova skill em `skills/` é 100% plugável sem alterar os demais componentes.
 
 ### 18. Regra da Soberania do Usuário (_Rule of User Sovereignty_)
 

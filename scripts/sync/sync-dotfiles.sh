@@ -55,34 +55,34 @@ _link() {
 ### Formatadores Globais & Linters
 ### --------------------------------
 echo "↳ 1. Formatadores globais e linters..."
-_link "${_repo_root}/software/tools/.clang-format" "${HOME}/.clang-format"
-_link "${_repo_root}/software/tools/.prettierrc" "${HOME}/.prettierrc"
-_link "${_repo_root}/software/tools/.stylua.toml" "${HOME}/.stylua.toml"
-_link "${_repo_root}/software/tools/.editorconfig" "${HOME}/.editorconfig"
-_link "${_repo_root}/software/tools/clangd.yaml" "${HOME}/.config/clangd/config.yaml"
+_link "${_repo_root}/tools/.clang-format" "${HOME}/.clang-format"
+_link "${_repo_root}/tools/.prettierrc" "${HOME}/.prettierrc"
+_link "${_repo_root}/tools/.stylua.toml" "${HOME}/.stylua.toml"
+_link "${_repo_root}/tools/.editorconfig" "${HOME}/.editorconfig"
+_link "${_repo_root}/tools/clangd.yaml" "${HOME}/.config/clangd/config.yaml"
 
 ### --------------------------------
 ### Editores Minimalistas
 ### --------------------------------
 echo "↳ 2. Editores minimalistas (Vim & Emacs)..."
-_link "${_repo_root}/software/editors/vim/lite.vim" "${HOME}/.vimrc"
-_link "${_repo_root}/software/editors/vim/lite.vim" "${HOME}/.config/nvim/init.vim"
-_link "${_repo_root}/software/editors/emacs/lite.el" "${HOME}/.emacs.d/init.el"
+_link "${_repo_root}/editors/vim/lite.vim" "${HOME}/.vimrc"
+_link "${_repo_root}/editors/vim/lite.vim" "${HOME}/.config/nvim/init.vim"
+_link "${_repo_root}/editors/emacs/lite.el" "${HOME}/.emacs.d/init.el"
 
 ### --------------------------------
 ### Editores Modernos & IDEs
 ### --------------------------------
 echo "↳ 3. Editores modernos (Zed, VSCode, Antigravity)..."
-_link "${_repo_root}/software/editors/zed/settings.json" "${HOME}/.config/zed/settings.json"
+_link "${_repo_root}/editors/zed/settings.json" "${HOME}/.config/zed/settings.json"
 
 if [ "${_os_type}" = "Darwin" ]; then
 	_app_support="${HOME}/Library/Application Support"
-	_link "${_repo_root}/software/editors/vscode/settings.json" "${_app_support}/Code/User/settings.json"
-	_link "${_repo_root}/software/editors/antigravity/settings.json" "${_app_support}/Antigravity/User/settings.json"
+	_link "${_repo_root}/editors/vscode/settings.json" "${_app_support}/Code/User/settings.json"
+	_link "${_repo_root}/editors/antigravity/settings.json" "${_app_support}/Antigravity/User/settings.json"
 else
-	_link "${_repo_root}/software/editors/vscode/settings.json" "${HOME}/.config/Code/User/settings.json"
-	_link "${_repo_root}/software/editors/vscode/settings.json" "${HOME}/.config/vscode-oss/User/settings.json"
-	_link "${_repo_root}/software/editors/antigravity/settings.json" "${HOME}/.config/Antigravity/User/settings.json"
+	_link "${_repo_root}/editors/vscode/settings.json" "${HOME}/.config/Code/User/settings.json"
+	_link "${_repo_root}/editors/vscode/settings.json" "${HOME}/.config/vscode-oss/User/settings.json"
+	_link "${_repo_root}/editors/antigravity/settings.json" "${HOME}/.config/Antigravity/User/settings.json"
 fi
 
 ### --------------------------------
@@ -91,18 +91,18 @@ fi
 echo "↳ 4. Emuladores de terminal e shells alternativos..."
 
 _konsole_dir="${HOME}/.local/share/konsole"
-_link "${_repo_root}/software/terminals/konsole/Bash.profile" "${_konsole_dir}/Bash.profile"
-_link "${_repo_root}/software/terminals/konsole/Shell.profile" "${_konsole_dir}/Shell.profile"
-_link "${_repo_root}/software/terminals/konsole/Zsh.profile" "${_konsole_dir}/Zsh.profile"
+_link "${_repo_root}/terminals/konsole/Bash.profile" "${_konsole_dir}/Bash.profile"
+_link "${_repo_root}/terminals/konsole/Shell.profile" "${_konsole_dir}/Shell.profile"
+_link "${_repo_root}/terminals/konsole/Zsh.profile" "${_konsole_dir}/Zsh.profile"
 
 _nu_dir="${HOME}/.config/nushell"
-_link "${_repo_root}/software/terminals/nushell/config.nu" "${_nu_dir}/config.nu"
-_link "${_repo_root}/software/terminals/nushell/env.nu" "${_nu_dir}/env.nu"
-_link "${_repo_root}/software/terminals/nushell/nushell.nu" "${_nu_dir}/nushell.nu"
+_link "${_repo_root}/terminals/nushell/config.nu" "${_nu_dir}/config.nu"
+_link "${_repo_root}/terminals/nushell/env.nu" "${_nu_dir}/env.nu"
+_link "${_repo_root}/terminals/nushell/nushell.nu" "${_nu_dir}/nushell.nu"
 
 _pwsh_dir="${HOME}/.config/powershell"
-_link "${_repo_root}/software/terminals/powershell/profile.ps1" "${_pwsh_dir}/profile.ps1"
-_link "${_repo_root}/software/terminals/powershell/Microsoft.PowerShell_profile.ps1" "${_pwsh_dir}/Microsoft.PowerShell_profile.ps1"
+_link "${_repo_root}/terminals/powershell/profile.ps1" "${_pwsh_dir}/profile.ps1"
+_link "${_repo_root}/terminals/powershell/Microsoft.PowerShell_profile.ps1" "${_pwsh_dir}/Microsoft.PowerShell_profile.ps1"
 
 echo "✅ [Profile] Todos os dotfiles sincronizados com sucesso!"
 exit 0

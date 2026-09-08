@@ -28,19 +28,19 @@ Validar que nenhum dotfile estático contém erros gramaticais que impeçam o ca
 
 ```sh
 # Validar arquivos JSON (Zed, VS Code, Windows Terminal)
-find software -name "*.json" -exec python3 -m json.tool {} >/dev/null \;
+find editors terminals tools browsers -name "*.json" -exec python3 -m json.tool {} > "/dev/null" \;
 
 # Validar arquivos YAML (Clangd)
 python3 -c '
 import yaml, glob
-for f in glob.glob("software/**/*.yaml", recursive=True):
+for f in glob.glob("tools/**/*.yaml", recursive=True):
     yaml.safe_load(open(f))
 '
 
 # Validar arquivos TOML (StyLua)
 python3 -c '
 import tomllib, glob
-for f in glob.glob("software/**/*.toml", recursive=True):
+for f in glob.glob("tools/**/*.toml", recursive=True):
     tomllib.load(open(f, "rb"))
 '
 ```

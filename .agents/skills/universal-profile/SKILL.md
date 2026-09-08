@@ -16,15 +16,15 @@ Este guia detalha o fluxo operacional para estender, refatorar e auditar o repos
 
 Antes de criar qualquer arquivo, posicione-o na pasta correta:
 
-| Camada                | Diretório             | Papel & Responsabilidade                                      | Exemplos                                       |
-| :-------------------- | :-------------------- | :------------------------------------------------------------ | :--------------------------------------------- |
-| **Editores**          | `software/editors/`   | Configurações declarativas autocontidas por editor.           | Antigravity, VS Code, Zed, Emacs, Vim          |
-| **Terminais**         | `software/terminals/` | Perfis gráficos e scripts de inicialização de terminais.      | Konsole, Windows Terminal, NuShell, PowerShell |
-| **Linters & Tools**   | `software/tools/`     | Arquivos de configuração globais de formatação e LSP.         | `.clang-format`, `.prettierrc`, `.stylua.toml` |
-| **Navegadores**       | `software/browsers/`  | Ajustes de navegadores no host.                               | Firefox Wayland e clipboard                    |
-| **Habilidades de IA** | `skills/`             | Pacotes autocontidos de procedimentos para agentes autônomos. | `SKILL.md` com YAML Frontmatter                |
-| **Sincronização**     | `scripts/sync/`       | Scripts em shell para criar symlinks no `$HOME`.              | `sync-dotfiles.sh`, `sync-skills.sh`           |
-| **Documentação**      | `docs/`               | Manuais de arquitetura e filosofia do ecossistema.            | `ARCHITECTURE.md`, `PHILOSOPHY.md`             |
+| Camada                | Diretório       | Papel & Responsabilidade                                      | Exemplos                                       |
+| :-------------------- | :-------------- | :------------------------------------------------------------ | :--------------------------------------------- |
+| **Editores**          | `editors/`      | Configurações declarativas autocontidas por editor.           | Antigravity, VS Code, Zed, Emacs, Vim          |
+| **Terminais**         | `terminals/`    | Perfis gráficos e scripts de inicialização de terminais.      | Konsole, Windows Terminal, NuShell, PowerShell |
+| **Linters & Tools**   | `tools/`        | Arquivos de configuração globais de formatação e LSP.         | `.clang-format`, `.prettierrc`, `.stylua.toml` |
+| **Navegadores**       | `browsers/`     | Ajustes de navegadores no host.                               | Firefox Wayland e clipboard                    |
+| **Habilidades de IA** | `skills/`       | Pacotes autocontidos de procedimentos para agentes autônomos. | `SKILL.md` com YAML Frontmatter                |
+| **Sincronização**     | `scripts/sync/` | Scripts em shell para criar symlinks no `$HOME`.              | `sync-dotfiles.sh`, `sync-skills.sh`           |
+| **Documentação**      | `docs/`         | Manuais de arquitetura e filosofia do ecossistema.            | `ARCHITECTURE.md`, `PHILOSOPHY.md`             |
 
 ---
 

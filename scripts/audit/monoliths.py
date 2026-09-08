@@ -9,8 +9,8 @@ import sys
 import argparse
 
 DEFAULT_WHITELIST = {
-    "bootstrap/windows/native/pkg/winget.cmd",
-    "software/terminals/powershell/profile.ps1",
+    "windows/native/pkg/winget.cmd",
+    "terminals/powershell/profile.ps1",
 }
 
 

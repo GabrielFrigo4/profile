@@ -56,39 +56,39 @@ function Link-File {
 }
 
 Write-Host "↳ 1. Formatadores globais e linters..." -ForegroundColor Cyan
-Link-File "$RepoRoot\software\tools\.clang-format" "$HOME\.clang-format"
-Link-File "$RepoRoot\software\tools\.prettierrc" "$HOME\.prettierrc"
-Link-File "$RepoRoot\software\tools\.stylua.toml" "$HOME\.stylua.toml"
-Link-File "$RepoRoot\software\tools\.editorconfig" "$HOME\.editorconfig"
+Link-File "$RepoRoot\tools\.clang-format" "$HOME\.clang-format"
+Link-File "$RepoRoot\tools\.prettierrc" "$HOME\.prettierrc"
+Link-File "$RepoRoot\tools\.stylua.toml" "$HOME\.stylua.toml"
+Link-File "$RepoRoot\tools\.editorconfig" "$HOME\.editorconfig"
 
 Write-Host "↳ 2. Editores modernos (VS Code & Antigravity)..." -ForegroundColor Cyan
 if ($env:APPDATA) {
-    Link-File "$RepoRoot\software\editors\vscode\settings.json" "$env:APPDATA\Code\User\settings.json"
-    Link-File "$RepoRoot\software\editors\antigravity\settings.json" "$env:APPDATA\Antigravity\User\settings.json"
+    Link-File "$RepoRoot\editors\vscode\settings.json" "$env:APPDATA\Code\User\settings.json"
+    Link-File "$RepoRoot\editors\antigravity\settings.json" "$env:APPDATA\Antigravity\User\settings.json"
 }
 
 Write-Host "↳ 3. Windows Terminal..." -ForegroundColor Cyan
 $WtPath = "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
-Link-File "$RepoRoot\software\terminals\windows-terminal\settings.json" $WtPath
+Link-File "$RepoRoot\terminals\windows-terminal\settings.json" $WtPath
 
 Write-Host "↳ 4. Clink (CMD)..." -ForegroundColor Cyan
 $ClinkDir = "$env:LOCALAPPDATA\clink"
-Link-File "$RepoRoot\software\terminals\cmd\profile.lua" "$ClinkDir\profile.lua"
-Link-File "$RepoRoot\software\terminals\cmd\profile.cmd" "$ClinkDir\profile.cmd"
+Link-File "$RepoRoot\terminals\cmd\profile.lua" "$ClinkDir\profile.lua"
+Link-File "$RepoRoot\terminals\cmd\profile.cmd" "$ClinkDir\profile.cmd"
 
 Write-Host "↳ 5. PowerShell Profiles..." -ForegroundColor Cyan
 $PsDocs = "$HOME\Documents\PowerShell"
 $WinPsDocs = "$HOME\Documents\WindowsPowerShell"
-Link-File "$RepoRoot\software\terminals\powershell\profile.ps1" "$PsDocs\profile.ps1"
-Link-File "$RepoRoot\software\terminals\powershell\Microsoft.PowerShell_profile.ps1" "$PsDocs\Microsoft.PowerShell_profile.ps1"
-Link-File "$RepoRoot\software\terminals\powershell\profile.ps1" "$WinPsDocs\profile.ps1"
+Link-File "$RepoRoot\terminals\powershell\profile.ps1" "$PsDocs\profile.ps1"
+Link-File "$RepoRoot\terminals\powershell\Microsoft.PowerShell_profile.ps1" "$PsDocs\Microsoft.PowerShell_profile.ps1"
+Link-File "$RepoRoot\terminals\powershell\profile.ps1" "$WinPsDocs\profile.ps1"
 
 Write-Host "↳ 6. NuShell..." -ForegroundColor Cyan
 if ($env:APPDATA) {
     $NuDir = "$env:APPDATA\nushell"
-    Link-File "$RepoRoot\software\terminals\nushell\config.nu" "$NuDir\config.nu"
-    Link-File "$RepoRoot\software\terminals\nushell\env.nu" "$NuDir\env.nu"
-    Link-File "$RepoRoot\software\terminals\nushell\nushell.nu" "$NuDir\nushell.nu"
+    Link-File "$RepoRoot\terminals\nushell\config.nu" "$NuDir\config.nu"
+    Link-File "$RepoRoot\terminals\nushell\env.nu" "$NuDir\env.nu"
+    Link-File "$RepoRoot\terminals\nushell\nushell.nu" "$NuDir\nushell.nu"
 }
 
 Write-Host "✅ [Profile] Sincronizacao concluida com sucesso no Windows!" -ForegroundColor Green

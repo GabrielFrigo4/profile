@@ -20,7 +20,7 @@ O agente nunca deve agir de forma passiva diante de arquivos de configuração i
     - Se um arquivo JSON ou YAML contiver erro de formatação ou vírgulas soltas, **corrija imediatamente de acordo com o padrão canônico**.
     - Se um script de sincronização estiver sem quoting em variáveis ou `> "/dev/null"`, **corrija imediatamente**.
 2. **Garantia de Documentação Universal:**
-    - Todo subdiretório DEVE possuir um `README.md`. Se uma nova ferramenta for adicionada em `software/`, crie o respectivo `README.md` imediatamente no mesmo ciclo de entrega.
+    - Todo subdiretório DEVE possuir um `README.md`. Se uma nova ferramenta for adicionada em `editors/`, `terminals/`, `tools/` ou `browsers/`, crie o respectivo `README.md` imediatamente no mesmo ciclo de entrega.
 
 ---
 

@@ -45,11 +45,10 @@ Diferente do **Setup** (que exige `sudo`/`root` para instalar pacotes no sistema
 
 ## 📂 Estrutura do Repositório
 
-- **[`software/`](software/README.md)** — **Dotfiles e Configurações Declarativas de Usuário:**
-    - **`editors/`** — Antigravity, VS Code, VSCodium, Zed, Emacs (`lite.el`) e Vim (`lite.vim`).
-    - **`terminals/`** — Konsole (KDE), Windows Terminal, CMD (Clink), PowerShell e NuShell.
-    - **`tools/`** — Formatadores e linters globais (`.clang-format`, `.prettierrc`, `.stylua.toml`, `clangd.yaml`).
-    - **`browsers/`** — Ajustes e perfis de navegadores (Firefox).
+- **[`editors/`](editors/README.md)** — **Configurações de Editores & IDEs:** Antigravity, VS Code, VSCodium, Zed, Emacs (`lite.el`) e Vim (`lite.vim`).
+- **[`terminals/`](terminals/README.md)** — **Perfis de Terminal:** Konsole (KDE), Windows Terminal, CMD (Clink), PowerShell e NuShell.
+- **[`tools/`](tools/README.md)** — **Formatadores & Linters Globais:** `.clang-format`, `.prettierrc`, `.stylua.toml`, `clangd.yaml`.
+- **[`browsers/`](browsers/README.md)** — **Navegadores:** Ajustes e perfis de navegadores (Firefox).
 - **[`skills/`](skills/README.md)** — **Habilidades & Runbooks Portáteis para IA:** Catálogo de skills cognitivas para Google Antigravity/Gemini, Claude e OpenAI com ativação sob demanda.
 - **[`scripts/`](scripts/README.md)** — Utilitários de sincronização (`sync/`) e validação estática (`audit/`).
 - **[`docs/`](docs/README.md)** — Documentação técnica completa da estação de trabalho e arquitetura.

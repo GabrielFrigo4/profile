@@ -30,7 +30,7 @@ Esta pasta reúne exclusivamente os **arquivos declarativos de configuração** 
 ### 1. Sincronizar Extensões com o Setup
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/GabrielFrigo4/setup/main/bootstrap/common/editors/sync-extensions.sh | sh
+curl -fsSL https://raw.githubusercontent.com/GabrielFrigo4/setup/main/common/editors/sync-extensions.sh | sh
 ```
 
 ### 2. Configurações de Editores GUI

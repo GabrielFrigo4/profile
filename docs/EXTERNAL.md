@@ -1,6 +1,6 @@
 # 📥 Ferramentas Externas
 
-Este documento cataloga softwares, utilitários e aplicativos vitais para o ecossistema que **não** são gerenciados pelos scripts automatizados de `bootstrap/` (seja por não estarem em repositórios oficiais, requererem licenças manuais, ou serem exclusividades de lojas de aplicativos).
+Este documento cataloga softwares, utilitários e aplicativos vitais para o ecossistema que **não** são gerenciados pelos scripts automatizados de `Setup/` (seja por não estarem em repositórios oficiais, requererem licenças manuais, ou serem exclusividades de lojas de aplicativos).
 
 ## 📦 Downloads Manuais (Instaladores)
 
