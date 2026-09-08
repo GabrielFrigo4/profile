@@ -58,6 +58,5 @@ Todas as ferramentas estão padronizadas para respeitar as mesmas diretrizes:
 Execute a receita canônica do repositório:
 
 ```sh
-# UNIX (Linux / FreeBSD / WSL)
 curl -fsSL https://raw.githubusercontent.com/GabrielFrigo4/Configuration/main/bootstrap/common/linters/linters.sh | sh
 ```

@@ -85,9 +85,15 @@ Todos os 4 repositórios aderem rigorosamente aos mesmos padrões arquiteturais 
 Baseados nos 17 Princípios UNIX (*The Art of UNIX Programming*, Eric S. Raymond, 2003) somados ao 18º Princípio fundamental:
 - **A Regra da Soberania do Usuário (*Rule of User Sovereignty*):** Nenhuma automação, script ou loader deve sobrescrever variáveis ou configurações pré-existentes do usuário sem consentimento explícito. Ferramentas intencionais do usuário (`doas`, `paru`, `hx`, `eza`, `rg`, `bat`) têm prioridade sobre utilitários genéricos.
 
-### 2. Padrão Exclusivo de Comentários Estruturais (Regra do Não-Vazamento)
-- **Código Autoexplicativo:** Comentários explicativos inline triviais são proibidos.
-- **Dois Níveis Canônicos:**
+### 2. Arquitetura de Comentários em Três Camadas (Regra do Não-Vazamento)
+- **Zero Comentários Narrativos:** Comentários explicativos inline ("faz isso", "verifica aquilo") são expressamente proibidos em código, scripts, templates e exemplos de documentação. O código expressa sua intenção por meio de nomes semânticos e separação por linhas em branco.
+- **Camada 1 — Header Banner (64 `-`):** Exclusivo para o topo do arquivo (linhas 2 a 4), delimitando a identidade do script:
+  ```sh
+  # ----------------------------------------------------------------
+  # Recipe: [Nome do Software / Funcionalidade]
+  # ----------------------------------------------------------------
+  ```
+- **Camada 2 — Delimitadores de Corpo (32 caracteres):**
   - **Seções Principais (32 `=`):**
     ```sh
     ### ================================
@@ -100,21 +106,25 @@ Baseados nos 17 Princípios UNIX (*The Art of UNIX Programming*, Eric S. Raymond
     ### Nome da Subsecao
     ### --------------------------------
     ```
-  - **Regra do Não-Vazamento:** O texto do título DEVE ter no máximo 32 caracteres (total de 36 colunas com `### `) e JAMAIS vazar além da régua divisora.
+  - **Regra do Não-Vazamento:** O texto do título DEVE ter no máximo 32 caracteres (total de 36 colunas com `### `) e JAMAIS vazar além da régua divisora. Títulos concisos, sem parênteses e sem numerações redundantes.
 
-### 3. Taxonomia Estrita de Nomenclatura
+### 3. Padrão Universal de Documentação (README Templates)
+- **README Raiz:** Portal institucional com título e emoji, blockquote de missão, badges do Quarteto de Produtividade, tecnologias suportadas, catálogo de primeiro nível e comandos de auditoria/CI.
+- **README de Subpastas:** Catálogo tabular padronizado (`| Arquivo / Receita | Descrição | Plataforma |`) e bloco de execução limpo sem comentários inline.
+
+### 4. Taxonomia Estrita de Nomenclatura
 - **`kebab-case` público:** Comandos, aliases e funções destinados à invocação interativa (`vault-keys`, `vault-perms`, `update-all`, `open-helix`).
 - **`_snake_case` privado:** Funções internas de infraestrutura, bootstrapping e variáveis locais temporárias (`_as_root`, `_detect_os`, `_vault_dir`).
 - **`SNAKE_CASE` maiúsculo:** Variáveis globais de ambiente e constantes (`PATH`, `SHELL_REPO_DIR`, `VAULT_DIR`).
 
-### 4. Permissões Canônicas em 4 Dígitos Octais
+### 5. Permissões Canônicas em 4 Dígitos Octais
 - `chmod 0755`: Diretórios e scripts executáveis públicos (`Setup`, `Profile`, `Shell`).
 - `chmod 0644`: Dotfiles estáticos, documentações e arquivos de configuração públicos.
 - `chmod 0700`: Diretórios privados e scripts executáveis com dados sensíveis (`Vault`).
 - `chmod 0600`: Chaves privadas SSH, PuTTY PPK, tokens e arquivos `.env` (`Vault`).
 - `chmod 0440`: Arquivos de autorização do sistema operacional (`/etc/sudoers.d/*`, `doas.conf`).
 
-### 5. Governança Autônoma com IA e Quality Gates
+### 6. Governança Autônoma com IA e Quality Gates
 - Todo repositório do ecossistema possui:
   - `.githooks/pre-commit` executável e atômico para validar integridade, sintaxe e formatação antes do commit.
   - `.agents/rules/principles.md` com diretrizes de engenharia específicas do seu domínio.

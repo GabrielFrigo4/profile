@@ -22,12 +22,9 @@ Este diretório centraliza scripts auxiliares executados no espaço do usuário 
 ## 🚀 Como Usar
 
 ```sh
-# Sincronizar dotfiles de editores e formatadores no $HOME:
 ./scripts/sync/sync-dotfiles.sh
 
-# Sincronizar skills para o escopo global de IA (~/.gemini/config/skills):
 ./scripts/sync/sync-skills.sh
 
-# Executar suíte de testes de formato e links:
 python3 scripts/audit/all.py
 ```

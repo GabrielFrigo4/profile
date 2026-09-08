@@ -61,20 +61,14 @@ Diferente do **Setup** (que exige `sudo`/`root` para instalar pacotes no sistema
 ### 🐧 Unix (Linux, FreeBSD, macOS)
 
 ```sh
-# 1. Clone no seu diretório de configurações do usuário
 git clone "https://github.com/GabrielFrigo4/profile" "${HOME}/.config/profile"
-
-# 2. Instale e sincronize tudo (dotfiles + skills de IA)
 sh "${HOME}/.config/profile/install.sh"
 ```
 
 ### 🪟 Windows (PowerShell)
 
 ```powershell
-# 1. Clone no seu diretório de configurações
 git clone "https://github.com/GabrielFrigo4/profile" "$HOME\.config\profile"
-
-# 2. Execute a instalação
 & "$HOME\.config\profile\install.ps1"
 ```
 

@@ -5,44 +5,188 @@ description: Runbook cognitivo para auditoria e refatoração de código POSIX, 
 
 # 🧹 Clean Code Refactor Skill
 
-Esta habilidade orienta o agente de inteligência artificial na análise estática, auditoria de qualidade e refatoração de scripts e configurações do ecossistema.
+Esta habilidade orienta o agente de inteligência artificial na análise estática, auditoria de qualidade, padronização e refatoração de scripts, documentações e configurações do ecossistema.
 
 ---
 
 ## 🎯 Diretrizes de Engenharia & Invariantes
 
-Ao refatorar qualquer script ou configuração:
+Ao refatorar ou auditar qualquer arquivo no ecossistema:
 
 1. **Shebang Universal:**
    - Utilize sempre `#!/usr/bin/env sh` para scripts de shell.
-   - Evite `#!/bin/sh` ou `#!/bin/bash` rígidos para garantir portabilidade em FreeBSD e macOS.
+   - Evite `#!/bin/sh` ou `#!/bin/bash` rígidos para garantir portabilidade em FreeBSD, Linux e macOS.
 
 2. **Modo Defensivo:**
-   - Todo script executável deve iniciar com `set -eu` (ou `set -euo pipefail` quando compatível com o parser).
+   - Todo script executável de shell deve iniciar com `set -eu` (ou `set -euo pipefail` quando compatível com o parser).
 
 3. **Orçamento de Linhas (Regra 8 - 128):**
-   - Scripts não devem ultrapassar 128 linhas úteis. Se uma receita estiver crescendo além desse limite, decomponha em módulos ou invoque submódulos em pastas específicas.
-   - Scripts com menos de 8 linhas devem ser avaliados quanto à real necessidade de existência ou consolidados.
+   - **Piso:** 8 linhas úteis. Scripts menores devem ser justificados ou consolidados.
+   - **Teto:** 128 linhas úteis. Scripts maiores devem ser modularizados em submódulos temáticos.
 
-4. **Regra de Comentários Estruturais (32 Caracteres):**
-   - **Seções Principais:** Exatamente 32 caracteres de `=`
+4. **Arquitetura de Comentários em Três Camadas (Regra do Não-Vazamento):**
+   - **Camada 1 (Header Banner - 64 `-`):** Exclusivo para as linhas 2 a 4 de scripts utilitários e receitas:
      ```sh
-     ### ================================
-     ### TITULO DA SECAO PRINCIPAL
-     ### ================================
+     # ----------------------------------------------------------------
+     # Recipe: [Nome do Software / Funcionalidade]
+     # ----------------------------------------------------------------
      ```
-   - **Subseções:** Exatamente 32 caracteres de `-`
-     ```sh
-     ### --------------------------------
-     ### Nome da Subsecao
-     ### --------------------------------
-     ```
-   - Nenhum título pode vazar ou exceder as 32 colunas da régua.
+   - **Camada 2 (Delimitadores Estruturais de Corpo - 32 Caracteres):**
+     - Seções Principais (32 `=`):
+       ```sh
+       ### ================================
+       ### NOME DA SECAO PRINCIPAL
+       ### ================================
+       ```
+     - Subseções Internas (32 `-`):
+       ```sh
+       ### --------------------------------
+       ### Nome da Subsecao
+       ### --------------------------------
+       ```
+     - **Regra Estrita do Não-Vazamento:** O texto do título DEVE ter no máximo 32 caracteres (total de 36 colunas contando `### `) e JAMAIS vazar além da régua divisora. Títulos puramente semânticos, sem parênteses e sem numerações arbitrárias.
+   - **Camada 3 (Zero Comentários Narrativos):** É expressamente proibido o uso de comentários explicativos ou narrativos inline ("faz isso", "executa aquilo") em scripts, dotfiles, blocos de código markdown ou templates. O código deve ser autoexplicativo, utilizando separação lógica por linhas em branco.
 
-5. **Aspas em Variáveis:**
+5. **Aspas em Variáveis & Quoting Defensivo:**
    - Toda expansão de variável deve estar entre aspas duplas: `"${VAR}"`, `"${HOME}"`.
+   - Redirecionamentos para `/dev/null` sempre protegidos por aspas: `> "/dev/null"` e `2> "/dev/null"`.
 
 6. **Nomenclatura Canônica:**
-   - Comandos públicos: `kebab-case` (`vault-keys`, `update-all`).
-   - Helpers e variáveis locais: `_snake_case` (`_repo_root`, `_as_root`).
-   - Variáveis globais: `SNAKE_CASE` (`PATH`, `SHELL_REPO_DIR`).
+   - Comandos e utilitários públicos: `kebab-case` (`vault-keys`, `update-all`).
+   - Helpers internos e variáveis locais: `_snake_case` (`_as_root`, `_repo_root`).
+   - Variáveis globais de ambiente e constantes: `SNAKE_CASE` (`PATH`, `SHELL_REPO_DIR`, `VAULT_DIR`).
+
+7. **Elevação Canônica de Privilégios (POSIX):**
+   - Sempre utilize a forma compacta e defensiva de checagem do `ELEVATE`:
+     ```sh
+     ELEVATE="$( [ "$(id -u)" -ne 0 ] && { command -v doas > "/dev/null" 2>&1 && echo "doas" || { command -v sudo > "/dev/null" 2>&1 && echo "sudo"; }; } )"
+     ```
+
+8. **Permissões em 4 Dígitos Octais:**
+   - Scripts públicos (`Setup`, `Profile`, `Shell`): `chmod 0755`
+   - Configurações e documentações públicas: `chmod 0644`
+   - Scripts e diretórios restritos (`Vault`): `chmod 0700`
+   - Chaves privadas e segredos (`Vault`): `chmod 0600`
+   - Arquivos do sistema (`sudoers.d`): `chmod 0440`
+
+---
+
+## 📋 Templates Canônicos de Scripts (Sem Comentários Narrativos)
+
+### 1. Template POSIX Shell (`.sh`)
+
+```sh
+#!/usr/bin/env sh
+# ----------------------------------------------------------------
+# Recipe: [Nome do Software / Funcionalidade]
+# ----------------------------------------------------------------
+set -eu
+
+echo "📦 [Nome]: Iniciando configuração..."
+
+ELEVATE="$( [ "$(id -u)" -ne 0 ] && { command -v doas > "/dev/null" 2>&1 && echo "doas" || { command -v sudo > "/dev/null" 2>&1 && echo "sudo"; }; } )"
+
+echo "✅ [Nome]: Configurado com sucesso!"
+```
+
+### 2. Template PowerShell (`.ps1`)
+
+```powershell
+<#
+# ----------------------------------------------------------------
+# Recipe: [Nome do Software / Funcionalidade]
+# ----------------------------------------------------------------
+#>
+[CmdletBinding()]
+param()
+
+$ErrorActionPreference = 'Stop'
+
+Write-Host "📦 [Nome]: Iniciando configuracao..." -ForegroundColor Cyan
+
+Write-Host "✅ [Nome]: Configurado com sucesso!" -ForegroundColor Green
+```
+
+### 3. Template Batch (`.cmd`)
+
+```cmd
+@echo off
+setlocal enabledelayedexpansion
+rem ----------------------------------------------------------------
+rem Recipe: [Nome do Software / Funcionalidade]
+rem ----------------------------------------------------------------
+
+echo [*] [Nome]: Iniciando configuracao...
+
+echo [V] [Nome]: Configurado com sucesso!
+endlocal
+```
+
+---
+
+## 📚 Templates Canônicos de Documentação (READMEs)
+
+### 1. Template de README Raiz (Portal Institucional)
+
+````markdown
+# [Emoji] [Nome do Repositório] — [Subtítulo Conciso]
+
+> [Declaração de missão institucional e invariantes do repositório em uma ou duas frases].
+
+---
+
+## 🏛️ O Quarteto de Produtividade
+
+| Repositório | Visibilidade | Papel Central | Escopo & Privilégios |
+| :--- | :--- | :--- | :--- |
+| **[Setup](https://github.com/GabrielFrigo4/setup)** | Público | Provisionamento ativo de SO e pacotes | Nível SO / Privilegiado (`root` / `ELEVATE`) |
+| **[Shell](https://github.com/GabrielFrigo4/shell)** | Público | Motor interativo de terminal e prompts | Nível Shell / Sessão do Terminal |
+| **[Vault](https://github.com/GabrielFrigo4/vault)** | Privado | Cofre criptográfico, chaves SSH e segredos | Usuário Restrito (`0700` / `0600`) |
+| **[Profile](https://github.com/GabrielFrigo4/profile)** | Público | Dotfiles declarativos, editores e IA | Nível Usuário (`$HOME`, sem privilégios) |
+
+---
+
+## 📂 Catálogo de Diretórios
+
+| Diretório | Descrição |
+| :--- | :--- |
+| [`pasta/`](pasta/) | Descrição do propósito dos arquivos nesta pasta |
+
+---
+
+## 🚀 Como Usar
+
+[Instruções concisas de clone ou execução].
+
+---
+
+## 🧪 Auditoria & Quality Gates
+
+```sh
+python3 scripts/audit/all.py
+```
+````
+
+### 2. Template de README de Subpasta (Catálogo Tabular)
+
+````markdown
+# [Emoji] [Nome da Categoria] — Catálogo de Receitas
+
+> [Descrição concisa do propósito desta subpasta e escopo de ferramentas].
+
+---
+
+## 📂 Catálogo de Arquivos
+
+| Arquivo / Receita | Descrição | Plataforma |
+| :--- | :--- | :--- |
+| [`exemplo.sh`](exemplo.sh) | Provisionamento do utilitário exemplo | Linux, FreeBSD |
+
+---
+
+## 🚀 Como Usar
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/GabrielFrigo4/[repo]/main/[path]/exemplo.sh | sh
+```
+````

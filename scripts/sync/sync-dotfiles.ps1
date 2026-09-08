@@ -53,38 +53,32 @@ function Link-File {
         New-Item -ItemType SymbolicLink -Path $Destination -Target $Source -Force | Out-Null
         Write-Host "  [LINK] $Destination" -ForegroundColor Green
     } catch {
-        # Fallback para HardLink caso o usuario nao tenha Developer Mode ou privilégios de Symlink
         New-Item -ItemType HardLink -Path $Destination -Target $Source -Force | Out-Null
         Write-Host "  [HARDLINK] $Destination" -ForegroundColor Yellow
     }
 }
 
-# 1. Formatadores Globais & Linters
 Write-Host "↳ 1. Formatadores globais e linters..." -ForegroundColor Cyan
 Link-File "$RepoRoot\software\tools\.clang-format" "$HOME\.clang-format"
 Link-File "$RepoRoot\software\tools\.prettierrc" "$HOME\.prettierrc"
 Link-File "$RepoRoot\software\tools\.stylua.toml" "$HOME\.stylua.toml"
 Link-File "$RepoRoot\software\tools\.editorconfig" "$HOME\.editorconfig"
 
-# 2. Editores Modernos & IDEs
 Write-Host "↳ 2. Editores modernos (VS Code & Antigravity)..." -ForegroundColor Cyan
 if ($env:APPDATA) {
     Link-File "$RepoRoot\software\editors\vscode\settings.json" "$env:APPDATA\Code\User\settings.json"
     Link-File "$RepoRoot\software\editors\antigravity\settings.json" "$env:APPDATA\Antigravity\User\settings.json"
 }
 
-# 3. Windows Terminal
 Write-Host "↳ 3. Windows Terminal..." -ForegroundColor Cyan
 $WtPath = "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
 Link-File "$RepoRoot\software\terminals\windows-terminal\settings.json" $WtPath
 
-# 4. Clink (CMD Enhancement)
 Write-Host "↳ 4. Clink (CMD)..." -ForegroundColor Cyan
 $ClinkDir = "$env:LOCALAPPDATA\clink"
 Link-File "$RepoRoot\software\terminals\cmd\profile.lua" "$ClinkDir\profile.lua"
 Link-File "$RepoRoot\software\terminals\cmd\profile.cmd" "$ClinkDir\profile.cmd"
 
-# 5. PowerShell
 Write-Host "↳ 5. PowerShell Profiles..." -ForegroundColor Cyan
 $PsDocs = "$HOME\Documents\PowerShell"
 $WinPsDocs = "$HOME\Documents\WindowsPowerShell"
@@ -92,7 +86,6 @@ Link-File "$RepoRoot\software\terminals\powershell\profile.ps1" "$PsDocs\profile
 Link-File "$RepoRoot\software\terminals\powershell\Microsoft.PowerShell_profile.ps1" "$PsDocs\Microsoft.PowerShell_profile.ps1"
 Link-File "$RepoRoot\software\terminals\powershell\profile.ps1" "$WinPsDocs\profile.ps1"
 
-# 6. NuShell
 Write-Host "↳ 6. NuShell..." -ForegroundColor Cyan
 if ($env:APPDATA) {
     $NuDir = "$env:APPDATA\nushell"

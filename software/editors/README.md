@@ -30,7 +30,6 @@ Esta pasta reúne exclusivamente os **arquivos declarativos de configuração** 
 ### 1. Sincronizar Extensões com o Setup
 
 ```sh
-# Instala as extensões da IDE ativa via receita do Setup
 curl -fsSL https://raw.githubusercontent.com/GabrielFrigo4/setup/main/bootstrap/common/editors/sync-extensions.sh | sh
 ```
 

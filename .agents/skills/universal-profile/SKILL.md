@@ -44,12 +44,9 @@ Antes de criar qualquer arquivo, posicione-o na pasta correta:
 ## 3. Checklist de Validação Obrigatório
 
 ```sh
-# 1. Verificar espaços e quebras de linha
 git diff --check
 
-# 2. Validar integridade de links e formatos declarativos
 python3 scripts/audit/all.py
 
-# 3. Executar o pre-commit hook oficial
 ./.githooks/pre-commit
 ```

@@ -91,19 +91,17 @@ fi
 ### Emuladores de Terminal & Shells
 ### --------------------------------
 echo "↳ 4. Emuladores de terminal e shells alternativos..."
-# Konsole (KDE)
+
 _konsole_dir="${HOME}/.local/share/konsole"
 _link "${_repo_root}/software/terminals/konsole/Bash.profile" "${_konsole_dir}/Bash.profile"
 _link "${_repo_root}/software/terminals/konsole/Shell.profile" "${_konsole_dir}/Shell.profile"
 _link "${_repo_root}/software/terminals/konsole/Zsh.profile" "${_konsole_dir}/Zsh.profile"
 
-# NuShell
 _nu_dir="${HOME}/.config/nushell"
 _link "${_repo_root}/software/terminals/nushell/config.nu" "${_nu_dir}/config.nu"
 _link "${_repo_root}/software/terminals/nushell/env.nu" "${_nu_dir}/env.nu"
 _link "${_repo_root}/software/terminals/nushell/nushell.nu" "${_nu_dir}/nushell.nu"
 
-# PowerShell (Linux / FreeBSD / macOS)
 _pwsh_dir="${HOME}/.config/powershell"
 _link "${_repo_root}/software/terminals/powershell/profile.ps1" "${_pwsh_dir}/profile.ps1"
 _link "${_repo_root}/software/terminals/powershell/Microsoft.PowerShell_profile.ps1" "${_pwsh_dir}/Microsoft.PowerShell_profile.ps1"

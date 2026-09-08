@@ -31,11 +31,17 @@ Essas diretrizes são de aplicação obrigatória para qualquer modificação ou
 - `chmod 0644` para arquivos de configuração, dotfiles declarativos e Markdown.
 - Redirecionamentos para `/dev/null` sempre com aspas: `> "/dev/null"`.
 
-## 6. Limites de Linhas & Clean Code
-- **Piso:** Nenhum script isolado deve ter menos de 8 linhas.
-- **Teto:** Nenhum script deve ultrapassar 128 linhas (evitar monólitos).
+## 6. Limites de Linhas & Arquitetura de Comentários
+- **Orçamento de Linhas (Regra 8 - 128):** Piso de 8 linhas e teto de 128 linhas úteis.
+- **Camada 1 (Header Banner):** Exclusivo para linhas 2 a 4 de scripts utilitários, delimitado por 64 hífens (`# ----------------------------------------------------------------`).
+- **Camada 2 (Delimitadores Estruturais de Corpo):** Réguas simétricas de 32 caracteres (`### ================================` ou `### --------------------------------`). O título DEVE ter no máximo 32 caracteres e JAMAIS vazar além da régua (total de 36 colunas com `### `).
+- **Camada 3 (Zero Comentários Narrativos):** Proibição absoluta de comentários narrativos ou inline em scripts, dotfiles, templates e documentações. Separe blocos lógicos exclusivamente por linhas em branco.
 
-## 7. Checklist de Validação Obrigatório
+## 7. Padrão Universal de READMEs
+- **README Raiz:** Portal institucional com título e emoji, blockquote de missão, badges do Quarteto de Produtividade, sistemas suportados, catálogo de primeiro nível e instruções de auditoria/CI.
+- **README de Subpastas:** Catálogo tabular obrigatório (`| Arquivo / Receita | Descrição | Plataforma |`) e bloco de execução limpo sem comentários inline.
+
+## 8. Checklist de Validação Obrigatório
 Antes de concluir qualquer alteração no Profile:
 1. `git diff --check` (deve retornar 0 erros).
 2. `./.githooks/pre-commit` (deve passar 100%).

@@ -30,11 +30,15 @@ Esta pasta centraliza os scripts de inspeção de código para manter o reposit�
 
 Execute a partir da raiz do repositório:
 
-```sh
-# 1. Executar a suite completa (Recomendado)
-python3 scripts/audit/all.py
+### Suíte Completa (Recomendado)
 
-# 2. Execuções individuais:
+```sh
+python3 scripts/audit/all.py
+```
+
+### Execuções Individuais
+
+```sh
 python3 scripts/audit/monoliths.py
 python3 scripts/audit/nanos.py
 python3 scripts/audit/syntax.py
