@@ -2,6 +2,8 @@
 
 Essas diretrizes são de aplicação obrigatória para qualquer modificação ou extensão neste repositório (`Profile`).
 
+> 🏛️ **Hub Orquestrador:** Este repositório faz parte do [Quarteto de Produtividade](https://github.com/GabrielFrigo4/environment), orquestrado pelo repositório **Environment**. Consulte o `ENVIRONMENT.md` e `PRINCIPLES.md` canônicos na raiz do Environment para a arquitetura completa.
+
 ## 1. Zero Privilégios Administrativos (Zero-Sudo)
 
 - Todo dotfile, configuração e automação DEVE operar exclusivamente no espaço do usuário comum (`$HOME` / `~/.config/`).
