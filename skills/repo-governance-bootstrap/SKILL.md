@@ -67,9 +67,10 @@ Crie ou atualize o `AGENTS.md` no padrão institucional:
 - Título e subtítulo com emoji temático.
 - Seção **1. Identidade e Papel**.
 - Seção **2. Regras Críticas para Agentes de IA** (incluindo a Regra de Ouro e limites estritos).
-- Seção **3. Estrutura do Repositório** (árvore ASCII limpa).
-- Seção **4. Comandos de Verificação Rápida** (tabela com alvos do Makefile).
-- Seção **5. Referências Obrigatórias** (links para `PRINCIPLES.md` e `.agents/`).
+- Seção **3. Regra da Proatividade e Correção Contínua (Boy Scout Rule)**: Orientação mandante para o agente corrigir ativamente qualquer desvio encontrado.
+- Seção **4. Estrutura do Repositório** (árvore ASCII limpa).
+- Seção **5. Comandos de Verificação Rápida** (tabela com alvos do Makefile).
+- Seção **6. Referências Obrigatórias** (links para `PRINCIPLES.md` e `.agents/`).
 
 ### Passo 3: Criação do `PRINCIPLES.md` Contextualizado
 
