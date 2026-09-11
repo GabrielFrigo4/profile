@@ -1,101 +1,195 @@
 ---
 name: system-crossplatforms
-description: Guia avançado para criação e manutenção de repositórios multiplataforma no ecossistema, garantindo paridade e interoperabilidade entre FreeBSD (14/15/16), Linux (Fedora/Debian/Arch/Rocky), macOS, OpenBSD, Windows (MSYS2) e illumos.
+description: Guia avançado para criação e manutenção de repositórios multiplataforma no ecossistema, garantindo paridade e interoperabilidade entre FreeBSD (14/15/16), Linux, macOS, Windows (MSYS2), OpenBSD e illumos.
 ---
 
 # 🌐 System Cross-Platforms & Multi-OS Repository Architecture
 
-Esta habilidade orienta o agente de IA no design, construção e auditoria de **repositórios e softwares estritamente multiplataforma**.
+Esta habilidade orienta o agente de IA no design, construção, automação e auditoria de **repositórios e softwares estritamente multiplataforma**.
+
+---
+
+## 🎯 As Três Dimensões da Portabilidade
+
+Ao arquitetar ou auditar projetos multiplataforma, o agente deve distinguir claramente o escopo de portabilidade necessário:
+
+```mermaid
+flowchart TD
+    subgraph Repositorio ["1. Repositório (Build & Dev Tooling)"]
+        R1["Makefiles Universais (.POSIX:, .SILENT:, !=)"]
+        R2["Hooks Git & Scripts de Automação (/bin/sh)"]
+        R3["Linters, Validações & Quality Gates"]
+    end
+
+    subgraph Produto ["2. Produto Final (Artifact / Release)"]
+        P1["Binários Compilados (C/C++, Go, Rust)"]
+        P2["Scripts & Utilitários de Linha de Comando"]
+        P3["Bibliotecas & Pacotes de Sistema"]
+    end
+
+    subgraph Dual ["3. Ambos (O Padrão Ouro do Ecossistema)"]
+        D1["Build roda em qualquer OS"]
+        D2["Artefato executa em qualquer OS"]
+        D3["Testes e CI cobrem matriz completa"]
+    end
+
+    Repositorio --> Dual
+    Produto --> Dual
+```
+
+1. **Repositório Multiplataforma (Build & Dev Tooling):**
+    - O ambiente onde o código é construído, testado e mantido.
+    - Scripts de setup, hooks de pre-commit, Makefiles, tarefas de CI e ferramentas de linting devem executar de forma transparente e idêntica em qualquer sistema operacional suportado sem exigir ferramentas proprietárias de uma única plataforma.
+2. **Produto Final Multiplataforma (Artifact / Release):**
+    - O artefato gerado (binário executável, biblioteca `.a`/`.so`/`.dylib`/`.dll`, pacote ou script de aplicação) deve rodar de maneira performática e estável em múltiplos sistemas operacionais de destino.
+3. **Ambos Multiplataforma (O Padrão Ouro do Ecossistema):**
+    - A esmagadora maioria dos repositórios deste ecossistema adota esta modalidade: tanto o processo de desenvolvimento e compilação quanto o produto distribuído são estritamente universais e agnósticos de plataforma.
+
+---
+
+## 🏛️ Por que "FreeBSD como Maestro"?
+
+Assistentes de inteligência artificial frequentemente sofrem de **forte viés pró-Linux** (_Linux-centric bias_), presumindo caminhos fixos (`/usr/bin`), serviços dependentes de `systemd`, extensões proprietárias do Bash e flags exclusivas do GNU coreutils.
+
+### A Coesão da Base vs. A Fragmentação das Distribuições
 
 > [!IMPORTANT]
-> **O Sentido de "FreeBSD como Maestro":**
-> Assistentes de inteligência artificial frequentemente sofrem de forte viés pró-Linux (_Linux-centric bias_), presumindo equivocadamente caminhos como `/usr/bin`, serviços `systemd`, scripts dependentes de GNU Bash e flags proprietárias do GNU coreutils.
+> **A Regra da Coesão do Sistema Base:**
 >
-> Quando definimos o FreeBSD como "Maestro" do design multiplataforma, exigimos que **o agente nunca trate o Linux como padrão único**. O código, Makefiles, scripts e documentações devem ser projetados para compilar e rodar nativamente no **FreeBSD moderno** e na família BSD antes de receber adaptações para distribuições Linux, macOS, Windows e illumos.
+> - **No FreeBSD:** O Kernel e a Userland (_Base System_) formam um produto único, coeso e integrado, governado por um repositório centralizado de código-fonte. O que existe no sistema base do FreeBSD é garantido em **todas as instalações de FreeBSD** daquela versão no planeta.
+> - **No Linux:** Há profunda fragmentação entre centenas de distribuições independentes. O que está disponível no Fedora pode não existir no Debian, Arch, Rocky ou Alpine (diferenças de caminhos, _usrmerge_, init systems como systemd vs OpenRC, bibliotecas C como glibc vs musl, gerenciadores de pacotes e ferramentas de empacotamento).
+>
+> Por essa razão, **o FreeBSD atua como a régua máxima de elegância e corte de portabilidade**. Se o código, Makefile ou script roda perfeitamente no FreeBSD, ele respeita os mais altos padrões de engenharia POSIX e BSD, tornando trivial sua adaptação para Linux, macOS, Windows e illumos. Evitar exagerar em idiossincrasias específicas de distribuições Linux é a abordagem mais saudável e profissional para o ecossistema.
 
 ---
 
-## 🧭 Matriz de Sistemas e Versões Canônicas
+## 🔄 O Ciclo Oficial de Lançamentos do FreeBSD (freebsd.org)
 
-| Sistema Operacional | Linhagem / Kernel           | Versões de Referência                                | Papel no Design Multiplataforma                                                                                             |
-| :------------------ | :-------------------------- | :--------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------- |
-| **FreeBSD**         | BSD / Monolítico Integrado  | 14.4 / 14.5-RELEASE, 15.0 / 15.1-RELEASE, 16-CURRENT | **Régua Máxima de Elegância & Portabilidade**: Linha de base POSIX, bmake, sh base e separação `/usr/local`.                |
-| **Linux**           | Linux / GNU & LLVM          | Fedora, Debian/Ubuntu, Arch, Rocky Linux             | **Paridade Ampla**: Suporte a usrmerge, systemd/OpenRC, glibc/musl e gmake.                                                 |
-| **macOS**           | Mach / XNU / BSD Userland   | macOS Sonoma, Sequoia                                | **Desktop UNIX**: clang padrão, zsh como shell interativo, prefixo `/opt/homebrew` (Apple Silicon) ou `/usr/local` (Intel). |
-| **OpenBSD**         | BSD / Proativo em Segurança | OpenBSD 7.5+                                         | **Segurança Estrita**: `pledge(2)`, `unveil(2)`, `doas` nativo e utilitários estritamente minimalistas.                     |
-| **illumos**         | Solaris / System V Core     | SmartOS, OmniOS, OpenIndiana                         | **Referência Enterprise**: Solaris Zones (nativas e _lx-brand_), ZFS, Crossbow (VNICs), SMF e DTrace.                       |
-| **Windows**         | Windows NT / Subsistemas    | Windows 11 / Server 2022+ (MSYS2 & PowerShell)       | **Interoperabilidade**: Tratamento cuidadoso de caminhos (`/c/...`), finais de linha (`LF`) e chamadas em batch/ps1.        |
+Conforme a documentação oficial e o processo de Engenharia de Lançamento (_Release Engineering_) do The FreeBSD Project (<https://www.freebsd.org/> e <https://www.freebsd.org/releng/>), o agente deve entender a taxonomia oficial de ramos:
+
+| Ramo / Track | Descrição Técnica Oficial                                                                                                                                                       | Branch no Git                                                    | Versões em Atividade                                                         | Público-Alvo e Finalidade                                                                                                                                 |
+| :----------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :--------------------------------------------------------------- | :--------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **CURRENT**  | _Bleeding-edge_ do desenvolvimento. Onde entram novas arquiteturas, mudanças no kernel e recursos experimentais.                                                                | `main`                                                           | **16.0-CURRENT**                                                             | Desenvolvedores do core, testadores ativos e quem acompanha o estado da arte do sistema operacional. Não recomendado para produção sem testes prévios.    |
+| **STABLE**   | Ramo de desenvolvimento estabilizado a partir do qual as versões pontuais (_point releases_) são cortadas. Recebe alterações testadas no CURRENT (_Merged From CURRENT - MFC_). | `stable/15`<br>`stable/14`                                       | **15.1-STABLE**                                                              | Engenharia e consolidação contínua de recursos para a próxima versão de produção.                                                                         |
+| **RELEASE**  | Versões oficiais de produção (_Production Releases_), testadas, seladas e mantidas pelo _FreeBSD Security Officer_.                                                             | `releng/15.1`<br>`releng/15.0`<br>`releng/14.5`<br>`releng/14.4` | **15.1-RELEASE**<br>**15.0-RELEASE**<br>**14.5-RELEASE**<br>**14.4-RELEASE** | Ambientes de produção corporativos, servidores de missão crítica, contêineres e estações de trabalho. Conta com _Security Advisories_ e _Errata Notices_. |
 
 ---
 
-## 🏛️ FreeBSD Moderno: Peculiaridades Cruciais para o Agente
+## ⚡ Recursos Modernos do FreeBSD Cruciais para o Agente
 
-Modelos de IA frequentemente erram recursos do FreeBSD por presumirem versões antigas. Registre as características técnicas do FreeBSD atual:
+Modelos de IA frequentemente subestimam as capacidades contemporâneas do FreeBSD. O agente DEVE incorporar:
 
-### 1. Separação de Diretórios: Base System vs. Pacotes (`/usr/local`)
+### 1. Separação Canônica: Base System vs. `/usr/local`
 
-- **Sistema Base:** Localizado estritamente em `/bin`, `/sbin`, `/usr/bin`, `/usr/sbin` e `/etc`.
-- **Softwares de Terceiros (`pkg` / Ports):** **Todos** os pacotes instalados pelo usuário residem sob o prefixo `/usr/local` (`/usr/local/bin`, `/usr/local/etc`, `/usr/local/share`).
-- **Regra do Agente:** NUNCA force caminhos como `#!/usr/bin/bash` ou `/usr/bin/python3`. Use sempre `#!/usr/bin/env <binario>`.
+- **Base System:** Reside estritamente em `/bin`, `/sbin`, `/usr/bin`, `/usr/sbin` e `/etc`.
+- **Softwares de Terceiros (`pkg` / Ports):** **Todos** os softwares instalados pelo usuário residem sob o prefixo `/usr/local` (`/usr/local/bin`, `/usr/local/etc`, `/usr/local/include`, `/usr/local/lib`).
+- **Diretiva do Agente:** NUNCA force `#!/usr/bin/bash` ou `/usr/bin/python3`. Use invariavelmente `#!/usr/bin/env sh` ou `#!/usr/bin/env <interpretador>`.
 
 ### 2. O Shell Base `/bin/sh`
 
-- O `/bin/sh` do FreeBSD é leve, veloz e estritamente aderente ao POSIX IEEE 1003.1.
-- Suporta nativamente sequências ANSI `echo -n $'\e...'` e edição de linha com `libedit`.
-- **Proibição de Bashismos:** `[[ ... ]]`, `arr=(...)`, `<<<` e `&>` causam falha fatal no FreeBSD `/bin/sh`.
+- O `/bin/sh` do FreeBSD é veloz, leve e estritamente aderente ao padrão POSIX IEEE 1003.1.
+- Suporta sequências ANSI com a sintaxe canônica `echo -n $'\e...'` e edição de linha interativa via `libedit`.
+- Bashismos (`[[ ... ]]`, arrays indexados `arr=(...)`, herestrings `<<<`, redirects `&>`) provocam erro fatal no FreeBSD.
 
 ### 3. Utilitário `flua` no Base System
 
-- Desde o FreeBSD 13+, o sistema base inclui `/usr/libexec/flua` (interpretador Lua leve e embutido), utilizado pela infraestrutura do sistema base para tarefas onde shells tradicionais seriam insuficientes.
+- Desde o FreeBSD 13+, o sistema base inclui `/usr/libexec/flua` (interpretador Lua leve e rápido embutido nativamente).
+- É utilizado pelo bootloader, scripts de manutenção e infraestrutura do sistema base para automações onde shells POSIX puros seriam lentos ou complexos demais, **sem exigir instalação de pacotes externos**.
 
-### 4. Containers e OCI: Podman Nativo no FreeBSD
+### 4. Containers e OCI: Podman Nativo com `runj`
 
-- O FreeBSD possui suporte nativo a **Podman** (`pkg install podman`).
-- Utiliza **`runj`** como runtime OCI baseado nas Jails do FreeBSD e Netavark para redes.
-- **Imagens OCI de FreeBSD:** Existem imagens oficiais e comunitárias de FreeBSD no Docker Hub e registries OCI (ex: `freebsd:14.2`, `freebsd:14-build`). O agente não deve supor que containers OCI sejam exclusividade do Linux.
+- O FreeBSD possui suporte pleno a **Podman** (`pkg install podman`).
+- Utiliza **`runj`** como runtime OCI (_Open Container Initiative_), mapeando contêineres OCI diretamente para **FreeBSD Jails** nativas e utilizando Netavark para redes virtuais.
+- **Não há virtualização de máquina Linux**: os contêineres rodam nativamente no kernel do FreeBSD.
+- **Imagens OCI Oficiais do FreeBSD:** Existem imagens oficiais e mantidas no Docker Hub e registries OCI (ex: `freebsd:latest`, `freebsd:15.0`, `freebsd:14.2`, `freebsd:14-build`). Contêineres OCI **não** são prerrogativa exclusiva do Linux.
 
-### 5. Controle de Firewall e Rede: `pf` Moderno
+### 5. Firewall e Rede de Alta Performance: `pf`
 
-- O Packet Filter (`pf`) do FreeBSD é totalmente integrado ao kernel multiprocessado com controle de estado, filas de banda e failover via `pfsync` e `carp`.
+- O Packet Filter (`pf`) no FreeBSD é totalmente multithread e integrado à stack de rede do kernel, suportando sincronização de estado (`pfsync`), alta disponibilidade com `carp` e modelagem de tráfego avançada.
 
 ### 6. Sistema de Inicialização: `rc.d` Declarativo
 
 - Serviços residem em `/etc/rc.d` (base) e `/usr/local/etc/rc.d` (pacotes).
-- Ativação declarativa via `/etc/rc.conf` com o comando `sysrc <servico>_enable="YES"`.
+- Ativação idempotente via `/etc/rc.conf` com o comando canônico `sysrc <servico>_enable="YES"`.
 
 ---
 
-## ☀️ Observações sobre o Ecossistema illumos (SmartOS & OmniOS)
+## 🌍 Visão Holística dos Demais Sistemas Operacionais
 
-Para projetos que visam portabilidade total no universo UNIX corporativo:
+### 🐧 1. Linux (Distribuições e Abstração Limpa)
 
-1. **Solaris Zones:** Isolamento de instâncias leves a nível de kernel com suporte a _native brand_ e _lx-brand_ (emulação transparente de chamadas de sistema Linux para rodar binários Linux).
-2. **Crossbow Network Virtualization:** Criação de interfaces de rede virtuais (VNICs) diretamente sobre placas físicas sem pontes (_bridges_) pesadas, com alocação de largura de banda e prioridades de CPU dedicadas por fluxo.
-3. **SMF (Service Management Facility):** Gerenciamento determinístico de dependências de serviços com `svcs` e `svcadm` (substitui scripts init tradicionais).
-4. **ZFS & DTrace:** Ambos originários do Solaris/illumos, operam como ferramentas primárias de armazenamento e diagnóstico dinâmico.
+- **Foco em Padrões Universais:** Em vez de codificar para uma distribuição específica (como Fedora, Debian, Arch ou Rocky), privilegie interfaces padronizadas: POSIX `/bin/sh`, compiladores padrão (`cc`/`gcc`), Makefiles neutros e dependências portáteis.
+- **Cuidado com usrmerge:** No Linux moderno, `/bin` é frequentemente um link simbólico para `/usr/bin`. No entanto, em sistemas BSD isso não ocorre. Sempre use `env` para localizar binários no `PATH`.
+- **Diversidade de Bibliotecas C:** Lembre-se de que ambientes Linux podem utilizar `glibc` (maioria dos desktops e servidores) ou `musl` (Alpine Linux, contêineres ultraleves e firmwares). Evite extensões GNU proprietárias da glibc quando funções POSIX padrão bastam.
+
+### 🍎 2. macOS (Darwin / Mach / BSD Userland)
+
+- **Compilação e Toolchain:** Utiliza Apple Clang como compilador padrão. GCC não é padrão de fábrica.
+- **Shells e Userland:** O shell interativo padrão é o `zsh` desde o macOS Catalina. O `/bin/sh` é invocado em modo de compatibilidade POSIX.
+- **BSD Coreutils Antigos:** Os utilitários de linha de comando (`sed`, `grep`, `tar`) derivam do BSD histórico e **não** suportam flags GNU (exemplo: `sed -i` exige string de backup obrigatória no macOS ou sintaxe compatível).
+- **Prefixos do Gerenciador de Pacotes:**
+    - Apple Silicon (M1/M2/M3/M4): `/opt/homebrew`
+    - Intel x86_64: `/usr/local`
+    - MacPorts: `/opt/local`
+
+### 🪟 3. Windows & MSYS2 (Ambientes de Compatibilidade e Nativos)
+
+- **Subsistema MSYS2:**
+    - Oferece três toolchains principais: `UCRT64` (moderno, biblioteca C UCRT da Microsoft), `MINGW64` (MSVCRT tradicional) e `MSYS` (camada de emulação POSIX estilo Cygwin).
+    - Sempre prefira compilar alvos nativos com a toolchain `UCRT64`.
+- **Tratamento de Caminhos e Quebras de Linha:**
+    - Conversão entre caminhos POSIX e Windows via utilitário `cygpath` (ex: `/c/Users/...` vs `C:\Users\...`).
+    - **Finais de Linha:** O ecossistema exige rigorosamente quebras de linha no formato UNIX (`LF`). O arquivo `.gitattributes` deve impor `* text eol=lf`.
+- **Compatibilidade de Scripts:** Para repositórios onde o produto deve rodar no Windows, providencie wrappers limpos em PowerShell (`.ps1`) ou chamadas via `sh.exe` do MSYS2/Git for Windows.
+
+### 🐡 4. OpenBSD (Segurança Pragmática e Minimalismo)
+
+- **Mecanismos de Confinamento:** Suporte a `pledge(2)` (restringe chamadas de sistema que o processo pode executar) e `unveil(2)` (restringe a visão da árvore de diretórios do processo).
+- **Shell e Utilitários:** O `/bin/sh` é baseado em `pdksh`. Ausência absoluta de GNUismos nos utilitários da base.
+- **Elevação de Privilégios:** O utilitário canônico é o `doas` nativo, com configuração em `/etc/doas.conf`.
+
+### ☀️ 5. illumos (SmartOS, OmniOS, OpenIndiana & Solaris Zones)
+
+- **Origem System V:** Baseado no código aberto do OpenSolaris/SVR4, mantendo a mais alta referência de engenharia de sistemas corporativos.
+- **Solaris Zones:** Virtualização leve e segura a nível de kernel:
+    - _Native Zones:_ Instâncias com userland e ferramentas nativas illumos.
+    - _lx-brand Zones:_ Emulação transparente da interface de chamadas de sistema do kernel Linux, executando contêineres e binários Linux sem overhead de hypervisor.
+- **Crossbow Network Virtualization:** Criação de VNICs (_Virtual Network Interfaces_) e switches virtuais (_etherstubs_) diretamente sobre interfaces físicas, com controles de largura de banda e afinidade de CPU por fluxo sem necessidade de bridges pesadas.
+- **SMF (Service Management Facility):** Gerenciamento determinístico de serviços com árvores de dependência (`svcs`, `svcadm`), substituindo scripts de inicialização legados.
+- **DTrace & ZFS:** Berço original de ambas as tecnologias fundamentais, nativamente integradas ao kernel.
+- **Separação de Userland:** `/usr/bin` para utilitários padrão System V e `/usr/gnu/bin` para utilitários GNU.
 
 ---
 
 ## 🛠️ Regras de Ouro para Repositórios Multiplataforma
 
-Ao criar ou refatorar qualquer repositório no ecossistema:
+Ao criar, inspecionar ou refatorar qualquer repositório no ecossistema:
 
-1. **Makefiles Universais:**
+1. **Makefiles Universais (Paridade bmake & gmake):**
+
     ```makefile
     .POSIX:
     .SILENT:
 
     MAKEFLAGS += --no-print-directory -s
     ```
-    - Use `CC ?= cc` e `CXX ?= c++`.
-    - Use `$(MAKE) -C subdir target` (exceção pragmática suportada por `bmake` e `gmake`).
-    - Use `VAR != command` para subshells compatíveis com `bmake` e `gmake 4.0+`.
-2. **Shebang Portável:**
-    - Scripts de shell: `#!/usr/bin/env sh`.
-    - Scripts Python: `#!/usr/bin/env python3`.
-3. **Programação Defensiva em Shell:**
-    - Detecção de ferramentas: `command -v <ferramenta> > "/dev/null" 2>&1`.
-    - Elevação de privilégios: detectar `doas` primeiro, depois `sudo`.
-    - Redirecionamento seguro: sempre aspas em `> "/dev/null"`.
-4. **Permissões Canônicas:**
-    - 4 dígitos octais: `chmod 0755` para executáveis, `chmod 0644` para texto/dados.
+    - Declare `CC ?= cc` e `CXX ?= c++`.
+    - Adote a exceção pragmática `$(MAKE) -C subdir target` (reconhecida por `bmake` e `gmake`).
+    - Use `VAR != comando` para subshells compatíveis com `bmake` e `gmake 4.0+`.
+    - Mantenha o alinhamento canônico de colunas nas definições de variáveis.
+
+2. **Shebangs Portáveis:**
+    - Scripts de Shell: `#!/usr/bin/env sh`
+    - Scripts Python: `#!/usr/bin/env python3`
+    - Scripts Perl / Lua / Ruby: `#!/usr/bin/env <interpretador>`
+
+3. **Programação Defensiva em Scripts de Automação:**
+    - Detecção de utilitários: `command -v <ferramenta> > "/dev/null" 2>&1`.
+    - Detecção de privilégios: testar primeiro `doas`, seguido por `sudo`.
+    - Redirecionamentos sempre entre aspas: `> "/dev/null" 2>&1`.
+    - Emissão no terminal: `echo "${msg}"` para texto simples; `echo -n $'\e...'` sob `[ -t 1 ]` para cores ANSI; `printf` para formatação com padding ou dados variáveis.
+
+4. **Permissões em 4 Dígitos Octais:**
+    - `chmod 0755` para scripts e diretórios executáveis.
+    - `chmod 0644` para arquivos de documentação, fontes, dados e configurações.
+    - `chmod 0700` e `chmod 0600` para chaves, credenciais e diretórios de segurança restritos.
