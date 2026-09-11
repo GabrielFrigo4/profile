@@ -27,6 +27,25 @@ No ecossistema do **Quarteto de Produtividade**, enquanto o repositório **Setup
 
 ---
 
+## 📚 Catálogo Canônico de Skills Portáteis (10 Runbooks)
+
+O ecossistema disponibiliza 10 habilidades cognitivas universais organizadas por domínio de especialidade:
+
+| Categoria                       | Skill                                                               | Descrição e Escopo de Ativação                                                                                        | Gatilhos de Ativação / Cenários de Uso                                                                     |
+| :------------------------------ | :------------------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------- |
+| **Arquitetura & Filosofia**     | [`unix-philosophy-auditor`](./unix-philosophy-auditor/SKILL.md)     | Auditoria e conformidade com os 17 Princípios UNIX de Eric S. Raymond + Soberania do Usuário.                         | Criação de novas CLI, revisão de arquitetura, validação de regras de silêncio e transparência.             |
+| **Governança & Repositórios**   | [`repo-governance-bootstrap`](./repo-governance-bootstrap/SKILL.md) | Scaffolding e auditoria da tríade de governança (`.agents/`, `.githooks/`, `.github/`, `AGENTS.md`, `PRINCIPLES.md`). | Inicialização de repositórios, padronização de hooks de commit, alinhamento de briefings de IA.            |
+| **Templates & Scaffolding**     | [`repo-template-generator`](./repo-template-generator/SKILL.md)     | Gerador de repositórios completos e padronizados por stack (C/POSIX, Shell, C++23, Go, LaTeX).                        | Início de novos projetos, expansão do ecossistema, criação de bibliotecas e ferramentas.                   |
+| **Padrões de Shell**            | [`posix-shell-standards`](./posix-shell-standards/SKILL.md)         | Manual e validador de Shell POSIX estrito com baseline no FreeBSD `/bin/sh`, taxonomia de saída e permissões octais.  | Escrita e revisão de scripts `.sh`, eliminação de bashismos, padronização de sequências ANSI e quoting.    |
+| **Makefiles Universais**        | [`posix-makefile-architect`](./posix-makefile-architect/SKILL.md)   | Construção de Makefiles silenciosos e portáteis entre BSD Make (`bmake`) e GNU Make (`gmake`).                        | Criação de Makefiles, migração para `.POSIX: .SILENT:`, suporte à exceção `$(MAKE) -C`, remoção de `@`.    |
+| **Interoperabilidade Multi-OS** | [`system-crossplatforms`](./system-crossplatforms/SKILL.md)         | Guia de paridade de sistemas operacionais, com **FreeBSD como maestro**, integrando Linux, macOS, OpenBSD e Windows.  | Migração entre plataformas, configuração de serviços (`rc.d` vs `systemd`), ZFS, Jails e paths de pacotes. |
+| **Pesquisa Ativa & Versões**    | [`deep-version-researcher`](./deep-version-researcher/SKILL.md)     | Investigação ativa na web por versões atuais, notas de lançamento (_release notes_) e breaking changes.               | Seleção de dependências, novas stacks, apuração de documentação oficial recente, anti-alucinação.          |
+| **Refatoração & Clean Code**    | [`clean-code-refactor`](./clean-code-refactor/SKILL.md)             | Auditoria de código POSIX, scripts de shell e dotfiles conforme os 18 princípios Clean Code do ecossistema.           | Limpeza de código legado, redução de complexidade ciclomática, eliminação de comentários narrativos.       |
+| **Integridade de Dotfiles**     | [`dotfiles-doctor`](./dotfiles-doctor/SKILL.md)                     | Verificação de integridade de links simbólicos, sintaxe de configurações (JSON, YAML, TOML) e permissões.             | Teste de integridade de dotfiles após sincronização, validação de arquivos de configuração em `$HOME`.     |
+| **Diagnóstico de Sistema**      | [`system-diagnostics`](./system-diagnostics/SKILL.md)               | Diagnóstico completo de saúde de estações Linux e FreeBSD (Wayland, VA-API, PipeWire, logs e conectividade).          | Investigação de falhas de hardware, aceleração gráfica, servidores de áudio e rede.                        |
+
+---
+
 ## 🌐 Escopos de Atuação: Global (Home) vs. Local (Projeto)
 
 O Antigravity e os agentes modernos suportam dois níveis de alcance para as skills:

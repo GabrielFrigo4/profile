@@ -1,11 +1,12 @@
-# 📜 Princípios de Engenharia & Filosofia do Ecossistema
+# 📜 Princípios de Engenharia & Filosofia do Universal Profile
 
 > _"Rule of Separation: Separate policy from mechanism; separate engine from interface."_<br>
 > — Eric S. Raymond, _The Art of UNIX Programming_ (2003)
 
-O **Quarteto de Produtividade** (`Setup`, `Shell`, `Vault`, `Profile`) é um ecossistema federado de 4 repositórios complementares e desacoplados, orquestrado pelo repositório **[Environment](https://github.com/GabrielFrigo4/environment)**. Cada componente é responsável por um domínio distinto: provisionamento de sistema operacional (_Setup_), motor interativo de terminal (_Shell_), cofre criptográfico de segredos (_Vault_) e dotfiles declarativos e skills de IA (_Profile_).
+O **Profile** é o repositório de estado declarativo de usuário e catálogo central de habilidades de IA do **Quarteto de Produtividade** (`Setup`, `Shell`, `Vault`, `Profile`), orquestrado pelo ecossistema **[Environment](https://github.com/GabrielFrigo4/environment)**. Ele é responsável por definir _o que_ deve existir configurado no espaço do usuário (`$HOME`), mantendo dotfiles estáticos de editores, navegadores, terminais, formatadores e runbooks cognitivos para agentes autônomos.
 
-Para garantir longevidade, idempotência e excelência técnica, toda contribuição a qualquer repositório do ecossistema deve obedecer aos **18 Princípios de Engenharia** (17 Princípios UNIX + Regra da Soberania do Usuário), às práticas de **Clean Code** adaptadas a scripts de infraestrutura, e às diretrizes arquiteturais unificadas.
+> [!IMPORTANT]
+> **A Regra de Ouro do Agente de IA:** Ao entrar em qualquer diretório de repositório, o agente DEVE SEMPRE ler os arquivos `AGENTS.md`, `PRINCIPLES.md` e `.agents/` daquele repositório antes de realizar qualquer alteração.
 
 ---
 
@@ -15,192 +16,124 @@ Para garantir longevidade, idempotência e excelência técnica, toda contribui�
 
 > _Escreva partes simples conectadas por interfaces limpas._
 
-- O provisionamento de SO é quebrado em receitas atômicas, autocontidas e independentes por ecossistema (`freebsd/`, `linux/`, `windows/`, `common/`).
+- As configurações são particionadas por domínios funcionais limpos:
+    - `editors/`: Configurações de VS Code, Zed e editores gráficos.
+    - `terminals/`: Configurações de emuladores de terminal (Ghostty, Alacritty, Kitty, WezTerm).
+    - `browsers/`: Preferências de navegadores (Brave, Firefox, Chrome).
+    - `tools/`: Formatadores e linters globais (`.clang-format`, `.stylua.toml`, `prettier`).
+    - `skills/`: Habilidades e runbooks cognitivos portáteis para agentes de IA.
 
 ### 2. Regra da Clareza (_Rule of Clarity_)
 
 > _Clareza é melhor que esperteza._
 
-- Scripts de provisionamento priorizam legibilidade absoluta sobre "one-liners" crípticos ou truques de regex obscuros.
-- Nomes de variáveis são autoexplicativos (`TARGET_CONFIG_DIR`, `BACKUP_TIMESTAMP`).
+- Arquivos de configuração são mantidos em seus formatos nativos declarativos (`.json`, `.toml`, `.yaml`, `.el`, `.vim`), evitando linguagens de template dinâmicas ou camadas obscuras de interpolação.
 
 ### 3. Regra da Composição (_Rule of Composition_)
 
 > _Projete programas para serem conectados a outros programas._
 
-- As receitas de provisionamento são atômicas e podem ser executadas isoladamente ou encadeadas sequencialmente em pipelines de automação.
+- Scripts de sincronização (`sync-dotfiles.sh`, `sync-skills.sh`) operam via links simbólicos idempotentes (`ln -sf`), permitindo que as ferramentas leiam seus arquivos de configuração originais em tempo real.
 
 ### 4. Regra da Separação (_Rule of Separation_)
 
 > _Separe a política do mecanismo; separe o motor da interface._
 
-- **Mecanismo (`Setup`):** Scripts executáveis de automação e provisionamento que sabem _como_ interagir com o sistema operacional, gerenciar pacotes (`pkg`, `dnf`, `apt`, `pacman`, `winget`), configurar privilégios (`sudo`/`doas`) e registrar serviços.
-- **Política (`Profile`):** Arquivos declarativos puros (`settings.json`, `.clang-format`, `.stylua.toml`, `extensions.txt`) que definem _o que_ deve ser configurado no espaço do usuário (`$HOME`). O mecanismo nunca embute configurações hardcoded que pertençam ao Profile.
+- **Política Pura:** O Profile define _o que_ deve ser configurado (arquivos estáticos e dotfiles). Ele nunca instala binários ou mexe no sistema operacional (responsabilidade do **Setup**).
 
 ### 5. Regra da Simplicidade (_Rule of Simplicity_)
 
 > _Projete para a simplicidade; adicione complexidade apenas onde estritamente necessário._
 
-- **Clean Host (Santuário):** O sistema operacional hospedeiro permanece mínimo. Não instalamos runtimes pesados no host; desenvolvimento de projetos vive em Containers ou Jails.
+- **Zero Sudo / Zero Root:** O Profile opera exclusivamente no espaço do usuário comum (`$HOME`). Nenhuma operação neste repositório requer privilégios de administrador.
 
 ### 6. Regra da Parcimônia (_Rule of Parsimony_)
 
 > _Escreva um programa grande apenas quando estiver claro por demonstração que nada mais resolverá._
 
-- Se um comando nativo do gerenciador de pacotes (`dnf install`, `pkg install`, `winget install`) resolve o problema, não criamos wrappers complexos em torno dele.
+- Mantemos apenas as configurações que realmente alteram a experiência padrão para melhor, descartando opções redundantes com os padrões das aplicações.
 
 ### 7. Regra da Transparência (_Rule of Transparency_)
 
 > _Projete para a visibilidade para tornar inspeção e depuração fáceis._
 
-- Scripts de bootstrap exibem exatamente quais etapas estão executando, com mensagens sem ruído excessivo mas informativas o bastante para auditoria imediata.
+- Estrutura espelhada do `$HOME` e da pasta de configuração padrão (`~/.config/`).
 
 ### 8. Regra da Robustez (_Rule of Robustness_)
 
 > _A robustez é filha da transparência e da simplicidade._
 
-- Antes de tentar instalar pacotes ou aplicar configurações, os scripts validam pré-requisitos (`command -v`, variáveis de ambiente necessárias, privilégios).
-- Uso extensivo do **ZFS** para snapshots automáticos antes de mudanças críticas no sistema.
+- Scripts de sincronização criam diretórios pais automaticamente e realizam backups defensivos antes de sobrescrever arquivos preexistentes.
 
 ### 9. Regra da Representação (_Rule of Representation_)
 
 > _Dobre o conhecimento em dados para que a lógica do programa possa ser estúpida e robusta._
 
-- Preferir listas declarativas de pacotes em vez de blocos gigantescos de `if/else` procedural.
+- Tabelas declarativas de extensões e configurações substituem rotinas procedurais imperativas.
 
 ### 10. Regra do Menor Espanto (_Rule of Least Surprise_)
 
 > _No design de interfaces, sempre faça a coisa menos surpreendente._
 
-- Seguir estritamente os caminhos convencionais do ecossistema Unix (`/etc/`, `/usr/local/`, `/var/`). Códigos de saída universais: `0` para sucesso, diferente de zero para falhas.
+- Respeito estrito às especificações XDG Base Directory (`~/.config`, `~/.local/share`).
 
 ### 11. Regra do Silêncio (_Rule of Silence_)
 
 > _Quando um programa não tem nada surpreendente a dizer, ele não deve dizer nada._
 
-- Scripts utilitários de compilação ou conversão devem executar de forma quieta, emitindo mensagens apenas na ocorrência de erros reais em `stderr`.
+- Scripts de auditoria e sincronização informam de forma concisa apenas o progresso real e falhas.
 
 ### 12. Regra do Reparo (_Rule of Repair_)
 
 > _Quando você precisar falhar, falhe ruidosamente e o mais rápido possível._
 
-- Se o bootstrap não tiver privilégios de administrador ou falhar ao acessar um repositório remoto, ele **aborta imediatamente** (fail-fast via `set -eu`), em vez de deixar a máquina em estado semi-configurado.
+- Erros de sintaxe em JSON/TOML ou links simbólicos quebrados são detectados na auditoria (`make audit`) antes do commit.
 
 ### 13. Regra da Economia (_Rule of Economy_)
 
 > _O tempo do programador é caro; economize-o em preferência ao tempo da máquina._
 
-- O objetivo do `Setup` é que você possa reconstruir qualquer estação de trabalho completa em minutos com receitas prontas.
+- Replicar um ambiente de desenvolvimento completo em uma máquina recém-instalada exige apenas `make sync`.
 
 ### 14. Regra da Geração (_Rule of Generation_)
 
 > _Evite codificação manual; escreva programas para escrever programas quando puder._
 
-- Utilizar scripts utilitários e geradores de templates em `scripts/` para automações e conversões de formatos.
+- Scripts de exportação automática de listas de extensões instaladas.
 
 ### 15. Regra da Otimização (_Rule of Optimization_)
 
 > _Prototipe antes de polir. Faça funcionar antes de otimizar._
 
-- Primeiro garanta que o provisionamento funcione de ponta a ponta sem falhas em uma VM limpa ou snapshot ZFS.
+- Manter temas e fontes leves para evitar latência em editores e terminais.
 
 ### 16. Regra da Diversidade (_Rule of Diversity_)
 
 > _Desconfie de todas as afirmações de "uma única maneira verdadeira"._
 
-- Aceitamos a diversidade de sistemas de forma intencional e estruturada:
-    - **FreeBSD:** Foco em KDE Plasma, estabilidade sólida, Jails e ZFS de primeira classe.
-    - **Fedora:** Foco em GNOME Shell moderno, Wayland nativo e containers Podman/Incus.
-    - **Windows:** Suporte pragmático através de PowerShell, Batch e MSYS2.
+- Suporte a múltiplos editores (Helix, NeoVim, Vim, Emacs, VS Code, Zed) e plataformas (FreeBSD, Linux, macOS, Windows).
 
 ### 17. Regra da Extensibilidade (_Rule of Extensibility_)
 
 > _Projete para o futuro, porque ele chegará antes do que você imagina._
 
-- A estrutura de pastas permite plugar um novo sistema operacional em `linux/` (ex: Arch, Rocky) sem alterar as receitas existentes.
+- A pasta `skills/` permite plugar novos runbooks e procedimentos cognitivos para qualquer IA do ecossistema.
 
 ### 18. Regra da Soberania do Usuário (_Rule of User Sovereignty_)
 
 > _Honre a escolha explícita e deliberada do usuário antes de impor padrões genéricos._
 
-- **Preferência de Elevação (`doas > sudo`):** Respeitar a preferência explícita do usuário pelo `doas` através da variável `${ELEVATE}`.
-- **Preservação de Escolhas:** Receitas de sistema nunca substituem ou desconfiguram serviços e configurações personalizadas preexistentes do usuário sem aviso explícito.
+- Dotfiles locais não-versionados (`*.local`) sempre têm precedência sobre os defaults do repositório.
 
 ---
 
-## 🧼 Princípios de Clean Code para Receitas de Infraestrutura
+## 🧼 Princípios de Clean Code para o Profile
 
-### 1. Princípio da Responsabilidade Única (SRP)
-
-- Cada receita de provisionamento deve ter **uma única razão para mudar**. A receita `fonts.sh` apenas instala fontes; não configura atalhos de teclado nem instala editores.
-
-### 2. Idempotência Rigorosa
-
-- Executar qualquer receita uma, duas ou dez vezes seguidas DEVE produzir o mesmo resultado estável, sem duplicar linhas em arquivos, sem gerar erros de "arquivo já existe" e sem quebrar links.
-
-### 3. Shebang Padrão Absoluto (`#!/usr/bin/env sh`)
-
-- Todo script de shell neste repositório DEVE iniciar com `#!/usr/bin/env sh`.
-
-### 4. Permissões Canônicas em 4 Dígitos Octais
-
-- `chmod 0755` para diretórios e receitas de provisionamento executáveis.
-- `chmod 0644` para arquivos de configuração e documentações.
-- `chmod 0440` para arquivos de autorização do sistema (ex: `/etc/sudoers.d/*`, `doas.conf`).
-
-### 5. Template Canônico de Receitas (Cookbook Header)
-
-Os scripts de provisionamento adotam um cabeçalho compacto de 3 linhas com modo defensivo:
-
-```sh
-#!/usr/bin/env sh
-# ----------------------------------------------------------------
-# Recipe: [Nome do Software / Funcionalidade]
-# ----------------------------------------------------------------
-set -eu
-
-echo "📦 [Nome]: Iniciando configuração..."
-
-ELEVATE="$( [ "$(id -u)" -ne 0 ] && { command -v doas > "/dev/null" 2>&1 && echo "doas" || { command -v sudo > "/dev/null" 2>&1 && echo "sudo"; }; } )"
-
-echo "✅ [Nome]: Configurado com sucesso!"
-```
-
-### 6. Padrão Exclusivo de Comentários Estruturais (Regra do Não-Vazamento)
-
-- **Zero Comentários Narrativos:** Comentários explicativos inline são estritamente proibidos em código, scripts, templates e exemplos. O código expressa sua intenção através de separação por linhas em branco e nomenclatura semântica.
-- **Cabeçalho de Topo (Header Banner):** Exclusivo para as linhas 2 a 4 do arquivo, delimitado por exatamente 64 hífens (`# ----------------------------------------------------------------`).
-- **Corpo do Script:** Seções estruturais internas usam estritamente réguas de 32 caracteres (`### ================================` ou `### --------------------------------`), com o título estritamente contido no limite de 32 caracteres (não-vazamento).
-
-### 7. Ordem Canônica de Priorização de Pacotes (Dispatch Universal)
-
-1. **Receitas Multi-OS (`FreeBSD` + `Linux`):**
-   `pkg` _(FreeBSD)_ $\rightarrow$ `dnf` _(Fedora)_ $\rightarrow$ `apt` _(Debian)_ $\rightarrow$ `pacman` _(Arch)_
-2. **Receitas Exclusivas de Linux (`linux/`):**
-   `dnf` _(Fedora)_ $\rightarrow$ `apt` _(Debian)_ $\rightarrow$ `pacman` _(Arch)_
-
-### 8. Preferência Absoluta por Flags Longas Autoexplicativas
-
-- Use sempre flags descritivas: `apt install --yes`, `dnf install --assumeyes`, `pkg install --yes`, `pacman -S --needed --noconfirm`.
-
-### 9. Nomenclatura Semântica de Diretórios
-
-- Coleções contáveis $\rightarrow$ PLURAL (`scripts/`, `docs/`, `fonts/`, `linters/`).
-- Áreas de sistema & processos $\rightarrow$ SINGULAR (`system/`, `desktop/`, `server/`, `container/`, `security/`).
-- Nomes próprios $\rightarrow$ CANÔNICO (`linux/`, `freebsd/`, `windows/`, `fedora/`, `arch/`, `debian/`).
-
-### 10. Orçamento de Linhas (Regra 8 - 128)
-
-- **Piso:** Nenhum script isolado deve possuir menos de 8 linhas úteis.
-- **Teto:** Nenhum script deve ultrapassar 128 linhas úteis (evitar monólitos e manter coesão temática).
-
-### 11. Execução pelo Shell Ativo (_Active Shell Invocation_)
-
-- Funções utilitárias do terminal e rotinas interativas (como `reinstall-shell`, `bench-shell`, `install.sh`) NUNCA devem invocar `sh <script>` de forma cega.
-- Em distribuições Linux baseadas em Debian e Ubuntu, `/bin/sh` aponta para o interpretador `dash`, cuja BNF estrita rejeita nomes em `kebab-case` (`-`) em funções (`update-all`, `reinstall-shell`, etc.).
-- A execução de sub-rotinas interativas DEVE sempre delegar para o shell ativo em execução seguindo a ordem canônica de preferência: `command -v "$(_detect_shell)" || command -v zsh || command -v bash || command -v sh`. No FreeBSD, o `/bin/sh` permanece como fallback leve de sistema. Scripts instaladores devem conter guards de auto-elevação para o shell interativo suportado do usuário.
-
-### 12. Nomenclatura Kebab-Case para Funções de Shell
-
-- Todas as funções utilitárias do motor interativo (`Shell`) adotam estritamente a convenção **kebab-case** (`reinstall-shell`, `update-editors`, `update-git`, `open-neovim`).
-- O interpretador `dash` é formalmente descartado como shell interativo por incompatibilidade com essa convenção, focando a experiência do usuário nos shells suportados (`bash`, `zsh` e FreeBSD `/bin/sh`).
+1. **Shebang Universal:** `#!/usr/bin/env sh` para scripts em `scripts/`.
+2. **Quoting Defensivo & Variáveis:** Sempre `"${VAR}"` e redirecionamentos `> "/dev/null"`.
+3. **Taxonomia de Emissão:** `echo` para mensagens, `printf` para relatórios, `echo -n $'\e...'` para ANSI.
+4. **Permissões Canônicas:** `chmod 0755` para scripts de sincronização, `chmod 0644` para dotfiles estáticos.
+5. **Arquitetura de Comentários (A Tríade Sem Vazamento):**
+    - Header Banner: 64 hífens (`# ----------------------------------------------------------------`).
+    - Delimitadores Estruturais: 32 caracteres (`### ================================` e `### --------------------------------`). Título $\le$ 32 caracteres.
+    - Zero comentários explicativos no código.
