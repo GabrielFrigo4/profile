@@ -52,7 +52,7 @@ _link() {
 }
 
 ### --------------------------------
-### Formatadores Globais & Linters
+### Formatadores & Linters
 ### --------------------------------
 echo "↳ 1. Formatadores globais e linters..."
 _link "${_repo_root}/tools/.clang-format" "${HOME}/.clang-format"
@@ -105,7 +105,7 @@ else
 fi
 
 ### --------------------------------
-### Emuladores de Terminal & Shells
+### Terminais & Shells
 ### --------------------------------
 echo "↳ 4. Emuladores de terminal e shells alternativos..."
 

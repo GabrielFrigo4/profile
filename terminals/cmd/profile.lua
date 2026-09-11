@@ -1,6 +1,10 @@
--- ################################
--- # Startup
--- ################################
+-- ----------------------------------------------------------------
+-- Module: Windows CMD Clink Prompt & Profile
+-- ----------------------------------------------------------------
+
+-- ================================
+-- STARTUP
+-- ================================
 
 local function CLINK_DIR() return [[C:\Program Files\Shell\clink]] end
 local function SYSTEM32_DIR() return [[C:\Windows\System32]] end
@@ -10,9 +14,9 @@ local startup = {
 	cwd = os.getcwd(),
 }
 
--- ################################
--- # System
--- ################################
+-- ================================
+-- SYSTEM
+-- ================================
 
 local function exists(path)
 	local ok, err, code = os.rename(path, path)
@@ -42,24 +46,22 @@ local current = {
 	dir = nil,
 }
 
--- ################################
--- # Constant
--- ################################
+-- ================================
+-- CONSTANT
+-- ================================
 
 local function IO_POPEN_SIZE() return 0 end
 local function DEFAULT_USER_NAME() return "gabriel" end
 local function DEFAULT_BRANCH_DATA() return "" end
 
--- ################################
--- # Functions
--- ################################
+-- ================================
+-- FUNCTIONS
+-- ================================
 
--- String
 local function trim(s)
 	return (string.gsub(s, "^%s*(.-)%s*$", "%1"))
 end
 
--- String
 local function split(str, pattern)
 	local str_list = {}
 	for chunk in str:gmatch("[^" .. pattern .. "]+") do
@@ -68,17 +70,14 @@ local function split(str, pattern)
 	return str_list
 end
 
--- Array
 local function last(list)
 	return list[#list]
 end
 
--- File
 local function size(file)
 	return file:seek("end")
 end
 
--- Admin
 local function get_admin()
 	local handle = io.popen(SYSTEM32_PATH("whoami") .. [[ /groups | ]] .. SYSTEM32_PATH("find") .. [[ " S-1-16-12288 "]])
 	if handle == nil then
@@ -94,7 +93,6 @@ local function get_admin()
 	return admin
 end
 
--- User
 local function get_user()
 	local handle = io.popen(SYSTEM32_PATH("whoami"))
 	if handle == nil then
@@ -109,7 +107,6 @@ local function get_user()
 	return last(split(content, "\\"))
 end
 
--- Git
 local function get_git_branch()
 	local handle = io.popen([[git symbolic-ref --short HEAD 2>nul]])
 	if handle == nil then
@@ -128,7 +125,6 @@ local function get_git_branch()
 	return branch_info
 end
 
--- Info
 local function get_win_info()
 	local handle = io.popen("ver")
 	if handle == nil then return "WinNT" end
@@ -146,7 +142,6 @@ local function get_win_info()
 	return "WinNT"
 end
 
--- Icon
 local function get_win_icon()
 	local handle = io.popen("ver")
 	if handle == nil then return "" end
@@ -164,7 +159,6 @@ local function get_win_icon()
 	return ""
 end
 
--- Prompt
 local function extract_prompt(prompt)
 	local prompt_venv = string.match(prompt, "^%((.-)%)")
 	local prompt_cwd = os.getcwd()
@@ -181,17 +175,15 @@ local function extract_prompt(prompt)
 	return prompt_info
 end
 
--- ################################
--- # Constant Colors
--- ################################
+-- ================================
+-- CONSTANT COLORS
+-- ================================
 
--- Default
 local function GET_RESET() return "\x1b[0m" end
 local function GET_BOLD() return "\x1b[1m" end
 local function GET_ITALIC() return "\x1b[3m" end
 local function GET_UNDERLINE() return "\x1b[4m" end
 
--- Color Basic
 local function GET_BLACK() return "0" end
 local function GET_RED() return "1" end
 local function GET_GREEN() return "2" end
@@ -201,11 +193,10 @@ local function GET_MAGENTA() return "5" end
 local function GET_CYAN() return "6" end
 local function GET_WHITE() return "7" end
 
--- ################################
--- # Functions Colors
--- ################################
+-- ================================
+-- FUNCTIONS COLORS
+-- ================================
 
--- Color Create
 local function create_rgb_color(r, g, b)
 	local color = {
 		r = r,
@@ -215,7 +206,6 @@ local function create_rgb_color(r, g, b)
 	return color
 end
 
--- Color Set
 local function set_text_color(color)
 	return "\x1b[3" .. color .. "m"
 end
@@ -248,7 +238,6 @@ local function set_background_rgb_color(color)
 	return "\x1b[48;2;" .. color.r .. ";" .. color.g .. ";" .. color.b .. "m"
 end
 
--- text_color
 local function text_black(str)
 	return set_text_color(GET_BLACK()) .. str .. GET_RESET()
 end
@@ -274,7 +263,6 @@ local function text_white(str)
 	return set_text_color(GET_WHITE()) .. str .. GET_RESET()
 end
 
--- background_color
 local function background_black(str)
 	return set_background_color(GET_BLACK()) .. str .. GET_RESET()
 end
@@ -300,7 +288,6 @@ local function background_white(str)
 	return set_background_color(GET_WHITE()) .. str .. GET_RESET()
 end
 
--- text_bright_color
 local function text_bright_black(str)
 	return set_text_bright_color(GET_BLACK()) .. str .. GET_RESET()
 end
@@ -326,7 +313,6 @@ local function text_bright_white(str)
 	return set_text_bright_color(GET_WHITE()) .. str .. GET_RESET()
 end
 
--- background_bright_color
 local function background_bright_black(str)
 	return set_background_bright_color(GET_BLACK()) .. str .. GET_RESET()
 end
@@ -352,18 +338,18 @@ local function background_bright_white(str)
 	return set_background_bright_color(GET_WHITE()) .. str .. GET_RESET()
 end
 
--- ################################
--- # Variables
--- ################################
+-- ================================
+-- VARIABLES
+-- ================================
 
 local admin = get_admin()
 local user = get_user()
 local info = get_win_info()
 local icon = get_win_icon()
 
--- ################################
--- # Appearance
--- ################################
+-- ================================
+-- APPEARANCE
+-- ================================
 
 local pf = clink.promptfilter(10)
 function pf:filter(prompt)
@@ -416,14 +402,14 @@ function pf:transientfilter(prompt)
 	return current.prompt
 end
 
--- ################################
--- # Aliases
--- ################################
+-- ================================
+-- ALIASES
+-- ================================
 
 local aliases = {
-	-- ################################
-	-- # My Shortcuts
-	-- ################################
+	-- --------------------------------
+	-- My Shortcuts
+	-- --------------------------------
 	["upget"] = [[winget upgrade --all]],
 	["upscp"] = [[scoop update && scoop update --all]],
 	["upcho"] = [[sudo wt choco upgrade all]],
@@ -445,14 +431,14 @@ local aliases = {
 	['oz'] = [[zed .]],
 	['ant'] = [[antigravity-ide]],
 
-	-- ################################
-	-- # Console and Terminal
-	-- ################################
+	-- --------------------------------
+	-- Console and Terminal
+	-- --------------------------------
 	["clear"] = [[cls]],
 
-	-- ################################
-	-- # Files and Directories
-	-- ################################
+	-- --------------------------------
+	-- Files and Directories
+	-- --------------------------------
 	["ls"] = [[busybox ls -F --color=auto]],
 	["ll"] = [[busybox ls -alF --color=auto]],
 	["la"] = [[busybox ls -A --color=auto]],
@@ -472,9 +458,9 @@ local aliases = {
 	["which"] = [[where]],
 	["open"] = [[start]],
 
-	-- ################################
-	-- # System and Processes
-	-- ################################
+	-- --------------------------------
+	-- System and Processes
+	-- --------------------------------
 	["ps"] = [[tasklist]],
 	["kill"] = [[taskkill /F /IM]],
 	["top"] = [[taskmgr]],
@@ -485,17 +471,17 @@ local aliases = {
 	["reboot"] = [[shutdown /r /t 0]],
 	["poweroff"] = [[shutdown /s /t 0]],
 
-	-- ################################
-	-- # Disk Utils and Info
-	-- ################################
+	-- --------------------------------
+	-- Disk Utils and Info
+	-- --------------------------------
 	["free"] = [[busybox free -m]],
 	["who"] = [[quser]],
 	["wc"] = [[busybox wc]],
 	["diff"] = [[busybox diff --color=auto]],
 
-	-- ################################
-	-- # Search and Network
-	-- ################################
+	-- --------------------------------
+	-- Search and Network
+	-- --------------------------------
 	["grep"] = [[busybox grep --color=auto]],
 	["find"] = [[busybox find]],
 	["ifconfig"] = [[ipconfig]],
@@ -524,9 +510,9 @@ if clink.onfilterinput then
 	clink.onfilterinput(filter_alias)
 end
 
--- ################################
--- # Lua Command (LuaCMD)
--- ################################
+-- ================================
+-- LUA COMMAND
+-- ================================
 
 local lua_commands = {
 	["lc"] = true,

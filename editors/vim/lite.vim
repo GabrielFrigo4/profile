@@ -1,3 +1,7 @@
+" ----------------------------------------------------------------
+" Config: Lightweight Portable Vim Configuration
+" ----------------------------------------------------------------
+
 syn on|filetype plugin indent on
 se nocp nu rnu ls=2 sc enc=utf-8 bs=2 ww+=<,>,h,l,[,] hi=256 nobk noswf hls is ai si
 se tgc cul nowrap mouse=a mousemodel=popup ts=4 sts=4 sw=4 et

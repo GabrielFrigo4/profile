@@ -10,7 +10,7 @@ echo "🎨 [Profile] Instalando e sincronizando ecossistema declarativo..."
 echo "  ↳ Origem: ${_repo_root}"
 
 ### --------------------------------
-### 1. Sincronizar Dotfiles
+### Sincronizar Dotfiles
 ### --------------------------------
 echo "↳ 1. Sincronizando dotfiles de ferramentas, editores e terminais..."
 if [ -f "${_repo_root}/scripts/sync/sync-dotfiles.sh" ]; then
@@ -18,7 +18,7 @@ if [ -f "${_repo_root}/scripts/sync/sync-dotfiles.sh" ]; then
 fi
 
 ### --------------------------------
-### 2. Sincronizar Skills de IA
+### Sincronizar Skills de IA
 ### --------------------------------
 echo "↳ 2. Sincronizando runbooks cognitivos de IA..."
 if [ -f "${_repo_root}/scripts/sync/sync-skills.sh" ]; then

@@ -1,8 +1,11 @@
+;; ----------------------------------------------------------------
+;; Config: Lightweight Portable Emacs Configuration
+;; ----------------------------------------------------------------
+
 (require 'treesit)
 (require 'eglot)
 (require 'project)
 
-;; --- Regras de Indentação Específicas (Hooks) ---
 (dolist (mode '(js-ts-mode-hook typescript-ts-mode-hook html-mode-hook lua-mode-hook json-ts-mode-hook))
   (add-hook mode (lambda () (setq-local tab-width 2 indent-tabs-mode nil))))
 
@@ -10,32 +13,26 @@
   (add-hook mode (lambda () (setq-local tab-width 4 indent-tabs-mode t))))
 
 (custom-set-variables
- ;; --- Core & Encoding ---
  '(current-language-environment "UTF-8")
  '(inhibit-startup-screen t)
  '(initial-scratch-message nil)
  '(ring-bell-function 'ignore)
  '(vc-follow-symlinks t)
- ;; --- UI Limpa ---
  '(menu-bar-mode nil)
  '(tool-bar-mode nil)
  '(scroll-bar-mode nil)
  '(use-short-answers t)
  '(global-display-line-numbers-mode t)
  '(display-line-numbers-type 'relative)
- ;; --- Segurança & Arquivos ---
  '(make-backup-files nil)
  '(create-lockfiles nil)
- ;; --- Visual ---
  '(custom-enabled-themes '(wombat))
  '(default-frame-alist '((width . 87) (height . 29)))
  '(font-lock-maximum-decoration t)
  '(column-number-mode t)
- ;; --- Indentação Global ---
  '(c-default-style "user")
  '(indent-tabs-mode nil)
  '(tab-width 4)
- ;; --- UX & Navegação ---
  '(fido-vertical-mode t)
  '(which-key-mode t)
  '(pixel-scroll-precision-mode t)
@@ -45,15 +42,12 @@
  '(electric-pair-mode t)
  '(xterm-mouse-mode t)
  '(editorconfig-mode t)
- ;; --- Histórico ---
  '(savehist-mode t)
  '(recentf-mode t)
  '(save-place-mode t)
- ;; --- Dired ---
  '(dired-listing-switches "-agho --group-directories-first")
  '(dired-dwim-target t)
  '(dired-kill-when-opening-new-dired-buffer t)
- ;; --- IDE Settings ---
  '(eglot-autoshutdown t)
  '(eglot-stay-out-of '(font-lock))
  '(treesit-font-lock-level 4)
