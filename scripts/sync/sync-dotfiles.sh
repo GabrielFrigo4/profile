@@ -28,7 +28,7 @@ _link() {
 	_src="$1"
 	_dst="$2"
 
-	[ ! -f "${_src}" ] && return 0
+	[ ! -e "${_src}" ] && return 0
 
 	if [ "${_dry_run}" -eq 1 ]; then
 		echo "  [DRY-RUN] ${_dst} -> ${_src}"
@@ -62,12 +62,31 @@ _link "${_repo_root}/tools/.editorconfig" "${HOME}/.editorconfig"
 _link "${_repo_root}/tools/clangd.yaml" "${HOME}/.config/clangd/config.yaml"
 
 ### --------------------------------
-### Editores Minimalistas
+### Editores de Texto
 ### --------------------------------
-echo "↳ 2. Editores minimalistas (Vim & Emacs)..."
-_link "${_repo_root}/editors/vim/lite.vim" "${HOME}/.vimrc"
-_link "${_repo_root}/editors/vim/lite.vim" "${HOME}/.config/nvim/init.vim"
-_link "${_repo_root}/editors/emacs/lite.el" "${HOME}/.emacs.d/init.el"
+echo "↳ 2. Editores de texto (Emacs, Helix, NeoVim, Vim)..."
+_ed="${_repo_root}/../Editor"
+[ -e "${_ed}/Emacs/init.el" ] && _link "${_ed}/Emacs" "${HOME}/.emacs.d" || _link "${_repo_root}/editors/emacs/lite.el" "${HOME}/.emacs.d/init.el"
+
+if [ -e "${_ed}/Helix/config.toml" ]; then
+	_link "${_ed}/Helix/config.toml" "${HOME}/.config/helix/config.toml"
+	_link "${_ed}/Helix/languages.toml" "${HOME}/.config/helix/languages.toml"
+fi
+
+if [ -e "${_ed}/NeoVim/init.lua" ]; then
+	_link "${_ed}/NeoVim/init.lua" "${HOME}/.config/nvim/init.lua"
+	_link "${_ed}/NeoVim/lua" "${HOME}/.config/nvim/lua"
+else
+	_link "${_repo_root}/editors/vim/lite.vim" "${HOME}/.config/nvim/init.vim"
+fi
+
+if [ -e "${_ed}/Vim/vimrc" ]; then
+	_link "${_ed}/Vim/vimrc" "${HOME}/.vimrc"
+	_link "${_ed}/Vim" "${HOME}/vimfiles"
+	_link "${_ed}/Vim" "${HOME}/.vim"
+else
+	_link "${_repo_root}/editors/vim/lite.vim" "${HOME}/.vimrc"
+fi
 
 ### --------------------------------
 ### Editores Modernos & IDEs
@@ -76,9 +95,9 @@ echo "↳ 3. Editores modernos (Zed, VSCode, Antigravity)..."
 _link "${_repo_root}/editors/zed/settings.json" "${HOME}/.config/zed/settings.json"
 
 if [ "${_os_type}" = "Darwin" ]; then
-	_app_support="${HOME}/Library/Application Support"
-	_link "${_repo_root}/editors/vscode/settings.json" "${_app_support}/Code/User/settings.json"
-	_link "${_repo_root}/editors/antigravity/settings.json" "${_app_support}/Antigravity/User/settings.json"
+	_app="${HOME}/Library/Application Support"
+	_link "${_repo_root}/editors/vscode/settings.json" "${_app}/Code/User/settings.json"
+	_link "${_repo_root}/editors/antigravity/settings.json" "${_app}/Antigravity/User/settings.json"
 else
 	_link "${_repo_root}/editors/vscode/settings.json" "${HOME}/.config/Code/User/settings.json"
 	_link "${_repo_root}/editors/vscode/settings.json" "${HOME}/.config/vscode-oss/User/settings.json"
