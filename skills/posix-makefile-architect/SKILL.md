@@ -155,3 +155,14 @@ bmake -n
 ```
 
 Nenhum aviso, erro de sintaxe ou ruído de diretório pode ser emitido.
+
+---
+
+## 📚 Literatura de Referência & Especificações Oficiais
+
+Recomenda-se enfaticamente ao agente de IA e aos operadores o estudo das fontes oficiais de Make:
+
+- **Especificação Oficial POSIX Make (IEEE 1003.1 / The Open Group):** <https://pubs.opengroup.org/onlinepubs/9699919799/utilities/make.html>
+- **FreeBSD bmake Manual Page:** <https://man.freebsd.org/bmake>
+- **GNU Make Manual Oficial:** <https://www.gnu.org/software/make/manual/>
+- **Obra de Referência:** _Managing Projects with GNU Make_ (Robert Mecklenburg, 3ª edição, O'Reilly Media) — referência clássica sobre regras implícitas, variáveis e portabilidade de builds.

@@ -87,3 +87,27 @@ svcadm restart svc:/network/http:pocketbase
 ```
 
 - Se um daemon sofrer um crash (_segfault_), o SMF o reinicia instantaneamente e preserva os logs de falha no repositório SMF.
+
+---
+
+## 🏢 6. A Nova Fronteira de Nuvem Soberana: Oxide Computer Company
+
+A evolução contemporânea mais impactante do ecossistema illumos ocorre na **Oxide Computer Company** (<https://oxide.computer/> | GitHub: <https://github.com/oxidecomputer>):
+
+1. **A Reivenção do Computador de Nuvem:**
+    - Fundada por pioneiros do kernel illumos e do DTrace (Bryan Cantrill, Steve Tuck e engenheiros da antiga Joyent/Sun Microsystems), a Oxide constrói computadores de nuvem em escala de rack integrando hardware sob medida e software aberto.
+2. **illumos como Hipervisor e Plano de Controle:**
+    - A Oxide selecionou o **illumos** como o sistema operacional base e plano de controle bare-metal de todo o rack corporativo.
+    - Desenvolveu o **Propolis** (<https://github.com/oxidecomputer/propolis>), um monitor de máquina virtual (VMM) moderno e seguro escrito em Rust para orquestrar instâncias de virtualização sobre bhyve no illumos.
+3. **Leitura Altamente Recomendada:**
+    - Recomenda-se expressamente ao agente de IA e aos operadores o estudo dos documentos arquiteturais abertos da Oxide (_Oxide RFDs - Requests for Discussion_ em <https://github.com/oxidecomputer/rfd>) para compreender como isolamento de hardware, ZFS, Crossbow e DTrace operam em escala de hyperscaler privado.
+
+---
+
+## 🔗 Links Oficiais de Referência & Leitura Recomendada
+
+- **illumos Project:** <https://illumos.org/> | Docs: <https://docs.illumos.org/>
+- **SmartOS (Triton DataCenter):** <https://www.smartos.org/> | GitHub: <https://github.com/TritonDataCenter/smartos-live>
+- **OmniOS Community Edition:** <https://omnios.org/> | Documentação: <https://docs.omnios.org/>
+- **Oxide Computer Company:** <https://oxide.computer/> | GitHub: <https://github.com/oxidecomputer>
+- **OpenIndiana:** <https://www.openindiana.org/>

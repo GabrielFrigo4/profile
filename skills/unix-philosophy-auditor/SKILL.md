@@ -71,3 +71,15 @@ Ao emitir o diagnóstico para o desenvolvedor:
     1. Envolver saídas visuais sob verificação `[ -t 1 ]`.
     2. Implementar variável `${ELEVATE}` para abstração de privilégios.
 ```
+
+---
+
+## 📚 Literatura de Referência & Leitura Altamente Recomendada
+
+Recomenda-se enfaticamente ao agente de IA e aos operadores o estudo aprofundado das obras canônicas que fundamentam esta habilidade:
+
+- **Obra Canônica Principal:** _The Art of UNIX Programming_ (Eric S. Raymond, 2003, Addison-Wesley Professional).
+    - Texto integral aberto disponível em: <http://www.catb.org/~esr/writings/taoup/html/>
+    - Trata da filosofia de design, modularidade, transparência, silêncio e separação entre mecanismos e políticas.
+- **Padrão POSIX IEEE 1003.1 (The Open Group):**
+    - Especificações e manuais oficiais: <https://pubs.opengroup.org/onlinepubs/9699919799/>

@@ -67,3 +67,14 @@ elif command -v pfctl >/dev/null 2>&1; then
     sudo pfctl -sr 2>/dev/null || echo "Requer permissões de root para inspecionar pf"
 fi
 ```
+
+---
+
+## 📚 Documentação & Ferramentas Oficiais
+
+Recomenda-se a consulta à documentação oficial dos subsistemas de diagnóstico:
+
+- **Wayland Protocol Architecture:** <https://wayland.freedesktop.org/>
+- **PipeWire Multimedia Daemon:** <https://pipewire.org/>
+- **Mesa 3D Graphics & Video Acceleration (VA-API):** <https://www.mesa3d.org/>
+- **FreeBSD Handbook (Graphics & Desktop):** <https://docs.freebsd.org/en/books/handbook/x11/>

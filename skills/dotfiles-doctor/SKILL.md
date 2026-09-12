@@ -51,3 +51,14 @@ Garantir que arquivos em `Profile/` não possuam permissões de execução desne
 
 - Dotfiles e documentação: `0644`
 - Scripts de sincronização (`sync-*.sh`): `0755`
+
+---
+
+## 📚 Especificações & Ferramentas Oficiais de Validação
+
+Recomenda-se a consulta aos padrões oficiais de formatos declarativos:
+
+- **JSON Specification (ECMA-404):** <https://www.json.org/>
+- **YAML Specification:** <https://yaml.org/>
+- **TOML Specification:** <https://toml.io/>
+- **jq Command-line JSON Processor:** <https://jqlang.github.io/jq/>

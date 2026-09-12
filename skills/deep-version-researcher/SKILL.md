@@ -78,3 +78,14 @@ Antes de propor ou escrever código com tecnologias de rápida evolução:
 - [ ] Verifiquei se métodos ou comandos foram deprecados?
 - [ ] Confirmei como o FreeBSD lida com este componente (pacote no `/usr/local`, serviço em `rc.d`)?
 - [ ] A sintaxe utilizada representa o estado da arte moderno e limpo da ferramenta?
+
+---
+
+## 📚 Fontes Canônicas Primárias para Investigação
+
+Recomenda-se ao agente de IA consultar sempre as fontes autoritativas para verificar o estado da arte:
+
+- **FreeBSD Manual Pages & Release Notes:** <https://man.freebsd.org/> | <https://www.freebsd.org/releases/>
+- **The Linux Kernel Archive & Man-Pages:** <https://www.kernel.org/doc/man-pages/>
+- **OpenBSD Manual Pages:** <https://man.openbsd.org/>
+- **GitHub CLI & API de Releases:** `gh release view` ou consulta direta a `https://github.com/<org>/<repo>/releases`

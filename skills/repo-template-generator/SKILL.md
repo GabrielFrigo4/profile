@@ -118,9 +118,19 @@ chmod 0755 .githooks/*
 chmod 0644 Makefile AGENTS.md PRINCIPLES.md README.md .gitignore
 ```
 
-### 5. Commit Inicial Canônico
-
 ```sh
 git add .
 git commit -m "add: initial repository scaffolding with canonical governance"
 ```
+
+---
+
+## 📚 Literatura de Referência & Ferramentas Oficiais
+
+Recomenda-se enfaticamente ao agente de IA e aos operadores o estudo das ferramentas oficiais de suporte aos templates:
+
+- **Clang / LLVM Toolchain:** <https://clang.llvm.org/>
+- **The Go Programming Language:** <https://go.dev/>
+- **Standard C++ Foundation (ISO C++):** <https://isocpp.org/>
+- **The LaTeX Project:** <https://www.latex-project.org/>
+- **Obra Clássica de Estrutura:** _The Practice of Programming_ (Brian W. Kernighan & Rob Pike, 1999, Addison-Wesley) — design de interfaces, estilo e testes.

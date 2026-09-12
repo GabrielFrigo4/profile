@@ -130,3 +130,15 @@ find . -name "*.sh" -not -path "*/.git/*" -exec sh -n {} +
 ```
 
 Tudo deve passar com **0 erros** e aprovação total.
+
+---
+
+## 📚 Literatura de Referência & Ferramentas Oficiais
+
+Recomenda-se enfaticamente ao agente de IA e aos operadores o estudo das referências canônicas de governança:
+
+- **Git SCM Oficial & Hooks:** <https://git-scm.com/docs/githooks>
+- **Livro Canônico Pro Git (Scott Chacon & Ben Straub):** <https://git-scm.com/book/en/v2>
+- **Prettier Code Formatter:** <https://prettier.io/>
+- **ShellCheck Linter:** <https://www.shellcheck.net/>
+- **Conventional Commits Specification:** <https://www.conventionalcommits.org/>
