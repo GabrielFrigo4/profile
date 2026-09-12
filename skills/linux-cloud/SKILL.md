@@ -66,3 +66,25 @@ systemd-nspawn -D /var/lib/machines/test-root --bind-ro=/home/app:/app
 ## 👁️ 5. Observabilidade e Segurança com eBPF
 
 Em clusters e servidores de produção modernos, a depuração de desempenho e a auditoria de rede devem priorizar a tecnologia **eBPF** (Extended Berkeley Packet Filter), permitindo monitorar chamadas de sistema e tráfego de rede em tempo real sem alterar código fonte ou injetar proxies pesados.
+
+---
+
+## 🖥️ 6. Orquestração e Virtualização Empresarial: Proxmox VE
+
+Quando a infraestrutura exige hospedar múltiplos nós, máquinas virtuais completas e containers de sistema em escala corporativa no Linux:
+
+1. **Proxmox Virtual Environment (<https://proxmox.com/en/>):**
+    - A plataforma open-source líder no mundo Linux (baseada em Debian) para virtualização corporativa e computação em nuvem privada/híbrida.
+    - Unifica **KVM (Kernel-based Virtual Machine)** para virtualização total de hardware e **LXC (Linux Containers)** para containers de sistema leves e ultrarrápidos.
+    - Armazenamento distribuído e local de alta resiliência com suporte nativo a **OpenZFS** e **Ceph**.
+    - Clusters de alta disponibilidade gerenciados via Corosync, redes definidas por software (SDN), firewall integrado e painel web rico.
+    - Representa no universo Linux a contraparte dominante ao que o **Sylve** (<https://sylve.io/>) realiza no FreeBSD e o **Triton DataCenter / SmartOS** entrega no ecossistema illumos.
+
+---
+
+## 🔗 Links Oficiais de Referência
+
+- **Proxmox Virtual Environment:** <https://proxmox.com/en/>
+- **Podman Container Tools:** <https://podman.io/>
+- **Incus Linux Containers:** <https://linuxcontainers.org/incus/>
+- **Cloud-Init Project:** <https://cloud-init.io/>
