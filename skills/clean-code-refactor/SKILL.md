@@ -207,7 +207,8 @@ Se durante a execução de qualquer tarefa (seja criação de features, correç�
     - **Shebang Universal:** Garantir sempre `#!/usr/bin/env sh` ou `#!/usr/bin/env python3`.
     - **Sequências ANSI:** Substituir octais crípticos (`\033`) e `printf` desnecessário por `[ -t 1 ] && echo -n $'\e...'`.
     - **Redirecionamento Seguro:** Envolver destinos em aspas duplas (ex: `> "/dev/null" 2>&1`).
-    - **Makefiles:** Assegurar cabeçalho `.POSIX: .SILENT:`, `MAKEFLAGS += --no-print-directory -s`, alinhamento estético de variáveis e zero `@` redundante.
+    - **Makefiles Enterprise (Padrão OptiLaser):** Assegurar cabeçalho `.POSIX: .SILENT:`, `MAKEFLAGS += --no-print-directory -s`, alinhamento estético de colunas em variáveis, dinamismo portátil via `!=`, atalhos ergonômicos universais (`dev`, `build`, `test`, `clean`), zero `@` redundante e catálogo `make help` com TUI ANSI colorida.
+    - **Isolamento de Git Hooks:** Garantir que scripts em `.githooks/` sejam 100% autossuficientes e herméticos, NUNCA invocando utilitários contidos em skills de IA externas.
     - **Permissões Canônicas:** Aplicar 4 dígitos octais (`chmod 0755`, `chmod 0644`, `chmod 0700`, `chmod 0600`).
 
 ---

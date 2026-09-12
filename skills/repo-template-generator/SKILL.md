@@ -65,9 +65,9 @@ git init -b main
 git config core.hooksPath .githooks
 ```
 
-### 2. Criação do `Makefile` Canônico
+### 2. Criação do `Makefile` Canônico (Padrão Enterprise OptiLaser)
 
-Todo repositório gerado inicia obrigatoriamente com:
+Todo repositório gerado adota a arquitetura de alta ergonomia e TUI do padrão OptiLaser:
 
 ```makefile
 .POSIX:
@@ -79,32 +79,53 @@ MAKEFLAGS += --no-print-directory -s
 # Makefile: <Nome do Projeto>
 # ----------------------------------------------------------------
 
-CC      ?= cc
-CFLAGS  ?= -Wall -Wextra -Werror -pedantic -std=c99 -O2
+APP         = app
+CMD         = src/main.c
+VERSION    != cat VERSION 2> "/dev/null" || echo 0.1.0-dev
 
-.PHONY: all check format clean help
+CC         ?= cc
+CFLAGS     ?= -Wall -Wextra -Werror -pedantic -std=c99 -O2
 
-all: build
+.PHONY: all help dev build check format clean
+
+all: help
 
 help:
-	echo "Comandos disponíveis:"
-	echo "  make all     - Compila os binários do projeto"
-	echo "  make check   - Executa testes estáticos e validações"
-	echo "  make format  - Formata código com ferramentas canônicas"
-	echo "  make clean   - Remove artefatos de compilação"
+	cmd() { printf "    \033[36mmake %-28s\033[0m %s\n" "$$1" "$$2"; }; \
+	sec() { printf "\n  \033[1;33m%s\033[0m\n" "$$1"; }; \
+	sub() { printf "  \033[1;34m  ── %s ──\033[0m\n" "$$1"; }; \
+	printf "\n  \033[1;37m%s — Catálogo de Comandos\033[0m (v%s)\n" "$(APP)" "$(VERSION)"; \
+	printf "  ============================================================\n"; \
+	sec "Desenvolvimento & Compilação:"; \
+	cmd "build"             "Compila o binário de produção em bin/"; \
+	cmd "dev"               "Compila e executa o binário imediatamente"; \
+	sec "Qualidade & Auditoria:"; \
+	cmd "check"             "Executa validação estática de sintaxe"; \
+	cmd "format"            "Formata código com ferramentas canônicas"; \
+	sec "Manutenção:"; \
+	cmd "clean"             "Remove artefatos e diretório bin/"; \
+	echo ""
+
+dev: build
+	./bin/$(APP)
 
 build:
-	$(CC) $(CFLAGS) src/main.c -o bin/app
+	mkdir -p bin
+	$(CC) $(CFLAGS) $(CMD) -o bin/$(APP)
 
 check:
-	$(CC) $(CFLAGS) -fsyntax-only src/main.c
+	$(CC) $(CFLAGS) -fsyntax-only $(CMD)
 
 format:
-	find . -type f \( -name "*.c" -o -name "*.h" \) -exec clang-format -i {} +
+	find . -type f \( -name "*.c" -o -name "*.h" \) -not -path "*/.*" -exec clang-format -i {} +
 
 clean:
 	rm -rf bin/
 ```
+
+> [!CAUTION]
+> **Hermeticidade dos Git Hooks Gerados:**
+> Os scripts gerados em `.githooks/` (`pre-commit`, `commit-msg`) devem ser **100% autossuficientes** e escritos em POSIX `/bin/sh`. **NUNCA** gere hooks que dependam de comandos ou pastas de skills externas (`~/.gemini/config/skills/`). Toda checagem deve usar ferramentas padrão do sistema (`git diff --check`, `sh -n`, linters do PATH).
 
 ### 3. Criação de `AGENTS.md` e `PRINCIPLES.md`
 

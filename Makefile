@@ -13,13 +13,17 @@ MAKEFLAGS += --no-print-directory -s
 ### HELP & DOCUMENTATION
 ### ================================
 help:
-	echo "🎨 Universal Profile — Dotfiles Declarativos & Skills de IA"
-	echo ""
-	echo "Comandos disponíveis:"
-	echo "  make audit    - Executa auditoria estática de qualidade"
-	echo "  make sync     - Sincroniza dotfiles, editores e skills no sistema"
-	echo "  make test     - Valida sintaxe de scripts utilitários"
-	echo "  make ci       - Executa suite completa de validação"
+	cmd() { printf "    \033[36mmake %-20s\033[0m %s\n" "$$1" "$$2"; }; \
+	sec() { printf "\n  \033[1;33m%s\033[0m\n" "$$1"; }; \
+	sub() { printf "  \033[1;34m  ── %s ──\033[0m\n" "$$1"; }; \
+	printf "\n  \033[1;37mUniversal Profile — Dotfiles Declarativos & Skills de IA\033[0m\n"; \
+	printf "  ============================================================\n"; \
+	sec "Sincronização & Instalação:"; \
+	cmd "sync"           "Sincroniza dotfiles, editores e skills no sistema"; \
+	sec "Qualidade & Auditoria:"; \
+	cmd "test"           "Valida sintaxe POSIX dos scripts utilitários"; \
+	cmd "audit"          "Executa auditoria estática completa (JSON/YAML/TOML/links)"; \
+	cmd "ci"             "Executa suite completa de CI local"; \
 	echo ""
 
 ### ================================
