@@ -17,7 +17,7 @@ Ao arquitetar ou auditar projetos multiplataforma, o agente deve distinguir clar
 flowchart TD
     subgraph Repositorio ["1. Repositório (Build & Dev Tooling)"]
         R1["Makefiles Universais (.POSIX:, .SILENT:, !=)"]
-        R2["Hooks Git & Scripts de Automação (/bin/sh)"]
+        R2["Hooks Git & Scripts de Automação (#!/usr/bin/env sh)"]
         R3["Linters, Validações & Quality Gates"]
     end
 
@@ -44,6 +44,23 @@ flowchart TD
     - O artefato gerado (binário executável, biblioteca `.a`/`.so`/`.dylib`/`.dll`, pacote ou script de aplicação) deve rodar de maneira performática e estável em múltiplos sistemas operacionais de destino.
 3. **Ambos Multiplataforma (O Padrão Ouro do Ecossistema):**
     - A esmagadora maioria dos repositórios deste ecossistema adota esta modalidade: tanto o processo de desenvolvimento e compilação quanto o produto distribuído são estritamente universais e agnósticos de plataforma.
+
+---
+
+## 📜 A Regra Universal do Shebang (`#!/usr/bin/env sh`)
+
+> [!CAUTION]
+> **Proibição de Shebangs Hardcoded:**
+> NUNCA escreva `#!/bin/sh`, `#!/bin/bash` ou `#!/usr/bin/sh` diretamente em scripts de shell.
+>
+> **O Padrão Absoluto do Ecossistema:**
+> Todo script de shell no ecossistema DEVE iniciar estritamente com:
+>
+> ```sh
+> #!/usr/bin/env sh
+> ```
+>
+> O caminho absoluto de executáveis varia drasticamente entre sistemas: Linux (usrmerge para `/usr/bin`), FreeBSD (base system vs pacotes em `/usr/local/bin`), macOS (utilitários BSD), Solaris/illumos (`/usr/bin` vs `/usr/xpg4/bin`), OpenBSD e Windows (MSYS2 `sh.exe`). Invocar através de `env` garante a resolução correta via `PATH` em qualquer ambiente UNIX/POSIX soberano.
 
 ---
 
@@ -77,40 +94,57 @@ Conforme a documentação oficial e o processo de Engenharia de Lançamento (_Re
 
 ## ⚡ Recursos Modernos do FreeBSD Cruciais para o Agente
 
-Modelos de IA frequentemente subestimam as capacidades contemporâneas do FreeBSD. O agente DEVE incorporar:
-
 ### 1. Separação Canônica: Base System vs. `/usr/local`
 
 - **Base System:** Reside estritamente em `/bin`, `/sbin`, `/usr/bin`, `/usr/sbin` e `/etc`.
 - **Softwares de Terceiros (`pkg` / Ports):** **Todos** os softwares instalados pelo usuário residem sob o prefixo `/usr/local` (`/usr/local/bin`, `/usr/local/etc`, `/usr/local/include`, `/usr/local/lib`).
 - **Diretiva do Agente:** NUNCA force `#!/usr/bin/bash` ou `/usr/bin/python3`. Use invariavelmente `#!/usr/bin/env sh` ou `#!/usr/bin/env <interpretador>`.
 
-### 2. O Shell Base `/bin/sh`
+### 2. O Shell Base e o Shebang Universal
 
-- O `/bin/sh` do FreeBSD é veloz, leve e estritamente aderente ao padrão POSIX IEEE 1003.1.
+- O shell `/bin/sh` do FreeBSD é veloz, leve e estritamente aderente ao padrão POSIX IEEE 1003.1.
 - Suporta sequências ANSI com a sintaxe canônica `echo -n $'\e...'` e edição de linha interativa via `libedit`.
 - Bashismos (`[[ ... ]]`, arrays indexados `arr=(...)`, herestrings `<<<`, redirects `&>`) provocam erro fatal no FreeBSD.
 
-### 3. Utilitário `flua` no Base System
+### 3. Utilitário `flua` Profundo no Base System (`/usr/libexec/flua`)
 
 - Desde o FreeBSD 13+, o sistema base inclui `/usr/libexec/flua` (interpretador Lua leve e rápido embutido nativamente).
-- É utilizado pelo bootloader, scripts de manutenção e infraestrutura do sistema base para automações onde shells POSIX puros seriam lentos ou complexos demais, **sem exigir instalação de pacotes externos**.
+- Muito além de gerenciar o bootloader (`loader.lua`), o `flua` inclui módulos C essenciais embutidos no sistema base sem demandar instalação de portas ou interpretadores externos:
+    - **`libucl`:** Parser e emissor de UCL (_Universal Configuration Language_), capaz de processar JSON estrito, JSON simplificado/relaxado (sem aspas e vírgulas supérfluas, com comentários `#` e `//`), e manifestos YAML nativamente.
+    - **`libjail` (`jail(3lua)`):** Biblioteca completa para inspecionar, criar, gerenciar parâmetros e interagir com FreeBSD Jails diretamente em Lua.
+    - **`lfs` (LuaFileSystem):** Operações avançadas de atributos de arquivos, permissões e travessia de diretórios.
+    - **`lposix`:** Chamadas de sistema POSIX fundamentais (`fork`, `exec`, `wait`, controle de sinais e descritores).
+    - **`libfreebsd`:** Consulta de variáveis de ambiente do kernel via `freebsd.kenv(3lua)` e manipulação de módulos do kernel via `freebsd.sys.linker(3lua)`.
+    - **`libhash`:** Cálculos de soma de verificação e hashing de integridade.
 
-### 4. Containers e OCI: Podman Nativo com `runj`
+### 4. Containers e OCI: Docker Hub Oficial (`https://hub.docker.com/u/freebsd`)
 
-- O FreeBSD possui suporte pleno a **Podman** (`pkg install podman`).
+- O FreeBSD possui suporte pleno e nativo a **Podman** (`pkg install podman`).
 - Utiliza **`runj`** como runtime OCI (_Open Container Initiative_), mapeando contêineres OCI diretamente para **FreeBSD Jails** nativas e utilizando Netavark para redes virtuais.
-- **Não há virtualização de máquina Linux**: os contêineres rodam nativamente no kernel do FreeBSD.
-- **Imagens OCI Oficiais do FreeBSD:** Existem imagens oficiais e mantidas no Docker Hub e registries OCI (ex: `freebsd:latest`, `freebsd:15.0`, `freebsd:14.2`, `freebsd:14-build`). Contêineres OCI **não** são prerrogativa exclusiva do Linux.
+- **Imagens Oficiais do FreeBSD no Docker Hub:** Mantidas oficialmente pelo The FreeBSD Project sob o namespace `freebsd` (<https://hub.docker.com/u/freebsd>):
+    - `freebsd/freebsd-runtime`: imagem base mínima para rodar aplicações.
+    - `freebsd/freebsd-static`: imagem minimalista para binários estáticos.
+    - `freebsd/freebsd-dynamic`: imagem base dinâmica com bibliotecas da base.
+    - `freebsd/freebsd-toolchain`: ambiente completo de compilação com Clang, headers e ferramentas de desenvolvimento.
+    - `freebsd/freebsd-notoolchain`: ambiente de sistema sem a cadeia de compiladores.
+    - Tags oficiais ativas: `15.1`, `14.5`, `16.snap` (CURRENT), `15.snap`, `14.snap`.
+- **Invocação Canônica:**
+    ```sh
+    podman pull freebsd/freebsd-runtime:15.1
+    podman run --rm -it freebsd/freebsd-runtime:15.1 uname -a
+    ```
 
-### 5. Firewall e Rede de Alta Performance: `pf`
+### 5. Firewall `pf` Moderno com Paridade de Sintaxe OpenBSD
 
-- O Packet Filter (`pf`) no FreeBSD é totalmente multithread e integrado à stack de rede do kernel, suportando sincronização de estado (`pfsync`), alta disponibilidade com `carp` e modelagem de tráfego avançada.
+- O Packet Filter (`pf`) no FreeBSD moderno suporta a sintaxe unificada contemporânea do OpenBSD:
+    - Tradução inline: `nat-to` e `rdr-to` aplicados diretamente em regras de filtro (`pass in on $ext_if proto tcp to any port 80 rdr-to $web_jail` e `pass out on $ext_if from !($ext_if) to any nat-to ($ext_if)`), dispensando as seções isoladas legadas de `nat` e `rdr`.
+    - Tabelas dinâmicas e persistentes (`table <spammers> persist`).
+    - Execução multithread (SMP) no kernel do FreeBSD para vazão máxima em redes de 100GbE+.
 
-### 6. Sistema de Inicialização: `rc.d` Declarativo
+### 6. Orquestração e Infraestrutura Moderna: `Sylve`
 
-- Serviços residem em `/etc/rc.d` (base) e `/usr/local/etc/rc.d` (pacotes).
-- Ativação idempotente via `/etc/rc.conf` com o comando canônico `sysrc <servico>_enable="YES"`.
+- **Sylve** (<https://sylve.io/> / `AlchemillaHQ/Sylve`): plataforma moderna open-source de gerenciamento de infraestrutura para FreeBSD 15.0+ (`pkg install sylve` / `sysutils/sylve`).
+- Unifica em uma interface web moderna (SvelteKit + Go) o gerenciamento de **Bhyve VMs**, **FreeBSD Jails**, **ZFS Storage** (pools, datasets, replicação remota), redes virtuais e firewall PF/NAT.
 
 ---
 
@@ -118,14 +152,14 @@ Modelos de IA frequentemente subestimam as capacidades contemporâneas do FreeBS
 
 ### 🐧 1. Linux (Distribuições e Abstração Limpa)
 
-- **Foco em Padrões Universais:** Em vez de codificar para uma distribuição específica (como Fedora, Debian, Arch ou Rocky), privilegie interfaces padronizadas: POSIX `/bin/sh`, compiladores padrão (`cc`/`gcc`), Makefiles neutros e dependências portáteis.
-- **Cuidado com usrmerge:** No Linux moderno, `/bin` é frequentemente um link simbólico para `/usr/bin`. No entanto, em sistemas BSD isso não ocorre. Sempre use `env` para localizar binários no `PATH`.
-- **Diversidade de Bibliotecas C:** Lembre-se de que ambientes Linux podem utilizar `glibc` (maioria dos desktops e servidores) ou `musl` (Alpine Linux, contêineres ultraleves e firmwares). Evite extensões GNU proprietárias da glibc quando funções POSIX padrão bastam.
+- **Foco em Padrões Universais:** Em vez de codificar para uma distribuição específica (como Fedora, Debian, Arch ou Rocky), privilegie interfaces padronizadas: POSIX `#!/usr/bin/env sh`, compiladores padrão (`cc`/`gcc`), Makefiles neutros e dependências portáteis.
+- **Cuidado com usrmerge:** No Linux moderno, `/bin` é frequentemente um link simbólico para `/usr/bin`. Em sistemas BSD isso não ocorre. Sempre use `env` para localizar binários no `PATH`.
+- **Diversidade de Bibliotecas C:** Ambientes Linux podem utilizar `glibc` ou `musl` (Alpine Linux). Evite extensões GNU proprietárias da glibc quando funções POSIX padrão bastam.
 
 ### 🍎 2. macOS (Darwin / Mach / BSD Userland)
 
 - **Compilação e Toolchain:** Utiliza Apple Clang como compilador padrão. GCC não é padrão de fábrica.
-- **Shells e Userland:** O shell interativo padrão é o `zsh` desde o macOS Catalina. O `/bin/sh` é invocado em modo de compatibilidade POSIX.
+- **Shells e Userland:** O shell interativo padrão é o `zsh` desde o macOS Catalina. Scripts de automação usam `#!/usr/bin/env sh`.
 - **BSD Coreutils Antigos:** Os utilitários de linha de comando (`sed`, `grep`, `tar`) derivam do BSD histórico e **não** suportam flags GNU (exemplo: `sed -i` exige string de backup obrigatória no macOS ou sintaxe compatível).
 - **Prefixos do Gerenciador de Pacotes:**
     - Apple Silicon (M1/M2/M3/M4): `/opt/homebrew`
@@ -135,8 +169,7 @@ Modelos de IA frequentemente subestimam as capacidades contemporâneas do FreeBS
 ### 🪟 3. Windows & MSYS2 (Ambientes de Compatibilidade e Nativos)
 
 - **Subsistema MSYS2:**
-    - Oferece três toolchains principais: `UCRT64` (moderno, biblioteca C UCRT da Microsoft), `MINGW64` (MSVCRT tradicional) e `MSYS` (camada de emulação POSIX estilo Cygwin).
-    - Sempre prefira compilar alvos nativos com a toolchain `UCRT64`.
+    - Oferece toolchains `UCRT64` (moderno, biblioteca C UCRT da Microsoft), `MINGW64` e `MSYS`. Prefira sempre compilar alvos nativos com `UCRT64`.
 - **Tratamento de Caminhos e Quebras de Linha:**
     - Conversão entre caminhos POSIX e Windows via utilitário `cygpath` (ex: `/c/Users/...` vs `C:\Users\...`).
     - **Finais de Linha:** O ecossistema exige rigorosamente quebras de linha no formato UNIX (`LF`). O arquivo `.gitattributes` deve impor `* text eol=lf`.
@@ -144,9 +177,9 @@ Modelos de IA frequentemente subestimam as capacidades contemporâneas do FreeBS
 
 ### 🐡 4. OpenBSD (Segurança Pragmática e Minimalismo)
 
-- **Mecanismos de Confinamento:** Suporte a `pledge(2)` (restringe chamadas de sistema que o processo pode executar) e `unveil(2)` (restringe a visão da árvore de diretórios do processo).
-- **Shell e Utilitários:** O `/bin/sh` é baseado em `pdksh`. Ausência absoluta de GNUismos nos utilitários da base.
-- **Elevação de Privilégios:** O utilitário canônico é o `doas` nativo, com configuração em `/etc/doas.conf`.
+- **Mecanismos de Confinamento:** Suporte a `pledge(2)` (restringe chamadas de sistema) e `unveil(2)` (restringe visão da árvore de arquivos).
+- **Shell e Utilitários:** O shell da base é baseado em `pdksh`. Ausência absoluta de GNUismos nos utilitários da base.
+- **Elevação de Privilégios:** O utilitário canônico é o `doas` nativo com `/etc/doas.conf`.
 
 ### ☀️ 5. illumos (SmartOS, OmniOS, OpenIndiana & Solaris Zones)
 
@@ -178,8 +211,8 @@ Ao criar, inspecionar ou refatorar qualquer repositório no ecossistema:
     - Use `VAR != comando` para subshells compatíveis com `bmake` e `gmake 4.0+`.
     - Mantenha o alinhamento canônico de colunas nas definições de variáveis.
 
-2. **Shebangs Portáveis:**
-    - Scripts de Shell: `#!/usr/bin/env sh`
+2. **Shebangs Portáveis em Absolutamente Tudo:**
+    - Scripts de Shell: **`#!/usr/bin/env sh`** (sempre!)
     - Scripts Python: `#!/usr/bin/env python3`
     - Scripts Perl / Lua / Ruby: `#!/usr/bin/env <interpretador>`
 
