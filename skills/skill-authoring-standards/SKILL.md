@@ -34,6 +34,25 @@ flowchart TD
 
 ---
 
+## 🗂️ Estrutura Modular de uma Skill (Além do `SKILL.md`)
+
+Uma Portable AI Skill no padrão canônico **não se limita a um único arquivo `SKILL.md`**. Ela pode e deve ser estruturada como um módulo completo de automação cognitiva quando a tarefa envolver ferramentas auxiliares, testes ou dados:
+
+```text
+skills/<nome-da-skill>/
+├── SKILL.md            # [Obrigatório] Runbook principal com frontmatter YAML e instruções
+├── scripts/            # [Opcional] Utilitários executáveis (Python, Shell POSIX) invocados pela IA
+├── references/         # [Opcional] Manuais, especificações, tabelas de decisão e notas densas
+├── examples/           # [Opcional] Implementações de referência, snippets e arquivos modelo
+└── resources/          # [Opcional] Templates estáticos, esquemas JSON/YAML ou dados canônicos
+```
+
+> [!TIP]
+> **Utilitários Executáveis em `scripts/`:**
+> Sempre que uma validação for repetitiva, complexa ou exigir chamadas de rede/parsing estruturado (como inspecionar links, auditar sintaxe ou processar JSON), **forneça um script executável dentro da própria skill** (ex: `scripts/verify_links.py`). O agente de IA pode invocar o script diretamente via terminal.
+
+---
+
 ## 📋 Anatomia Obrigatória de um Arquivo `SKILL.md`
 
 Todo arquivo `SKILL.md` DEVE seguir a anatomia canônica:
@@ -63,27 +82,59 @@ Links oficiais para prevenir conhecimento estático ou desatualizado.
 
 ---
 
-## 📚 A Regra das Fontes Canônicas & Citação Bibliográfica
+## 📚 A Regra das Fontes Canônicas, Links & Citação Bibliográfica
 
-Para garantir rigor técnico e evitar que modelos de IA trabalhem com premissas estáticas ou obsoletas, adote as seguintes regras:
+Para garantir rigor técnico, evitar premissas estáticas ou obsoletas e assegurar integridade de rede:
 
-### 1. Links Oficiais para Tecnologias Citadas
+### 1. A Regra da Homepage Obrigatória
 
-- Sempre que uma ferramenta, sistema operacional, framework ou utilitário for citado no texto (ex: FreeBSD, Sylve, Proxmox, PocketBase, Svelte, Incus, Oxide), inclua **links simples e oficiais**:
-    - Site oficial do projeto (`https://...`)
-    - Repositório oficial no GitHub ou cgit
-    - Página de documentação oficial
-- **Equilíbrio Pragmático:** Mantenha de 1 a 2 links concisos por tecnologia para evitar poluição visual.
-- **Recomendação Explícita de Leitura:** O texto da skill DEVE instruir explicitamente o agente de IA a consultar essas páginas para checar novas versões, recursos contemporâneos e _breaking changes_.
+- **Paridade entre Raiz e Documentação Específica:** Sempre que uma documentação técnica aprofundada, manual, RFC, release note ou subpágina for linkada, **a Homepage oficial (portal raiz) da tecnologia DEVE acompanhar o link**:
+    - Exemplo:
+        ```markdown
+        - **The FreeBSD Project:** <https://www.freebsd.org/> | Releases: <https://www.freebsd.org/releases/> | Shell (`sh`): <https://man.freebsd.org/sh>
+        - **The Open Group (POSIX):** <https://www.opengroup.org/> | Especificações Base: <https://pubs.opengroup.org/onlinepubs/9699919799/>
+        - **Proxmox Virtual Environment:** <https://proxmox.com/en/> | Documentação: <https://pve.proxmox.com/pve-docs/>
+        - **Game of Trees (Got):** <https://gameoftrees.org/> | Manual: <https://gameoftrees.org/manual.html>
+        ```
+- Isso garante que tanto o leitor humano quanto o agente de IA tenham acesso imediato ao portal principal e à documentação técnica específica.
 
-### 2. Citação Formal de Obras de Literatura Técnica
+### 2. Proibição Absoluta de Links Fictícios, Quebrados ou Privados
 
-Quando diretrizes da skill forem fundamentadas em livros clássicos ou tratados de engenharia, **o autor e o título da obra devem ser registrados com precisão**:
+- **Links Quebrados (404, DNS, Timeouts):** É terminantemente proibido incluir URLs inexistentes, domínios expirados ou rotas desatualizadas.
+- **Repositórios Privados:** NUNCA crie links markdown para repositórios privados da organização (como o `Vault`), pois retornarão HTTP 404 para agentes e operadores não autenticados. Cite-os apenas em negrito formal (ex: `**Vault** (Privado)`).
+- **Sem Falsos Placeholders:** Não use URLs inventadas (`example.com`, `meu-link-aqui.com`) em links clicáveis. Se uma tecnologia não tiver site oficial público, cite apenas seu nome formal em negrito.
 
-- _The Art of UNIX Programming_ (Eric S. Raymond) — para filosofia UNIX, modularidade, simplicidade e transparência.
-- _Clean Code: A Handbook of Agile Software Craftsmanship_ (Robert C. Martin) — para legibilidade, nomes descritivos e Boy Scout Rule.
-- _The Practice of Programming_ (Brian W. Kernighan & Rob Pike) — para simplicidade, depuração e portabilidade.
-- _Operating Systems: Three Easy Pieces_ (Remzi H. Arpaci-Dusseau & Andrea C. Arpaci-Dusseau) — para virtualização e concorrência.
+### 3. Citação Formal de Obras de Literatura Técnica
+
+Quando diretrizes da skill forem fundamentadas em livros clássicos ou tratados de engenharia, **o autor, o título da obra, ano e editora devem ser registrados com precisão**:
+
+- _The Art of UNIX Programming_ (Eric S. Raymond, 2003, Addison-Wesley) — para filosofia UNIX, modularidade, simplicidade e transparência.
+- _Clean Code: A Handbook of Agile Software Craftsmanship_ (Robert C. Martin, 2008, Prentice Hall) — para legibilidade, nomes descritivos e Boy Scout Rule.
+- _The Practice of Programming_ (Brian W. Kernighan & Rob Pike, 1999, Addison-Wesley) — para simplicidade, depuração e portabilidade.
+- _The UNIX Programming Environment_ (Brian W. Kernighan & Rob Pike, 1984, Prentice Hall) — para scripts de shell e composição de ferramentas.
+- _Managing Projects with GNU Make_ (Robert Mecklenburg, 3ª ed., O'Reilly Media) — para regras de Makefiles.
+
+---
+
+## 🧪 Auditoria Automatizada com o Verificador Integrado
+
+Esta skill fornece um utilitário oficial multithreaded para auditar links em massa em qualquer skill ou repositório:
+
+- **Script Canônico:** [`scripts/verify_links.py`](scripts/verify_links.py)
+
+### Como Executar:
+
+```sh
+# 1. Verificar todas as skills do ecossistema:
+python3 /home/gabrielfrigo/Documentos/Environment/Profile/skills/skill-authoring-standards/scripts/verify_links.py
+
+# 2. Verificar uma skill específica ou arquivo isolado:
+python3 /home/gabrielfrigo/Documentos/Environment/Profile/skills/skill-authoring-standards/scripts/verify_links.py skills/nome-da-skill/SKILL.md
+```
+
+- Testa status HTTP (200 OK, redirecionamentos, proteções WAF/anti-bot).
+- Suporta codificação percentual de caracteres para badges (Shields.io).
+- Retorna código de saída `1` se houver links quebrados ou inacessíveis, servindo perfeitamente para hooks de pré-commit ou pipelines de CI/CD.
 
 ---
 
@@ -115,8 +166,16 @@ Ao incluir trechos de código executável em qualquer skill:
 1. **Criação do Diretório:** Crie a pasta em `Environment/Profile/skills/<nome-da-skill>/`.
 2. **Redação do `SKILL.md`:** Escreva o conteúdo seguindo os padrões desta diretriz.
 3. **Registro no Catálogo:** Atualize a tabela em [skills/README.md](../README.md), incrementando o contador total de runbooks.
-4. **Validação e Formatação:** Execute `npx prettier --write` em todo o diretório `skills/`.
-5. **Sincronização:** Execute o script canônico:
+4. **Validação de Links e Formatação:**
+    - Execute o verificador de links integrado:
+        ```sh
+        python3 /home/gabrielfrigo/Documentos/Environment/Profile/skills/skill-authoring-standards/scripts/verify_links.py skills/<nome-da-skill>/SKILL.md
+        ```
+    - Execute a formatação canônica com Prettier em todo o diretório `skills/`:
+        ```sh
+        npx prettier --write skills/
+        ```
+5. **Sincronização com o Runtime Global:** Execute o script canônico:
     ```sh
     /home/gabrielfrigo/Documentos/Environment/Profile/scripts/sync/sync-skills.sh
     ```
