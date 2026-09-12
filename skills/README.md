@@ -27,9 +27,9 @@ No ecossistema do **Quarteto de Produtividade**, enquanto o repositório **Setup
 
 ---
 
-## 📚 Catálogo Canônico de Skills Portáteis (17 Runbooks)
+## 📚 Catálogo Canônico de Skills Portáteis (18 Runbooks)
 
-O ecossistema disponibiliza 17 habilidades cognitivas universais organizadas por domínio de especialidade:
+O ecossistema disponibiliza 18 habilidades cognitivas universais organizadas por domínio de especialidade:
 
 | Categoria                     | Skill                                                               | Descrição e Escopo de Ativação                                                                                                  | Gatilhos de Ativação / Cenários de Uso                                                                             |
 | :---------------------------- | :------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------ | :----------------------------------------------------------------------------------------------------------------- |
@@ -38,6 +38,7 @@ O ecossistema disponibiliza 17 habilidades cognitivas universais organizadas por
 | **Aplicações Anti-Inchaço**   | [`svelte-pocketbase-go`](./svelte-pocketbase-go/SKILL.md)           | Arquitetura minimalista fullstack em SvelteKit, PocketBase e Go, entrega em binário único, SQLite WAL e custo quase zero.       | Criação de sistemas web ágeis, microsserviços sem node_modules em produção, painéis reativos leves.                |
 | **Metodologia & Meta-Skills** | [`skill-authoring-standards`](./skill-authoring-standards/SKILL.md) | Padrões canônicos para especificação, redação, citações oficiais e manutenção de Portable AI Skills no ecossistema.             | Criação de novas skills, auditoria de runbooks, inclusão de referências bibliográficas e links.                    |
 | **Controle de Versão (VCS)**  | [`vcs-git-got`](./vcs-git-got/SKILL.md)                             | Gestão soberana de repositórios Git e Game of Trees (Got/tog), coexistência no `.git`, commits atômicos e inspeção no terminal. | Uso de Git ou Got/tog, padronização de commits, visualização de histórico com `tog`, branchless dev e hooks POSIX. |
+| **Editoração Científica**     | [`latex-typesetting`](./latex-typesetting/SKILL.md)                 | Editoração científica em LaTeX/TeX, compilação isolada com -outdir=build, listagens e Makefiles silenciosos.                    | Redação de papers, relatórios técnicos, compilação de monografias e eliminação de arquivos temporários.            |
 | **Governança & Repositórios** | [`repo-governance-bootstrap`](./repo-governance-bootstrap/SKILL.md) | Scaffolding e auditoria da tríade de governança (`.agents/`, `.githooks/`, `.github/`, `AGENTS.md`, `PRINCIPLES.md`).           | Inicialização de repositórios, padronização de hooks de commit, alinhamento de briefings de IA.                    |
 | **Templates & Scaffolding**   | [`repo-template-generator`](./repo-template-generator/SKILL.md)     | Gerador de repositórios completos e padronizados por stack (C/POSIX, Shell, C++23, Go, LaTeX).                                  | Início de novos projetos, expansão do ecossistema, criação de bibliotecas e ferramentas.                           |
 | **Padrões de Shell**          | [`posix-shell-standards`](./posix-shell-standards/SKILL.md)         | Manual e validador de Shell POSIX estrito com baseline no FreeBSD `/bin/sh`, taxonomia de saída e permissões octais.            | Escrita e revisão de scripts `.sh`, eliminação de bashismos, padronização de sequências ANSI e quoting.            |
