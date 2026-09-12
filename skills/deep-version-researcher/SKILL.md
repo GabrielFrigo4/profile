@@ -85,7 +85,7 @@ Antes de propor ou escrever código com tecnologias de rápida evolução:
 
 Recomenda-se ao agente de IA consultar sempre as fontes autoritativas para verificar o estado da arte:
 
-- **FreeBSD Manual Pages & Release Notes:** <https://man.freebsd.org/> | <https://www.freebsd.org/releases/>
-- **The Linux Kernel Archive & Man-Pages:** <https://www.kernel.org/doc/man-pages/>
-- **OpenBSD Manual Pages:** <https://man.openbsd.org/>
+- **The FreeBSD Project:** <https://www.freebsd.org/> | Manual Pages: <https://man.freebsd.org/> | Release Notes: <https://www.freebsd.org/releases/>
+- **The Linux Kernel Archive:** <https://www.kernel.org/> | Man-Pages: <https://www.kernel.org/doc/man-pages/>
+- **OpenBSD:** <https://www.openbsd.org/> | Manual Pages: <https://man.openbsd.org/>
 - **GitHub CLI & API de Releases:** `gh release view` ou consulta direta a `https://github.com/<org>/<repo>/releases`

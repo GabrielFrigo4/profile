@@ -94,7 +94,7 @@ Recomenda-se enfaticamente ao agente de IA e aos operadores o estudo das fontes 
 - **Proxmox Virtual Environment:** <https://proxmox.com/en/> | Documentação: <https://pve.proxmox.com/pve-docs/>
 - **Oxide Computer Company:** <https://oxide.computer/> | RFDs: <https://rfd.shared.oxide.computer/>
 - **The FreeBSD Project:** <https://www.freebsd.org/> | Releases: <https://www.freebsd.org/where/>
-- **OpenBSD Packet Filter (PF):** <https://www.openbsd.org/faq/pf/>
-- **Incus System Containers:** <https://linuxcontainers.org/incus/>
+- **OpenBSD:** <https://www.openbsd.org/> | Packet Filter (PF): <https://www.openbsd.org/faq/pf/>
+- **Linux Containers Project:** <https://linuxcontainers.org/> | Incus: <https://linuxcontainers.org/incus/>
 - **Literatura de Referência:**
     - _The Art of UNIX Programming_ (Eric S. Raymond) — leitura indispensável sobre modularidade, simplicidade e economia de software: <http://www.catb.org/~esr/writings/taoup/html/>.

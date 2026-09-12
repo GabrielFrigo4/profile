@@ -77,4 +77,4 @@ Recomenda-se a consulta à documentação oficial dos subsistemas de diagnóstic
 - **Wayland Protocol Architecture:** <https://wayland.freedesktop.org/>
 - **PipeWire Multimedia Daemon:** <https://pipewire.org/>
 - **Mesa 3D Graphics & Video Acceleration (VA-API):** <https://www.mesa3d.org/>
-- **FreeBSD Handbook (Graphics & Desktop):** <https://docs.freebsd.org/en/books/handbook/x11/>
+- **The FreeBSD Project:** <https://www.freebsd.org/> | Handbook (X11 & Desktop): <https://docs.freebsd.org/en/books/handbook/x11/>

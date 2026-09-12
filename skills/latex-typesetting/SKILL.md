@@ -140,4 +140,4 @@ Recomenda-se enfaticamente ao agente de IA e aos autores a consulta às referên
 - **CTAN (Comprehensive TeX Archive Network):** O repositório central de pacotes e documentações: <https://www.ctan.org/>
 - **Livro Canônico de LaTeX:** _LaTeX: A Document Preparation System_ (Leslie Lamport, 2ª edição, Addison-Wesley) — O manual definitivo escrito pelo criador do LaTeX.
 - **O TeXbook:** _The TeXbook_ (Donald E. Knuth, Addison-Wesley) — Fundamentos tipográficos e controle de macros do TeX original: <https://www-cs-faculty.stanford.edu/~knuth/abcde.html>
-- **Guia de Boas Práticas do Overleaf:** <https://www.overleaf.com/learn>
+- **Overleaf:** <https://www.overleaf.com/> | Guia de Boas Práticas: <https://www.overleaf.com/learn>

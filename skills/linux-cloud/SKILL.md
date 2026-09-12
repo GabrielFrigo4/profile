@@ -86,5 +86,6 @@ Quando a infraestrutura exige hospedar múltiplos nós, máquinas virtuais compl
 
 - **Proxmox Virtual Environment:** <https://proxmox.com/en/>
 - **Podman Container Tools:** <https://podman.io/>
-- **Incus Linux Containers:** <https://linuxcontainers.org/incus/>
+- **Linux Containers Project:** <https://linuxcontainers.org/> | Incus: <https://linuxcontainers.org/incus/>
 - **Cloud-Init Project:** <https://cloud-init.io/>
+- **Sylve Infrastructure Platform:** <https://sylve.io/>

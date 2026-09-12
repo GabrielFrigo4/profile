@@ -146,3 +146,13 @@ O FreeBSD disponibiliza imagens oficiais prontas em todos os maiores provedores 
 
 - **AWS (EC2):** AMIs oficiais com inicialização por bootloader ZFS e suporte a instâncias Graviton (ARM64) e AMD64.
 - **Hetzner Cloud, DigitalOcean, Vultr, Linode:** Imagens com suporte a Cloud-Init (`cloud-init` em ports) para injeção declarativa de chaves SSH, hostname e provisionamento automático no boot.
+
+---
+
+## 🔗 Links Oficiais de Referência & Leitura Recomendada
+
+- **The FreeBSD Project:** <https://www.freebsd.org/> | Releases: <https://www.freebsd.org/where/>
+- **FreeBSD Handbook:** <https://docs.freebsd.org/en/books/handbook/>
+- **Sylve Infrastructure Platform:** <https://sylve.io/> | GitHub: <https://github.com/AlchemillaHQ/Sylve>
+- **BastilleBSD (Container Management):** <https://bastillebsd.org/>
+- **FreeBSD Official OCI Images (Docker Hub):** <https://hub.docker.com/u/freebsd>

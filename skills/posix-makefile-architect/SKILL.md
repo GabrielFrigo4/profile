@@ -162,7 +162,7 @@ Nenhum aviso, erro de sintaxe ou ruído de diretório pode ser emitido.
 
 Recomenda-se enfaticamente ao agente de IA e aos operadores o estudo das fontes oficiais de Make:
 
-- **Especificação Oficial POSIX Make (IEEE 1003.1 / The Open Group):** <https://pubs.opengroup.org/onlinepubs/9699919799/utilities/make.html>
-- **FreeBSD bmake Manual Page:** <https://man.freebsd.org/bmake>
-- **GNU Make Manual Oficial:** <https://www.gnu.org/software/make/manual/>
+- **The Open Group Base Specifications (POSIX IEEE 1003.1):** <https://pubs.opengroup.org/onlinepubs/9699919799/> | Make (`make`): <https://pubs.opengroup.org/onlinepubs/9699919799/utilities/make.html>
+- **The FreeBSD Project:** <https://www.freebsd.org/> | Manual Pages: <https://man.freebsd.org/> | `bmake`: <https://man.freebsd.org/bmake>
+- **Linux man-pages (Michael Kerrisk):** <https://man7.org/> | GNU Make (`make`): <https://man7.org/linux/man-pages/man1/make.1.html>
 - **Obra de Referência:** _Managing Projects with GNU Make_ (Robert Mecklenburg, 3ª edição, O'Reilly Media) — referência clássica sobre regras implícitas, variáveis e portabilidade de builds.

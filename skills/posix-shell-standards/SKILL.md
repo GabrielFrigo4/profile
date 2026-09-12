@@ -114,7 +114,7 @@ Sempre utilize a notação octal de 4 dígitos nos comandos `chmod`:
 
 Recomenda-se enfaticamente ao agente de IA e aos operadores o estudo das fontes oficiais de portabilidade:
 
-- **Especificação Oficial Shell POSIX (IEEE 1003.1 / The Open Group):** <https://pubs.opengroup.org/onlinepubs/9699919799/utilities/sh.html>
+- **The Open Group Base Specifications (POSIX IEEE 1003.1):** <https://pubs.opengroup.org/onlinepubs/9699919799/> | Shell (`sh`): <https://pubs.opengroup.org/onlinepubs/9699919799/utilities/sh.html>
 - **ShellCheck (Linter Estático de Shell):** <https://www.shellcheck.net/> | GitHub: <https://github.com/koalaman/shellcheck>
-- **FreeBSD /bin/sh Manual Page:** <https://man.freebsd.org/sh>
+- **The FreeBSD Project:** <https://www.freebsd.org/> | Manual Pages: <https://man.freebsd.org/> | Shell (`sh`): <https://man.freebsd.org/sh>
 - **Obra Clássica de Referência:** _The UNIX Programming Environment_ (Brian W. Kernighan & Rob Pike, 1984, Prentice Hall) — o clássico fundamental sobre composição de comandos, pipes e scripts de shell idiomáticos.
