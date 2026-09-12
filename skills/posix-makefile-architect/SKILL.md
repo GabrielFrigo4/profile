@@ -142,6 +142,117 @@ clean:
 
 ---
 
+## 🏛️ A Estrutura Canônica Enterprise / "Hype" (O Padrão OptiLaser)
+
+Para projetos e repositórios de alta complexidade (como **Ventures/OptiLaser**), o Makefile deixa de ser um mero script de compilação e torna-se a **Interface de Linha de Comando (CLI) Principal do Projeto**.
+
+Qualquer desenvolvedor, operador ou agente de IA que entra no repositório deve ter à sua disposição uma experiência rica, autoexplicativa, veloz e esteticamente impecável.
+
+```mermaid
+flowchart TD
+    M["Makefile Enterprise (Padrão OptiLaser)"]
+    M --> B1["1. Header POSIX Silencioso (.POSIX: .SILENT:)"]
+    M --> B2["2. Metadados, Alinhamento de Colunas & != Portátil"]
+    M --> B3["3. Declaração Centralizada de .PHONY"]
+    M --> B4["4. Atalhos Ergonômicos (Developer UX)"]
+    M --> B5["5. Segregação Modular por Domínio (Host, OCI, Cloud)"]
+    M --> B6["6. TUI Rica de Ajuda (make help com Cores ANSI)"]
+```
+
+### 1. Metadados e Alinhamento Rigoroso de Colunas
+
+O bloco de variáveis deve manter um alinhamento visual de colunas rigoroso para legibilidade instantânea, combinando valores estáticos, padrões condicionais (`?=`) e comandos de shell portáteis via `!=`:
+
+```makefile
+APP             = optilaser
+CMD             = ./cmd/optilaser
+VERSION        != cat VERSION 2> "/dev/null" || echo 0.0.0-dev
+FLAVOR         != cat FLAVOR 2> "/dev/null" || echo linux
+
+CONTAINER_RT   ?= podman
+IMAGE_NAME      = optilaser
+PORT           ?= 8080
+SUDO_DEFAULT   != if [ "$$(uname -s)" = "FreeBSD" ] && [ "$$(id -u)" != "0" ]; then if command -v sudo > "/dev/null" 2>&1; then echo "sudo"; elif command -v doas > "/dev/null" 2>&1; then echo "doas"; else echo ""; fi; else echo ""; fi
+SUDO           ?= $(SUDO_DEFAULT)
+```
+
+- **Alinhamento em Coluna Única:** Todos os sinais `=`, `!=` e `?=` devem estar perfeitamente alinhados na mesma coluna.
+- **Detecção Defensiva de Privilégios:** A variável `SUDO` é resolvida dinamicamente testando primeiro a plataforma, usuário não-root e disponibilidade de `sudo` ou `doas`.
+
+### 2. Atalhos Ergonômicos Unificados (Developer Experience / UX)
+
+O Makefile deve oferecer uma fachada de verbos curtos e universais que abstraem a complexidade das implementações granulares:
+
+```makefile
+all: dev
+
+# Atalhos Ergonômicos Principais:
+dev:        container-dev
+run:        container-run
+stop:       container-stop
+restart:    container-restart
+build:      container-build
+test:       container-test
+logs:       container-logs
+status:     container-status
+ps:         container-ps
+shell:      container-shell
+exec:       container-exec
+clean:      container-clean
+prune:      container-prune
+purge:      container-purge
+```
+
+- Se o ambiente for chaveado para rodar direto no host (`make host-dev`), o desenvolvedor ainda pode digitar simplesmente `make dev` se a fachada direcionar para o flavor ativo.
+
+### 3. Segregação Modular por Domínio
+
+Separe alvos em domínios lógicos com banners estruturais de 32 caracteres:
+
+1. **Containers / OCI (Container-First):** `container-build`, `container-run`, `container-logs`, volumes de dados.
+2. **Qualidade & Bootstrap:** `setup`, `init`, `fmt`, `lint`, `tidy`, `bump`.
+3. **Host Nativo (Bare Metal):** `host-dev`, `host-build`, `host-test`, `host-clean`.
+4. **Infraestrutura & Staging:** `incus-launch`, `bastille-create`, `tofu-apply`.
+
+### 4. Ajuda Interativa Rica (`make help`) com TUI ANSI Colorida
+
+O ponto alto ("Hype") do padrão OptiLaser é o alvo `help:`, implementado com mini-funções de shell inline (`cmd()`, `sec()`, `sub()`, `var()`) para produzir uma saída categorizada, colorida e alinhada sem depender de ferramentas externas como Python ou AWK:
+
+```makefile
+help:
+	cmd() { printf "    \033[36mmake %-42s\033[0m %s\n" "$$1" "$$2"; }; \
+	sec() { printf "\n  \033[1;33m%s\033[0m\n" "$$1"; }; \
+	sub() { printf "  \033[1;34m  ── %s ──\033[0m\n" "$$1"; }; \
+	var() { printf "    \033[35m%-47s\033[0m %s\n" "$$1" "$$2"; }; \
+	printf "\n  \033[1;37m$(APP) — Catálogo de Comandos Makefile\033[0m (v%s)\n" "$(VERSION)"; \
+	printf "  ============================================================\n"; \
+	sec "Fluxo Principal (Container-First via Podman OCI):"; \
+	sub "Execução & Desenvolvimento"; \
+	cmd "dev"                                     "Executar container interativo com logs ao vivo"; \
+	cmd "run"                                     "Iniciar container em background (daemon)"; \
+	cmd "stop"                                    "Parar container em execução"; \
+	cmd "build"                                   "Construir imagem OCI do flavor ativo"; \
+	cmd "test"                                    "Executar suíte de testes dentro do container"; \
+	sub "Diagnóstico & Shell"; \
+	cmd "status"                                  "Exibir diagnóstico completo (containers, volumes)"; \
+	cmd "logs"                                    "Acompanhar logs do serviço em tempo real"; \
+	cmd "shell"                                   "Abrir terminal interativo no container"; \
+	sub "Limpeza & Manutenção"; \
+	cmd "clean"                                   "Remover imagens finais compiladas (mantém cache)"; \
+	cmd "prune"                                   "Faxina de containers mortos e imagens órfãs"; \
+	cmd "purge"                                   "Limpeza profunda de containers, volumes e banco"; \
+	sec "Variáveis Customizáveis:"; \
+	var "PORT=8080"                               "Porta de escuta do serviço HTTP"; \
+	var "CONTAINER_RT=podman"                     "Runtime OCI (podman ou docker)"; \
+	echo ""
+```
+
+> [!TIP]
+> **Convenção de Escrita de Shell no Makefile:**
+> No corpo da receita do Make, os parâmetros posicionais de funções do shell DEVEM ser escapados com cifrão duplo: `$$1`, `$$2`. O sinal simples `$1` é interpretado pelo Make antes do shell iniciar.
+
+---
+
 ## 🧪 Validação de Portabilidade Obrigatória
 
 Antes de finalizar qualquer alteração em um Makefile, o agente DEVE executar a simulação de execução (_dry-run_) em ambos os motores:

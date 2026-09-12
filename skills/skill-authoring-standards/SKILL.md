@@ -51,6 +51,17 @@ skills/<nome-da-skill>/
 > **Utilitários Executáveis em `scripts/`:**
 > Sempre que uma validação for repetitiva, complexa ou exigir chamadas de rede/parsing estruturado (como inspecionar links, auditar sintaxe ou processar JSON), **forneça um script executável dentro da própria skill** (ex: `scripts/verify_links.py`). O agente de IA pode invocar o script diretamente via terminal.
 
+> [!CAUTION]
+> **Regra da Soberania & Isolamento: Git Hooks NUNCA Consomem Scripts de Skills!**
+> É **estritamente proibido** fazer com que scripts de `.githooks/` (como `pre-commit` ou `commit-msg`) chamem utilitários contidos dentro de pastas de skills (seja em `~/.gemini/config/skills/` ou `.agents/skills/`).
+>
+> **Por que isso é um erro arquitetural grave?**
+>
+> 1. **Quebra da Hermeticidade do Repositório:** O repositório Git deve ser 100% autônomo e autossuficiente. Se outro desenvolvedor clonar o repositório ou se ele rodar em uma pipeline limpa de CI/CD (GitHub Actions, GitLab CI, servidor bare-metal), os githooks quebrarão se dependerem de uma IA ou pasta externa.
+> 2. **Separação Rígida de Papéis:**
+>     - **`.githooks/`:** Quality gates obrigatórios, rápidos, determinísticos e autônomos locais do repositório (usando lógica shell POSIX própria ou scripts em `scripts/` do próprio repositório).
+>     - **Scripts de Skills:** Ferramentas sob demanda para o **Agente de IA e operadores humanos**, com foco em automação cognitiva e auditorias profundas.
+
 ---
 
 ## 📋 Anatomia Obrigatória de um Arquivo `SKILL.md`
