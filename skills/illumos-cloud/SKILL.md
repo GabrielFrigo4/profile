@@ -100,14 +100,14 @@ A evolução contemporânea mais impactante do ecossistema illumos ocorre na **O
     - A Oxide selecionou o **illumos** como o sistema operacional base e plano de controle bare-metal de todo o rack corporativo.
     - Desenvolveu o **Propolis** (<https://github.com/oxidecomputer/propolis>), um monitor de máquina virtual (VMM) moderno e seguro escrito em Rust para orquestrar instâncias de virtualização sobre bhyve no illumos.
 3. **Leitura Altamente Recomendada:**
-    - Recomenda-se expressamente ao agente de IA e aos operadores o estudo dos documentos arquiteturais abertos da Oxide (_Oxide RFDs - Requests for Discussion_ em <https://github.com/oxidecomputer/rfd>) para compreender como isolamento de hardware, ZFS, Crossbow e DTrace operam em escala de hyperscaler privado.
+    - Recomenda-se expressamente ao agente de IA e aos operadores o estudo dos documentos arquiteturais abertos da Oxide (_Oxide RFDs - Requests for Discussion_ em <https://rfd.shared.oxide.computer/>) para compreender como isolamento de hardware, ZFS, Crossbow e DTrace operam em escala de hyperscaler privado.
 
 ---
 
 ## 🔗 Links Oficiais de Referência & Leitura Recomendada
 
-- **illumos Project:** <https://illumos.org/> | Docs: <https://docs.illumos.org/>
+- **illumos Project:** <https://illumos.org/> | Documentação: <https://illumos.org/docs/>
 - **SmartOS (Triton DataCenter):** <https://www.smartos.org/> | GitHub: <https://github.com/TritonDataCenter/smartos-live>
-- **OmniOS Community Edition:** <https://omnios.org/> | Documentação: <https://docs.omnios.org/>
+- **OmniOS Community Edition:** <https://omnios.org/> | Primeiros Passos: <https://omnios.org/info/getstarted.html>
 - **Oxide Computer Company:** <https://oxide.computer/> | GitHub: <https://github.com/oxidecomputer>
 - **OpenIndiana:** <https://www.openindiana.org/>

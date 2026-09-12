@@ -155,7 +155,7 @@ Recomenda-se enfaticamente ao agente de IA e aos operadores o estudo das fontes 
 
 - **Game of Trees (Got) Oficial:** <https://gameoftrees.org/>
 - **Manuais do Got e tog:** <https://gameoftrees.org/manual.html>
-- **Repositório do Código Fonte do Got (OpenBSD):** <https://cvsweb.openbsd.org/src/usr.bin/got/>
+- **Código Fonte Oficial do Got:** <https://gameoftrees.org/code.html>
 - **Git Oficial:** <https://git-scm.com/>
 - **Livro Canônico Pro Git (Scott Chacon & Ben Straub, 2ª edição, Apress):**
     - Leitura indispensável sobre a estrutura interna de objetos e grafos direcionados acíclicos (DAG): <https://git-scm.com/book/en/v2>

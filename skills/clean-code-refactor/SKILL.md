@@ -141,7 +141,7 @@ endlocal
 | :------------------------------------------------------ | :----------- | :----------------------------------------- | :------------------------------------------- |
 | **[Setup](https://github.com/GabrielFrigo4/setup)**     | Público      | Provisionamento ativo de SO e pacotes      | Nível SO / Privilegiado (`root` / `ELEVATE`) |
 | **[Shell](https://github.com/GabrielFrigo4/shell)**     | Público      | Motor interativo de terminal e prompts     | Nível Shell / Sessão do Terminal             |
-| **[Vault](https://github.com/GabrielFrigo4/vault)**     | Privado      | Cofre criptográfico, chaves SSH e segredos | Usuário Restrito (`0700` / `0600`)           |
+| **Vault**                                               | Privado      | Cofre criptográfico, chaves SSH e segredos | Usuário Restrito (`0700` / `0600`)           |
 | **[Profile](https://github.com/GabrielFrigo4/profile)** | Público      | Dotfiles declarativos, editores e IA       | Nível Usuário (`$HOME`, sem privilégios)     |
 
 ---
@@ -187,7 +187,7 @@ python3 scripts/audit/all.py
 ## 🚀 Como Usar
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/GabrielFrigo4/[repo]/main/[path]/exemplo.sh | sh
+sh ./exemplo.sh
 ```
 ````
 

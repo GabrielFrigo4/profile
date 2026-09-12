@@ -92,7 +92,7 @@ Recomenda-se enfaticamente ao agente de IA e aos operadores o estudo das fontes 
 
 - **Sylve Infrastructure Platform:** <https://sylve.io/> | GitHub: <https://github.com/AlchemillaHQ/Sylve>
 - **Proxmox Virtual Environment:** <https://proxmox.com/en/> | Documentação: <https://pve.proxmox.com/pve-docs/>
-- **Oxide Computer Company:** <https://oxide.computer/> | RFDs: <https://github.com/oxidecomputer/rfd>
+- **Oxide Computer Company:** <https://oxide.computer/> | RFDs: <https://rfd.shared.oxide.computer/>
 - **The FreeBSD Project:** <https://www.freebsd.org/> | Releases: <https://www.freebsd.org/where/>
 - **OpenBSD Packet Filter (PF):** <https://www.openbsd.org/faq/pf/>
 - **Incus System Containers:** <https://linuxcontainers.org/incus/>
