@@ -149,6 +149,22 @@ O FreeBSD disponibiliza imagens oficiais prontas em todos os maiores provedores 
 
 ---
 
+## 🤖 8. Automação Headless, CI/CD e Gestão de TTY (O Padrão `script -q /dev/null`)
+
+Ao executar pipelines de CI/CD (GitHub Actions via QEMU, `bastille cmd`, scripts headless via SSH) em FreeBSD:
+
+1. **A Armadilha do `SIGTTIN` no Kernel FreeBSD (`sys/kern/kern_tty.c`):**
+    - Diferente do Linux e macOS (que retornam erro `ENOTTY` inofensivo quando um processo sem terminal de controle tenta invocar `tcsetpgrp()`), o kernel do FreeBSD aplica estritamente a segurança POSIX/BSD: ele envia o sinal **`SIGTTIN` (sinal 21)** para processos em background.
+    - Como a ação padrão de `SIGTTIN` é suspender o processo (`SIGSTOP`), shells interativos como o GNU Bash (`bash -i`) congelam a VM indefinidamente se invocados em sessões sem PTY alocado.
+2. **Alocação de PTY sob Demanda com `/usr/bin/script`:**
+    - O padrão canônico para executar comandos interativos com segurança em ambientes headless no FreeBSD é encapsulá-los via `script(1)` do sistema base:
+    ```sh
+    script -q /dev/null bash -i -c 'echo "Prompt OK: ${PS1}"'
+    ```
+    - O `script` aloca um pseudo-terminal real (`/dev/pts`), tornando o processo líder de terminal e eliminando 100% dos riscos de `SIGTTIN`.
+
+---
+
 ## 🔗 Links Oficiais de Referência & Leitura Recomendada
 
 - **The FreeBSD Project:** <https://www.freebsd.org/> | Releases: <https://www.freebsd.org/where/>

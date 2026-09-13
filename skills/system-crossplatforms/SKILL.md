@@ -222,7 +222,42 @@ Para prevenir conhecimento estático ou desatualizado, o agente deve consultar a
 - **SMF (Service Management Facility):** Gerenciamento determinístico de serviços com árvores de dependência (`svcs`, `svcadm`), substituindo scripts de inicialização legados.
 - **DTrace & ZFS:** Berço original de ambas as tecnologias fundamentais, nativamente integradas ao kernel.
 - **Separação de Userland:** `/usr/bin` para utilitários padrão System V e `/usr/gnu/bin` para utilitários GNU.
-- **Realidade em CI/CD:** O GitHub Actions não disponibiliza runners nativos nem imagens oficiais de VM para illumos (diferente dos BSDs que possuem `vmactions`). Portanto, pipelines de CI para illumos operam por meio de **validação estática rigorosa de sintaxe** (`bash -n`, `zsh -n`) e **simulação de boot/mock** sob Linux, justificando o descritor `(Syntax & Simulation)`.
+- **Realidade em CI/CD:** O GitHub Actions não disponibiliza runners nativos nem imagens oficiais de VM para illumos (diferente dos BSDs que possuem `vmactions`). Portanto, pipelines de CI para illumos operam por meio de **validação estática rigorosa de sintaxe** (`bash -n`, `zsh -n`) e **simulação de boot/mock** sob Linux, justificando o descritor `(Syntax & Simulation)`. Como não há dotfiles instalados no host (que é Ubuntu), o teste avalia os alvos em memória via `zsh -c` e `bash -c`.
+
+### 🚩 6. NetBSD (Portabilidade Extrema, Almquist Shell e Berço do EditLine)
+
+- **O Berço da `libedit`:** Criada originalmente no NetBSD por Christos Zoulas nos anos 1990 como alternativa BSD limpa à GNU Readline. É a base importada hoje pelo FreeBSD (`contrib/libedit`) e pelo macOS.
+- **Shell do Sistema Base (`/bin/sh`):** Almquist Shell (ash) extensivamente modernizado, portado para dezenas de arquiteturas de hardware (x86_64, ARM, VAX, SPARC, m68k). Por não aceitar hífens em nomes de funções (`goodname()` em `bin/sh/parser.c`), o ecossistema elege `bash` e `zsh` como alvos interativos no NetBSD.
+- **Gerenciamento de Pacotes (`pkgsrc`):** O mais portável sistema de build de pacotes do mundo UNIX.
+    - Utilitários binários: `pkg_add` (nativo do sistema base, sempre disponível em imagens mínimas) e `pkgin` (gerenciador de alto nível).
+    - Convenção de nomes: pacotes de linguagens são estritamente versionados no `pkgsrc` (`python312`, `python311`, `python313`). O padrão estável distribuído em binários para NetBSD 10.x/11.x é `python312`, requerendo symlink `/usr/pkg/bin/python3.12 -> /usr/pkg/bin/python3`.
+- **Busca de Ports & Pacotes:** <https://pkgsrc.se/> e <https://cdn.netbsd.org/pub/pkgsrc/current/pkgsrc/>.
+
+---
+
+## 🚦 Armadilhas de Kernel TTY & O Padrão PTY (`script -q /dev/null`) em CI Headless
+
+Ao executar testes e automações que envolvem inicialização de shells interativos (`-i`) em pipelines headless de CI/CD (GitHub Actions, SSH sem PTY alocado, VMs QEMU):
+
+1. **A Divergência Fundamental de Kernels na Chamada `tcsetpgrp()`:**
+    - Shells interativos iniciados com a flag `-i` tentam habilitar _Job Control_ notificando o kernel via `tcsetpgrp(fd, pgrp)` de que são os donos do terminal.
+    - **Linux & macOS:** Detectam a ausência de terminal controlador e a syscall simplesmente falha retornando `ENOTTY` ou `EPERM`. O shell emite um aviso inofensivo no stderr (`no job control in background`) e prossegue com a execução normalmente, lendo os arquivos RC.
+    - **OpenBSD & NetBSD:** Tratam a ausência de terminal com retorno de erro sem interrupção de sinal.
+    - **FreeBSD (`kern/kern_tty.c`):** O kernel do FreeBSD segue estritamente a especificação clássica BSD: qualquer processo em background que tente invocar `tcsetpgrp()` sem PTY controlador recebe **imediatamente o sinal `SIGTTIN` (sinal 21)**.
+    - Como a ação padrão de `SIGTTIN` é **suspender a execução (`SIGSTOP`)**, o processo entra no estado `T` (stopped) e a VM de CI congela em loop infinito.
+2. **O Padrão Canônico de Solução: Alocação de PTY sob Demanda com `script(1)`:**
+    - Em vez de rebaixar os testes para shells não-interativos (o que ignoraria o `~/.bashrc` e travaria na _Interactive Guard_), deve-se alocar um pseudo-terminal (PTY) sob demanda via utilitário nativo `script`:
+    ```sh
+    # FreeBSD: Aloca PTY real (/dev/pts), satisfaz o kernel e evita SIGTTIN
+    script -q /dev/null bash -i -c 'echo "Prompt OK: ${PS1}"'
+    ENV="${HOME}/.shrc" script -q /dev/null sh -i -c 'echo "Prompt OK: ${PS1}"'
+    ```
+    - O `script` do FreeBSD base aloca `/dev/pts`, torna o processo líder de terminal e garante que `tcsetpgrp()` seja executado com sucesso.
+3. **Alternativa em GNU Bash (`+m`):**
+    - `bash +m -i -c '...'`: A flag `+m` desativa o _monitor mode_ (job control), impedindo o Bash de chamar `tcsetpgrp()`, enquanto `-i` preserva o modo interativo e carrega o `.bashrc`.
+4. **Por que a flag `-i` é insubstituível em testes reais de dotfiles:**
+    - Arquivos RC canônicos protegem-se com uma `Interactive Guard` no cabeçalho (`case "$-" in *i*) ;; *) return ;; esac`).
+    - Sem a flag `-i`, o shell não é interativo, o arquivo RC é ignorado ou sofre `return` na 5ª linha, gerando falsos positivos nos testes. O `-i` é o único modo que valida aliases, prompts, temas e detecção de contexto de ponta a ponta.
 
 ---
 
