@@ -70,12 +70,12 @@ Nem todas as tecnologias de nicho ou sistemas clássicos possuem slugs diretos n
 
 O Markdown moderno deve utilizar diagramas Mermaid em cercaduras de código (`mermaid`) em vez de imagens estáticas PNG/JPG que envelhecem e não podem ser versionadas via `git diff`:
 
-### 2.1. Fluxogramas Horizontais (`flowchart LR`)
+### 2.1. Fluxogramas Verticais Top-Down (`flowchart TD`)
 
-Ideais para mostrar relacionamentos entre plataformas, contextos e ferramentas:
+Prefira a direção **Top-Down (`flowchart TD`)** para diagramas de arquitetura em camadas. Ela aproveita muito melhor a largura da viewport, distribui nós em blocos expansíveis e previne o esticamento horizontal excessivo que quebra o layout em telas menores:
 
 ```mermaid
-flowchart LR
+flowchart TD
     subgraph OS ["🖥️ Plataformas"]
         BSD["FreeBSD"]
         LNX["Linux"]
