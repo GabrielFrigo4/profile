@@ -62,36 +62,9 @@ _link "${_repo_root}/tools/.editorconfig" "${HOME}/.editorconfig"
 _link "${_repo_root}/tools/clangd.yaml" "${HOME}/.config/clangd/config.yaml"
 
 ### --------------------------------
-### Editores de Texto
-### --------------------------------
-echo "↳ 2. Editores de texto (Emacs, Helix, NeoVim, Vim)..."
-_ed="${_repo_root}/../Editor"
-[ -e "${_ed}/Emacs/init.el" ] && _link "${_ed}/Emacs" "${HOME}/.emacs.d" || _link "${_repo_root}/editors/emacs/lite.el" "${HOME}/.emacs.d/init.el"
-
-if [ -e "${_ed}/Helix/config.toml" ]; then
-	_link "${_ed}/Helix/config.toml" "${HOME}/.config/helix/config.toml"
-	_link "${_ed}/Helix/languages.toml" "${HOME}/.config/helix/languages.toml"
-fi
-
-if [ -e "${_ed}/NeoVim/init.lua" ]; then
-	_link "${_ed}/NeoVim/init.lua" "${HOME}/.config/nvim/init.lua"
-	_link "${_ed}/NeoVim/lua" "${HOME}/.config/nvim/lua"
-else
-	_link "${_repo_root}/editors/vim/lite.vim" "${HOME}/.config/nvim/init.vim"
-fi
-
-if [ -e "${_ed}/Vim/vimrc" ]; then
-	_link "${_ed}/Vim/vimrc" "${HOME}/.vimrc"
-	_link "${_ed}/Vim" "${HOME}/vimfiles"
-	_link "${_ed}/Vim" "${HOME}/.vim"
-else
-	_link "${_repo_root}/editors/vim/lite.vim" "${HOME}/.vimrc"
-fi
-
-### --------------------------------
 ### Editores Modernos & IDEs
 ### --------------------------------
-echo "↳ 3. Editores modernos (Zed, VSCode, Antigravity)..."
+echo "↳ 2. Editores modernos (Zed, VSCode, Antigravity)..."
 _link "${_repo_root}/editors/zed/settings.json" "${HOME}/.config/zed/settings.json"
 
 if [ "${_os_type}" = "Darwin" ]; then
@@ -107,7 +80,7 @@ fi
 ### --------------------------------
 ### Terminais & Shells
 ### --------------------------------
-echo "↳ 4. Emuladores de terminal e shells alternativos..."
+echo "↳ 3. Emuladores de terminal e shells alternativos..."
 
 _konsole_dir="${HOME}/.local/share/konsole"
 _link "${_repo_root}/terminals/konsole/Bash.profile" "${_konsole_dir}/Bash.profile"

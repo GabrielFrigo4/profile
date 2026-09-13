@@ -10,16 +10,18 @@ _target_dir="${1:-${HOME}/.gemini/config/skills}"
 echo "🧠 [Profile] Sincronizando Portable AI Skills..."
 echo "  ↳ Destino: ${_target_dir}"
 
-mkdir -p "${_target_dir}"
+_target_parent="$(dirname "${_target_dir}")"
+[ ! -d "${_target_parent}" ] && mkdir -p "${_target_parent}"
 
-for _skill_dir in "${_repo_root}/skills/"*; do
-	if [ -d "${_skill_dir}" ]; then
-		_skill_name="$(basename "${_skill_dir}")"
-		echo "  ↳ Vinculando skill: ${_skill_name}"
-		rm -f "${_target_dir}/${_skill_name}"
-		ln -s "${_skill_dir}" "${_target_dir}/${_skill_name}"
+if [ -L "${_target_dir}" ] && [ "$(readlink "${_target_dir}")" = "${_repo_root}/skills" ]; then
+	echo "  👉 Link simbólico unificado já ativo."
+else
+	if [ -e "${_target_dir}" ] || [ -L "${_target_dir}" ]; then
+		rm -rf "${_target_dir}"
 	fi
-done
+	ln -s "${_repo_root}/skills" "${_target_dir}"
+	echo "  🔗 Link unificado criado: ${_target_dir} -> ${_repo_root}/skills"
+fi
 
 echo "✅ [Profile] Skills de IA sincronizadas com sucesso!"
 exit 0

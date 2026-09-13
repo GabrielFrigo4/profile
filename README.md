@@ -45,11 +45,11 @@ Diferente do **Setup** (que exige `sudo`/`root` para instalar pacotes no sistema
 
 ## 📂 Estrutura do Repositório
 
-- **[`editors/`](editors/README.md)** — **Configurações de Editores & IDEs:** Antigravity, VS Code, VSCodium, Zed, Emacs (`lite.el`) e Vim (`lite.vim`).
+- **[`editors/`](editors/README.md)** — **Configurações de Editores & IDEs Modernos:** Antigravity, VS Code, VSCodium e Zed (os editores modais Emacs, NeoVim, Vim e Helix operam como repositórios autônomos independentes).
 - **[`terminals/`](terminals/README.md)** — **Perfis de Terminal:** Konsole (KDE), Windows Terminal, CMD (Clink), PowerShell e NuShell.
 - **[`tools/`](tools/README.md)** — **Formatadores & Linters Globais:** `.clang-format`, `.prettierrc`, `.stylua.toml`, `clangd.yaml`.
 - **[`browsers/`](browsers/README.md)** — **Navegadores:** Ajustes e perfis de navegadores (Firefox).
-- **[`skills/`](skills/README.md)** — **Habilidades & Runbooks Portáteis para IA:** Catálogo de skills cognitivas para Google Antigravity/Gemini, Claude e OpenAI com ativação sob demanda.
+- **[`skills/`](skills/README.md)** — **Habilidades & Runbooks Portáteis para IA:** Catálogo de skills cognitivas para Google Antigravity/Gemini com ativação contínua via link de diretório unificado.
 - **[`scripts/`](scripts/README.md)** — Utilitários de sincronização (`sync/`) e validação estática (`audit/`).
 - **[`docs/`](docs/README.md)** — Documentação técnica completa da estação de trabalho e arquitetura.
 
