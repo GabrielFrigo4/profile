@@ -27,13 +27,14 @@ No ecossistema do **Quarteto de Produtividade**, enquanto o repositório **Setup
 
 ---
 
-## 📚 Catálogo Canônico de Skills Portáteis (18 Runbooks)
+## 📚 Catálogo Canônico de Skills Portáteis (19 Runbooks)
 
-O ecossistema disponibiliza 18 habilidades cognitivas universais organizadas por domínio de especialidade:
+O ecossistema disponibiliza 19 habilidades cognitivas universais organizadas por domínio de especialidade:
 
 | Categoria                     | Skill                                                               | Descrição e Escopo de Ativação                                                                                                  | Gatilhos de Ativação / Cenários de Uso                                                                             |
 | :---------------------------- | :------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------ | :----------------------------------------------------------------------------------------------------------------- |
 | **Arquitetura & Filosofia**   | [`unix-philosophy-auditor`](./unix-philosophy-auditor/SKILL.md)     | Auditoria e conformidade com os 17 Princípios UNIX de Eric S. Raymond + Soberania do Usuário.                                   | Criação de novas CLI, revisão de arquitetura, validação de regras de silêncio e transparência.                     |
+| **Design & Documentação**     | [`readme-crafting`](./readme-crafting/SKILL.md)                     | Padrões para especificação, design, hierarquia visual e redação de READMEs (Simple Icons, Mermaid, tabelas).                    | Criação e refatoração de READMEs, modernização de badges vetoriais, documentações institucionais.                  |
 | **Soberania & Cloud-Exit**    | [`cloud-exit`](./cloud-exit/SKILL.md)                               | Repatriação de nuvem para bare-metal com FreeBSD, Linux, illumos, OpenBSD e Windows (Sylve, Proxmox, Oxide, ZFS e pf).          | Migração para infraestrutura própria, redução de custos de nuvem pública, soberania digital.                       |
 | **Aplicações Anti-Inchaço**   | [`svelte-pocketbase-go`](./svelte-pocketbase-go/SKILL.md)           | Arquitetura minimalista fullstack em SvelteKit, PocketBase e Go, entrega em binário único, SQLite WAL e custo quase zero.       | Criação de sistemas web ágeis, microsserviços sem node_modules em produção, painéis reativos leves.                |
 | **Metodologia & Meta-Skills** | [`skill-authoring-standards`](./skill-authoring-standards/SKILL.md) | Padrões canônicos para especificação, redação, citações oficiais e manutenção de Portable AI Skills no ecossistema.             | Criação de novas skills, auditoria de runbooks, inclusão de referências bibliográficas e links.                    |
