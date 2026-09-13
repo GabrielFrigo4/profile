@@ -206,13 +206,15 @@ Para prevenir conhecimento estático ou desatualizado, o agente deve consultar a
 
 ### 🐡 4. OpenBSD (Segurança Pragmática e Minimalismo)
 
-- **Mecanismos de Confinamento:** Suporte a `pledge(2)` (restringe chamadas de sistema) e `unveil(2)` (restringe visão da árvore de arquivos).
-- **Shell e Utilitários:** O shell da base é baseado em `pdksh`. Ausência absoluta de GNUismos nos utilitários da base.
+- **Mecanismos de Confinamento:** Suporte a `pledge(2)` (restringe chamadas de sistema por processo) e `unveil(2)` (restringe visibilidade da árvore de arquivos).
+- **Shell Nativo da Base (`/bin/ksh`):** Derivado do PD-KSH. Não possui expansão ANSI-C `$''` (interpreta literalmente). Cores ANSI exigem captura dinâmica do byte escape `_esc="$(printf '\033')"`, e caracteres invisíveis de prompt no `PS1` exigem obrigatoriamente delimitação por `\001` para não desalinhar o editor de linha.
+- **Userland & Pacotes:** Ausência absoluta de GNUismos nos utilitários da base. Gerenciamento de pacotes via `pkg_add` / `pkg_delete` com repositórios declarados em `/etc/installurl`.
+- **Comportamento em CI/CD:** Em runners automatizados (ex: `vmactions/openbsd-vm`), o sistema parte de uma instalação limpa onde `zsh` não existe por padrão. Scripts de teste e benchmarks devem ser 100% defensivos, checando `command -v "${sh}"` antes de qualquer execução.
 - **Elevação de Privilégios:** O utilitário canônico é o `doas` nativo com `/etc/doas.conf`.
 
 ### ☀️ 5. illumos (SmartOS, OmniOS, OpenIndiana & Solaris Zones)
 
-- **Origem System V:** Baseado no código aberto do OpenSolaris/SVR4, mantendo a mais alta referência de engenharia de sistemas corporativos.
+- **Origem System V:** Baseado no código aberto do OpenSolaris/SVR4, mantendo a mais alta referência de engenharia de sistemas corporativos UNIX.
 - **Solaris Zones:** Virtualização leve e segura a nível de kernel:
     - _Native Zones:_ Instâncias com userland e ferramentas nativas illumos.
     - _lx-brand Zones:_ Emulação transparente da interface de chamadas de sistema do kernel Linux, executando contêineres e binários Linux sem overhead de hypervisor.
@@ -220,6 +222,7 @@ Para prevenir conhecimento estático ou desatualizado, o agente deve consultar a
 - **SMF (Service Management Facility):** Gerenciamento determinístico de serviços com árvores de dependência (`svcs`, `svcadm`), substituindo scripts de inicialização legados.
 - **DTrace & ZFS:** Berço original de ambas as tecnologias fundamentais, nativamente integradas ao kernel.
 - **Separação de Userland:** `/usr/bin` para utilitários padrão System V e `/usr/gnu/bin` para utilitários GNU.
+- **Realidade em CI/CD:** O GitHub Actions não disponibiliza runners nativos nem imagens oficiais de VM para illumos (diferente dos BSDs que possuem `vmactions`). Portanto, pipelines de CI para illumos operam por meio de **validação estática rigorosa de sintaxe** (`bash -n`, `zsh -n`) e **simulação de boot/mock** sob Linux, justificando o descritor `(Syntax & Simulation)`.
 
 ---
 

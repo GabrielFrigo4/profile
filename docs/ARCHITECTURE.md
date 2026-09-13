@@ -11,7 +11,7 @@ flowchart TD
     subgraph QUARTET ["🏛️ O Quarteto de Produtividade"]
         SETUP["📦 Setup (Público)<br/>• Bootstrap do Host (SO/Root)<br/>• Jails & Containers (Incus/Podman)<br/>• Drivers e Desktop Wayland<br/>• Catálogo Cookbook Zero-Clone"]
         PROFILE["🎨 Profile (Público)<br/>• Dotfiles Estáticos ($HOME)<br/>• Editores (VSCode, Zed, Antigravity)<br/>• Terminais e Formatadores<br/>• Portable AI Skills"]
-        SHELL["🐚 Shell (Público)<br/>• Motor Interativo do Terminal<br/>• Prompts Rápidos (&lt; 50ms)<br/>• Aliases e Funções (Library)<br/>• Contextos (Desktop, Server, WSL)"]
+        SHELL["🐚 Shell (Público)<br/>• Motor Interativo do Terminal<br/>• Prompts Rápidos (&lt; 64ms)<br/>• Aliases e Funções (Library)<br/>• Contextos (Desktop, Server, WSL)"]
         VAULT["🔐 Vault (Privado: ~/.vault)<br/>• Chaves SSH / PuTTY PPK<br/>• Variáveis .env de Credenciais<br/>• Senhas Wi-Fi / Mapeamento Hosts<br/>• Loaders Multi-Shell (sh, ps1, nu, cmd)"]
     end
 

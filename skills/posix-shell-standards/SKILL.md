@@ -27,12 +27,19 @@ Adotamos uma taxonomia estrita e semântica para emissão de dados no terminal:
 
 | Ferramenta             | Cenário de Uso Exclusivo                               | Exemplo Canônico                        | Justificativa Técnica                                                                                            |
 | :--------------------- | :----------------------------------------------------- | :-------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
-| **`echo "${msg}"`**    | Texto simples, quebras de linha e escrita em arquivos. | `echo "${val}" >                        | "${file}"`                                                                                                       | Simples, atômico, rápido e universal. |
-| **`echo -n $'\e...'`** | **Padrão Canônico para sequências ANSI interativas.**  | `[ -t 1 ] && echo -n $'\e[2J\e[H'`      | Suportado no FreeBSD `/bin/sh`, Bash, Zsh e padronizado no **POSIX Issue 8**. Elimina octais crípticos (`\033`). |
+| **`echo "${msg}"`**    | Texto simples, quebras de linha e escrita em arquivos. | `echo "${val}" > "${file}"`             | Simples, atômico, rápido e universal.                                                                            |
+| **`echo -n $'\e...'`** | **Padrão Canônico para sequências ANSI interativas.**  | `[ -t 1 ] && echo -n $'\e[2J\e[H'`      | Suportado em Zsh, Bash, FreeBSD `/bin/sh` e padronizado no **POSIX Issue 8**. Elimina octais crípticos (`\033`). |
 | **`printf`**           | Tabelas, colunas formatadas e alinhamento com padding. | `printf "%-16s %s\n" "${key}" "${val}"` | Controle preciso de espaçamento e largura de campo.                                                              |
 
 > [!CAUTION]
 > **Proibição de Octais Obscuros:** Evite notação octal do tipo `\033` ou `\077` em scripts quando o formato legível `$'\e...'` estiver disponível e for a solução mais elegante.
+
+> [!NOTE]
+> **Peculiaridade Crítica do OpenBSD `ksh` (PD-KSH):**
+> O `ksh` nativo do OpenBSD (`/bin/ksh` e seu port portátil `oksh`) não implementa expansão ANSI-C `$''`. Ele interpreta `$'\e...'` literalmente como texto bruto `$\e[...]`.
+>
+> - Para sequências ANSI no OpenBSD `ksh`, capture o caractere escape dinamicamente via `_esc="$(printf '\033')"` e utilize `"${_esc}[32m"`.
+> - No `PS1` do OpenBSD `ksh`, qualquer sequência ANSI invisível (largura zero) **DEVE** ser delimitada pelo caractere de controle `\001` (ex: `\001${_esc}[32m\001`). Sem essa delimitação, o editor de linha do `ksh` calcula incorretamente o comprimento do prompt, corrompendo a rolagem de histórico e a quebra de linha.
 
 ---
 
@@ -107,6 +114,16 @@ Sempre utilize a notação octal de 4 dígitos nos comandos `chmod`:
         *) return ;;
     esac
     ```
+
+---
+
+## 👑 Ordem Canônica de Prevalência & Enumeração de Shells
+
+Em qualquer enumeração, checklist, pipeline de CI/CD, Makefile, script de benchmark ou documentação, a ordem DEVE SEMPRE respeitar a hierarquia canônica de ergonomia e conveniência:
+
+1. **`zsh`** (topo da cadeia de ergonomia, autocompletion visual e produtividade interativa)
+2. **`bash`** (padrão corporativo universal e compatibilidade retroativa)
+3. **`sh`** (FreeBSD `/bin/sh` como base system exclusivo) ou **`ksh`** (OpenBSD `/bin/ksh` como base system exclusivo)
 
 ---
 
