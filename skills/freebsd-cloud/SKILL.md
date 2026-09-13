@@ -152,6 +152,7 @@ O FreeBSD disponibiliza imagens oficiais prontas em todos os maiores provedores 
 ## 🔗 Links Oficiais de Referência & Leitura Recomendada
 
 - **The FreeBSD Project:** <https://www.freebsd.org/> | Releases: <https://www.freebsd.org/where/>
+- **FreeBSD Ports & Packages Index:** <https://ports.freebsd.org/cgi/ports.cgi> | FreshPorts: <https://www.freshports.org/>
 - **FreeBSD Handbook:** <https://docs.freebsd.org/en/books/handbook/>
 - **Sylve Infrastructure Platform:** <https://sylve.io/> | GitHub: <https://github.com/AlchemillaHQ/Sylve>
 - **BastilleBSD (Container Management):** <https://bastillebsd.org/>
