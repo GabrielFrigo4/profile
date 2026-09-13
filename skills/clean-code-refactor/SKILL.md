@@ -69,6 +69,12 @@ Ao refatorar ou auditar qualquer arquivo no ecossistema:
     - Chaves privadas e segredos (`Vault`): `chmod 0600`
     - Arquivos do sistema (`sudoers.d`): `chmod 0440`
 
+9. **Auditoria Estática de Comentários & Banners:**
+    - Utilize o utilitário da skill para validar réguas estruturais (64 no topo, 32 no corpo), ausência de parênteses em títulos e eliminação total de comentários narrativos ou código morto:
+        ```sh
+        python3 scripts/audit_comments.py [caminho]
+        ```
+
 ---
 
 ## 📋 Templates Canônicos de Scripts (Sem Comentários Narrativos)

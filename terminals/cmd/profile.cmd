@@ -29,11 +29,3 @@ set "FASM_STORE=%VIRTUAL_STORE%\Program Files\FASM"
 set "FASM2_STORE=%VIRTUAL_STORE%\Program Files\FASM2"
 set "FASMG_STORE=%VIRTUAL_STORE%\Program Files\FASMG"
 set "FASMARM_STORE=%VIRTUAL_STORE%\Program Files\FASMARM"
-
-rem ================================
-rem APPEARANCE
-rem ================================
-rem oh-my-posh init cmd --config "%HOME%\.oh-my-posh\themes\pure.omp.json" > "%HOME%\.oh-my-posh.lua"
-rem oh-my-posh init cmd --config "%HOME%\.oh-my-posh\themes\pure.omp.json" > "%CLINKPATH%\profile.lua"
-rem oh-my-posh init cmd --config "%HOME%\.oh-my-posh\themes\atomic.omp.json" > "%HOME%\.oh-my-posh.lua"
-rem oh-my-posh init cmd --config "%HOME%\.oh-my-posh\themes\atomic.omp.json" > "%CLINKPATH%\profile.lua"

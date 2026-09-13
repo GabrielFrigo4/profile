@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # ----------------------------------------------------------------
 # Utility: Portable AI Skills - External URLs & Integrity Verifier
-# License: MIT (c) 2026 GabrielFrigo
 # ----------------------------------------------------------------
 
 import argparse
@@ -13,8 +12,6 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor, as_completed
-
-# Cores ANSI condicionadas a terminal TTY
 if sys.stdout.isatty():
     BLUE = "\033[0;34m"
     GREEN = "\033[0;32m"
@@ -25,8 +22,6 @@ if sys.stdout.isatty():
     NC = "\033[0m"
 else:
     BLUE = GREEN = RED = YELLOW = CYAN = BOLD = NC = ""
-
-# Contexto SSL permissivo para verificação de conectividade
 CTX = ssl.create_default_context()
 CTX.check_hostname = False
 CTX.verify_mode = ssl.CERT_NONE
@@ -57,7 +52,6 @@ def extract_urls(file_path):
     try:
         with open(file_path, "r", encoding="utf-8") as fh:
             for line in fh:
-                # Ignora linhas com padrões de exemplo / placeholders
                 if any(ig in line for ig in IGNORE_PATTERNS):
                     continue
                 matches = URL_REGEX.findall(line)
@@ -109,11 +103,9 @@ def main():
     )
     args = parser.parse_args()
 
-    # Determina o alvo de verificação
     if args.target:
         target_path = os.path.abspath(args.target)
     else:
-        # Tenta localizar o diretório skills/ relativo ao script
         script_dir = os.path.dirname(os.path.abspath(__file__))
         candidate = os.path.abspath(os.path.join(script_dir, "..", ".."))
         if os.path.isdir(os.path.join(candidate, "skills")):
@@ -127,8 +119,6 @@ def main():
 
     print(f"{BLUE}{BOLD}🔎 Verificador de Links para Portable AI Skills{NC}")
     print(f"{CYAN}Alvo de inspeção:{NC} {target_path}")
-
-    # Coleta arquivos markdown
     files_to_scan = []
     if os.path.isfile(target_path):
         if target_path.endswith(".md"):

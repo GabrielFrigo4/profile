@@ -36,7 +36,7 @@ if [ -d "scripts/sync" ]; then
 fi
 
 ### --------------------------------
-### Format Validation (JSON/YAML/TOML)
+### Format Validation
 ### --------------------------------
 if [ -f "scripts/audit/formats.py" ] && command -v python3 > "/dev/null" 2>&1; then
 	echo "  ↳ Validating declarative formats (JSON, YAML, TOML)..."

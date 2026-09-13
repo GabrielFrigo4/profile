@@ -75,8 +75,6 @@ def main():
         os.path.dirname(__file__), "../.."))
     errors = []
     scanned = 0
-
-    # 1. JSON & JSONC
     for root, dirs, files in os.walk(repo_root):
         if ".git" in root or "_OLD_" in root:
             continue
@@ -91,8 +89,6 @@ def main():
                     json.loads(strip_jsonc(content))
                 except Exception as e:
                     errors.append(f"[JSON] {rel}: {e}")
-
-    # 2. YAML
     if HAS_YAML:
         for root, dirs, files in os.walk(repo_root):
             if ".git" in root or "_OLD_" in root:
@@ -107,8 +103,6 @@ def main():
                             list(yaml.safe_load_all(yf))
                         except Exception as e:
                             errors.append(f"[YAML] {rel}: {e}")
-
-    # 3. Registry (.reg)
     for p in glob.glob(f"{repo_root}/**/*.reg", recursive=True):
         scanned += 1
         rel = os.path.relpath(p, repo_root)
@@ -116,8 +110,6 @@ def main():
             first = f.readline().strip()
             if not first.startswith("Windows Registry Editor Version 5.00"):
                 errors.append(f"[REG] {rel}: Cabeçalho inválido '{first}'")
-
-    # 4. PowerShell (.ps1)
     for p in glob.glob(f"{repo_root}/**/*.ps1", recursive=True):
         scanned += 1
         rel = os.path.relpath(p, repo_root)

@@ -10,9 +10,7 @@ import sys
 import argparse
 from collections import defaultdict
 
-DEFAULT_WHITELIST = {
-    # Scripts onde 1 comando é a responsabilidade atômica estrita e intencional
-}
+DEFAULT_WHITELIST = set()
 
 def scan_nano_scripts(root_dir, min_lines=8, whitelist=None):
     if whitelist is None:
