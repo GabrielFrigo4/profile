@@ -27,10 +27,13 @@ flowchart TD
     C1 --> C2 --> C3 --> C4 --> C5 --> C6
 ```
 
-### Escopos de Aplicação:
+### Hierarquia de Resolução & Precedência Unix (Local > Global):
 
-1. **Global da Estação (`Environment/Profile/skills/`):** Habilidades perenes de engenharia, sistemas operacionais, padrões de linguagem e ferramentas de terminal (disponíveis para o agente em qualquer pasta do computador via symlink em `~/.gemini/config/skills/`).
-2. **Local do Repositório (`<repo>/.agents/skills/`):** Habilidades específicas do domínio de negócio daquele projeto, versionadas no Git com o repositório.
+Inspirado na filosofia UNIX onde o escopo mais local e específico sempre sobrepõe o global:
+
+1. **Local do Repositório (`<repo>/.agents/skills/`):** Tem **prioridade máxima**. Sobrescreve ou especializa qualquer skill homônima de nível de usuário ou de sistema. Permite que um projeto defina contratos, runbooks e regras específicas para o agente de IA sem poluir o ambiente global.
+2. **Global do Usuário (`~/.gemini/config/skills/` via `Profile/skills/`):** Habilidades perenes de engenharia, sistemas operacionais, padrões de linguagem e ferramentas de terminal, disponíveis para o agente em qualquer workspace do usuário.
+3. **Built-in da IDE (`builtin/skills`):** Habilidades fundamentais fornecidas pelo ecossistema Antigravity, atuando como base e fallback de último nível.
 
 ---
 
