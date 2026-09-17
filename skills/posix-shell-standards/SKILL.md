@@ -41,6 +41,36 @@ Adotamos uma taxonomia estrita e semântica para emissão de dados no terminal:
 > - Para sequências ANSI no OpenBSD `ksh`, capture o caractere escape dinamicamente via `_esc="$(printf '\033')"` e utilize `"${_esc}[32m"`.
 > - No `PS1` do OpenBSD `ksh`, qualquer sequência ANSI invisível (largura zero) **DEVE** ser delimitada pelo caractere de controle `\001` (ex: `\001${_esc}[32m\001`). Sem essa delimitação, o editor de linha do `ksh` calcula incorretamente o comprimento do prompt, corrompendo a rolagem de histórico e a quebra de linha.
 
+### Padrão Semântico de Emissão de UI
+
+Para utilitários interativos, orquestradores de componentes (`shell.sh`, `profile.sh`), comandos de sincronização e atualizadores universais (`update-*`), **evite espalhar sequências de escape ANSI soltas ou chamadas arbitrárias de `echo` com emojis**. Centralize a emissão na biblioteca semântica padronizada (`library/ui.sh`):
+
+1. **Detecção Defensiva de TTY (`_ui_has_color`):**
+   Cores e sequências visuais só devem ser renderizadas quando o descritor `stdout` for um terminal interativo (`[ -t 1 ]`) e `$TERM` não for nulo nem `dumb`:
+
+    ```sh
+    _ui_has_color() {
+        [ -t 1 ] || return 1
+        case "${TERM:-}" in
+            dumb|"") return 1 ;;
+            *) return 0 ;;
+        esac
+    }
+    ```
+
+2. **Paleta Semântica Canônica & Fallback Gracioso:**
+   Cada função encapsula uma intenção semântica com fallback em texto plano limpo para pipelines e redirecionamentos:
+
+| Função           | Prefixo TTY (Colorido)                      | Fallback Não-Interativo | Finalidade Semântica                                 |
+| :--------------- | :------------------------------------------ | :---------------------- | :--------------------------------------------------- |
+| **`_ui_step`**   | `\e[1;36m==>\e[0m ` (Ciano)                 | `==> `                  | Início de etapa primária de um fluxo                 |
+| **`_ui_sub`**    | `\e[1;34m  ↳\e[0m ` (Azul)                  | ` ->`                   | Subtarefa, ação aninhada ou item inspecionado        |
+| **`_ui_ok`**     | `\e[1;32m  ✅\e[0m ` (Verde)                | ` OK`                   | Conclusão bem-sucedida de operação                   |
+| **`_ui_warn`**   | `\e[1;33m  ⚠️ \e[0m ` (Amarelo)             | ` WARN`                 | Alerta preventivo ou falha não-bloqueante            |
+| **`_ui_err`**    | `\e[1;31m  ❌\e[0m ` (Vermelho em `stderr`) | ` FAIL` em `stderr`     | Falha crítica ou erro direcionado para `>&2`         |
+| **`_ui_info`**   | `\e[1;35m  ℹ️ \e[0m ` (Magenta)             | ` INFO`                 | Informação contextual, notas ou recargas             |
+| **`_ui_banner`** | Régua dupla de 64 `=` em Ciano              | Régua plana de 64 `=`   | Delimitador de abertura/encerramento de rotina ampla |
+
 ---
 
 ## 🔒 Quoting Defensivo & Variáveis

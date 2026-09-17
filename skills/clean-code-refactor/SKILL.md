@@ -75,11 +75,15 @@ Ao refatorar ou auditar qualquer arquivo no ecossistema:
         python3 scripts/audit_comments.py [caminho]
         ```
 
+10. **Emissão Semântica de UI:**
+    - Em utilitários, interfaces CLI e rotinas de sincronização/atualização (`update-*`), adote a biblioteca semântica `_ui_*` (`_ui_step`, `_ui_sub`, `_ui_ok`, `_ui_warn`, `_ui_err`, `_ui_info`, `_ui_banner`) com detecção segura de TTY (`_ui_has_color`).
+    - Reserve saídas simplificadas (`echo "📦 ..."` e `echo "✅ ..."`) para receitas de provisionamento do sistema operacional (`Setup`), onde o isolamento e zero dependências de runtime são prioritários.
+
 ---
 
 ## 📋 Templates Canônicos de Scripts (Sem Comentários Narrativos)
 
-### 1. Template POSIX Shell (`.sh`)
+### 1. Template POSIX Shell — Receita de Provisionamento (`.sh`)
 
 ```sh
 #!/usr/bin/env sh
@@ -95,7 +99,32 @@ ELEVATE="$( [ "$(id -u)" -ne 0 ] && { command -v doas > "/dev/null" 2>&1 && echo
 echo "✅ [Nome]: Configurado com sucesso!"
 ```
 
-### 2. Template PowerShell (`.ps1`)
+### 2. Template POSIX Shell — Utilitário com Interface Semântica (`.sh`)
+
+```sh
+#!/usr/bin/env sh
+# ----------------------------------------------------------------
+# Utility: [Nome do Utilitário / Ferramenta]
+# ----------------------------------------------------------------
+set -eu
+
+. "${SHELL_REPO_DIR:-${HOME}/.shell}/library/ui.sh"
+
+_ui_banner "Iniciando Operação"
+_ui_step "Verificando dependências do sistema..."
+_ui_sub "Inspecionando executáveis no PATH..."
+
+if command -v git > "/dev/null" 2>&1; then
+	_ui_ok "Dependência verificada com sucesso!"
+else
+	_ui_err "Git não encontrado no sistema."
+	exit 1
+fi
+
+_ui_banner "Operação Concluída com Sucesso"
+```
+
+### 3. Template PowerShell (`.ps1`)
 
 ```powershell
 <#
@@ -113,7 +142,7 @@ Write-Host "📦 [Nome]: Iniciando configuracao..." -ForegroundColor Cyan
 Write-Host "✅ [Nome]: Configurado com sucesso!" -ForegroundColor Green
 ```
 
-### 3. Template Batch (`.cmd`)
+### 4. Template Batch (`.cmd`)
 
 ```cmd
 @echo off
