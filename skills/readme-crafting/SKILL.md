@@ -163,10 +163,10 @@ make setup
 ````
 
 > [!IMPORTANT]
-> **Quando usar `bash`, `zsh`, `ksh` ou `nu`:**
-> Identificadores específicos só devem ser utilizados se o conteúdo do bloco contiver código ou sintaxe estritamente privativa daquele interpretador (ex: arrays associativos no Bash, expansões específicas no Zsh, scripts Nushell). Instruções gerais de linha de comando UNIX devem ser sempre ````sh`.
+> **Quando usar `zsh`, `bash`, `ksh`, `fish`, `nu` ou `pwsh`:**
+> Identificadores específicos só devem ser utilizados se o conteúdo do bloco contiver código ou sintaxe estritamente privativa daquele interpretador (ex: expansões específicas no Zsh, arrays associativos no Bash, scripts KornShell, sintaxe Fish, pipelines orientados a tabelas no Nushell, scripts PowerShell/`pwsh`). Instruções gerais de linha de comando UNIX devem ser sempre ````sh`.
 >
-> **Identificadores Proibidos:** É proibido utilizar `shell`, `console` ou `terminal`.
+> **Identificadores Proibidos:** É terminantemente proibido utilizar `shell`, `console` ou `terminal`.
 
 ---
 

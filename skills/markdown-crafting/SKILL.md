@@ -105,8 +105,8 @@ theme = "dark_plus"
 > **Padrão Canônico para Comandos de Terminal (`sh`):**
 > Utilize **SEMPRE** o identificador `sh` (````sh ... ````) para qualquer bloco contendo comandos de terminal, instruções de clone (`git clone`), compilação (`make`), gerenciadores de pacotes (`pkg`, `apt`, `npm`), chamadas de CLI e rotinas de automação UNIX em geral.
 >
-> **Identificadores Específicos (`bash`, `zsh`, `ksh`, `fish`, `nu`):**
-> Devem ser utilizados **exclusiva e estritamente** quando o código contido dentro da caixa depender de sintaxe, flags ou recursos privativos daquele interpretador específico (como testes avançados `[[ ... ]]` ou arrays associativos no Bash; expansões e flags globais no Zsh; pipelines orientados a dados no Nushell).
+> **Identificadores Específicos (`zsh`, `bash`, `ksh`, `fish`, `nu`, `pwsh`):**
+> Devem ser utilizados **exclusiva e estritamente** quando o código contido dentro da caixa depender de sintaxe, flags ou recursos privativos daquele interpretador específico (como expansões e opções globais no Zsh; testes avançados `[[ ... ]]` ou arrays associativos no Bash; recursos nativos do KornShell; sintaxe do Fish; pipelines orientados a tabelas no Nushell; ou scripts e cmdlets em PowerShell/`pwsh`).
 >
 > **É terminantemente proibido** utilizar identificadores genéricos depreciados como `shell`, `console`, `terminal` ou `prompt`.
 
@@ -115,9 +115,12 @@ theme = "dark_plus"
 | Stack / Alvo | Identificador Canônico | Evitar / Proibido |
 | :--- | :---: | :--- |
 | **Comandos de Terminal / Shell UNIX** | `sh` | `shell`, `console`, `terminal`, `bash` (se genérico) |
-| **Bash Específico (com bashismos)** | `bash` | `sh` (quando possuir sintaxe não-POSIX) |
 | **Zsh Específico (com zshismos)** | `zsh` | `sh` (quando depender de recursos exclusivos do Zsh) |
+| **Bash Específico (com bashismos)** | `bash` | `sh` (quando possuir sintaxe não-POSIX) |
+| **KornShell / Scripts Korn** | `ksh` | `sh` (quando depender de extensões ksh) |
+| **Fish Shell** | `fish` | `sh` (quando possuir sintaxe Fish) |
 | **Nushell / Scripts Nu** | `nu` | `nushell`, `sh` |
+| **PowerShell / Pwsh** | `pwsh` | `powershell`, `posh`, `sh` |
 | **Lua / Neovim** | `lua` | `nvim` |
 | **Emacs Lisp** | `elisp` ou `lisp` | `el` |
 | **TOML / Configurações** | `toml` | `txt` |
