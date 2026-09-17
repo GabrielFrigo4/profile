@@ -1,6 +1,6 @@
 ---
 name: repo-template-generator
-description: Runbook cognitivo para geração e scaffold de novos repositórios completos a partir de templates canônicos por linguagem (C99/POSIX, Shell, C++23, Go, Python, LaTeX).
+description: Runbook cognitivo para geração e scaffold de novos repositórios completos a partir de templates canônicos por linguagem (C Moderno (C23), Shell, C++23, Go, Python, LaTeX).
 ---
 
 # 🚀 Repo Template Generator Skill
@@ -13,7 +13,7 @@ Esta habilidade orienta o agente de IA na criação do zero de novos repositóri
 
 Ao solicitar a criação de um novo repositório, o agente deve selecionar o perfil adequado:
 
-1. **`c-posix`**: Utilitários e sistemas Unix em C99 estrito, Makefile POSIX, manpage, linters clang-format e sanitizers.
+1. **`c-posix`**: Utilitários e sistemas Unix em C Moderno (C23 estrito com `-std=c23`), Makefile POSIX, manpage, linters clang-format e sanitizers.
 2. **`shell-posix`**: Automações, suítes de scripts ou dotfiles com baseline no `/bin/sh` do FreeBSD, testes e linters.
 3. **`cpp-modern`**: Bibliotecas ou softwares de alta performance em C++23, Google Test ou suites nativas, fast I/O e flags de stack.
 4. **`go-binary`**: Projetos em Go (single-binary, PocketBase, CGo ou APIs nativas) com testes e embedding estático.
@@ -84,7 +84,7 @@ CMD         = src/main.c
 VERSION    != cat VERSION 2> "/dev/null" || echo 0.1.0-dev
 
 CC         ?= cc
-CFLAGS     ?= -Wall -Wextra -Werror -pedantic -std=c99 -O2
+CFLAGS     ?= -Wall -Wextra -Werror -pedantic -std=c23 -O2
 
 .PHONY: all help dev build check format clean
 

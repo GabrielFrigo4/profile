@@ -27,12 +27,13 @@ No ecossistema do **Quarteto de Produtividade**, enquanto o repositório **Setup
 
 ---
 
-## 📚 Catálogo Canônico de Skills Portáteis (21 Runbooks)
+## 📚 Catálogo Canônico de Skills Portáteis (22 Runbooks)
 
-O ecossistema disponibiliza 21 habilidades cognitivas universais organizadas por domínio de especialidade:
+O ecossistema disponibiliza 22 habilidades cognitivas universais organizadas por domínio de especialidade:
 
 | Categoria                     | Skill                                                               | Descrição e Escopo de Ativação                                                                                                  | Gatilhos de Ativação / Cenários de Uso                                                                                            |
 | :---------------------------- | :------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------- |
+| **Engenharia de Testes**      | [`ironclad-testing`](./ironclad-testing/SKILL.md)                   | Engenharia de testes rigorosos, invariantes defensivas, mindset adversarial (Advogado do Diabo) e barreiras anti-regressão.     | Criação de testes unitários e de integração, testes negativos, barreiras pre-commit, sanitizers em C23/C++23 e suites POSIX sh.   |
 | **Arquitetura & Filosofia**   | [`unix-philosophy-auditor`](./unix-philosophy-auditor/SKILL.md)     | Auditoria e conformidade com os 17 Princípios UNIX de Eric S. Raymond + Soberania do Usuário.                                   | Criação de novas CLI, revisão de arquitetura, validação de regras de silêncio e transparência.                                    |
 | **Design & Documentação**     | [`readme-crafting`](./readme-crafting/SKILL.md)                     | Padrões para especificação, design, hierarquia visual e redação de READMEs (Simple Icons, Mermaid, tabelas).                    | Criação e refatoração de READMEs, modernização de badges vetoriais, documentações institucionais.                                 |
 | **Redação & Acessibilidade**  | [`markdown-crafting`](./markdown-crafting/SKILL.md)                 | Redação técnica em Markdown de alta legibilidade, caixas de código `sh` universais, otimização para Readers e Prettier.         | Documentações conceituais, manuais técnicos, guias de arquitetura, formatação de prosa e auditoria de legibilidade.               |

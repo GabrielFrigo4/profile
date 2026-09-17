@@ -99,8 +99,8 @@ Sempre utilize atribuições condicionais (`?=`) para permitir sobrescrita por v
 ```makefile
 CC ?= cc
 CXX ?= c++
-CFLAGS ?= -O2 -Wall -Wextra -pedantic
-CXXFLAGS ?= -O2 -Wall -Wextra -std=c++23
+CFLAGS ?= -O2 -Wall -Wextra -pedantic -std=c23
+CXXFLAGS ?= -O2 -Wall -Wextra -pedantic -std=c++23
 PREFIX ?= /usr/local
 BINDIR ?= $(PREFIX)/bin
 MANDIR ?= $(PREFIX)/share/man
