@@ -16,18 +16,38 @@
 
 ---
 
-### 🖥️ Ambientes & Editores Suportados
+### 🖥️ Ambientes & Sistemas Homologados
 
-![Linux](https://img.shields.io/badge/🐧_Linux-Supported-blue)
-![FreeBSD](https://img.shields.io/badge/😈_FreeBSD-Supported-red)
-![Windows](https://img.shields.io/badge/🪟_Windows-Supported-purple)
-![macOS](https://img.shields.io/badge/🍎_macOS-Supported-lightgrey)
+![Linux](https://img.shields.io/badge/Linux-Supported-blue?logo=linux&logoColor=white)
+![FreeBSD](https://img.shields.io/badge/FreeBSD-Supported-red?logo=freebsd&logoColor=white)
+![Windows](https://img.shields.io/badge/Windows-Supported-purple?logo=gitforwindows&logoColor=white)
+![macOS](https://img.shields.io/badge/macOS-Supported-black?logo=apple&logoColor=white)
 
-![Antigravity](https://img.shields.io/badge/✨_Antigravity-Ready-blue)
-![VS Code](https://img.shields.io/badge/💻_VS_Code-Ready-007ACC)
-![Zed](https://img.shields.io/badge/⚡_Zed-Ready-orange)
-![Emacs](https://img.shields.io/badge/🐂_Emacs-Lite-purple)
-![Vim](https://img.shields.io/badge/🟢_Vim-Lite-green)
+### 🎨 Editores, Terminais & IA
+
+![Google Gemini & Antigravity](https://img.shields.io/badge/Antigravity_%2F_Gemini-Ready-blue?logo=googlegemini&logoColor=white)
+![Visual Studio Code](https://img.shields.io/badge/VS_Code-Ready-007ACC?logo=visualstudiocode&logoColor=white)
+![Zed](https://img.shields.io/badge/Zed-Ready-orange?logo=zed&logoColor=white)
+![GNU Emacs](https://img.shields.io/badge/GNU_Emacs-Lite-purple?logo=gnuemacs&logoColor=white)
+![Vim](https://img.shields.io/badge/Vim-Lite-green?logo=vim&logoColor=white)
+
+```mermaid
+flowchart TD
+    subgraph HOME ["🏠 Espaço do Usuário ($HOME / ~/.config)"]
+        PR_REPO["🎨 Profile (~/.config/profile)"]
+        SYNC["⚡ scripts/sync/sync-dotfiles.sh"]
+    end
+
+    subgraph TARGETS ["🎯 Alvos Gerenciados"]
+        ED["💻 Editores (VSCode, Zed, Antigravity)"]
+        TR["📟 Terminais (Konsole, Windows Terminal, NuShell)"]
+        TL["🛠️ Linters (.clang-format, prettier, stylua)"]
+        SK["🧠 Portable AI Skills (20 Runbooks)"]
+    end
+
+    PR_REPO --> SYNC
+    SYNC -->|"Symlinks atômicos (ln -sf)"| TARGETS
+```
 
 ---
 
