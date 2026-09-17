@@ -21,6 +21,7 @@ Esta pasta centraliza os scripts de inspeção de código para manter o reposit�
 | [`monoliths.py`](monoliths.py) | Python 3  | Detecta scripts acima de 256 linhas (fatal) e entre 129-256 linhas (aviso)    |
 | [`nanos.py`](nanos.py)         | Python 3  | Detecta scripts abaixo de 8 linhas (fatal) e entre 8-16 linhas (aviso)        |
 | [`syntax.py`](syntax.py)       | Python 3  | Valida sintaxe POSIX (`sh -n`), shebangs, modo defensivo `set -eu` e `chmod`  |
+| [`banners.py`](banners.py)     | Python 3  | Valida geometria de réguas (32/64 cols), não-vazamento e suporte a `--fix`    |
 | [`links.py`](links.py)         | Python 3  | Valida integridade de 100% dos links relativos em arquivos Markdown (`.md`)   |
 | [`formats.py`](formats.py)     | Python 3  | Valida sintaxe de JSON, JSONC, YAML (multi-doc), PowerShell (`.ps1`) e `.reg` |
 
@@ -42,6 +43,7 @@ python3 audit/all.py
 python3 audit/monoliths.py
 python3 audit/nanos.py
 python3 audit/syntax.py
+python3 audit/banners.py
 python3 audit/links.py
 python3 audit/formats.py
 ```

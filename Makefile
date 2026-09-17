@@ -7,7 +7,7 @@ MAKEFLAGS += --no-print-directory -s
 # Makefile: Profile Dotfiles
 # ----------------------------------------------------------------
 
-.PHONY: help audit sync test ci
+.PHONY: help audit sync test fix-banners ci
 
 ### ================================
 ### HELP & DOCUMENTATION
@@ -40,6 +40,11 @@ test:
 	echo "🧪 Validando sintaxe POSIX dos scripts..."
 	find . -name "*.sh" -not -path "*/.git/*" -exec sh -n {} +
 	echo "✅ Todos os scripts do Profile são válidos!"
+
+fix-banners:
+	echo "📏 Normalizando réguas de banners de cabeçalho e seções..."
+	python3 audit/banners.py --fix
+	echo "✅ Réguas de banners normalizadas com sucesso!"
 
 ci: test audit
 	echo "🚀 Profile 100% aprovado no CI local!"
