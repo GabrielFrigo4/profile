@@ -96,5 +96,11 @@ _pwsh_dir="${HOME}/.config/powershell"
 _link "${_repo_root}/terminals/powershell/profile.ps1" "${_pwsh_dir}/profile.ps1"
 _link "${_repo_root}/terminals/powershell/Microsoft.PowerShell_profile.ps1" "${_pwsh_dir}/Microsoft.PowerShell_profile.ps1"
 
+### --------------------------------
+### AI Skills & Assistentes
+### --------------------------------
+echo "↳ 4. Skills portáteis de IA (Antigravity & Gemini)..."
+_link "${_repo_root}/skills" "${HOME}/.gemini/config/skills"
+
 echo "✅ [Profile] Todos os dotfiles sincronizados com sucesso!"
 exit 0
