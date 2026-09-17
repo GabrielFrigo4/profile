@@ -18,10 +18,15 @@
 
 ### 🖥️ Ambientes & Sistemas Homologados
 
-![Linux](https://img.shields.io/badge/Linux-Supported-blue?logo=linux&logoColor=white)
 ![FreeBSD](https://img.shields.io/badge/FreeBSD-Supported-red?logo=freebsd&logoColor=white)
-![Windows](https://img.shields.io/badge/Windows-Supported-purple?logo=gitforwindows&logoColor=white)
+![Linux](https://img.shields.io/badge/Linux-Supported-blue?logo=linux&logoColor=white)
 ![macOS](https://img.shields.io/badge/macOS-Supported-black?logo=apple&logoColor=white)
+![Windows](<https://img.shields.io/badge/Windows_(Native_%26_MSYS2)-Supported-purple?logo=gitforwindows&logoColor=white>)
+![OpenBSD](https://img.shields.io/badge/OpenBSD-Supported-yellow?logo=openbsd&logoColor=white)
+![NetBSD](https://img.shields.io/badge/NetBSD-Supported-orange?logo=netbsd&logoColor=white)
+![illumos](https://img.shields.io/badge/illumos-Supported-orange?logo=openzfs&logoColor=white)
+
+O **Universal Profile** opera com paridade multiplataforma absoluta em **FreeBSD**, **Linux**, **macOS**, **OpenBSD**, **NetBSD**, **illumos** e **Windows** (nativo via PowerShell e sob MSYS2 via POSIX). Todas as configurações e links simbólicos são orquestrados de forma declarativa e atômica (`ln -sf`) sem necessidade de privilégios de superusuário (`sudo`).
 
 ### 🎨 Editores, Terminais & IA
 
@@ -34,7 +39,7 @@
 ```mermaid
 flowchart TD
     subgraph HOME ["🏠 Espaço do Usuário ($HOME / ~/.config)"]
-        PR_REPO["🎨 Profile (~/.config/profile)"]
+        PR_REPO["🎨 Profile (~/.local/share/profile)"]
         SYNC["⚡ profile.sh sync"]
     end
 
@@ -42,7 +47,7 @@ flowchart TD
         ED["💻 Editores (VSCode, Zed, Antigravity)"]
         TR["📟 Terminais (Konsole, Windows Terminal, NuShell)"]
         TL["🛠️ Linters (.clang-format, prettier, stylua)"]
-        SK["🧠 Portable AI Skills (20 Runbooks)"]
+        SK["🧠 Portable AI Skills (26 Runbooks)"]
     end
 
     PR_REPO --> SYNC
@@ -55,10 +60,10 @@ flowchart TD
 
 Diferente do **Setup** (que exige `sudo`/`root` para instalar pacotes no sistema operacional) ou do **Vault** (que guarda segredos criptografados privados), o **Profile** é a sua **identidade de trabalho pública e residente no `$HOME`**:
 
-1. **Zero Privilégios Administrativos (Zero-Sudo):** Todos os arquivos e scripts operam estritamente no espaço do usuário comum (`$HOME` / `~/.config/`).
+1. **Zero Privilégios Administrativos (Zero-Sudo):** Todos os arquivos e scripts operam estritamente no espaço do usuário comum (`$HOME` / `~/.local/share/`).
 2. **Formatos Declarativos Puros:** Configurações escritas em formatos universais e legíveis (`.json`, `.toml`, `.yaml`, `.el`, `.vim`), fáceis de inspecionar, auditar e versionar.
 3. **Dual-Mode de Sincronização:**
-    - **Modo Residente (Recomendado):** Clone o repositório em `~/.config/profile` e execute `sh profile.sh sync` para criar links simbólicos atômicos (`ln -sf`). Qualquer `git pull` futuro atualiza seus editores instantaneamente!
+    - **Modo Residente (Recomendado):** Clone o repositório em `~/.local/share/profile` e execute `sh profile.sh sync` para criar links simbólicos atômicos (`ln -sf`). Qualquer `git pull` futuro atualiza seus editores instantaneamente!
     - **Modo Estático / RAW:** Copie arquivos avulsos diretamente pela interface do GitHub para máquinas temporárias.
 
 ---
@@ -78,18 +83,47 @@ Diferente do **Setup** (que exige `sudo`/`root` para instalar pacotes no sistema
 
 ## 🚀 Instalação & Sincronização Rápida
 
-### 🐧 Unix (Linux, FreeBSD, macOS)
+### 🗺️ Matriz de Caminhos de Instalação do Profile
+
+| Localização Canônica                   | Escopo / Privilégios           | Status & Recomendação  | Casos de Uso & Contexto                                                                             |
+| :------------------------------------- | :----------------------------- | :--------------------: | :-------------------------------------------------------------------------------------------------- |
+| **`~/.local/share/profile`**           | XDG Data (Rootless)            |   ⭐ **Recomendado**   | Padrão soberano moderno em Linux, FreeBSD, macOS e MSYS2 com isolamento limpo de dotfiles.          |
+| **`~/.config/profile`**                | XDG Config (Rootless)          | 🔵 **Alternativa XDG** | Instalações unificadas onde o profile reside diretamente dentro do diretório de configurações.      |
+| **`~/.profile.d` / `~/.profile-repo`** | Home Direta (Clássico UNIX)    | ⚪ **Fallback Legado** | Sistemas UNIX clássicos, ambientes mínimos sem suporte a XDG ou preferência por dotdirs no `$HOME`. |
+| **`/usr/local/share/profile`**         | Global / FHS (`root` / `sudo`) | ⚠️ **Não Recomendado** | Apenas para imagens base multiusuário imutáveis; desaconselhado por quebrar autonomia do usuário.   |
+
+---
+
+### 🐧 Unix & 🪟 MSYS2 (Modo Rootless — Recomendado)
+
+#### Opção A: XDG Data (Canônico Rootless — Recomendado)
+
+```sh
+git clone "https://github.com/GabrielFrigo4/profile" "${HOME}/.local/share/profile"
+sh "${HOME}/.local/share/profile/profile.sh" sync
+```
+
+#### Opção B: XDG Config (Ergonomia unificada sob ~/.config)
 
 ```sh
 git clone "https://github.com/GabrielFrigo4/profile" "${HOME}/.config/profile"
 sh "${HOME}/.config/profile/profile.sh" sync
 ```
 
-### 🪟 Windows (PowerShell)
+#### Opção C: Home Direta (Fallback Clássico UNIX / Ambientes Legados)
+
+```sh
+git clone "https://github.com/GabrielFrigo4/profile" "${HOME}/.profile-repo"
+sh "${HOME}/.profile-repo/profile.sh" sync
+```
+
+---
+
+### 🪟 Windows (Nativo via PowerShell)
 
 ```powershell
-git clone "https://github.com/GabrielFrigo4/profile" "$HOME\.config\profile"
-& "$HOME\.config\profile\install.ps1"
+git clone "https://github.com/GabrielFrigo4/profile" "$HOME\.local\share\profile"
+& "$HOME\.local\share\profile\install.ps1"
 ```
 
 ---
