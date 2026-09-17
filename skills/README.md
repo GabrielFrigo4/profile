@@ -27,12 +27,13 @@ No ecossistema do **Quarteto de Produtividade**, enquanto o repositório **Setup
 
 ---
 
-## 📚 Catálogo Canônico de Skills Portáteis (24 Runbooks)
+## 📚 Catálogo Canônico de Skills Portáteis (25 Runbooks)
 
-O ecossistema disponibiliza 24 habilidades cognitivas universais organizadas por domínio de especialidade:
+O ecossistema disponibiliza 25 habilidades cognitivas universais organizadas por domínio de especialidade:
 
 | Categoria                     | Skill                                                               | Descrição e Escopo de Ativação                                                                                                              | Gatilhos de Ativação / Cenários de Uso                                                                                               |
 | :---------------------------- | :------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------ | :----------------------------------------------------------------------------------------------------------------------------------- |
+| **GNU Emacs 30+ & Elisp**     | [`emacs-engineering`](./emacs-engineering/SKILL.md)                 | Engenharia em GNU Emacs 30+, Tree-sitter nativo (ABI ≥ 14), compilação nativa (libgccjit), Elpaca assíncrono e Eglot LSP.                   | Desenvolvimento e depuração de configurações Elisp, compilação de gramáticas Tree-sitter, testes batch e otimização de boot.         |
 | **C Moderno & POSIX**         | [`c-engineering`](./c-engineering/SKILL.md)                         | Engenharia em C Moderno (C23) e sistemas POSIX.1-2024 / FreeBSD / Linux, aritmética com `<stdckdint.h>`, `[[nodiscard]]`, sanitizers e I/O. | Desenvolvimento e refatoração em C23, daemons Unix, kqueue/poll, sockets, pthreads, manipulação defensiva de descritores de arquivo. |
 | **C++23 & RAII de Sistemas**  | [`cpp-engineering`](./cpp-engineering/SKILL.md)                     | Engenharia em C++23 Moderno, erros monádicos (`std::expected`), `std::print`, ranges, concepts e wrappers RAII de SO.                       | Desenvolvimento de sistemas de alta performance em C++23, abstrações RAII de descritores e memória, I/O tipado sem exceções.         |
 | **Engenharia de Testes**      | [`ironclad-testing`](./ironclad-testing/SKILL.md)                   | Engenharia de testes rigorosos, invariantes defensivas, mindset adversarial (Advogado do Diabo) e barreiras anti-regressão.                 | Criação de testes unitários e de integração, testes negativos, barreiras pre-commit, sanitizers em C23/C++23 e suites POSIX sh.      |
