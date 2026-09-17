@@ -27,9 +27,9 @@ No ecossistema do **Quarteto de Produtividade**, enquanto o repositório **Setup
 
 ---
 
-## 📚 Catálogo Canônico de Skills Portáteis (25 Runbooks)
+## 📚 Catálogo Canônico de Skills Portáteis (26 Runbooks)
 
-O ecossistema disponibiliza 25 habilidades cognitivas universais organizadas por domínio de especialidade:
+O ecossistema disponibiliza 26 habilidades cognitivas universais organizadas por domínio de especialidade:
 
 | Categoria                     | Skill                                                               | Descrição e Escopo de Ativação                                                                                                              | Gatilhos de Ativação / Cenários de Uso                                                                                               |
 | :---------------------------- | :------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------ | :----------------------------------------------------------------------------------------------------------------------------------- |
@@ -51,6 +51,7 @@ O ecossistema disponibiliza 25 habilidades cognitivas universais organizadas por
 | **Padrões de Shell**          | [`posix-shell-standards`](./posix-shell-standards/SKILL.md)         | Manual e validador de Shell POSIX estrito com baseline no FreeBSD `/bin/sh`, taxonomia de saída e permissões octais.                        | Escrita e revisão de scripts `.sh`, eliminação de bashismos, padronização de sequências ANSI e quoting.                              |
 | **Makefiles Universais**      | [`posix-makefile-architect`](./posix-makefile-architect/SKILL.md)   | Construção de Makefiles silenciosos e portáteis entre BSD Make (`bmake`) e GNU Make (`gmake`).                                              | Criação de Makefiles, migração para `.POSIX: .SILENT:`, suporte à exceção `$(MAKE) -C`, remoção de `@`.                              |
 | **Repositórios Multi-OS**     | [`system-crossplatforms`](./system-crossplatforms/SKILL.md)         | Guia para design e manutenção de repositórios multiplataforma (FreeBSD 14/15/16, Linux, macOS, OpenBSD, Windows e illumos).                 | Criação e teste de projetos multiplataforma, caminhos defensivos, compilação cruzada e paridade.                                     |
+| **Padrões XDG & FHS**         | [`xdg-fhs-standards`](./xdg-fhs-standards/SKILL.md)                 | Governança XDG Base Directory e FHS, resolução de caminhos (Data vs Config), segregação de privilégios e isolamento rootless.               | Definição e auditoria de caminhos de arquivos, segregação de segredos do usuário e resolução de runtimes de terminal.                |
 | **Cloud no FreeBSD**          | [`freebsd-cloud`](./freebsd-cloud/SKILL.md)                         | Arquitetura e operação em nuvem FreeBSD moderna (Jails, Bastille, Sylve, Podman nativo com runj, imagens OCI, bhyve e ZFS).                 | Desenvolvimento de serviços para FreeBSD, conteinerização OCI com Podman, Jails VNET e ZFS storage.                                  |
 | **Cloud no Linux**            | [`linux-cloud`](./linux-cloud/SKILL.md)                             | Arquitetura e microsserviços em nuvem Linux moderna (Proxmox VE, Podman rootless/Quadlet, Incus/LXC, systemd-nspawn, eBPF).                 | Implantação de microsserviços, containers rootless, Proxmox VE, servidores e infraestrutura Linux.                                   |
 | **Cloud no illumos**          | [`illumos-cloud`](./illumos-cloud/SKILL.md)                         | Arquitetura de infraestrutura corporativa illumos (SmartOS, OmniOS, Oxide, Zones nativas/lx-brand, Crossbow, ZFS e DTrace).                 | Projetos de alta densidade, virtualização de rede com Crossbow, auditoria com DTrace e SMF.                                          |
