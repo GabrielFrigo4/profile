@@ -46,14 +46,89 @@ _profile_help() {
 	EOF
 }
 
+_profile_link() {
+	_src="$1"
+	_dst="$2"
+	_dry_run="${3:-0}"
+	_backup="${4:-0}"
+	_timestamp="${5:-}"
+
+	[ ! -e "${_src}" ] && return 0
+
+	if [ "${_dry_run}" -eq 1 ]; then
+		echo "  [DRY-RUN] ${_dst} -> ${_src}"
+		return 0
+	fi
+
+	_dst_dir="$(dirname "${_dst}")"
+	[ ! -d "${_dst_dir}" ] && mkdir -p "${_dst_dir}"
+
+	if [ -e "${_dst}" ] || [ -L "${_dst}" ]; then
+		if [ "${_backup}" -eq 1 ] && [ ! -L "${_dst}" ]; then
+			mv "${_dst}" "${_dst}.bak.${_timestamp}"
+			echo "  [BACKUP] ${_dst}.bak.${_timestamp}"
+		else
+			rm -rf "${_dst}"
+		fi
+	fi
+
+	ln -sf "${_src}" "${_dst}"
+	echo "  [LINK] ${_dst}"
+}
+
 _profile_sync() {
-	echo "🎨 [Profile] Sincronizando ecossistema declarativo a partir de: ${_PROFILE_ROOT}"
-	if [ -f "${_PROFILE_ROOT}/scripts/sync/sync-dotfiles.sh" ]; then
-		sh "${_PROFILE_ROOT}/scripts/sync/sync-dotfiles.sh" "$@"
+	_dry_run=0
+	_backup=0
+	_timestamp="$(date +%Y%m%d%H%M%S)"
+	_os_type="$(uname -s)"
+
+	for _arg in "$@"; do
+		case "${_arg}" in
+			--dry-run) _dry_run=1 ;;
+			--backup) _backup=1 ;;
+		esac
+	done
+
+	echo "🎨 [Profile] Sincronizando ecossistema declarativo (${_os_type}) a partir de: ${_PROFILE_ROOT}"
+	[ "${_dry_run}" -eq 1 ] && echo "  ⚠️  Modo DRY-RUN ativado (nenhum arquivo será modificado)."
+
+	echo "↳ 1. Formatadores globais e linters..."
+	_profile_link "${_PROFILE_ROOT}/tools/.clang-format" "${HOME}/.clang-format" "${_dry_run}" "${_backup}" "${_timestamp}"
+	_profile_link "${_PROFILE_ROOT}/tools/.prettierrc" "${HOME}/.prettierrc" "${_dry_run}" "${_backup}" "${_timestamp}"
+	_profile_link "${_PROFILE_ROOT}/tools/.stylua.toml" "${HOME}/.stylua.toml" "${_dry_run}" "${_backup}" "${_timestamp}"
+	_profile_link "${_PROFILE_ROOT}/tools/.editorconfig" "${HOME}/.editorconfig" "${_dry_run}" "${_backup}" "${_timestamp}"
+	_profile_link "${_PROFILE_ROOT}/tools/clangd.yaml" "${HOME}/.config/clangd/config.yaml" "${_dry_run}" "${_backup}" "${_timestamp}"
+
+	echo "↳ 2. Editores modernos (Zed, VSCode, Antigravity)..."
+	_profile_link "${_PROFILE_ROOT}/editors/zed/settings.json" "${HOME}/.config/zed/settings.json" "${_dry_run}" "${_backup}" "${_timestamp}"
+	if [ "${_os_type}" = "Darwin" ]; then
+		_app="${HOME}/Library/Application Support"
+		_profile_link "${_PROFILE_ROOT}/editors/vscode/settings.json" "${_app}/Code/User/settings.json" "${_dry_run}" "${_backup}" "${_timestamp}"
+		_profile_link "${_PROFILE_ROOT}/editors/antigravity/settings.json" "${_app}/Antigravity/User/settings.json" "${_dry_run}" "${_backup}" "${_timestamp}"
+	else
+		_profile_link "${_PROFILE_ROOT}/editors/vscode/settings.json" "${HOME}/.config/Code/User/settings.json" "${_dry_run}" "${_backup}" "${_timestamp}"
+		_profile_link "${_PROFILE_ROOT}/editors/vscode/settings.json" "${HOME}/.config/vscode-oss/User/settings.json" "${_dry_run}" "${_backup}" "${_timestamp}"
+		_profile_link "${_PROFILE_ROOT}/editors/antigravity/settings.json" "${HOME}/.config/Antigravity/User/settings.json" "${_dry_run}" "${_backup}" "${_timestamp}"
 	fi
-	if [ -f "${_PROFILE_ROOT}/scripts/sync/sync-skills.sh" ]; then
-		sh "${_PROFILE_ROOT}/scripts/sync/sync-skills.sh"
-	fi
+
+	echo "↳ 3. Emuladores de terminal e shells alternativos..."
+	_konsole_dir="${HOME}/.local/share/konsole"
+	_profile_link "${_PROFILE_ROOT}/terminals/konsole/Bash.profile" "${_konsole_dir}/Bash.profile" "${_dry_run}" "${_backup}" "${_timestamp}"
+	_profile_link "${_PROFILE_ROOT}/terminals/konsole/Shell.profile" "${_konsole_dir}/Shell.profile" "${_dry_run}" "${_backup}" "${_timestamp}"
+	_profile_link "${_PROFILE_ROOT}/terminals/konsole/Zsh.profile" "${_konsole_dir}/Zsh.profile" "${_dry_run}" "${_backup}" "${_timestamp}"
+
+	_nu_dir="${HOME}/.config/nushell"
+	_profile_link "${_PROFILE_ROOT}/terminals/nushell/config.nu" "${_nu_dir}/config.nu" "${_dry_run}" "${_backup}" "${_timestamp}"
+	_profile_link "${_PROFILE_ROOT}/terminals/nushell/env.nu" "${_nu_dir}/env.nu" "${_dry_run}" "${_backup}" "${_timestamp}"
+	_profile_link "${_PROFILE_ROOT}/terminals/nushell/nushell.nu" "${_nu_dir}/nushell.nu" "${_dry_run}" "${_backup}" "${_timestamp}"
+
+	_pwsh_dir="${HOME}/.config/powershell"
+	_profile_link "${_PROFILE_ROOT}/terminals/powershell/profile.ps1" "${_pwsh_dir}/profile.ps1" "${_dry_run}" "${_backup}" "${_timestamp}"
+	_profile_link "${_PROFILE_ROOT}/terminals/powershell/Microsoft.PowerShell_profile.ps1" "${_pwsh_dir}/Microsoft.PowerShell_profile.ps1" "${_dry_run}" "${_backup}" "${_timestamp}"
+
+	echo "↳ 4. Skills portáteis de IA (Antigravity & Gemini)..."
+	_profile_link "${_PROFILE_ROOT}/skills" "${HOME}/.gemini/config/skills" "${_dry_run}" "${_backup}" "${_timestamp}"
+
 	echo "✅ [Profile] Sincronização concluída com sucesso!"
 }
 
@@ -95,8 +170,8 @@ _profile_test() {
 
 _profile_audit() {
 	echo "🔍 [Profile] Executando auditoria estática..."
-	if command -v python3 > "/dev/null" 2>&1 && [ -f "${_PROFILE_ROOT}/scripts/audit/all.py" ]; then
-		python3 "${_PROFILE_ROOT}/scripts/audit/all.py"
+	if command -v python3 > "/dev/null" 2>&1 && [ -f "${_PROFILE_ROOT}/audit/all.py" ]; then
+		python3 "${_PROFILE_ROOT}/audit/all.py"
 	else
 		echo "ℹ️  Python3 ou script all.py ausente; executando apenas teste sintático."
 		_profile_test

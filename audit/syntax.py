@@ -50,7 +50,7 @@ def check_script(full_path, repo_root):
 
 def main():
     repo_root = os.path.abspath(os.path.join(
-        os.path.dirname(__file__), "../.."))
+        os.path.dirname(__file__), ".."))
     sh_files = []
 
     for root, dirs, files in os.walk(repo_root):

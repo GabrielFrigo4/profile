@@ -55,15 +55,15 @@ skills/<nome-da-skill>/
 > Sempre que uma validação for repetitiva, complexa ou exigir chamadas de rede/parsing estruturado (como inspecionar links, auditar sintaxe ou processar JSON), **forneça um script executável dentro da própria skill** (ex: `scripts/verify_links.py`). O agente de IA pode invocar o script diretamente via terminal.
 
 > [!CAUTION]
-> **Regra da Soberania & Isolamento: Git Hooks NUNCA Consomem Scripts de Skills!**
-> É **estritamente proibido** fazer com que scripts de `.githooks/` (como `pre-commit` ou `commit-msg`) chamem utilitários contidos dentro de pastas de skills (seja em `~/.gemini/config/skills/` ou `.agents/skills/`).
+> **Regra da Soberania & Hermetismo de Produção: Código de Produção NUNCA Consome Skills!**
+> É **estritamente proibido** fazer com que scripts de produção, Makefiles, carregadores de shell (`*.sh`, `*.rc`), aliases, dotfiles ou scripts de `.githooks/` chamem ou dependam de utilitários e arquivos contidos dentro de pastas de skills (seja em `~/.gemini/config/skills/` ou `.agents/skills/`).
 >
 > **Por que isso é um erro arquitetural grave?**
 >
-> 1. **Quebra da Hermeticidade do Repositório:** O repositório Git deve ser 100% autônomo e autossuficiente. Se outro desenvolvedor clonar o repositório ou se ele rodar em uma pipeline limpa de CI/CD (GitHub Actions, GitLab CI, servidor bare-metal), os githooks quebrarão se dependerem de uma IA ou pasta externa.
-> 2. **Separação Rígida de Papéis:**
->     - **`.githooks/`:** Quality gates obrigatórios, rápidos, determinísticos e autônomos locais do repositório (usando lógica shell POSIX própria ou scripts em `scripts/` do próprio repositório).
->     - **Scripts de Skills:** Ferramentas sob demanda para o **Agente de IA e operadores humanos**, com foco em automação cognitiva e auditorias profundas.
+> 1. **Invariante do Teste de Fogo (`rm -rf .agents`):** O repositório Git DEVE ser 100% autônomo e autossuficiente. Se outro desenvolvedor clonar o repositório, executar `rm -rf .agents` ou rodar em uma pipeline limpa de CI/CD (GitHub Actions, bare-metal), nenhum script ou build pode quebrar por ausência de arquivos de IA.
+> 2. **Separação Ontológica Rígida:**
+>     - **Código de Produção & `.githooks/`:** Quality gates e rotinas determinísticas e autônomas do próprio repositório, sem acoplamento a IA.
+>     - **Scripts de Skills:** Ferramentas e runbooks estritamente cognitivos sob demanda para a **mente do Agente de IA e operadores humanos**.
 
 ---
 
@@ -189,8 +189,8 @@ Ao incluir trechos de código executável em qualquer skill:
         ```sh
         npx prettier --write skills/
         ```
-5. **Sincronização com o Runtime Global:** Execute o script canônico:
+5. **Sincronização com o Runtime Global:** Execute o comando canônico:
     ```sh
-    /home/gabrielfrigo/Documentos/Environment/Profile/scripts/sync/sync-skills.sh
+    profile.sh sync
     ```
 6. **Auditoria Git:** Valide com o hook de pre-commit (`.githooks/pre-commit`) e submeta as alterações via `git commit` e `git push`.

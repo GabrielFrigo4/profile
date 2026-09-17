@@ -57,7 +57,7 @@ def check_markdown_links(repo_root):
 
 def main():
     repo_root = os.path.abspath(os.path.join(
-        os.path.dirname(__file__), "../.."))
+        os.path.dirname(__file__), ".."))
     md_files, total_links, broken = check_markdown_links(repo_root)
 
     print("=" * 80)

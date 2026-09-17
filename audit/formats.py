@@ -72,7 +72,7 @@ def strip_jsonc(text):
 
 def main():
     repo_root = os.path.abspath(os.path.join(
-        os.path.dirname(__file__), "../.."))
+        os.path.dirname(__file__), ".."))
     errors = []
     scanned = 0
     for root, dirs, files in os.walk(repo_root):

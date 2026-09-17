@@ -35,7 +35,7 @@
 flowchart TD
     subgraph HOME ["🏠 Espaço do Usuário ($HOME / ~/.config)"]
         PR_REPO["🎨 Profile (~/.config/profile)"]
-        SYNC["⚡ scripts/sync/sync-dotfiles.sh"]
+        SYNC["⚡ profile.sh sync"]
     end
 
     subgraph TARGETS ["🎯 Alvos Gerenciados"]
@@ -58,7 +58,7 @@ Diferente do **Setup** (que exige `sudo`/`root` para instalar pacotes no sistema
 1. **Zero Privilégios Administrativos (Zero-Sudo):** Todos os arquivos e scripts operam estritamente no espaço do usuário comum (`$HOME` / `~/.config/`).
 2. **Formatos Declarativos Puros:** Configurações escritas em formatos universais e legíveis (`.json`, `.toml`, `.yaml`, `.el`, `.vim`), fáceis de inspecionar, auditar e versionar.
 3. **Dual-Mode de Sincronização:**
-    - **Modo Residente (Recomendado):** Clone o repositório em `~/.config/profile` e execute `./scripts/sync/sync-dotfiles.sh` para criar links simbólicos atômicos (`ln -sf`). Qualquer `git pull` futuro atualiza seus editores instantaneamente!
+    - **Modo Residente (Recomendado):** Clone o repositório em `~/.config/profile` e execute `sh profile.sh sync` para criar links simbólicos atômicos (`ln -sf`). Qualquer `git pull` futuro atualiza seus editores instantaneamente!
     - **Modo Estático / RAW:** Copie arquivos avulsos diretamente pela interface do GitHub para máquinas temporárias.
 
 ---
@@ -71,7 +71,7 @@ Diferente do **Setup** (que exige `sudo`/`root` para instalar pacotes no sistema
 - **[`tools/`](tools/README.md)** — **Formatadores & Linters Globais:** `.clang-format`, `.prettierrc`, `.stylua.toml`, `clangd.yaml`.
 - **[`browsers/`](browsers/README.md)** — **Navegadores:** Ajustes e perfis de navegadores (Firefox).
 - **[`skills/`](skills/README.md)** — **Habilidades & Runbooks Portáteis para IA:** Catálogo de skills cognitivas para Google Antigravity/Gemini com ativação contínua via link de diretório unificado.
-- **[`scripts/`](scripts/README.md)** — Utilitários de sincronização (`sync/`) e validação estática (`audit/`).
+- **[`audit/`](audit/README.md)** — Suíte de validação estática de integridade, formatos e links.
 - **[`docs/`](docs/README.md)** — Documentação técnica completa da estação de trabalho e arquitetura.
 
 ---
@@ -106,7 +106,7 @@ git config core.hooksPath .githooks
 Para executar a validação estática de formatos e links manualmente:
 
 ```sh
-python3 scripts/audit/all.py
+python3 audit/all.py
 ```
 
 ---

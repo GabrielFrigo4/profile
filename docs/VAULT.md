@@ -40,13 +40,13 @@ O Vault organiza os dados sensíveis em domínios claros:
 
 O Vault provê carregadores nativos para todos os ambientes do ecossistema:
 
-| Arquivo                  | Interpretador / Ambiente                  |
-| :----------------------- | :---------------------------------------- |
-| **`vault.sh`**           | POSIX `/bin/sh`, Bash, Zsh                |
-| **`vault.ps1`**          | PowerShell Core e Windows PowerShell      |
-| **`vault.cmd`**          | Prompt de Comando (CMD Batch)             |
-| **`vault.nu`**           | NuShell                                   |
-| **`script/regedit.ps1`** | Injeção permanente no Registro do Windows |
+| Arquivo                   | Interpretador / Ambiente                  |
+| :------------------------ | :---------------------------------------- |
+| **`vault.sh`**            | POSIX `/bin/sh`, Bash, Zsh                |
+| **`vault.ps1`**           | PowerShell Core e Windows PowerShell      |
+| **`vault.cmd`**           | Prompt de Comando (CMD Batch)             |
+| **`vault.nu`**            | NuShell                                   |
+| **`vault.ps1 -Register`** | Injeção permanente no Registro do Windows |
 
 ---
 

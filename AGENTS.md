@@ -22,7 +22,8 @@ O **Profile** é a **identidade de trabalho** do desenvolvedor. Opera estritamen
 3. **Conformidade XDG:** Todos os destinos seguem `~/.config/<ferramenta>/`.
 4. **Skills de IA:** Frontmatter YAML (`name`, `description`) + `SKILL.md` orientado a ação.
 5. **Zero comentários narrativos:** Separação por linhas em branco, nomenclatura semântica.
-6. **Limites de script:** Piso de 8, teto de 128 linhas úteis.
+6. **Orçamento de linhas:** Piso < 8 proibido, aviso <= 16, sweet spot 17-128, aviso 129-255, teto > 256 proibido (salvo Whitelist).
+7. **Hermetismo de Produção & Invariante `rm -rf .agents`:** Repositório 100% autônomo. Zero acoplamento de código de produção, dotfiles ou loaders a `.agents/` ou `skills/` (o Profile funciona plenamente se `.agents/` for deletado).
 
 ---
 

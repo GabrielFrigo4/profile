@@ -12,7 +12,7 @@ O repositório **[Profile](https://github.com/GabrielFrigo4/profile)** é o sant
 
 1. **[`editors/`](../editors/README.md), [`terminals/`](../terminals/README.md), [`tools/`](../tools/README.md):** Arquivos declarativos puros (`settings.json`, `.clang-format`, `.stylua.toml`, `config.nu`).
 2. **[`skills/`](../skills/README.md):** Runbooks e habilidades portáteis de IA (`SKILL.md` com YAML Frontmatter) para assistentes autônomos.
-3. **[`scripts/sync/`](../scripts/README.md):** Automações defensivas para criar links simbólicos atômicos (`ln -sf`).
+3. **[`profile.sh`](../profile.sh):** Interface unificada de componente para sincronização atômica (`profile.sh sync`), testes e auditoria.
 
 ---
 
@@ -25,9 +25,8 @@ Para manter seus editores e formatadores sempre atualizados:
 git clone "https://github.com/GabrielFrigo4/profile" "${HOME}/.config/profile"
 cd "${HOME}/.config/profile"
 
-# Execute a sincronização via symlinks
-./scripts/sync/sync-dotfiles.sh
-./scripts/sync/sync-skills.sh
+# Execute a sincronização unificada
+sh profile.sh sync
 ```
 
 Qualquer alteração futura no repositório através de `git pull` refletirá imediatamente em todos os seus aplicativos sem necessidade de reconfiguração manual.

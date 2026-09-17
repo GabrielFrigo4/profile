@@ -31,13 +31,10 @@ help:
 ### ================================
 audit:
 	echo "🔍 Executando suíte de auditoria do Profile..."
-	python3 scripts/audit/all.py
+	python3 audit/all.py
 
 sync:
-	echo "🎨 Sincronizando dotfiles e editores..."
-	sh scripts/sync/sync-dotfiles.sh
-	echo "🧠 Sincronizando skills de IA..."
-	sh scripts/sync/sync-skills.sh
+	sh profile.sh sync
 
 test:
 	echo "🧪 Validando sintaxe POSIX dos scripts..."
