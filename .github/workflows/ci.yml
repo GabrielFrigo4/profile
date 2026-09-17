@@ -33,8 +33,8 @@ jobs:
 
             - name: Run Profile Audit Suite
               run: |
-                  python3 scripts/audit/all.py
+                  python3 audit/all.py
 
             - name: Validate Shell Script Syntax
               run: |
-                  find scripts -name "*.sh" -exec sh -n {} +
+                  find . -name "*.sh" -not -path "./.git/*" -exec sh -n {} +
