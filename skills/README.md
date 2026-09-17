@@ -119,7 +119,7 @@ flowchart TD
         EXEC["⚡ Executa os passos / scripts descritos"]
     end
 
-    subgraph REPO ["⚙️ Repositório Configuration"]
+    subgraph REPO ["⚙️ Repositório Profile"]
         SKILLS_DIR["🧠 skills/<skill_name>/"]
         SKILL_MD["📄 SKILL.md"]
         SCRIPTS["🛠️ scripts/ & references/"]
@@ -185,28 +185,36 @@ As skills deste repositório podem ser consumidas tanto pontualmente quanto vinc
 
 Se você clonou este repositório no seu computador, crie **links simbólicos** (`ln -sf`). A grande vantagem é que qualquer melhoria que você fizer ou baixar via `git pull` estará **instantaneamente atualizada** para seus agentes:
 
-```sh
-# 🏠 Instalação Global (Disponível em qualquer workspace):
-mkdir -p "${HOME}/.gemini/config/skills"
-ln -sf /caminho/para/Configuration/skills/* "${HOME}/.gemini/config/skills/"
+Instalação global (disponível em qualquer workspace):
 
-# 📂 Instalação em um Projeto Específico:
+```sh
+mkdir -p "${HOME}/.gemini/config/skills"
+ln -sf "${HOME}/.local/share/profile/skills"/* "${HOME}/.gemini/config/skills/"
+```
+
+Instalação em um projeto específico:
+
+```sh
 mkdir -p .agents/skills
-ln -sf /caminho/para/Configuration/skills/minha-skill .agents/skills/minha-skill
+ln -sf "${HOME}/.local/share/profile/skills/minha-skill" .agents/skills/minha-skill
 ```
 
 ### 2. Instalação Estática (Cópia Isolada ou Zero-Clone / RAW)
 
 Se você prefere cópias congeladas (isoladas de futuras alterações) ou está em uma máquina onde não clonou o repositório completo:
 
-```sh
-# Cópia estática local:
-mkdir -p "${HOME}/.gemini/config/skills"
-cp -r /caminho/para/Configuration/skills/* "${HOME}/.gemini/config/skills/"
+Cópia estática local:
 
-# Ou cópia para projeto local compartilhável no Git:
+```sh
+mkdir -p "${HOME}/.gemini/config/skills"
+cp -r "${HOME}/.local/share/profile/skills"/* "${HOME}/.gemini/config/skills/"
+```
+
+Cópia para projeto local compartilhável no Git:
+
+```sh
 mkdir -p .agents/skills
-cp -r /caminho/para/Configuration/skills/minha-skill .agents/skills/
+cp -r "${HOME}/.local/share/profile/skills/minha-skill" .agents/skills/
 ```
 
 ### 3. Em Outros Ecossistemas (OpenAI / Claude / Copilot)

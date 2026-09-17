@@ -35,6 +35,29 @@ Inspirado na filosofia UNIX onde o escopo mais local e específico sempre sobrep
 2. **Global do Usuário (`~/.gemini/config/skills/` via `Profile/skills/`):** Habilidades perenes de engenharia, sistemas operacionais, padrões de linguagem e ferramentas de terminal, disponíveis para o agente em qualquer workspace do usuário.
 3. **Built-in da IDE (`builtin/skills`):** Habilidades fundamentais fornecidas pelo ecossistema Antigravity, atuando como base e fallback de último nível.
 
+### 🌐 Skills Globais vs. 🎯 Skills Locais: Dualidade Arquitetural
+
+O ecossistema estabelece uma distinção rigorosa entre habilidades portáteis de engenharia e runbooks de repositório:
+
+| Dimensão                 | Skills Globais (`Profile/skills/`)                      | Skills Locais (`<repo>/.agents/skills/`)          |
+| :----------------------- | :------------------------------------------------------ | :------------------------------------------------ |
+| **Localização Canônica** | `Profile/skills/` -> `~/.gemini/config/skills/`         | `<repo>/.agents/skills/`                          |
+| **Escopo de Atuação**    | Universal para toda a estação de trabalho               | Restrito ao workspace do repositório              |
+| **Conteúdo Principal**   | Padrões de engenharia (POSIX, C23, Go, XDG, Clean Code) | Orquestração local, Makefiles, regras do projeto  |
+| **Acoplamento**          | Zero acoplamento a caminhos ou repositórios privados    | Acoplamento aceitável aos scripts e alvos do repo |
+| **Precedência**          | Fallback geral de usuário                               | Prioridade máxima sobre skills globais            |
+
+#### 1. Diretrizes para Skills Globais (`Profile/skills/`)
+
+- **Universalidade Estrita:** Devem ser concebidas para funcionar em qualquer base de código ou projeto em que o usuário trabalhar.
+- **Agnósticas de Implementação:** Proibido codificar caminhos absolutos, variáveis de ambiente ou ferramentas exclusivas de um único repositório privado.
+- **Estudos de Caso Ilustrativos:** Se for necessário exemplificar como uma regra teórica funciona na prática (como o Quarteto de Produtividade em `xdg-fhs-standards`), faça-o estritamente como caso de estudo ilustrativo, mantendo a regra central abstrata e aplicável universalmente.
+
+#### 2. Diretrizes para Skills Locais (`<repo>/.agents/skills/`)
+
+- **Especialização do Projeto:** Devem codificar regras operacionais, flags de Makefile, alvos de compilação, scripts de teste e particularidades do fluxo daquele repositório.
+- **Não Redundância:** Não devem duplicar manuais gerais de linguagem ou boas práticas universais já cobertos pelas skills globais.
+
 ---
 
 ## 🗂️ Estrutura Modular de uma Skill (Além do `SKILL.md`)
@@ -43,12 +66,18 @@ Uma Portable AI Skill no padrão canônico **não se limita a um único arquivo 
 
 ```text
 skills/<nome-da-skill>/
-├── SKILL.md            # [Obrigatório] Runbook principal com frontmatter YAML e instruções
-├── scripts/            # [Opcional] Utilitários executáveis (Python, Shell POSIX) invocados pela IA
-├── references/         # [Opcional] Manuais, especificações, tabelas de decisão e notas densas
-├── examples/           # [Opcional] Implementações de referência, snippets e arquivos modelo
-└── resources/          # [Opcional] Templates estáticos, esquemas JSON/YAML ou dados canônicos
+├── SKILL.md
+├── scripts/
+├── references/
+├── examples/
+└── resources/
 ```
+
+- `SKILL.md`: Runbook principal obrigatório com frontmatter YAML e instruções operacionais.
+- `scripts/`: Utilitários executáveis opcionais (Python, Shell POSIX) invocados sob demanda pelo agente.
+- `references/`: Manuais, especificações, tabelas de decisão e notas densas complementares.
+- `examples/`: Implementações de referência, snippets e arquivos modelo.
+- `resources/`: Templates estáticos, esquemas JSON/YAML ou dados canônicos.
 
 > [!TIP]
 > **Utilitários Executáveis em `scripts/`:**
@@ -138,12 +167,16 @@ Esta skill fornece um utilitário oficial multithreaded para auditar links em ma
 
 ### Como Executar:
 
-```sh
-# 1. Verificar todas as skills do ecossistema:
-python3 /home/gabrielfrigo/Documentos/Environment/Profile/skills/skill-authoring-standards/scripts/verify_links.py
+Para verificar todas as skills do catálogo:
 
-# 2. Verificar uma skill específica ou arquivo isolado:
-python3 /home/gabrielfrigo/Documentos/Environment/Profile/skills/skill-authoring-standards/scripts/verify_links.py skills/nome-da-skill/SKILL.md
+```sh
+python3 "${PROFILE_DIR:-${HOME}/.local/share/profile}/skills/skill-authoring-standards/scripts/verify_links.py"
+```
+
+Para verificar uma skill específica ou arquivo isolado:
+
+```sh
+python3 "${PROFILE_DIR:-${HOME}/.local/share/profile}/skills/skill-authoring-standards/scripts/verify_links.py" skills/<nome-da-skill>/SKILL.md
 ```
 
 - Testa status HTTP (200 OK, redirecionamentos, proteções WAF/anti-bot).
@@ -183,7 +216,7 @@ Ao incluir trechos de código executável em qualquer skill:
 4. **Validação de Links e Formatação:**
     - Execute o verificador de links integrado:
         ```sh
-        python3 /home/gabrielfrigo/Documentos/Environment/Profile/skills/skill-authoring-standards/scripts/verify_links.py skills/<nome-da-skill>/SKILL.md
+        python3 "${PROFILE_DIR:-${HOME}/.local/share/profile}/skills/skill-authoring-standards/scripts/verify_links.py" skills/<nome-da-skill>/SKILL.md
         ```
     - Execute a formatação canônica com Prettier em todo o diretório `skills/`:
         ```sh

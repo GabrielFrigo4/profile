@@ -5,86 +5,105 @@ description: Runbook cognitivo para governança, mapeamento e conformidade estri
 
 # 🏛️ XDG Base Directory Specification & FHS Standards
 
-Este runbook define as diretrizes arquiteturais para localização de arquivos, segregação de privilégios e hierarquia de resolução de caminhos no ecossistema soberano, harmonizando a especificação **XDG Base Directory** com o **Filesystem Hierarchy Standard (FHS)** do UNIX.
+Este runbook define as diretrizes arquiteturais universais para localização de arquivos, segregação de privilégios e hierarquia de resolução de caminhos em software, CLIs, daemons e dotfiles em ambientes UNIX/POSIX (Linux, FreeBSD, OpenBSD, macOS).
 
 ---
 
 ## 🧭 Princípios Fundamentais de Segregação
 
-O ecossistema opera sob uma distinção rigorosa entre dois mundos:
+O desenvolvimento de software em ambientes UNIX opera sob uma distinção rigorosa entre dois espaços:
 
 1. **Espaço do Sistema (FHS — Global / Privilegiado):**
-    - Diretórios compartilhados entre usuários ou essenciais para a operação do host (`/usr/local/share`, `/etc`).
-    - Requer privilégios administrativos (`root` / `sudo` / `doas`) para escrita.
-    - **Somente código executável ou dados públicos** podem residir aqui (ex: **Universal Shell** para o par `root` + admin).
-    - **PROIBIDO PARA SEGREDOS:** Credenciais, chaves privadas ou tokens NUNCA devem ser armazenados em caminhos de sistema.
+    - Diretórios administrados pelo host ou compartilhados entre todos os usuários (`/usr/local/share`, `/usr/local/bin`, `/etc`).
+    - Escrita requer privilégios administrativos (`root` / `sudo` / `doas`).
+    - Destinado a binários compilados globais, bibliotecas compartilhadas e templates base da máquina.
+    - **Proibido para Segredos:** Chaves privadas, tokens ou dados sensíveis de usuários NUNCA devem residir no espaço do sistema.
 
 2. **Espaço do Usuário (XDG Base Directory — Rootless / Soberano):**
-    - Diretórios privativos do usuário dentro de `$HOME` sem necessidade de `sudo`.
-    - Isolamento natural com permissões estritas (`0755` para dotfiles, `0700` para segredos).
-    - Onde residem **Profile**, **Vault** e a **Suíte de Editores**.
+    - Diretórios privativos do usuário sob `$HOME` gerenciados sem privilégios de superusuário.
+    - Isolamento de permissões (`0755` para executáveis e dotfiles, `0700` para credenciais e segredos).
+    - Permite operação soberana, portabilidade entre máquinas e isolamento multi-tenant.
 
 ---
 
-## 🗺️ Matriz de Mapeamento XDG vs. FHS
+## 🗺️ Matriz Canônica XDG vs. FHS
 
 ```mermaid
 flowchart TD
     subgraph FHS ["🏛️ FHS (Sistema / Global)"]
         F_SHARE["/usr/local/share/<app><br/>(Assets e Runtimes Compartilhados)"]
         F_BIN["/usr/local/bin<br/>(Binários Globais do Host)"]
-        F_ETC["/etc<br/>(Configurações Globais da Máquina)"]
+        F_ETC["/etc/<app><br/>(Configurações Globais da Máquina)"]
     end
 
     subgraph XDG ["👤 XDG Base Directory (Espaço do Usuário)"]
-        X_DATA["$XDG_DATA_HOME (~/.local/share)<br/>(Motores, Runtimes, Plugins, Dados)"]
-        X_CONFIG["$XDG_CONFIG_HOME (~/.config)<br/>(Dotfiles, Preferências, Configurações)"]
-        X_STATE["$XDG_STATE_HOME (~/.local/state)<br/>(Histórico, Logs de Sessão, Undo)"]
-        X_CACHE["$XDG_CACHE_HOME (~/.cache)<br/>(Arquivos Voláteis e Temporários)"]
+        X_DATA["$XDG_DATA_HOME (~/.local/share/<app>)<br/>(Motores, Runtimes, Plugins, Assets)"]
+        X_CONFIG["$XDG_CONFIG_HOME (~/.config/<app>)<br/>(Preferências, Configurações, Dotfiles)"]
+        X_STATE["$XDG_STATE_HOME (~/.local/state/<app>)<br/>(Histórico, Logs de Sessão, Undo)"]
+        X_CACHE["$XDG_CACHE_HOME (~/.cache/<app>)<br/>(Arquivos Voláteis e Temporários)"]
     end
 
     F_SHARE -.->|Equivalente Rootless| X_DATA
     F_ETC -.->|Equivalente de Usuário| X_CONFIG
 ```
 
-| Variável de Ambiente   | Valor Padrão (Fallback) | Papel Arquitetural                                     | Exemplos no Ecossistema                                  |
-| :--------------------- | :---------------------- | :----------------------------------------------------- | :------------------------------------------------------- |
-| **`$XDG_CONFIG_HOME`** | `~/.config`             | Configurações declarativas e dotfiles (`/etc` usuário) | `~/.config/profile`, `~/.config/nvim`, `~/.config/helix` |
-| **`$XDG_DATA_HOME`**   | `~/.local/share`        | Motores, bibliotecas e runtimes (`/usr/share` usuário) | `~/.local/share/shell`, plugins Mason, Elpaca            |
-| **`$XDG_STATE_HOME`**  | `~/.local/state`        | Estado persistente que não é configuração pura         | Históricos de shell (`zsh_history`, `bash_history`)      |
-| **`$XDG_CACHE_HOME`**  | `~/.cache`              | Dados voláteis, caches de compilação e buffers         | Cache de inicialização do Shell, cache do Elpaca         |
+| Variável de Ambiente   | Fallback Padrão  | Papel Arquitetural                        | Equivalente FHS      |
+| :--------------------- | :--------------- | :---------------------------------------- | :------------------- |
+| **`$XDG_CONFIG_HOME`** | `~/.config`      | Configurações declarativas da aplicação   | `/etc/<app>`         |
+| **`$XDG_DATA_HOME`**   | `~/.local/share` | Runtimes, assets, bibliotecas e plugins   | `/usr/local/share`   |
+| **`$XDG_STATE_HOME`**  | `~/.local/state` | Estado persistente (histórico, logs)      | `/var/lib`           |
+| **`$XDG_CACHE_HOME`**  | `~/.cache`       | Caches voláteis e compilações temporárias | `/var/cache`         |
+| **`$XDG_RUNTIME_DIR`** | `/tmp`           | Sockets IPC, pipes e locks temporários    | `/run` ou `/var/run` |
 
 ---
 
-## 📐 Cascata de Resolução Canônica do Ecossistema
+## 📐 Padrão de Descoberta POSIX e Cascata de Resolução
 
-Para conciliar a pureza modular rootless com a conveniência prática de administradores, o ecossistema adota uma cascata estrita de 4 níveis:
+Aplicações e scripts devem resolver caminhos de forma defensiva usando expansão de parâmetros POSIX:
 
-### 1. 🐚 Universal Shell
+```sh
+config_dir="${XDG_CONFIG_HOME:-${HOME}/.config}/appname"
+data_dir="${XDG_DATA_HOME:-${HOME}/.local/share}/appname"
+state_dir="${XDG_STATE_HOME:-${HOME}/.local/state}/appname"
+cache_dir="${XDG_CACHE_HOME:-${HOME}/.cache}/appname"
+runtime_dir="${XDG_RUNTIME_DIR:-/tmp}/appname"
+```
 
-- **1º (Sistema / Global):** `/usr/local/share/shell` — Padrão de fato para o par `root` + administrador da máquina.
-- **2º (XDG Data - Recomendado):** `~/.local/share/shell` — Recomendado filosoficamente pela modularização e independência rootless.
-- **3º (XDG Config):** `~/.config/shell` — Ergonomia unificada sob a pasta central de configurações.
-- **4º (Home Direta):** `~/.shell` — Atalho clássico e ambiente Windows MSYS2.
+### Cascata Universal de Resolução em 4 Níveis
 
-### 2. 🎨 Universal Profile
+Para balancear administração centralizada com soberania rootless, utilize a resolução em cascata:
 
-- **1º (XDG Data):** `~/.local/share/profile` — Isolamento rootless para dados do perfil.
-- **2º (XDG Config - Padrão):** `~/.config/profile` — Localização canônica dos dotfiles declarativos.
-- **3º (Home Direta):** `~/.profile` — Fallback para ambientes POSIX legados.
-- **4º (Global - Não Recomendado):** `/usr/local/share/profile` — Suportado defensivamente, mas desaconselhado pois dotfiles pertencem ao usuário.
+1. **1º Nível (Sistema / Global):** `/usr/local/share/<app>` — Pacotes do host compartilhados entre usuários.
+2. **2º Nível (XDG Data - Recomendado):** `${XDG_DATA_HOME:-~/.local/share}/<app>` — Runtimes e assets rootless.
+3. **3º Nível (XDG Config):** `${XDG_CONFIG_HOME:-~/.config}/<app>` — Configuração integrada e dotfiles.
+4. **4º Nível (Home Direta):** `~/.<app>` — Fallback clássico UNIX e ambientes Windows MSYS2.
 
-### 3. 🔐 Universal Vault (`chmod 0700`)
+```sh
+resolve_app_root() {
+    target="${1}"
+    if [ -d "/usr/local/share/${target}" ]; then
+        echo "/usr/local/share/${target}"
+    elif [ -d "${XDG_DATA_HOME:-${HOME}/.local/share}/${target}" ]; then
+        echo "${XDG_DATA_HOME:-${HOME}/.local/share}/${target}"
+    elif [ -d "${XDG_CONFIG_HOME:-${HOME}/.config}/${target}" ]; then
+        echo "${XDG_CONFIG_HOME:-${HOME}/.config}/${target}"
+    elif [ -d "${HOME}/.${target}" ]; then
+        echo "${HOME}/.${target}"
+    else
+        return 1
+    fi
+}
+```
 
-- **1º (XDG Data):** `~/.local/share/vault` — Armazenamento seguro rootless.
-- **2º (XDG Config):** `~/.config/vault` — Configuração integrada e isolada.
-- **3º (Home Direta - Padrão Universal):** `~/.vault` (Unix) ou `%USERPROFILE%\.vault` (Windows).
-- **4º (Global - Estritamente Não Recomendado):** `/usr/local/share/vault` — Permitido apenas para cofre exclusivo do `root`.
+---
 
-> [!IMPORTANT]
-> **Recomendado vs. Mais Usado:**
-> O termo **"Recomendado"** expressa o ideal de engenharia (desacoplamento, segurança e soberania do usuário sem privilégios).
-> O termo **"Padrão de Sistema"** atende à ergonomia prática de estações administradas onde `root` e usuário precisam do mesmo shell interativo. O ecossistema é tolerante e resiliente, operando com perfeição em qualquer camada.
+## 🔬 Estudo de Caso: O Quarteto de Produtividade
+
+A arquitetura do Quarteto de Produtividade exemplifica essa governança:
+
+- **Shell:** Opera em `/usr/local/share/shell` (padrão global para o par `root` + admin) ou `~/.local/share/shell` (recomendado rootless).
+- **Profile:** Opera canonicamente em `~/.local/share/profile` ou `~/.config/profile` no espaço do usuário.
+- **Vault:** Armazenamento restrito (`chmod 0700`) em `~/.local/share/vault` ou `~/.vault`, expressamente desaconselhado em `/usr/local/share` compartilhado.
 
 ---
 
