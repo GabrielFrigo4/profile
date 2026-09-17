@@ -65,6 +65,7 @@ Diferente do **Setup** (que exige `sudo`/`root` para instalar pacotes no sistema
 
 ## 📂 Estrutura do Repositório
 
+- **[`profile.sh`](profile.sh)** — **Interface Unificada de Componente:** Entrypoint CLI para `sync`, `update`, `test`, `audit` e exportação de ambiente.
 - **[`editors/`](editors/README.md)** — **Configurações de Editores & IDEs Modernos:** Antigravity, VS Code, VSCodium e Zed (os editores modais Emacs, NeoVim, Vim e Helix operam como repositórios autônomos independentes).
 - **[`terminals/`](terminals/README.md)** — **Perfis de Terminal:** Konsole (KDE), Windows Terminal, CMD (Clink), PowerShell e NuShell.
 - **[`tools/`](tools/README.md)** — **Formatadores & Linters Globais:** `.clang-format`, `.prettierrc`, `.stylua.toml`, `clangd.yaml`.
@@ -81,7 +82,7 @@ Diferente do **Setup** (que exige `sudo`/`root` para instalar pacotes no sistema
 
 ```sh
 git clone "https://github.com/GabrielFrigo4/profile" "${HOME}/.config/profile"
-sh "${HOME}/.config/profile/install.sh"
+sh "${HOME}/.config/profile/profile.sh" sync
 ```
 
 ### 🪟 Windows (PowerShell)
