@@ -59,7 +59,12 @@ _profile_sync() {
 
 _profile_update() {
 	echo "🔄 [Profile] Atualizando repositório em: ${_PROFILE_ROOT}"
-	command git -C "${_PROFILE_ROOT}" pull --ff-only
+	_content_diff="$(command git -C "${_PROFILE_ROOT}" diff -U0 2> "/dev/null" | grep '^[+-][^+-]' || true)"
+	if [ -z "${_content_diff}" ] && [ -z "$(command git -C "${_PROFILE_ROOT}" status --porcelain 2> "/dev/null" | grep '^??' || true)" ]; then
+		command git -C "${_PROFILE_ROOT}" checkout -- . > "/dev/null" 2>&1 || true
+	fi
+	command git -C "${_PROFILE_ROOT}" pull --ff-only 2> "/dev/null" || command git -C "${_PROFILE_ROOT}" pull --rebase 2> "/dev/null" || command git -C "${_PROFILE_ROOT}" pull
+	find "${_PROFILE_ROOT}" -maxdepth 2 -type f \( -name "*.sh" -o -path "*/.githooks/*" \) -exec chmod 0755 {} + 2> "/dev/null" || true
 	_profile_sync "$@"
 }
 

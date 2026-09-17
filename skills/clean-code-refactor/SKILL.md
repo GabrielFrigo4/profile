@@ -79,6 +79,13 @@ Ao refatorar ou auditar qualquer arquivo no ecossistema:
     - Em utilitários, interfaces CLI e rotinas de sincronização/atualização (`update-*`), adote a biblioteca semântica `_ui_*` (`_ui_step`, `_ui_sub`, `_ui_ok`, `_ui_warn`, `_ui_err`, `_ui_info`, `_ui_banner`) com detecção segura de TTY (`_ui_has_color`).
     - Reserve saídas simplificadas (`echo "📦 ..."` e `echo "✅ ..."`) para receitas de provisionamento do sistema operacional (`Setup`), onde o isolamento e zero dependências de runtime são prioritários.
 
+11. **Padrão de Sincronização Resiliente & Auto-Cura de Repositórios:**
+    - Rotinas de atualização e scripts que realizam `git pull` (`update-*`, `upsh`, `uprc`, `upvt`, `make upgit`) devem adotar a estratégia em 4 etapas:
+        1. _Auto-cura de Atributos:_ Se houver drift apenas em permissões executáveis (`git diff -U0` sem alterações de linhas e zero arquivos não rastreados), restaurar o índice via `checkout -- .` antes de stashes desnecessários.
+        2. _Isolamento Defensivo:_ Criar auto-stash com timestamp (`autostash-before-update-<timestamp>`) somente quando existirem alterações reais em arquivos de código ou novos arquivos.
+        3. _Cascata de Sincronização:_ Tentativa sequencial de `--ff-only` $\rightarrow$ `--rebase` $\rightarrow$ `pull`.
+        4. _Garantia Canônica Pós-Pull:_ Normalizar permissões aplicando `chmod 0755` em arquivos de script (`*.sh`) e `.githooks/` para garantir conformidade e prevenir drift futuro.
+
 ---
 
 ## 📋 Templates Canônicos de Scripts (Sem Comentários Narrativos)

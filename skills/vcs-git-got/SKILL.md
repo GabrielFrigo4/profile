@@ -137,6 +137,58 @@ Makefile text eol=lf
 
 ---
 
+## 🔄 3. Padrão de Sincronização Resiliente & Auto-Cura de Repositórios
+
+Em estações de trabalho heterogêneas (FreeBSD, Linux, macOS), discrepâncias de permissões POSIX (`filemode` 0755 vs 0644) ou edições locais temporárias podem deixar árvores de trabalho em estado sujo (_dirty_). Sem um tratamento defensivo prévio, operações de `git pull` podem falhar por conflito ou entrar em ciclos viciosos de `stash` (quando permissões alteradas são salvas e restauradas repetidamente).
+
+Para garantir que comandos de atualização (`update-shell`, `upsh`, `update-profile`, `update-vault`, `update-editors`, `update-git`) executem com resiliência total, adota-se a arquitetura de **4 fases**:
+
+```mermaid
+flowchart TD
+    A["Início: Inspeção do Repositório"] --> B{"Há diff real de código<br/>ou arquivos untracked?"}
+    B -- "Não (Apenas drift de filemode)" --> C["Auto-cura: checkout -- .<br/>(Sem poluir a pilha com stashes)"]
+    B -- "Sim (Modificações reais)" --> D["Isolamento: git stash push -u<br/>com timestamp rastreável"]
+    C --> E["Cascata de Sincronização:<br/>--ff-only ➔ --rebase ➔ pull"]
+    D --> E
+    E --> F{"Stash defensivo criado?"}
+    F -- "Sim" --> G["git stash pop<br/>(Drop defensivo se status limpo)"]
+    F -- "Não" --> H["Garantia Canônica Pós-Pull:<br/>chmod 0755 em *.sh e .githooks/"]
+    G --> H
+    H --> I["Submódulos recursivos (se .gitmodules existir)"]
+```
+
+### Arquitetura de Implementação Canônica (POSIX Shell):
+
+```sh
+_content_diff="$(command git -C "${_target}" diff -U0 2> "/dev/null" | grep '^[+-][^+-]' || true)"
+if [ -z "${_content_diff}" ] && [ -z "$(command git -C "${_target}" status --porcelain 2> "/dev/null" | grep '^??' || true)" ]; then
+	command git -C "${_target}" checkout -- . > "/dev/null" 2>&1 || true
+fi
+
+_stash_created=""
+if [ -n "$(command git -C "${_target}" status --porcelain 2> "/dev/null")" ]; then
+	command git -C "${_target}" stash push -u -m "autostash-before-update-$(date +%s)" > "/dev/null" 2>&1 && _stash_created="1"
+fi
+
+_pull_ok=0
+if command git -C "${_target}" pull --ff-only > "/dev/null" 2>&1; then
+	_pull_ok=1
+elif command git -C "${_target}" pull --rebase > "/dev/null" 2>&1; then
+	_pull_ok=1
+elif command git -C "${_target}" pull > "/dev/null" 2>&1; then
+	_pull_ok=1
+fi
+
+if [ "${_pull_ok}" -eq 1 ]; then
+	if [ "${_stash_created}" = "1" ]; then
+		command git -C "${_target}" stash pop > "/dev/null" 2>&1 || true
+	fi
+	find "${_target}" -maxdepth 2 -type f \( -name "*.sh" -o -path "*/.githooks/*" \) -exec chmod 0755 {} + 2> "/dev/null" || true
+fi
+```
+
+---
+
 ## 🧭 Quando Usar Cada Ferramenta?
 
 | Cenário / Tarefa                              | Ferramenta Recomendada   | Justificativa Técnica                                                                      |
