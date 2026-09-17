@@ -150,7 +150,27 @@ Destaque informações críticas, dicas e notas de segurança usando os alertas 
 
 ---
 
-## 🧪 5. Quality Gates & Formatação Estrita com Prettier
+## 💻 5. Caixas de Código e Comandos de Terminal (`sh` como Padrão Universal)
+
+Em READMEs, todo bloco de comandos de terminal, instruções de instalação (`git clone`, `make`, `npm`, `pkg`), chamadas de CLI e automações deve utilizar o identificador universal `sh`:
+
+````markdown
+```sh
+git clone "https://github.com/GabrielFrigo4/repo.git"
+cd repo
+make setup
+```
+````
+
+> [!IMPORTANT]
+> **Quando usar `bash`, `zsh`, `ksh` ou `nu`:**
+> Identificadores específicos só devem ser utilizados se o conteúdo do bloco contiver código ou sintaxe estritamente privativa daquele interpretador (ex: arrays associativos no Bash, expansões específicas no Zsh, scripts Nushell). Instruções gerais de linha de comando UNIX devem ser sempre ````sh`.
+>
+> **Identificadores Proibidos:** É proibido utilizar `shell`, `console` ou `terminal`.
+
+---
+
+## 🧪 6. Quality Gates & Formatação Estrita com Prettier
 
 Documentações Markdown devem ser formatadas com o mesmo rigor de código compilado:
 

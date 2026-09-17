@@ -97,20 +97,34 @@ opt.number = true
 theme = "dark_plus"
 ```
 
-````
+`````
 
-### 2.2. Identificadores Canônicos Comuns
-| Stack / Alvo | Identificador Canônico | Evitar |
+### 2.2. A Regra das Caixas de Código de Terminal (sh como Padrão Universal)
+
+> [!IMPORTANT]
+> **Padrão Canônico para Comandos de Terminal (`sh`):**
+> Utilize **SEMPRE** o identificador `sh` (````sh ... ````) para qualquer bloco contendo comandos de terminal, instruções de clone (`git clone`), compilação (`make`), gerenciadores de pacotes (`pkg`, `apt`, `npm`), chamadas de CLI e rotinas de automação UNIX em geral.
+>
+> **Identificadores Específicos (`bash`, `zsh`, `ksh`, `fish`, `nu`):**
+> Devem ser utilizados **exclusiva e estritamente** quando o código contido dentro da caixa depender de sintaxe, flags ou recursos privativos daquele interpretador específico (como testes avançados `[[ ... ]]` ou arrays associativos no Bash; expansões e flags globais no Zsh; pipelines orientados a dados no Nushell).
+>
+> **É terminantemente proibido** utilizar identificadores genéricos depreciados como `shell`, `console`, `terminal` ou `prompt`.
+
+### 2.3. Tabela de Identificadores Canônicos Comuns
+
+| Stack / Alvo | Identificador Canônico | Evitar / Proibido |
 | :--- | :---: | :--- |
-| Shell POSIX / Bourne | `sh` | `shell`, `prompt` |
-| Bash scripts | `bash` | `sh` (quando tiver bashismos) |
-| Lua / Neovim | `lua` | `nvim` |
-| Emacs Lisp | `elisp` ou `lisp` | `el` |
-| TOML / Configurações | `toml` | `txt` |
-| JSON / Schemas | `json` | `text` |
-| YAML / Frontmatter | `yaml` | `yml` |
-| Makefiles | `make` | `makefile` |
-| Diagramas | `mermaid` | `diagram` |
+| **Comandos de Terminal / Shell UNIX** | `sh` | `shell`, `console`, `terminal`, `bash` (se genérico) |
+| **Bash Específico (com bashismos)** | `bash` | `sh` (quando possuir sintaxe não-POSIX) |
+| **Zsh Específico (com zshismos)** | `zsh` | `sh` (quando depender de recursos exclusivos do Zsh) |
+| **Nushell / Scripts Nu** | `nu` | `nushell`, `sh` |
+| **Lua / Neovim** | `lua` | `nvim` |
+| **Emacs Lisp** | `elisp` ou `lisp` | `el` |
+| **TOML / Configurações** | `toml` | `txt` |
+| **JSON / Schemas** | `json` | `text` |
+| **YAML / Frontmatter** | `yaml` | `yml` |
+| **Makefiles** | `make` | `makefile` |
+| **Diagramas** | `mermaid` | `diagram` |
 
 ---
 
@@ -125,7 +139,7 @@ As tabelas em Markdown devem ser funcionais e prazerosas de ler mesmo quando abe
 | **Shell**   | 🟢 Ativo |         8ms | Runtime interativo multi-shell de latência sub-20ms  |
 | **Vault**   | 🔒 Cofre |         0ms | Gerenciamento de segredos, tokens e chaves privadas  |
 | **Profile** | 🟢 Ativo |         5ms | Identidade residente do usuário, editores e dotfiles |
-````
+`````
 
 ### 3.1. Convenção Canônica de Alinhamento:
 
