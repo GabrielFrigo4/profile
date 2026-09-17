@@ -8,7 +8,7 @@ _PROFILE_ROOT="$(cd "$(dirname "$0")" && pwd)"
 export PROFILE_DIR="${_PROFILE_ROOT}"
 
 ### ================================
-### DETECCAO DE INVOCACAO (SOURCE VS EXEC)
+### DETECCAO DE INVOCACAO
 ### ================================
 _profile_is_sourced() {
 	if [ -n "${ZSH_VERSION:-}" ]; then
