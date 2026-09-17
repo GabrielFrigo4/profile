@@ -85,12 +85,12 @@ Diferente do **Setup** (que exige `sudo`/`root` para instalar pacotes no sistema
 
 ### 🗺️ Matriz de Caminhos de Instalação do Profile
 
-| Localização Canônica                   | Escopo / Privilégios           | Status & Recomendação  | Casos de Uso & Contexto                                                                             |
-| :------------------------------------- | :----------------------------- | :--------------------: | :-------------------------------------------------------------------------------------------------- |
-| **`~/.local/share/profile`**           | XDG Data (Rootless)            |   ⭐ **Recomendado**   | Padrão soberano moderno em Linux, FreeBSD, macOS e MSYS2 com isolamento limpo de dotfiles.          |
-| **`~/.config/profile`**                | XDG Config (Rootless)          | 🔵 **Alternativa XDG** | Instalações unificadas onde o profile reside diretamente dentro do diretório de configurações.      |
-| **`~/.profile.d` / `~/.profile-repo`** | Home Direta (Clássico UNIX)    | ⚪ **Fallback Legado** | Sistemas UNIX clássicos, ambientes mínimos sem suporte a XDG ou preferência por dotdirs no `$HOME`. |
-| **`/usr/local/share/profile`**         | Global / FHS (`root` / `sudo`) | ⚠️ **Não Recomendado** | Apenas para imagens base multiusuário imutáveis; desaconselhado por quebrar autonomia do usuário.   |
+| Localização Canônica           | Escopo / Privilégios           | Status & Recomendação  | Casos de Uso & Contexto                                                                             |
+| :----------------------------- | :----------------------------- | :--------------------: | :-------------------------------------------------------------------------------------------------- |
+| **`~/.local/share/profile`**   | XDG Data (Rootless)            |   ⭐ **Recomendado**   | Padrão soberano moderno em Linux, FreeBSD, macOS e MSYS2 com isolamento limpo de dotfiles.          |
+| **`~/.config/profile`**        | XDG Config (Rootless)          | 🔵 **Alternativa XDG** | Instalações unificadas onde o profile reside diretamente dentro do diretório de configurações.      |
+| **`~/.profile`**               | Home Direta (Clássico UNIX)    | ⚪ **Fallback Legado** | Sistemas UNIX clássicos, ambientes mínimos sem suporte a XDG ou preferência por dotdirs no `$HOME`. |
+| **`/usr/local/share/profile`** | Global / FHS (`root` / `sudo`) | ⚠️ **Não Recomendado** | Apenas para imagens base multiusuário imutáveis; desaconselhado por quebrar autonomia do usuário.   |
 
 ---
 
@@ -113,8 +113,8 @@ sh "${HOME}/.config/profile/profile.sh" sync
 #### Opção C: Home Direta (Fallback Clássico UNIX / Ambientes Legados)
 
 ```sh
-git clone "https://github.com/GabrielFrigo4/profile" "${HOME}/.profile-repo"
-sh "${HOME}/.profile-repo/profile.sh" sync
+git clone "https://github.com/GabrielFrigo4/profile" "${HOME}/.profile"
+sh "${HOME}/.profile/profile.sh" sync
 ```
 
 ---

@@ -71,7 +71,7 @@ Para conciliar a pureza modular rootless com a conveniência prática de adminis
 
 - **1º (XDG Data):** `~/.local/share/profile` — Isolamento rootless para dados do perfil.
 - **2º (XDG Config - Padrão):** `~/.config/profile` — Localização canônica dos dotfiles declarativos.
-- **3º (Home Direta):** `~/.profile.d` ou `~/.profile` — Fallback para ambientes POSIX legados.
+- **3º (Home Direta):** `~/.profile` — Fallback para ambientes POSIX legados.
 - **4º (Global - Não Recomendado):** `/usr/local/share/profile` — Suportado defensivamente, mas desaconselhado pois dotfiles pertencem ao usuário.
 
 ### 3. 🔐 Universal Vault (`chmod 0700`)
