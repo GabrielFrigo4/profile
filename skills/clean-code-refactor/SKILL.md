@@ -81,10 +81,10 @@ Ao refatorar ou auditar qualquer arquivo no ecossistema:
 
 11. **Padrão de Sincronização Resiliente & Auto-Cura de Repositórios:**
     - Rotinas de atualização e scripts que realizam `git pull` (`update-*`, `upsh`, `uprc`, `upvt`, `make upgit`) devem adotar a estratégia em 4 etapas:
-        1. _Auto-cura de Atributos:_ Se houver drift apenas em permissões executáveis (`git diff -U0` sem alterações de linhas e zero arquivos não rastreados), restaurar o índice via `checkout -- .` antes de stashes desnecessários.
+        1. _Auto-cura Cirúrgica de Atributos:_ Inspecionar `git diff --numstat`. Qualquer arquivo com 0 adições e 0 deleções (`0 0 <arquivo>`) reflete exclusivamente alteração de permissão ou metadados POSIX (`filemode`), sendo restaurado de imediato via `checkout -- <arquivo>`, sem criar stashes supérfluos e sem tocar em arquivos com alterações reais de código.
         2. _Isolamento Defensivo:_ Criar auto-stash com timestamp (`autostash-before-update-<timestamp>`) somente quando existirem alterações reais em arquivos de código ou novos arquivos.
         3. _Cascata de Sincronização:_ Tentativa sequencial de `--ff-only` $\rightarrow$ `--rebase` $\rightarrow$ `pull`.
-        4. _Garantia Canônica Pós-Pull:_ Normalizar permissões aplicando `chmod 0755` em arquivos de script (`*.sh`) e `.githooks/` para garantir conformidade e prevenir drift futuro.
+        4. _Restauração & Proteção de Ganchos:_ Restaurar alterações locais salvas via `stash pop` (reaplicando a cura cirúrgica caso o stash continha permissões antigas) e assegurar `chmod 0755` estritamente nos ganchos de `.githooks/`, preservando a integridade dos modos canônicos de arquivos do repositório.
 
 ---
 

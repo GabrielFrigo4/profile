@@ -145,29 +145,34 @@ Para garantir que comandos de atualização (`update-shell`, `upsh`, `update-pro
 
 ```mermaid
 flowchart TD
-    A["Início: Inspeção do Repositório"] --> B{"Há diff real de código<br/>ou arquivos untracked?"}
-    B -- "Não (Apenas drift de filemode)" --> C["Auto-cura: checkout -- .<br/>(Sem poluir a pilha com stashes)"]
-    B -- "Sim (Modificações reais)" --> D["Isolamento: git stash push -u<br/>com timestamp rastreável"]
-    C --> E["Cascata de Sincronização:<br/>--ff-only ➔ --rebase ➔ pull"]
-    D --> E
-    E --> F{"Stash defensivo criado?"}
-    F -- "Sim" --> G["git stash pop<br/>(Drop defensivo se status limpo)"]
-    F -- "Não" --> H["Garantia Canônica Pós-Pull:<br/>chmod 0755 em *.sh e .githooks/"]
-    G --> H
-    H --> I["Submódulos recursivos (se .gitmodules existir)"]
+    A["Início: Inspeciona git diff --numstat"] --> B{"Há arquivos com 0 adições e 0 deleções?"}
+    B -- "Sim (Drift puro de filemode)" --> C["Auto-cura Cirúrgica: checkout -- arquivo<br/>(Sem criar stashes supérfluos)"]
+    B -- "Não" --> D{"Restaram arquivos modificados<br/>ou untracked?"}
+    C --> D
+    D -- "Sim (Código real / novos arquivos)" --> E["Isolamento Defensivo: git stash push -u<br/>com timestamp rastreável"]
+    D -- "Não" --> F["Cascata de Sincronização:<br/>--ff-only ➔ --rebase ➔ pull"]
+    E --> F
+    F --> G{"Stash defensivo criado?"}
+    G -- "Sim" --> H["git stash pop<br/>(Reaplica auto-cura cirúrgica via numstat)"]
+    G -- "Não" --> I["Garantia Estrita em Ganchos:<br/>chmod 0755 .githooks/*"]
+    H --> I
+    I --> J["Submódulos recursivos (se .gitmodules existir)"]
 ```
 
 ### Arquitetura de Implementação Canônica (POSIX Shell):
 
 ```sh
-_content_diff="$(command git -C "${_target}" diff -U0 2> "/dev/null" | grep '^[+-][^+-]' || true)"
-if [ -z "${_content_diff}" ] && [ -z "$(command git -C "${_target}" status --porcelain 2> "/dev/null" | grep '^??' || true)" ]; then
-	command git -C "${_target}" checkout -- . > "/dev/null" 2>&1 || true
-fi
+command git -C "${_target}" diff --numstat 2> "/dev/null" | while IFS="$(printf '\t')" read -r _add _del _file; do
+	if [ "${_add}" = "0" ] && [ "${_del}" = "0" ] && [ -n "${_file}" ]; then
+		command git -C "${_target}" checkout -- "${_file}" > "/dev/null" 2>&1 || true
+	fi
+done
 
-_stash_created=""
-if [ -n "$(command git -C "${_target}" status --porcelain 2> "/dev/null")" ]; then
-	command git -C "${_target}" stash push -u -m "autostash-before-update-$(date +%s)" > "/dev/null" 2>&1 && _stash_created="1"
+_status="$(command git -C "${_target}" status --porcelain 2> "/dev/null" || true)"
+_has_dirty=0
+if [ -n "${_status}" ]; then
+	_has_dirty=1
+	command git -C "${_target}" stash push -u -m "autostash-before-update-$(date +%s)" > "/dev/null" 2>&1 || true
 fi
 
 _pull_ok=0
@@ -180,10 +185,17 @@ elif command git -C "${_target}" pull > "/dev/null" 2>&1; then
 fi
 
 if [ "${_pull_ok}" -eq 1 ]; then
-	if [ "${_stash_created}" = "1" ]; then
+	if [ "${_has_dirty}" -eq 1 ]; then
 		command git -C "${_target}" stash pop > "/dev/null" 2>&1 || true
+		command git -C "${_target}" diff --numstat 2> "/dev/null" | while IFS="$(printf '\t')" read -r _add _del _file; do
+			if [ "${_add}" = "0" ] && [ "${_del}" = "0" ] && [ -n "${_file}" ]; then
+				command git -C "${_target}" checkout -- "${_file}" > "/dev/null" 2>&1 || true
+			fi
+		done
 	fi
-	find "${_target}" -maxdepth 2 -type f \( -name "*.sh" -o -path "*/.githooks/*" \) -exec chmod 0755 {} + 2> "/dev/null" || true
+	if [ -d "${_target}/.githooks" ]; then
+		chmod 0755 "${_target}/.githooks/"* 2> "/dev/null" || true
+	fi
 fi
 ```
 

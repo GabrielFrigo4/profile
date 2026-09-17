@@ -59,12 +59,31 @@ _profile_sync() {
 
 _profile_update() {
 	echo "🔄 [Profile] Atualizando repositório em: ${_PROFILE_ROOT}"
-	_content_diff="$(command git -C "${_PROFILE_ROOT}" diff -U0 2> "/dev/null" | grep '^[+-][^+-]' || true)"
-	if [ -z "${_content_diff}" ] && [ -z "$(command git -C "${_PROFILE_ROOT}" status --porcelain 2> "/dev/null" | grep '^??' || true)" ]; then
-		command git -C "${_PROFILE_ROOT}" checkout -- . > "/dev/null" 2>&1 || true
+	command git -C "${_PROFILE_ROOT}" diff --numstat 2> "/dev/null" | while IFS="$(printf '\t')" read -r _add _del _file; do
+		if [ "${_add}" = "0" ] && [ "${_del}" = "0" ] && [ -n "${_file}" ]; then
+			command git -C "${_PROFILE_ROOT}" checkout -- "${_file}" > "/dev/null" 2>&1 || true
+		fi
+	done
+	_status="$(command git -C "${_PROFILE_ROOT}" status --porcelain 2> "/dev/null" || true)"
+	_has_dirty=0
+	if [ -n "${_status}" ]; then
+		_has_dirty=1
+		echo "⚠️  [Profile] Alterações locais detectadas em ${_PROFILE_ROOT}."
+		echo "  ↳ Criando auto-stash defensivo..."
+		command git -C "${_PROFILE_ROOT}" stash push -u -m "autostash-before-update-$(date +%s)" > "/dev/null" 2>&1 || true
 	fi
 	command git -C "${_PROFILE_ROOT}" pull --ff-only 2> "/dev/null" || command git -C "${_PROFILE_ROOT}" pull --rebase 2> "/dev/null" || command git -C "${_PROFILE_ROOT}" pull
-	find "${_PROFILE_ROOT}" -maxdepth 2 -type f \( -name "*.sh" -o -path "*/.githooks/*" \) -exec chmod 0755 {} + 2> "/dev/null" || true
+	if [ "${_has_dirty}" -eq 1 ]; then
+		command git -C "${_PROFILE_ROOT}" stash pop > "/dev/null" 2>&1 || true
+		command git -C "${_PROFILE_ROOT}" diff --numstat 2> "/dev/null" | while IFS="$(printf '\t')" read -r _add _del _file; do
+			if [ "${_add}" = "0" ] && [ "${_del}" = "0" ] && [ -n "${_file}" ]; then
+				command git -C "${_PROFILE_ROOT}" checkout -- "${_file}" > "/dev/null" 2>&1 || true
+			fi
+		done
+	fi
+	if [ -d "${_PROFILE_ROOT}/.githooks" ]; then
+		chmod 0755 "${_PROFILE_ROOT}/.githooks/"* 2> "/dev/null" || true
+	fi
 	_profile_sync "$@"
 }
 
