@@ -27,9 +27,9 @@ No ecossistema do **Quarteto de Produtividade**, enquanto o repositório **Setup
 
 ---
 
-## 📚 Catálogo Canônico de Skills Portáteis (26 Runbooks)
+## 📚 Catálogo Canônico de Skills Portáteis (27 Runbooks)
 
-O ecossistema disponibiliza 26 habilidades cognitivas universais organizadas por domínio de especialidade:
+O ecossistema disponibiliza 27 habilidades cognitivas universais organizadas por domínio de especialidade:
 
 | Categoria                     | Skill                                                               | Descrição e Escopo de Ativação                                                                                                              | Gatilhos de Ativação / Cenários de Uso                                                                                               |
 | :---------------------------- | :------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------ | :----------------------------------------------------------------------------------------------------------------------------------- |
@@ -43,6 +43,7 @@ O ecossistema disponibiliza 26 habilidades cognitivas universais organizadas por
 | **Soberania & Cloud-Exit**    | [`cloud-exit`](./cloud-exit/SKILL.md)                               | Repatriação de nuvem para bare-metal com FreeBSD, Linux, illumos, OpenBSD e Windows (Sylve, Proxmox, Oxide, ZFS e pf).                      | Migração para infraestrutura própria, redução de custos de nuvem pública, soberania digital.                                         |
 | **Aplicações Anti-Inchaço**   | [`svelte-pocketbase-go`](./svelte-pocketbase-go/SKILL.md)           | Arquitetura minimalista fullstack em SvelteKit, PocketBase e Go, entrega em binário único, SQLite WAL e custo quase zero.                   | Criação de sistemas web ágeis, microsserviços sem node_modules em produção, painéis reativos leves.                                  |
 | **Metodologia & Meta-Skills** | [`skill-authoring-standards`](./skill-authoring-standards/SKILL.md) | Padrões canônicos para especificação, redação, citações oficiais e manutenção de Portable AI Skills no ecossistema.                         | Criação de novas skills, auditoria de runbooks, inclusão de referências bibliográficas e links.                                      |
+| **Curadoria Cognitiva**       | [`local-skills-curator`](./local-skills-curator/SKILL.md)           | Curadoria do ciclo de vida (C.A.R.P.) e extração de conhecimento tácito perene em skills locais (`.agents/skills/`).                        | Descoberta de regras tácitas, manutenção ou expurgo de runbooks locais e preservação do hermetismo (`rm -rf .agents`).               |
 | **Controle de Versão (VCS)**  | [`vcs-git-got`](./vcs-git-got/SKILL.md)                             | Gestão soberana de repositórios Git e Game of Trees (Got/tog), coexistência no `.git`, commits atômicos e inspeção no terminal.             | Uso de Git ou Got/tog, padronização de commits, visualização de histórico com `tog`, branchless dev e hooks POSIX.                   |
 | **Engenharia de CI/CD & VCS** | [`git-flow-github-actions`](./git-flow-github-actions/SKILL.md)     | Ciclo completo Git e GitHub: quality gates locais (.githooks), commits atômicos, pipelines resilientes no Actions e gh CLI.                 | Criação de hooks (.githooks/), elaboração de workflows CI/CD (.github/workflows/), depuração de falhas com gh CLI, pushs seguros.    |
 | **Editoração Científica**     | [`latex-typesetting`](./latex-typesetting/SKILL.md)                 | Editoração científica em LaTeX/TeX, compilação isolada com -outdir=build, listagens e Makefiles silenciosos.                                | Redação de papers, relatórios técnicos, compilação de monografias e eliminação de arquivos temporários.                              |
@@ -234,3 +235,5 @@ Conforme estabelecido em [`../PRINCIPLES.md`](../PRINCIPLES.md):
 2. **Permissões Canônicas em 4 Dígitos:** Documentos (`.md`, `.yaml`, `.json`) utilizam `chmod 0644`. Scripts executáveis em `scripts/` utilizam `chmod 0755`.
 3. **Idempotência & Verificação:** Toda skill deve instruir a IA a validar o estado atual antes de aplicar alterações e verificar o resultado após a conclusão.
 4. **Desacoplamento Absoluto:** Cada skill deve ser autocontida, sem dependências ocultas de outras skills.
+5. **Orçamento de Linhas (Regra 17 – 128 – 256):** Toda skill deve ter $\ge 17$ linhas, mirar no _sweet spot_ executivo de $17\text{ a } 128$ linhas, admitir $129\text{ a } 256$ linhas apenas para matrizes densas e respeitar o limite máximo fatal de 256 linhas (monólito).
+6. **Invariante do Hermetismo (`rm -rf .agents`):** Código de produção NUNCA consome ou depende de skills. Se `.agents/` for sumariamente deletado, 100% do projeto continua compilando, testando e operando com perfeição.

@@ -125,6 +125,22 @@ Links oficiais para prevenir conhecimento estático ou desatualizado.
 
 ---
 
+## 📐 Orçamento de Linhas & Limites Canônicos (17 – 128 – 256)
+
+Para proteger a janela de contexto (_Context Window_) e forçar modularidade UNIX:
+
+| Faixa de Linhas                 | Classificação             | Diretriz Operacional                                          |
+| :------------------------------ | :------------------------ | :------------------------------------------------------------ |
+| **$\ge 17$ linhas**             | Mínimo Substancial        | Previne micro-runbooks vazios ou sem valor procedimental.     |
+| **$17 \text{ a } 128$ linhas**  | **Sweet Spot Executivo**  | Meta de design para fluxos diretos, acionáveis e rápidos.     |
+| **$129 \text{ a } 256$ linhas** | Faixa de Densidade        | Permitido para matrizes multi-OS, tabelas e regras densas.    |
+| **$> 256$ linhas**              | **Erro Fatal (Monólito)** | Proibido. Exige modularização em `references/` ou `scripts/`. |
+
+- **Invariante do Hermetismo:** Toda skill local em `<repo>/.agents/skills/` deve respeitar o teste `rm -rf .agents`. O código do projeto NUNCA depende da skill para compilar ou rodar.
+- **Curadoria do Ciclo de Vida:** A IA deve atuar ativamente via [`local-skills-curator`](../local-skills-curator/SKILL.md), atualizando ou expurgando skills para evitar acúmulo de regras mortas.
+
+---
+
 ## 📚 A Regra das Fontes Canônicas, Links & Citação Bibliográfica
 
 Para garantir rigor técnico, evitar premissas estáticas ou obsoletas e assegurar integridade de rede:
