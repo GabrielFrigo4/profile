@@ -9,9 +9,31 @@
 $env.config.buffer_editor = "notepad++";
 $env.config.show_banner = false;
 $env.HOME = $"($env.USERPROFILE)";
+let _vault_candidates = [
+	($env.VAULT_DIR? | default ""),
+	(($env.USERPROFILE? | default ($env.HOME? | default "~")) | path join ".local" "share" "vault"),
+	(($env.USERPROFILE? | default ($env.HOME? | default "~")) | path join ".config" "vault"),
+	(($env.USERPROFILE? | default ($env.HOME? | default "~")) | path join ".vault")
+]
+let _active_vault = ($_vault_candidates | where { |p| ($p | is-not-empty) and ($p | path exists) } | first?)
 
-source ~/.vault/vault.nu
-
+if ($_active_vault | is-not-empty) {
+	for f in (glob ($_active_vault | path join "**" "*.env")) {
+		let raw_lines = (open $f | lines | where { |it|
+			let trimmed = ($it | str trim)
+			($trimmed | is-not-empty) and (not ($trimmed | str starts-with '#')) and ($trimmed | str contains '=')
+		})
+		for line in $raw_lines {
+			let parts = ($line | split row -n 2 '=')
+			let key = ($parts | get 0 | str trim)
+			mut val = ($parts | get 1 | str trim | str replace -r '^"(.*)"$' '$1' | str replace -r "^'(.*)'$" '$1')
+			$val = ($val | str replace -r '\$\{VAULT_DIR:-[^\}]+\}' $_active_vault)
+			$val = ($val | str replace -a '${VAULT_DIR}' $_active_vault | str replace -a '$VAULT_DIR' $_active_vault)
+			$val = ($val | str replace -a '${HOME}' ($env.USERPROFILE? | default ($env.HOME? | default "~")) | str replace -a '$HOME' ($env.USERPROFILE? | default ($env.HOME? | default "~")))
+			load-env { $key: $val }
+		}
+	}
+}
 ### ================================
 ### SHELL VARIABLES
 ### ================================
@@ -90,8 +112,27 @@ alias Show-Downloads = explorer.exe $"($Downloads)";
 alias Show-Virtual-Store = explorer.exe $"($VIRTUAL_STORE)";
 alias Show-FASM-Store = explorer.exe $"($FASM_STORE)";
 alias Show-Machine = explorer.exe $"($System32)";
-alias frigo-server = ssh -i $"($env.FRIGO_SERVER_KEY)" $"ubuntu@($env.FRIGO_SERVER_IP)";
-alias orbs-server = ssh -i $"($env.ORBS_SERVER_KEY)" $"ubuntu@($env.ORBS_SERVER_IP)";
+def --wrapped frigo-server [...rest] {
+	let ip = ($env.FRIGO_SERVER_IP? | default "144.22.210.65")
+	let user = ($env.FRIGO_SERVER_USER? | default "ubuntu")
+	let key = ($env.FRIGO_SERVER_KEY? | default "")
+	if ($key | is-not-empty) and ($key | path exists) {
+		ssh -i $key $"($user)@($ip)" ...$rest
+	} else {
+		ssh $"($user)@($ip)" ...$rest
+	}
+}
+
+def --wrapped orbs-server [...rest] {
+	let ip = ($env.ORBS_SERVER_IP? | default "137.131.238.161")
+	let user = ($env.ORBS_SERVER_USER? | default "ubuntu")
+	let key = ($env.ORBS_SERVER_KEY? | default "")
+	if ($key | is-not-empty) and ($key | path exists) {
+		ssh -i $key $"($user)@($ip)" ...$rest
+	} else {
+		ssh $"($user)@($ip)" ...$rest
+	}
+}
 alias ek = taskkill /IM emacs.exe /F;
 alias es = runemacs --fg-daemon;
 alias ec = emacsclientw --create-frame --alternate-editor "";

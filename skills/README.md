@@ -27,9 +27,9 @@ No ecossistema do **Quarteto de Produtividade**, enquanto o repositório **Setup
 
 ---
 
-## 📚 Catálogo Canônico de Skills Portáteis (27 Runbooks)
+## 📚 Catálogo Canônico de Skills Portáteis (28 Runbooks)
 
-O ecossistema disponibiliza 27 habilidades cognitivas universais organizadas por domínio de especialidade:
+O ecossistema disponibiliza 28 habilidades cognitivas universais organizadas por domínio de especialidade:
 
 | Categoria                     | Skill                                                               | Descrição e Escopo de Ativação                                                                                                              | Gatilhos de Ativação / Cenários de Uso                                                                                               |
 | :---------------------------- | :------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------ | :----------------------------------------------------------------------------------------------------------------------------------- |
@@ -38,6 +38,7 @@ O ecossistema disponibiliza 27 habilidades cognitivas universais organizadas por
 | **C++23 & RAII de Sistemas**  | [`cpp-engineering`](./cpp-engineering/SKILL.md)                     | Engenharia em C++23 Moderno, erros monádicos (`std::expected`), `std::print`, ranges, concepts e wrappers RAII de SO.                       | Desenvolvimento de sistemas de alta performance em C++23, abstrações RAII de descritores e memória, I/O tipado sem exceções.         |
 | **Engenharia de Testes**      | [`ironclad-testing`](./ironclad-testing/SKILL.md)                   | Engenharia de testes rigorosos, invariantes defensivas, mindset adversarial (Advogado do Diabo) e barreiras anti-regressão.                 | Criação de testes unitários e de integração, testes negativos, barreiras pre-commit, sanitizers em C23/C++23 e suites POSIX sh.      |
 | **Arquitetura & Filosofia**   | [`unix-philosophy-auditor`](./unix-philosophy-auditor/SKILL.md)     | Auditoria e conformidade com os 17 Princípios UNIX de Eric S. Raymond + Soberania do Usuário.                                               | Criação de novas CLI, revisão de arquitetura, validação de regras de silêncio e transparência.                                       |
+| **Engenharia Antifrágil**     | [`antifragile-engineering`](./antifragile-engineering/SKILL.md)     | Engenharia de sistemas antifrágeis, auto-cura em tempo de execução, cascata ativa de descoberta e resiliência sob desordem.                 | Arquitetura adaptativa, resolução dinâmica de caminhos/chaves, auto-cura de permissões POSIX, eliminação de falhas cegas.            |
 | **Design & Documentação**     | [`readme-crafting`](./readme-crafting/SKILL.md)                     | Padrões para especificação, design, hierarquia visual e redação de READMEs (Simple Icons, Mermaid, tabelas).                                | Criação e refatoração de READMEs, modernização de badges vetoriais, documentações institucionais.                                    |
 | **Redação & Acessibilidade**  | [`markdown-crafting`](./markdown-crafting/SKILL.md)                 | Redação técnica em Markdown de alta legibilidade, caixas de código `sh` universais, otimização para Readers e Prettier.                     | Documentações conceituais, manuais técnicos, guias de arquitetura, formatação de prosa e auditoria de legibilidade.                  |
 | **Soberania & Cloud-Exit**    | [`cloud-exit`](./cloud-exit/SKILL.md)                               | Repatriação de nuvem para bare-metal com FreeBSD, Linux, illumos, OpenBSD e Windows (Sylve, Proxmox, Oxide, ZFS e pf).                      | Migração para infraestrutura própria, redução de custos de nuvem pública, soberania digital.                                         |

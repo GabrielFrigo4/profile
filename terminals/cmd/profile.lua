@@ -415,8 +415,22 @@ local aliases = {
 	["upcho"] = [[sudo wt choco upgrade all]],
 	["upall"] = [[winget upgrade --all && scoop update && scoop update --all && sudo wt choco upgrade all]],
 
-	["frigo-server"] = [[ssh -i ]] .. os.getenv("FRIGO_SERVER_KEY") .. [[ "ubuntu@]] .. os.getenv("FRIGO_SERVER_IP") .. [["]],
-	["orbs-server"] = [[ssh -i ]] .. os.getenv("ORBS_SERVER_KEY") .. [[ "ubuntu@]] .. os.getenv("ORBS_SERVER_IP") .. [["]],
+	["frigo-server"] = (function()
+		local ip = os.getenv("FRIGO_SERVER_IP") or "144.22.210.65"
+		local key = os.getenv("FRIGO_SERVER_KEY")
+		if key and key ~= "" then
+			return [[ssh -i "]] .. key .. [[" "ubuntu@]] .. ip .. [["]]
+		end
+		return [[ssh "ubuntu@]] .. ip .. [["]]
+	end)(),
+	["orbs-server"] = (function()
+		local ip = os.getenv("ORBS_SERVER_IP") or "137.131.238.161"
+		local key = os.getenv("ORBS_SERVER_KEY")
+		if key and key ~= "" then
+			return [[ssh -i "]] .. key .. [[" "ubuntu@]] .. ip .. [["]]
+		end
+		return [[ssh "ubuntu@]] .. ip .. [["]]
+	end)(),
 
 	["ek"] = [[taskkill /IM emacs.exe /F]],
 	["es"] = [[runemacs --fg-daemon]],

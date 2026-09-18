@@ -8,7 +8,16 @@
 ### CONFIGURACOES GERAIS
 ### ================================
 
-. "${HOME}\.vault\vault.ps1"
+$vaultCandidates = @(
+	$env:VAULT_DIR,
+	(Join-Path $HOME ".local\share\vault"),
+	(Join-Path $HOME ".config\vault"),
+	(Join-Path $HOME ".vault")
+) | Where-Object { $_ -and (Test-Path (Join-Path $_ "vault.ps1")) }
+
+if ($vaultCandidates) {
+	. (Join-Path $vaultCandidates[0] "vault.ps1")
+}
 
 $PSDefaultparameterValues['*:Encoding'] = 'utf8'
 
@@ -259,8 +268,42 @@ New-Alias "wsl-man" "Wsl-Manual"
 ### SERVER ALIASES
 ### ================================
 
-function frigo-server { ssh -i "${env:FRIGO_SERVER_KEY}" "ubuntu@${env:FRIGO_SERVER_IP}" }
-function orbs-server { ssh -i "${env:ORBS_SERVER_KEY}" "ubuntu@${env:ORBS_SERVER_IP}" }
+function Resolve-VaultSshKey([string]$explicitKey, [string]$keyName) {
+	if ($explicitKey -and (Test-Path $explicitKey)) { return $explicitKey }
+	$homeDir = if ($env:USERPROFILE) { $env:USERPROFILE } elseif ($env:HOME) { $env:HOME } else { "~" }
+	$candidates = @(
+		if ($env:VAULT_DIR) { Join-Path $env:VAULT_DIR "keys\$keyName" },
+		(Join-Path $homeDir ".local\share\vault\keys\$keyName"),
+		(Join-Path $homeDir ".config\vault\keys\$keyName"),
+		(Join-Path $homeDir ".vault\keys\$keyName")
+	) | Where-Object { $_ -and (Test-Path $_) }
+	if ($candidates) { return $candidates[0] }
+	return $null
+}
+
+function frigo-server {
+	$ip = if ($env:FRIGO_SERVER_IP) { $env:FRIGO_SERVER_IP } else { "144.22.210.65" }
+	$user = if ($env:FRIGO_SERVER_USER) { $env:FRIGO_SERVER_USER } else { "ubuntu" }
+	$key = Resolve-VaultSshKey $env:FRIGO_SERVER_KEY "ssh-key-frigo-server.key"
+	if ($key) {
+		$env:FRIGO_SERVER_KEY = $key
+		ssh -i $key "${user}@${ip}" $args
+	} else {
+		ssh "${user}@${ip}" $args
+	}
+}
+
+function orbs-server {
+	$ip = if ($env:ORBS_SERVER_IP) { $env:ORBS_SERVER_IP } else { "137.131.238.161" }
+	$user = if ($env:ORBS_SERVER_USER) { $env:ORBS_SERVER_USER } else { "ubuntu" }
+	$key = Resolve-VaultSshKey $env:ORBS_SERVER_KEY "ssh-key-orbs-server.key"
+	if ($key) {
+		$env:ORBS_SERVER_KEY = $key
+		ssh -i $key "${user}@${ip}" $args
+	} else {
+		ssh "${user}@${ip}" $args
+	}
+}
 
 ### ================================
 ### EMACS ALIASES

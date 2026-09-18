@@ -6,8 +6,13 @@ rem ----------------------------------------------------------------
 rem ================================
 rem SETUP
 rem ================================
-chcp 65001 > nul
-%USERPROFILE%\.vault\vault.cmd
+if exist "%USERPROFILE%\.local\share\vault\vault.cmd" (
+	call "%USERPROFILE%\.local\share\vault\vault.cmd"
+) else if exist "%USERPROFILE%\.config\vault\vault.cmd" (
+	call "%USERPROFILE%\.config\vault\vault.cmd"
+) else if exist "%USERPROFILE%\.vault\vault.cmd" (
+	call "%USERPROFILE%\.vault\vault.cmd"
+)
 
 rem ================================
 rem VARS
