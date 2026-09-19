@@ -27,3 +27,19 @@ Execute no CMD ou PowerShell:
 ```cmd
 reg import setup-profile.reg
 ```
+
+---
+
+## ⚡ Comandos e Atualizadores da Família `up*`
+
+| Comando                     | Descrição                                                                      |
+| :-------------------------- | :----------------------------------------------------------------------------- |
+| `upgit [caminho]`           | Varre e atualiza recursivamente todos os repositórios Git (profundidade até 3) |
+| `uped`                      | Atualiza a Suíte de Editores (`~/.emacs.d`, `helix`, `nvim`, `vimfiles`)       |
+| `uprc` / `upprofile`        | Atualiza o Universal Profile e sincroniza dotfiles via `install.ps1`           |
+| `upvt`                      | Atualiza o repositório privado Universal Vault                                 |
+| `upsh`                      | Atualiza o repositório Universal Shell                                         |
+| `upall`                     | Orquestra atualização de sistema (`upsys`), Profile, Vault e Editores          |
+| `upget` / `upscp` / `upcho` | Atualizadores de pacotes (Winget, Scoop e Chocolatey)                          |
+| `upsys`                     | Atualiza Winget, Scoop e Chocolatey em lote                                    |
+| `upwin`                     | Executa a atualização do Windows Update                                        |

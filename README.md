@@ -13,6 +13,7 @@
 
 > 📖 **Arquitetura Unificada do Ecossistema:** Conheça a matriz completa de responsabilidades, ciclo de boot e segregação de privilégios em [ENVIRONMENT.md](ENVIRONMENT.md).
 > 📜 **Princípios de Engenharia & Dotfiles:** Conheça os 18 princípios e diretrizes Clean Code em [PRINCIPLES.md](PRINCIPLES.md).
+> 🗺️ **Roadmap & Status do Projeto:** Acompanhe o planejamento e a matriz de status em [TODO.md](TODO.md).
 
 ---
 
@@ -25,6 +26,7 @@
 ![OpenBSD](https://img.shields.io/badge/OpenBSD-Supported-yellow?logo=openbsd&logoColor=white)
 ![NetBSD](https://img.shields.io/badge/NetBSD-Supported-orange?logo=netbsd&logoColor=white)
 ![illumos](https://img.shields.io/badge/illumos-Supported-orange?logo=openzfs&logoColor=white)
+[![Roadmap](https://img.shields.io/badge/🗺️_Roadmap-TODO.md-teal)](TODO.md)
 
 O **Universal Profile** opera com paridade multiplataforma absoluta em **FreeBSD**, **Linux**, **macOS**, **OpenBSD**, **NetBSD**, **illumos** e **Windows** (nativo via PowerShell e sob MSYS2 via POSIX). Todas as configurações e links simbólicos são orquestrados de forma declarativa e atômica (`ln -sf`) sem necessidade de privilégios de superusuário (`sudo`).
 

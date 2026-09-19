@@ -180,37 +180,223 @@ function Browser-Search {
 }
 
 ### ================================
+### EMISSAO E UI SEMANTICA
+### ================================
+
+function _ui_step([string]$msg) { Write-Host "==> $msg" -ForegroundColor Cyan }
+function _ui_sub([string]$msg)  { Write-Host "  ↳ $msg" -ForegroundColor Blue }
+function _ui_ok([string]$msg)   { Write-Host "  ✅ $msg" -ForegroundColor Green }
+function _ui_warn([string]$msg) { Write-Host "  ⚠️  $msg" -ForegroundColor Yellow }
+function _ui_err([string]$msg)  { [Console]::Error.WriteLine("  ❌ $msg") }
+function _ui_info([string]$msg) { Write-Host "  ℹ️  $msg" -ForegroundColor Magenta }
+function _ui_banner([string]$title) {
+	$sep = "=" * 64
+	Write-Host ""
+	Write-Host $sep -ForegroundColor Cyan
+	Write-Host "  $title" -ForegroundColor White
+	Write-Host $sep -ForegroundColor Cyan
+	Write-Host ""
+}
+
+### ================================
 ### ATUALIZACAO
 ### ================================
 
-function Update-Winget { winget upgrade --all }
+function Update-Winget {
+	_ui_step "Atualizando pacotes via Winget..."
+	winget upgrade --all
+	if ($LASTEXITCODE -eq 0) { _ui_ok "Winget atualizado com sucesso!" }
+}
 
 function Update-Scoop {
+	_ui_step "Atualizando pacotes via Scoop..."
 	scoop update
 	scoop update --all
+	_ui_ok "Scoop atualizado com sucesso!"
 }
 
 function Update-Choco {
+	_ui_step "Atualizando pacotes via Chocolatey..."
 	$process = Start-Process -FilePath "choco" -ArgumentList "upgrade all -y" -Verb RunAs -PassThru -WindowStyle Normal
 	Wait-Process -InputObject $process
+	_ui_ok "Chocolatey atualizado com sucesso!"
 }
 
 function Update-Windows {
+	_ui_step "Executando Windows Update com reinicialização automática se necessário..."
 	$cmd = "Get-WindowsUpdate -AcceptAll -Install -AutoReboot"
 	$process = Start-Process -FilePath "pwsh" -ArgumentList "-Command $cmd" -Verb RunAs -PassThru -WindowStyle Normal
 	Wait-Process -InputObject $process
+	_ui_ok "Windows Update finalizado!"
+}
+
+function Update-Git {
+	param(
+		[parameter(Position=0, Mandatory=$false)][string] $Path = "."
+	)
+	$targetPath = if ($Path) { (Resolve-Path $Path).Path } else { (Get-Location).Path }
+	if (-not (Test-Path $targetPath)) {
+		_ui_err "Diretório não encontrado: $targetPath"
+		return
+	}
+
+	_ui_step "Buscando e atualizando repositórios Git em: $targetPath"
+	Write-Host ""
+
+	$gitDirs = Get-ChildItem -Path $targetPath -Directory -Recurse -Depth 3 -Force -Filter ".git" -ErrorAction SilentlyContinue
+	if (-not $gitDirs) {
+		_ui_info "Nenhum repositório Git encontrado em $targetPath (profundidade máxima: 3)."
+		return
+	}
+
+	foreach ($gitDir in $gitDirs) {
+		$repoDir = $gitDir.Parent.FullName
+		_ui_sub "Atualizando $repoDir..."
+		git -C $repoDir pull --ff-only 2>$null
+		if ($LASTEXITCODE -ne 0) {
+			git -C $repoDir pull
+		}
+	}
+	Write-Host ""
+	_ui_ok "Varredura e atualização de repositórios Git concluída!"
+}
+
+function Update-Editors {
+	_ui_step "Atualizando a Suíte de Editores no Windows..."
+	$found = 0
+
+	$emacsPath = Join-Path $HOME ".emacs.d"
+	if (-not (Test-Path $emacsPath) -and $env:APPDATA) {
+		$emacsPath = Join-Path $env:APPDATA ".emacs.d"
+	}
+	if (Test-Path (Join-Path $emacsPath ".git")) {
+		$found = 1
+		_ui_sub "Atualizando Emacs em $emacsPath..."
+		git -C $emacsPath pull --ff-only
+		if (Test-Path (Join-Path $emacsPath ".gitmodules")) {
+			_ui_sub "Sincronizando submódulos Elisp..."
+			git -C $emacsPath submodule update --init --recursive --remote --merge
+		}
+		_ui_ok "Emacs atualizado com sucesso!"
+	}
+
+	$helixPath = if ($env:APPDATA) { Join-Path $env:APPDATA "helix" } else { Join-Path $HOME ".config\helix" }
+	if (-not (Test-Path (Join-Path $helixPath ".git")) -and (Test-Path (Join-Path $HOME ".config\helix\.git"))) {
+		$helixPath = Join-Path $HOME ".config\helix"
+	}
+	if (Test-Path (Join-Path $helixPath ".git")) {
+		$found = 1
+		_ui_sub "Atualizando Helix em $helixPath..."
+		git -C $helixPath pull --ff-only
+		_ui_ok "Helix atualizado com sucesso!"
+	}
+
+	$nvimPath = if ($env:LOCALAPPDATA) { Join-Path $env:LOCALAPPDATA "nvim" } else { Join-Path $HOME ".config\nvim" }
+	if (-not (Test-Path (Join-Path $nvimPath ".git")) -and (Test-Path (Join-Path $HOME ".config\nvim\.git"))) {
+		$nvimPath = Join-Path $HOME ".config\nvim"
+	}
+	if (Test-Path (Join-Path $nvimPath ".git")) {
+		$found = 1
+		_ui_sub "Atualizando NeoVim em $nvimPath..."
+		git -C $nvimPath pull --ff-only
+		_ui_ok "NeoVim atualizado com sucesso!"
+	}
+
+	$vimPath = Join-Path $HOME "vimfiles"
+	if (-not (Test-Path (Join-Path $vimPath ".git")) -and (Test-Path (Join-Path $HOME ".vim\.git"))) {
+		$vimPath = Join-Path $HOME ".vim"
+	}
+	if (Test-Path (Join-Path $vimPath ".git")) {
+		$found = 1
+		_ui_sub "Atualizando Vim em $vimPath..."
+		git -C $vimPath pull --ff-only
+		_ui_ok "Vim atualizado com sucesso!"
+	}
+
+	if ($found -eq 0) {
+		_ui_info "Nenhum repositório de editor encontrado nos caminhos canônicos (~/.emacs.d, helix, nvim, vimfiles)."
+	} else {
+		_ui_ok "Suíte de Editores sincronizada com sucesso!"
+	}
+}
+
+function Update-Profile {
+	$candidates = @(
+		$env:PROFILE_DIR,
+		(Join-Path $HOME ".local\share\profile"),
+		(Join-Path $HOME ".config\profile"),
+		(Join-Path $HOME ".profile"),
+		(Join-Path $HOME "OneDrive\Documentos\Profile"),
+		(Join-Path $HOME "Documents\Profile")
+	) | Where-Object { $_ -and (Test-Path (Join-Path $_ ".git")) }
+	$target = if ($candidates) { $candidates[0] } else { $null }
+
+	if ($target) {
+		_ui_step "Atualizando Universal Profile em: $target..."
+		git -C $target pull --ff-only
+		$installer = Join-Path $target "install.ps1"
+		if (Test-Path $installer) {
+			_ui_sub "Sincronizando dotfiles e links via install.ps1..."
+			& $installer
+		}
+		_ui_ok "Universal Profile atualizado e sincronizado com sucesso!"
+	} else {
+		_ui_info "Repositório do Profile não encontrado."
+	}
+}
+
+function Update-Vault {
+	$candidates = @(
+		$env:VAULT_DIR,
+		(Join-Path $HOME ".local\share\vault"),
+		(Join-Path $HOME ".config\vault"),
+		(Join-Path $HOME ".vault")
+	) | Where-Object { $_ -and (Test-Path (Join-Path $_ ".git")) }
+	$target = if ($candidates) { $candidates[0] } else { $null }
+
+	if ($target) {
+		_ui_step "Atualizando Universal Vault em: $target..."
+		git -C $target pull --ff-only
+		_ui_ok "Universal Vault atualizado com sucesso!"
+	} else {
+		_ui_info "Repositório do Vault não encontrado."
+	}
+}
+
+function Update-Shell {
+	$candidates = @(
+		$env:SHELL_REPO_DIR,
+		(Join-Path $HOME ".local\share\shell"),
+		(Join-Path $HOME ".config\shell"),
+		(Join-Path $HOME ".shell"),
+		"C:\Program Files\Shell"
+	) | Where-Object { $_ -and (Test-Path (Join-Path $_ ".git")) }
+	$target = if ($candidates) { $candidates[0] } else { $null }
+
+	if ($target) {
+		_ui_step "Atualizando Universal Shell em: $target..."
+		git -C $target pull --ff-only
+		_ui_ok "Universal Shell atualizado com sucesso!"
+	} else {
+		_ui_info "Repositório do Shell não encontrado."
+	}
 }
 
 function Update-System {
+	_ui_step "Atualizando gerenciadores de pacotes do sistema..."
 	Update-Winget
 	Update-Scoop
 	Update-Choco
+	_ui_ok "Atualização de pacotes do sistema concluída!"
 }
 
 function Update-All {
-	Update-Module
+	_ui_banner "Atualização Global do Ecossistema e Sistema"
 	Update-System
-	Update-Windows
+	Update-Profile
+	Update-Vault
+	Update-Editors
+	_ui_banner "Atualização Global Concluída com Sucesso"
 }
 
 ### ================================
@@ -252,8 +438,14 @@ New-Alias "upget" "Update-Winget"
 New-Alias "upscp" "Update-Scoop"
 New-Alias "upcho" "Update-Choco"
 New-Alias "upsys" "Update-System"
-New-Alias "upsh" "Update-Module"
+New-Alias "upsh" "Update-Shell"
+New-Alias "upmod" "Update-Module"
 New-Alias "upwin" "Update-Windows"
+New-Alias "upgit" "Update-Git"
+New-Alias "uped" "Update-Editors"
+New-Alias "uprc" "Update-Profile"
+New-Alias "upprofile" "Update-Profile"
+New-Alias "upvt" "Update-Vault"
 New-Alias "upall" "Update-All"
 
 New-Alias "brw" "Browser-Search"

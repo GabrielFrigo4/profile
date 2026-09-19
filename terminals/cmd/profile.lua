@@ -504,6 +504,15 @@ local aliases = {
 	["wget"] = [[curl -O]],
 	["env"] = [[set]],
 	["export"] = [[set]],
+
+	-- --------------------------------
+	-- Package Managers
+	-- --------------------------------
+	["upget"] = [[winget upgrade --all]],
+	["upscp"] = [[scoop update && scoop update --all]],
+	["upcho"] = [[choco upgrade all -y]],
+	["upwin"] = [[powershell -NoProfile -Command "Get-WindowsUpdate -AcceptAll -Install -AutoReboot"]],
+	["upsys"] = [[winget upgrade --all && scoop update && scoop update --all && choco upgrade all -y]],
 }
 
 for alias, _ in pairs(aliases) do
@@ -588,4 +597,257 @@ end
 
 if clink.onfilterinput then
 	clink.onfilterinput(filter_lua_cmd)
+end
+
+-- ================================
+-- EMISSAO E UI SEMANTICA
+-- ================================
+
+local function _ui_step(msg) print(text_cyan("==> ") .. msg) end
+local function _ui_sub(msg)  print(text_blue("  ↳ ") .. msg) end
+local function _ui_ok(msg)   print(text_green("  ✅ ") .. msg) end
+local function _ui_warn(msg) print(text_yellow("  ⚠️  ") .. msg) end
+local function _ui_err(msg)  io.stderr:write(text_red("  ❌ ") .. msg .. "\n") end
+local function _ui_info(msg) print(text_magenta("  ℹ️  ") .. msg) end
+local function _ui_banner(title)
+	local sep = string.rep("=", 64)
+	print("\n" .. text_cyan(sep) .. "\n  " .. title .. "\n" .. text_cyan(sep) .. "\n")
+end
+
+-- ================================
+-- UPDATE COMMANDS (ECOSYSTEM)
+-- ================================
+
+local function cmd_upgit(args)
+	local root = args and trim(args) or ""
+	if root == "" then root = "." end
+
+	_ui_step("Buscando e atualizando repositórios Git em: " .. root)
+	print("")
+
+	local pipe = io.popen([[for /r "]] .. root .. [[" %d in (.) do @if exist "%d\.git" echo %~fd]])
+	if not pipe then
+		_ui_err("Falha ao iniciar varredura Git.")
+		return
+	end
+
+	local count = 0
+	for line in pipe:lines() do
+		local repo = trim(line)
+		if repo ~= "" and exists(repo .. [[\.git]]) then
+			count = count + 1
+			_ui_sub("Atualizando " .. repo .. "...")
+			local ok = os.execute([[git -C "]] .. repo .. [[" pull --ff-only 2>nul]])
+			if not ok or ok ~= 0 then
+				os.execute([[git -C "]] .. repo .. [[" pull]])
+			end
+		end
+	end
+	pipe:close()
+
+	if count == 0 then
+		_ui_info("Nenhum repositório Git encontrado em " .. root .. " (profundidade máxima de busca).")
+	else
+		print("")
+		_ui_ok("Varredura e atualização de repositórios Git concluída!")
+	end
+end
+
+local function cmd_uped()
+	_ui_step("Atualizando a Suíte de Editores no Windows...")
+	local home = os.getenv("USERPROFILE") or os.getenv("HOME") or ""
+	local appdata = os.getenv("APPDATA") or ""
+	local localappdata = os.getenv("LOCALAPPDATA") or ""
+	local found = false
+
+	-- Emacs
+	local emacs_dir = home .. [[\.emacs.d]]
+	if not is_dir(emacs_dir) and appdata ~= "" then
+		emacs_dir = appdata .. [[\.emacs.d]]
+	end
+	if is_dir(emacs_dir .. [[\.git]]) then
+		found = true
+		_ui_sub("Atualizando Emacs em " .. emacs_dir .. "...")
+		os.execute([[git -C "]] .. emacs_dir .. [[" pull --ff-only]])
+		if exists(emacs_dir .. [[\.gitmodules]]) then
+			_ui_sub("Sincronizando submódulos Elisp...")
+			os.execute([[git -C "]] .. emacs_dir .. [[" submodule update --init --recursive --remote --merge]])
+		end
+		_ui_ok("Emacs atualizado com sucesso!")
+	end
+
+	-- Helix
+	local helix_dir = appdata ~= "" and (appdata .. [[\helix]]) or (home .. [[\.config\helix]])
+	if not is_dir(helix_dir .. [[\.git]]) and is_dir(home .. [[\.config\helix\.git]]) then
+		helix_dir = home .. [[\.config\helix]]
+	end
+	if is_dir(helix_dir .. [[\.git]]) then
+		found = true
+		_ui_sub("Atualizando Helix em " .. helix_dir .. "...")
+		os.execute([[git -C "]] .. helix_dir .. [[" pull --ff-only]])
+		_ui_ok("Helix atualizado com sucesso!")
+	end
+
+	-- NeoVim
+	local nvim_dir = localappdata ~= "" and (localappdata .. [[\nvim]]) or (home .. [[\.config\nvim]])
+	if not is_dir(nvim_dir .. [[\.git]]) and is_dir(home .. [[\.config\nvim\.git]]) then
+		nvim_dir = home .. [[\.config\nvim]]
+	end
+	if is_dir(nvim_dir .. [[\.git]]) then
+		found = true
+		_ui_sub("Atualizando NeoVim em " .. nvim_dir .. "...")
+		os.execute([[git -C "]] .. nvim_dir .. [[" pull --ff-only]])
+		_ui_ok("NeoVim atualizado com sucesso!")
+	end
+
+	-- Vim
+	local vim_dir = home .. [[\vimfiles]]
+	if not is_dir(vim_dir .. [[\.git]]) and is_dir(home .. [[\.vim\.git]]) then
+		vim_dir = home .. [[\.vim]]
+	end
+	if is_dir(vim_dir .. [[\.git]]) then
+		found = true
+		_ui_sub("Atualizando Vim em " .. vim_dir .. "...")
+		os.execute([[git -C "]] .. vim_dir .. [[" pull --ff-only]])
+		_ui_ok("Vim atualizado com sucesso!")
+	end
+
+	if not found then
+		_ui_info("Nenhum repositório de editor encontrado nos caminhos canônicos (~/.emacs.d, helix, nvim, vimfiles).")
+	else
+		_ui_ok("Suíte de Editores sincronizada com sucesso!")
+	end
+end
+
+local function cmd_uprc()
+	local home = os.getenv("USERPROFILE") or os.getenv("HOME") or ""
+	local candidates = {
+		os.getenv("PROFILE_DIR"),
+		home .. [[\.local\share\profile]],
+		home .. [[\.config\profile]],
+		home .. [[\.profile]],
+		home .. [[\OneDrive\Documentos\Profile]],
+		home .. [[\Documents\Profile]],
+	}
+
+	local target = nil
+	for _, p in ipairs(candidates) do
+		if p and p ~= "" and is_dir(p .. [[\.git]]) then
+			target = p
+			break
+		end
+	end
+
+	if target then
+		_ui_step("Atualizando Universal Profile em: " .. target .. "...")
+		os.execute([[git -C "]] .. target .. [[" pull --ff-only]])
+		local installer = target .. [[\install.ps1]]
+		if exists(installer) then
+			_ui_sub("Sincronizando dotfiles e links via install.ps1...")
+			os.execute([[powershell -NoProfile -ExecutionPolicy Bypass -File "]] .. installer .. [["]])
+		end
+		_ui_ok("Universal Profile atualizado e sincronizado com sucesso!")
+	else
+		_ui_info("Repositório do Profile não encontrado.")
+	end
+end
+
+local function cmd_upvt()
+	local home = os.getenv("USERPROFILE") or os.getenv("HOME") or ""
+	local candidates = {
+		os.getenv("VAULT_DIR"),
+		home .. [[\.local\share\vault]],
+		home .. [[\.config\vault]],
+		home .. [[\.vault]],
+	}
+
+	local target = nil
+	for _, p in ipairs(candidates) do
+		if p and p ~= "" and is_dir(p .. [[\.git]]) then
+			target = p
+			break
+		end
+	end
+
+	if target then
+		_ui_step("Atualizando Universal Vault em: " .. target .. "...")
+		os.execute([[git -C "]] .. target .. [[" pull --ff-only]])
+		_ui_ok("Universal Vault atualizado com sucesso!")
+	else
+		_ui_info("Repositório do Vault não encontrado.")
+	end
+end
+
+local function cmd_upsh()
+	local home = os.getenv("USERPROFILE") or os.getenv("HOME") or ""
+	local candidates = {
+		os.getenv("SHELL_REPO_DIR"),
+		home .. [[\.local\share\shell]],
+		home .. [[\.config\shell]],
+		home .. [[\.shell]],
+		[[C:\Program Files\Shell]],
+	}
+
+	local target = nil
+	for _, p in ipairs(candidates) do
+		if p and p ~= "" and is_dir(p .. [[\.git]]) then
+			target = p
+			break
+		end
+	end
+
+	if target then
+		_ui_step("Atualizando Universal Shell em: " .. target .. "...")
+		os.execute([[git -C "]] .. target .. [[" pull --ff-only]])
+		_ui_ok("Universal Shell atualizado com sucesso!")
+	else
+		_ui_info("Repositório do Shell não encontrado.")
+	end
+end
+
+local function cmd_upall()
+	_ui_banner("Atualização Global do Ecossistema e Sistema")
+	_ui_step("Atualizando gerenciadores de pacotes do sistema...")
+	os.execute([[winget upgrade --all]])
+	os.execute([[scoop update && scoop update --all]])
+	os.execute([[choco upgrade all -y]])
+	_ui_ok("Pacotes do sistema atualizados!")
+	cmd_uprc()
+	cmd_upvt()
+	cmd_uped()
+	_ui_banner("Atualização Global Concluída com Sucesso")
+end
+
+local updater_commands = {
+	["upgit"] = cmd_upgit,
+	["update-git"] = cmd_upgit,
+	["uped"] = cmd_uped,
+	["update-editors"] = cmd_uped,
+	["uprc"] = cmd_uprc,
+	["upprofile"] = cmd_uprc,
+	["update-profile"] = cmd_uprc,
+	["upvt"] = cmd_upvt,
+	["update-vault"] = cmd_upvt,
+	["upsh"] = cmd_upsh,
+	["update-shell"] = cmd_upsh,
+	["upall"] = cmd_upall,
+	["update-all"] = cmd_upall,
+}
+
+local updater_parser = clink.arg.new_parser()
+for cmd, _ in pairs(updater_commands) do
+	clink.arg.register_parser(cmd, updater_parser)
+end
+
+local function filter_updater_cmd(text)
+	local cmd, args = text:match("^%s*(%S+)%s*(.*)")
+	if cmd and updater_commands[cmd] then
+		updater_commands[cmd](args)
+		return ""
+	end
+	return nil
+end
+
+if clink.onfilterinput then
+	clink.onfilterinput(filter_updater_cmd)
 end

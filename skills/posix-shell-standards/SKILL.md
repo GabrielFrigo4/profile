@@ -71,6 +71,14 @@ Para utilitários interativos, orquestradores de componentes (`shell.sh`, `profi
 | **`_ui_info`**   | `\e[1;35m  ℹ️ \e[0m ` (Magenta)             | ` INFO`                 | Informação contextual, notas ou recargas             |
 | **`_ui_banner`** | Régua dupla de 64 `=` em Ciano              | Régua plana de 64 `=`   | Delimitador de abertura/encerramento de rotina ampla |
 
+> [!TIP]
+> **Paridade Multiplataforma (Windows):**
+> O padrão semântico `_ui_*` é replicado com fidelidade visual idêntica nos perfis de terminal do Windows mantidos no [Profile](https://github.com/GabrielFrigo4/profile):
+>
+> - **PowerShell:** Funções `_ui_step`, `_ui_sub`, `_ui_ok`, `_ui_warn`, `_ui_err`, `_ui_info`, `_ui_banner` em `profile.ps1`.
+> - **NuShell:** Comandos nativos `_ui_step`, `_ui_sub`, `_ui_ok`, etc., em `config.nu`.
+> - **CMD / Clink:** Helpers Lua e emissores com escape ANSI em `profile.lua` e macros de fallback em `profile.cmd`.
+
 ---
 
 ## 🔒 Quoting Defensivo & Variáveis

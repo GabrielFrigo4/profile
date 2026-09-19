@@ -34,3 +34,19 @@ set "FASM_STORE=%VIRTUAL_STORE%\Program Files\FASM"
 set "FASM2_STORE=%VIRTUAL_STORE%\Program Files\FASM2"
 set "FASMG_STORE=%VIRTUAL_STORE%\Program Files\FASMG"
 set "FASMARM_STORE=%VIRTUAL_STORE%\Program Files\FASMARM"
+
+rem ================================
+rem ALIASES & DOSKEY
+rem ================================
+doskey upget=winget upgrade --all
+doskey upscp=scoop update ^&^& scoop update --all
+doskey upcho=choco upgrade all -y
+doskey upsys=winget upgrade --all ^&^& scoop update ^&^& scoop update --all ^&^& choco upgrade all -y
+doskey upwin=powershell -NoProfile -Command "Get-WindowsUpdate -AcceptAll -Install -AutoReboot"
+doskey upgit=powershell -NoProfile -ExecutionPolicy Bypass -Command "& { . $PROFILE; Update-Git $* }"
+doskey uped=powershell -NoProfile -ExecutionPolicy Bypass -Command "& { . $PROFILE; Update-Editors }"
+doskey uprc=powershell -NoProfile -ExecutionPolicy Bypass -Command "& { . $PROFILE; Update-Profile }"
+doskey upprofile=powershell -NoProfile -ExecutionPolicy Bypass -Command "& { . $PROFILE; Update-Profile }"
+doskey upvt=powershell -NoProfile -ExecutionPolicy Bypass -Command "& { . $PROFILE; Update-Vault }"
+doskey upsh=powershell -NoProfile -ExecutionPolicy Bypass -Command "& { . $PROFILE; Update-Shell }"
+doskey upall=powershell -NoProfile -ExecutionPolicy Bypass -Command "& { . $PROFILE; Update-All }"

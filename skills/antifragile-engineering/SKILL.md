@@ -48,7 +48,7 @@ flowchart LR
 
 ---
 
-## 📐 Os 4 Pilares da Engenharia Antifrágil
+## 📐 Os 5 Pilares da Engenharia Antifrágil
 
 ### 1. Cascata Ativa de Descoberta (_Active Discovery Cascade_)
 
@@ -87,6 +87,14 @@ Isso garante que subprocessos, ferramentas subordinadas (editores, Git, IDEs) e 
 
 - Se a chave privada física não for encontrada no disco, o utilitário não injeta `-i ""` ou caminhos inexistentes que garantem falha no `ssh`. Ele verifica se há chaves carregadas no agente (`ssh-add -l`) ou invoca o comando sem a flag restritiva, permitindo que chaves de hardware (FIDO2/YubiKey) ou autenticações alternativas funcionem.
 - Sempre preserve argumentos variáveis (`"$@"` no Shell, `$args` no PowerShell, `...rest` no NuShell), transformando aliases estáticos em comandos utilitários flexíveis.
+
+### 5. Invariante de Clonagem "Out-of-the-Box" (_Zero-Tweaks Git Invariant_)
+
+Sistemas antifrágeis não exigem que o operador execute intervenções manuais de pós-instalação após um `git clone`:
+
+- **Permissões no Git Index:** Modos octais canônicos (`0755` para scripts/hooks executáveis, `0644` para configurações e documentação, `0700`/`0600` para segredos) são mantidos estritamente pelo controle de versão.
+- **Auto-Cura Pós-Clone:** Scripts de entrada e inicializadores detectam se estão rodando sob sistemas de arquivos que não preservam bits POSIX (ex: NTFS, FAT32, montagens WSL) e aplicam `chmod 0755` defensivamente aos seus subordinados antes da execução.
+- **Zero Diretórios Órfãos:** Scripts garantem a existência de seus diretórios de trabalho (`mkdir -p`) no momento do uso, prevenindo falhas de `No such file or directory`.
 
 ---
 
