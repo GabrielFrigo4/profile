@@ -660,7 +660,6 @@ local function cmd_uped()
 	local localappdata = os.getenv("LOCALAPPDATA") or ""
 	local found = false
 
-	-- Emacs
 	local emacs_dir = home .. [[\.emacs.d]]
 	if not is_dir(emacs_dir) and appdata ~= "" then
 		emacs_dir = appdata .. [[\.emacs.d]]
@@ -676,7 +675,6 @@ local function cmd_uped()
 		_ui_ok("Emacs atualizado com sucesso!")
 	end
 
-	-- Helix
 	local helix_dir = appdata ~= "" and (appdata .. [[\helix]]) or (home .. [[\.config\helix]])
 	if not is_dir(helix_dir .. [[\.git]]) and is_dir(home .. [[\.config\helix\.git]]) then
 		helix_dir = home .. [[\.config\helix]]
@@ -688,7 +686,6 @@ local function cmd_uped()
 		_ui_ok("Helix atualizado com sucesso!")
 	end
 
-	-- NeoVim
 	local nvim_dir = localappdata ~= "" and (localappdata .. [[\nvim]]) or (home .. [[\.config\nvim]])
 	if not is_dir(nvim_dir .. [[\.git]]) and is_dir(home .. [[\.config\nvim\.git]]) then
 		nvim_dir = home .. [[\.config\nvim]]
@@ -700,7 +697,6 @@ local function cmd_uped()
 		_ui_ok("NeoVim atualizado com sucesso!")
 	end
 
-	-- Vim
 	local vim_dir = home .. [[\vimfiles]]
 	if not is_dir(vim_dir .. [[\.git]]) and is_dir(home .. [[\.vim\.git]]) then
 		vim_dir = home .. [[\.vim]]
