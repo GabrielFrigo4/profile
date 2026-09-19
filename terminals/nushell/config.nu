@@ -15,10 +15,11 @@ let _vault_candidates = [
 	(($env.USERPROFILE? | default ($env.HOME? | default "~")) | path join ".config" "vault"),
 	(($env.USERPROFILE? | default ($env.HOME? | default "~")) | path join ".vault")
 ]
-let _active_vault = ($_vault_candidates | where { |p| ($p | is-not-empty) and ($p | path exists) } | first?)
+let _active_vault = ($_vault_candidates | where { |p| ($p | is-not-empty) and ($p | path exists) } | get -o 0)
 
 if ($_active_vault | is-not-empty) {
-	for f in (glob ($_active_vault | path join "**" "*.env")) {
+    let _pattern = ($"($_active_vault)/**/*.env" | str replace -a '\' '/')
+    for f in (glob $_pattern) {
 		let raw_lines = (open $f | lines | where { |it|
 			let trimmed = ($it | str trim)
 			($trimmed | is-not-empty) and (not ($trimmed | str starts-with '#')) and ($trimmed | str contains '=')

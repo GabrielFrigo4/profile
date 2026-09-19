@@ -8,15 +8,15 @@
 ### CONFIGURACOES GERAIS
 ### ================================
 
-$vaultCandidates = @(
+$vaultDir = @(
 	$env:VAULT_DIR,
 	(Join-Path $HOME ".local\share\vault"),
 	(Join-Path $HOME ".config\vault"),
 	(Join-Path $HOME ".vault")
-) | Where-Object { $_ -and (Test-Path (Join-Path $_ "vault.ps1")) }
+) | Where-Object { $_ -and (Test-Path (Join-Path $_ "vault.ps1")) } | Select-Object -First 1
 
-if ($vaultCandidates) {
-	. (Join-Path $vaultCandidates[0] "vault.ps1")
+if ($vaultDir) {
+	. (Join-Path $vaultDir "vault.ps1")
 }
 
 $PSDefaultparameterValues['*:Encoding'] = 'utf8'
