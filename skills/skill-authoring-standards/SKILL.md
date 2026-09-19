@@ -58,6 +58,22 @@ O ecossistema estabelece uma distinção rigorosa entre habilidades portáteis d
 - **Especialização do Projeto:** Devem codificar regras operacionais, flags de Makefile, alvos de compilação, scripts de teste e particularidades do fluxo daquele repositório.
 - **Não Redundância:** Não devem duplicar manuais gerais de linguagem ou boas práticas universais já cobertos pelas skills globais.
 
+### ⚖️ A Invariante da Perenidade Cognitiva (Skills vs. TODO.md)
+
+O ecossistema impõe uma **separação ontológica rigorosa** entre a memória procedimental perene e a governança de tarefas:
+
+| Documento       | Natureza & Papel              | Volatilidade        | O Que Deve Conter                                                | O Que NUNCA Deve Conter                          |
+| :-------------- | :---------------------------- | :------------------ | :--------------------------------------------------------------- | :----------------------------------------------- |
+| **`README.md`** | Vitrine Pública & Onboarding  | Baixa               | Portais, badges, sistemas suportados, arquitetura e quickstart   | Backlog granular, runbooks cognitivos densos     |
+| **`TODO.md`**   | Roadmap & Governança Dinâmica | **Alta (Dinâmico)** | Matriz de maturidade/status, épicos em andamento, sprints        | Invariantes teóricas, manuais procedimentais     |
+| **`SKILL.md`**  | Runbooks Cognitivos & Métodos | **Nula (Perene)**   | _Como_ pensar, projetar e auditar; heurísticas e padrões eternos | **Tarefas de sprint, cópia de TODO.md, backlog** |
+| **`AGENTS.md`** | Constituição Operacional      | Baixa               | Contratos invioláveis, regras de integridade e Boy Scout Rule    | Backlog de tarefas, código de implementação      |
+
+#### Proibição Absoluta de Débito Cognitivo & Tarefas Efêmeras em Skills:
+
+- **Proibição de Listas de Afazeres:** É expressamente proibido transformar skills em espelhos de tarefas pendentes do `TODO.md` ou checklists de sprint. O `TODO.md` é volátil; skills ensinam métodos invariantes.
+- **O Teste dos 5 Anos:** _"Quando todas as tarefas pendentes forem concluídas e o `TODO.md` estiver limpo, o conteúdo desta skill continuará 100% verdadeiro, relevante e acionável daqui a 5 anos?"_ Se depender de tarefas em aberto, pertencia ao `TODO.md`.
+
 ---
 
 ## 🗂️ Estrutura Modular de uma Skill (Além do `SKILL.md`)
@@ -203,24 +219,12 @@ python3 "${PROFILE_DIR:-${HOME}/.local/share/profile}/skills/skill-authoring-sta
 
 ## 🛡️ Padrões de Código e Shell em Skills
 
-Ao incluir trechos de código executável em qualquer skill:
+Ao incluir trechos de código executável ou automações em skills:
 
-1. **A Regra Absoluta do Shebang:**
-    - Em todo script de shell, utilize impreterivelmente:
-        ```sh
-        #!/usr/bin/env sh
-        ```
-    - NUNCA use caminhos hardcoded como `#!/bin/sh` ou `#!/bin/bash`.
-2. **Taxonomia de Emissão:**
-    - `echo "${msg}"` para texto simples.
-    - `echo -n $'\e...'` sob `[ -t 1 ]` para sequências ANSI.
-    - `printf` para tabulações e números.
-3. **Quoting Defensivo:**
-    - Redirecionamentos entre aspas: `> "/dev/null" 2>&1`.
-    - Variáveis protegidas: `"${var}"`.
-4. **Makefiles Universais:**
-    - Cabeçalho canônico: `.POSIX: .SILENT:` e `MAKEFLAGS += --no-print-directory -s`.
-    - Atribuição de subshell com `!=` e alinhamento canônico de colunas.
+1. **Shebang Universal:** Utilize sempre `#!/usr/bin/env sh` (POSIX) ou `#!/usr/bin/env python3`. Nunca hardcode `/bin/bash`.
+2. **Taxonomia de Emissão:** `echo "${msg}"` para texto simples; `[ -t 1 ] && echo -n $'\e...'` para ANSI; `printf` para tabelas.
+3. **Quoting Defensivo:** Proteção rigorosa de variáveis `"${var}"` e redirecionamentos cotados `> "/dev/null" 2>&1`.
+4. **Makefiles Universais:** Cabeçalho `.POSIX: .SILENT:`, `MAKEFLAGS += --no-print-directory -s` e atribuição `!=`.
 
 ---
 

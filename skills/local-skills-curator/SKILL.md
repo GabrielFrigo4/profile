@@ -20,9 +20,11 @@ Nem toda informação merece se tornar uma skill local. A proliferação desorde
 - **Padrões de Teste e Quality Gates:** Como disparar suites parciais, testes de estresse ou ferramentas de profiling locais.
 - **Armadilhas Conhecidas (Gotchas):** Comportamentos inesperados de dependências ou peculiaridades de plataformas específicas.
 
-### 🔴 O Que NUNCA Deve ser Registrado (Ruído Efêmero):
+### 🔴 O Que NUNCA Deve ser Registrado (Ruído Efêmero & Volatilidade):
 
-- **Tarefas de Curto Prazo e Debug Pontual:** Logs temporários, listas de afazeres imediatos ou anotações de sessão única.
+- **Tarefas de Backlog ou Épicos Transitórios (`TODO.md`):** É expressamente proibido converter skills em espelhos de tarefas a fazer, refatorações pontuais ou sprints. O `TODO.md` é o repositório exclusivo de pendências e dívidas técnicas; skills capturam exclusivamente o _método, os contratos e as invariantes perenes_.
+- **O Teste dos 5 Anos:** Antes de registrar uma instrução em uma skill, pergunte-se: _"Quando o `TODO.md` for zerado e as tarefas forem concluídas, este conhecimento ainda será útil, verdadeiro e acionável daqui a 5 anos?"_ Se depender de tarefas em aberto, descarte da skill.
+- **Tarefas de Curto Prazo e Debug Pontual:** Logs temporários, anotações de sessão única ou investigações pontuais.
 - **Conceitos Universais Já Cobertos:** Manuais gerais de linguagens ou regras POSIX que pertencem a skills globais.
 - **Duplicação de Código:** Trechos de código que já estão no repositório ou no `Makefile`.
 
@@ -32,10 +34,10 @@ Nem toda informação merece se tornar uma skill local. A proliferação desorde
 
 O agente deve gerenciar o ciclo de vida completo das skills locais:
 
-1. **Criar (Create):** Ao identificar uma regra tácita recorrente ou contrato estrutural consolidado, sugira ou crie um novo runbook em `.agents/skills/<nome>/SKILL.md`.
-2. **Atualizar (Update):** Quando a base de código evoluir (ex: nova flag de build, novo alvo de teste), atualize a skill local correspondente para manter paridade com a realidade do projeto.
+1. **Criar (Create):** Ao identificar uma regra tácita recorrente, padrão ou contrato estrutural consolidado, crie um novo runbook em `.agents/skills/<nome>/SKILL.md`.
+2. **Atualizar (Update):** Quando a arquitetura evoluir (ex: nova flag de build, novo alvo de teste), atualize a skill local para manter paridade com a realidade.
 3. **Refatorar (Refactor):** Se uma skill local crescer além do _sweet spot_ de 128 linhas, sintetize os pontos centrais e mova tabelas ou dados densos para `references/`.
-4. **Purgar (Prune / Delete):** Quando uma ferramenta, padrão ou subsistema for removido do projeto, **delete imediatamente a skill local obsoleta** para não acumular alucinações ou regras mortas.
+4. **Purgar (Prune / Delete):** Quando uma ferramenta ou subsistema for removido, ou quando uma skill contiver resquícios de tarefas já superadas do `TODO.md`, **delete imediatamente o ruído obsoleto** para não acumular alucinações.
 
 ---
 
