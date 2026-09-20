@@ -8,38 +8,62 @@
 ### CONFIGURACOES GERAIS
 ### ================================
 
-$vaultDir = @(
-	$env:VAULT_DIR,
-	(Join-Path $HOME ".local\share\vault"),
-	(Join-Path $HOME ".config\vault"),
-	(Join-Path $HOME ".vault")
-) | Where-Object { $_ -and (Test-Path (Join-Path $_ "vault.ps1")) } | Select-Object -First 1
-
-if ($vaultDir) {
-	. (Join-Path $vaultDir "vault.ps1")
-}
-
 $PSDefaultparameterValues['*:Encoding'] = 'utf8'
 
 $env:HOME = $env:USERPROFILE
 $SYSTEM32 = 'C:\Windows\System32'
 
+function Get-Msys2UserHome {
+	$root     = if ($env:MSYS2_ROOT) { $env:MSYS2_ROOT } else { 'C:\msys64' }
+	$homeBase = if ($env:MSYS2_HOME) { $env:MSYS2_HOME } else { Join-Path $root 'home' }
+	$user     = if ($env:MSYS2_USER) { $env:MSYS2_USER } else { $env:USERNAME }
+
+	$target = Join-Path $homeBase $user
+	if (-not (Test-Path $target)) {
+		$target = Join-Path $homeBase $user.ToLower()
+	}
+	if (Test-Path $target) { return $target }
+	return $null
+}
+
+$MsysHome = Get-Msys2UserHome
+
+$vaultCandidates = @(
+	$env:VAULT_DIR,
+	(Join-Path $HOME ".local\share\vault"),
+	(Join-Path $HOME ".config\vault"),
+	(Join-Path $HOME ".vault")
+)
+if ($MsysHome) {
+	$vaultCandidates += @(
+		(Join-Path $MsysHome ".local\share\vault"),
+		(Join-Path $MsysHome ".config\vault"),
+		(Join-Path $MsysHome ".vault")
+	)
+}
+
+$vaultDir = $vaultCandidates | Where-Object { $_ -and (Test-Path (Join-Path $_ "vault.ps1")) } | Select-Object -First 1
+
+if ($vaultDir) {
+	. (Join-Path $vaultDir "vault.ps1")
+}
+
 $OneDrive  = "${Home}\onedrive"
 $Desktop   = "${OneDrive}\Área de Trabalho"
 $Documents = "${OneDrive}\Documentos"
-$Images	= "${OneDrive}\Imagens"
+$Images    = "${OneDrive}\Imagens"
 $Workspace = "${OneDrive}\Workspace"
 $Downloads = "${Home}\Downloads"
 
 $VIRTUAL_STORE = "$($env:LOCALAPPDATA)\VirtualStore"
-$FASM_STORE	= "${VIRTUAL_STORE}\Program Files\FASM"
+$FASM_STORE    = "${VIRTUAL_STORE}\Program Files\FASM"
 $FASM2_STORE   = "${VIRTUAL_STORE}\Program Files\FASM2"
 $FASMG_STORE   = "${VIRTUAL_STORE}\Program Files\FASMG"
 $FASMARM_STORE = "${VIRTUAL_STORE}\Program Files\FASMARM"
 
 $IsAdmin = [bool](([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match "S-1-5-32-544")
 $Machine = [Environment]::GetEnvironmentVariables([System.EnvironmentVariableTarget]::Machine)
-$User	= [Environment]::GetEnvironmentVariables([System.EnvironmentVariableTarget]::User)
+$User    = [Environment]::GetEnvironmentVariables([System.EnvironmentVariableTarget]::User)
 
 ### ================================
 ### NAVEGACAO E EDICAO
@@ -58,6 +82,7 @@ function Goto-Downloads { Set-Location -Path "${Downloads}" }
 function Goto-Virtual-Store { Set-Location -Path "${VIRTUAL_STORE}" }
 function Goto-FASM-Store { Set-Location -Path "${FASM_STORE}" }
 function Goto-Machine { Set-Location -Path "$SYSTEM32" }
+function Goto-Msys { Set-Location -Path (if ($MsysHome) { $MsysHome } else { 'C:\msys64' }) }
 
 function Show-Explorer { explorer.exe . }
 function Show-User { explorer.exe "${Home}" }
@@ -70,6 +95,7 @@ function Show-Downloads { explorer.exe "${Downloads}" }
 function Show-Virtual-Store { explorer.exe "${VIRTUAL_STORE}" }
 function Show-FASM-Store { explorer.exe "${FASM_STORE}" }
 function Show-Machine { explorer.exe "$SYSTEM32" }
+function Show-Msys { explorer.exe (if ($MsysHome) { $MsysHome } else { 'C:\msys64' }) }
 
 ### ================================
 ### SISTEMA E ADMINISTRACAO
@@ -328,8 +354,15 @@ function Update-Profile {
 		(Join-Path $HOME ".profile"),
 		(Join-Path $HOME "OneDrive\Documentos\Profile"),
 		(Join-Path $HOME "Documents\Profile")
-	) | Where-Object { $_ -and (Test-Path (Join-Path $_ ".git")) }
-	$target = if ($candidates) { $candidates[0] } else { $null }
+	)
+	if ($MsysHome) {
+		$candidates += @(
+			(Join-Path $MsysHome ".local\share\profile"),
+			(Join-Path $MsysHome ".config\profile"),
+			(Join-Path $MsysHome ".profile")
+		)
+	}
+	$target = $candidates | Where-Object { $_ -and (Test-Path (Join-Path $_ ".git")) } | Select-Object -First 1
 
 	if ($target) {
 		_ui_step "Atualizando Universal Profile em: $target..."
@@ -351,8 +384,15 @@ function Update-Vault {
 		(Join-Path $HOME ".local\share\vault"),
 		(Join-Path $HOME ".config\vault"),
 		(Join-Path $HOME ".vault")
-	) | Where-Object { $_ -and (Test-Path (Join-Path $_ ".git")) }
-	$target = if ($candidates) { $candidates[0] } else { $null }
+	)
+	if ($MsysHome) {
+		$candidates += @(
+			(Join-Path $MsysHome ".local\share\vault"),
+			(Join-Path $MsysHome ".config\vault"),
+			(Join-Path $MsysHome ".vault")
+		)
+	}
+	$target = $candidates | Where-Object { $_ -and (Test-Path (Join-Path $_ ".git")) } | Select-Object -First 1
 
 	if ($target) {
 		_ui_step "Atualizando Universal Vault em: $target..."
@@ -370,8 +410,15 @@ function Update-Shell {
 		(Join-Path $HOME ".config\shell"),
 		(Join-Path $HOME ".shell"),
 		"C:\Program Files\Shell"
-	) | Where-Object { $_ -and (Test-Path (Join-Path $_ ".git")) }
-	$target = if ($candidates) { $candidates[0] } else { $null }
+	)
+	if ($MsysHome) {
+		$candidates += @(
+			(Join-Path $MsysHome ".local\share\shell"),
+			(Join-Path $MsysHome ".config\shell"),
+			(Join-Path $MsysHome ".shell")
+		)
+	}
+	$target = $candidates | Where-Object { $_ -and (Test-Path (Join-Path $_ ".git")) } | Select-Object -First 1
 
 	if ($target) {
 		_ui_step "Atualizando Universal Shell em: $target..."
@@ -464,13 +511,19 @@ function Resolve-VaultSshKey([string]$explicitKey, [string]$keyName) {
 	if ($explicitKey -and (Test-Path $explicitKey)) { return $explicitKey }
 	$homeDir = if ($env:USERPROFILE) { $env:USERPROFILE } elseif ($env:HOME) { $env:HOME } else { "~" }
 	$candidates = @(
-		if ($env:VAULT_DIR) { Join-Path $env:VAULT_DIR "keys\$keyName" },
+		(if ($env:VAULT_DIR) { Join-Path $env:VAULT_DIR "keys\$keyName" }),
 		(Join-Path $homeDir ".local\share\vault\keys\$keyName"),
 		(Join-Path $homeDir ".config\vault\keys\$keyName"),
 		(Join-Path $homeDir ".vault\keys\$keyName")
-	) | Where-Object { $_ -and (Test-Path $_) }
-	if ($candidates) { return $candidates[0] }
-	return $null
+	)
+	if ($MsysHome) {
+		$candidates += @(
+			(Join-Path $MsysHome ".local\share\vault\keys\$keyName"),
+			(Join-Path $MsysHome ".config\vault\keys\$keyName"),
+			(Join-Path $MsysHome ".vault\keys\$keyName")
+		)
+	}
+	return ($candidates | Where-Object { $_ -and (Test-Path $_) } | Select-Object -First 1)
 }
 
 function frigo-server {

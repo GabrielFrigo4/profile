@@ -9,17 +9,36 @@
 $env.config.buffer_editor = "notepad++";
 $env.config.show_banner = false;
 $env.HOME = $"($env.USERPROFILE)";
+
+let _msys_root = ($env.MSYS2_ROOT? | default "C:\\msys64")
+let _msys_home_base = ($env.MSYS2_HOME? | default ([$_msys_root, "home"] | path join))
+let _msys_user = ($env.MSYS2_USER? | default ($env.USERNAME? | default ""))
+
+let _msys_target = ([$_msys_home_base, $_msys_user] | path join)
+let _msys_target_lower = ([$_msys_home_base, ($_msys_user | str lowercase)] | path join)
+
+let MsysHome = if ($_msys_target | path exists) {
+	$_msys_target
+} else if ($_msys_target_lower | path exists) {
+	$_msys_target_lower
+} else {
+	""
+}
+
 let _vault_candidates = [
 	($env.VAULT_DIR? | default ""),
 	(($env.USERPROFILE? | default ($env.HOME? | default "~")) | path join ".local" "share" "vault"),
 	(($env.USERPROFILE? | default ($env.HOME? | default "~")) | path join ".config" "vault"),
-	(($env.USERPROFILE? | default ($env.HOME? | default "~")) | path join ".vault")
+	(($env.USERPROFILE? | default ($env.HOME? | default "~")) | path join ".vault"),
+	(if ($MsysHome | is-not-empty) { [$MsysHome, ".local", "share", "vault"] | path join } else { "" }),
+	(if ($MsysHome | is-not-empty) { [$MsysHome, ".config", "vault"] | path join } else { "" }),
+	(if ($MsysHome | is-not-empty) { [$MsysHome, ".vault"] | path join } else { "" })
 ]
 let _active_vault = ($_vault_candidates | where { |p| ($p | is-not-empty) and ($p | path exists) } | get -o 0)
 
 if ($_active_vault | is-not-empty) {
-    let _pattern = ($"($_active_vault)/**/*.env" | str replace -a '\' '/')
-    for f in (glob $_pattern) {
+	let _pattern = ($"($_active_vault)/**/*.env" | str replace -a '\' '/')
+	for f in (glob $_pattern) {
 		let raw_lines = (open $f | lines | where { |it|
 			let trimmed = ($it | str trim)
 			($trimmed | is-not-empty) and (not ($trimmed | str starts-with '#')) and ($trimmed | str contains '=')
@@ -35,6 +54,7 @@ if ($_active_vault | is-not-empty) {
 		}
 	}
 }
+
 ### ================================
 ### SHELL VARIABLES
 ### ================================
@@ -43,9 +63,9 @@ let Home = $"($env.USERPROFILE)";
 let System32 = "C:\\Windows\\System32";
 let OneDrive = $"($Home)\\onedrive";
 let Desktop = $"($OneDrive)\\Área de Trabalho";
-let Documents = $"($OneDrive)\\Documentos" ;
+let Documents = $"($OneDrive)\\Documentos";
 let Images = $"($OneDrive)\\Imagens";
-let Workspace = $"($OneDrive)\\Workspace" ;
+let Workspace = $"($OneDrive)\\Workspace";
 let Downloads = $"($Home)\\Downloads";
 let VIRTUAL_STORE = $"($env.LOCALAPPDATA)\\VirtualStore";
 let FASM_STORE = $"($VIRTUAL_STORE)\\Program Files\\FASM";
@@ -80,6 +100,27 @@ def unix-man [section: string, command: string] {
 };
 
 ### ================================
+### SSH KEY RESOLUTION
+### ================================
+
+def resolve-vault-ssh-key [explicit_key: string, key_name: string] {
+	if ($explicit_key | is-not-empty) and ($explicit_key | path exists) {
+		return $explicit_key
+	}
+	let user_home = ($env.USERPROFILE? | default ($env.HOME? | default "~"))
+	let candidates = [
+		(if ($env.VAULT_DIR? | is-not-empty) { [$env.VAULT_DIR, "keys", $key_name] | path join } else { "" }),
+		([$user_home, ".local", "share", "vault", "keys", $key_name] | path join),
+		([$user_home, ".config", "vault", "keys", $key_name] | path join),
+		([$user_home, ".vault", "keys", $key_name] | path join),
+		(if ($MsysHome | is-not-empty) { [$MsysHome, ".local", "share", "vault", "keys", $key_name] | path join } else { "" }),
+		(if ($MsysHome | is-not-empty) { [$MsysHome, ".config", "vault", "keys", $key_name] | path join } else { "" }),
+		(if ($MsysHome | is-not-empty) { [$MsysHome, ".vault", "keys", $key_name] | path join } else { "" })
+	]
+	$candidates | where { |p| ($p | is-not-empty) and ($p | path exists) } | get -o 0
+}
+
+### ================================
 ### SHELL ALIASES
 ### ================================
 
@@ -91,7 +132,7 @@ alias wman = win-man;
 alias uman = unix-man;
 alias mandoc = unix-man;
 alias upget = winget upgrade --all;
-alias upcho = choco upgrade all -y;
+alias upcho = ^pwsh -NoProfile -Command "Start-Process choco -ArgumentList 'upgrade all -y' -Verb RunAs -Wait";
 alias Goto-Home = cd $"($Home)";
 alias Goto-OneDrive = cd $"($OneDrive)";
 alias Goto-Desktop = cd $"($Desktop)";
@@ -102,6 +143,7 @@ alias Goto-Downloads = cd $"($Downloads)";
 alias Goto-Virtual-Store = cd $"($VIRTUAL_STORE)";
 alias Goto-FASM-Store = cd $"($FASM_STORE)";
 alias Goto-Machine = cd $"($System32)";
+alias Goto-Msys = cd (if ($MsysHome | is-not-empty) { $MsysHome } else { "C:\\msys64" });
 alias Show-Explorer = explorer.exe .;
 alias Show-Home = explorer.exe $"($Home)";
 alias Show-OneDrive = explorer.exe $"($OneDrive)";
@@ -113,11 +155,14 @@ alias Show-Downloads = explorer.exe $"($Downloads)";
 alias Show-Virtual-Store = explorer.exe $"($VIRTUAL_STORE)";
 alias Show-FASM-Store = explorer.exe $"($FASM_STORE)";
 alias Show-Machine = explorer.exe $"($System32)";
+alias Show-Msys = explorer.exe (if ($MsysHome | is-not-empty) { $MsysHome } else { "C:\\msys64" });
+
 def --wrapped frigo-server [...rest] {
 	let ip = ($env.FRIGO_SERVER_IP? | default "144.22.210.65")
 	let user = ($env.FRIGO_SERVER_USER? | default "ubuntu")
-	let key = ($env.FRIGO_SERVER_KEY? | default "")
-	if ($key | is-not-empty) and ($key | path exists) {
+	let key = (resolve-vault-ssh-key ($env.FRIGO_SERVER_KEY? | default "") "ssh-key-frigo-server.key")
+	if ($key | is-not-empty) {
+		$env.FRIGO_SERVER_KEY = $key
 		ssh -i $key $"($user)@($ip)" ...$rest
 	} else {
 		ssh $"($user)@($ip)" ...$rest
@@ -127,13 +172,15 @@ def --wrapped frigo-server [...rest] {
 def --wrapped orbs-server [...rest] {
 	let ip = ($env.ORBS_SERVER_IP? | default "137.131.238.161")
 	let user = ($env.ORBS_SERVER_USER? | default "ubuntu")
-	let key = ($env.ORBS_SERVER_KEY? | default "")
-	if ($key | is-not-empty) and ($key | path exists) {
+	let key = (resolve-vault-ssh-key ($env.ORBS_SERVER_KEY? | default "") "ssh-key-orbs-server.key")
+	if ($key | is-not-empty) {
+		$env.ORBS_SERVER_KEY = $key
 		ssh -i $key $"($user)@($ip)" ...$rest
 	} else {
 		ssh $"($user)@($ip)" ...$rest
 	}
 }
+
 alias ek = taskkill /IM emacs.exe /F;
 alias es = runemacs --fg-daemon;
 alias ec = emacsclientw --create-frame --alternate-editor "";
@@ -217,7 +264,8 @@ def uped [] {
 
 	let emacs_paths = [
 		([$env.USERPROFILE, ".emacs.d"] | path join),
-		(if ($env.APPDATA? | is-not-empty) { [$env.APPDATA, ".emacs.d"] | path join } else { "" })
+		(if ($env.APPDATA? | is-not-empty) { [$env.APPDATA, ".emacs.d"] | path join } else { "" }),
+		(if ($MsysHome | is-not-empty) { [$MsysHome, ".emacs.d"] | path join } else { "" })
 	]
 	let emacs_dir = ($emacs_paths | where { |p| ($p | is-not-empty) and ([$p, ".git"] | path join | path exists) } | get -o 0)
 	if ($emacs_dir | is-not-empty) {
@@ -233,7 +281,8 @@ def uped [] {
 
 	let helix_paths = [
 		(if ($env.APPDATA? | is-not-empty) { [$env.APPDATA, "helix"] | path join } else { "" }),
-		([$env.USERPROFILE, ".config", "helix"] | path join)
+		([$env.USERPROFILE, ".config", "helix"] | path join),
+		(if ($MsysHome | is-not-empty) { [$MsysHome, ".config", "helix"] | path join } else { "" })
 	]
 	let helix_dir = ($helix_paths | where { |p| ($p | is-not-empty) and ([$p, ".git"] | path join | path exists) } | get -o 0)
 	if ($helix_dir | is-not-empty) {
@@ -245,7 +294,8 @@ def uped [] {
 
 	let nvim_paths = [
 		(if ($env.LOCALAPPDATA? | is-not-empty) { [$env.LOCALAPPDATA, "nvim"] | path join } else { "" }),
-		([$env.USERPROFILE, ".config", "nvim"] | path join)
+		([$env.USERPROFILE, ".config", "nvim"] | path join),
+		(if ($MsysHome | is-not-empty) { [$MsysHome, ".config", "nvim"] | path join } else { "" })
 	]
 	let nvim_dir = ($nvim_paths | where { |p| ($p | is-not-empty) and ([$p, ".git"] | path join | path exists) } | get -o 0)
 	if ($nvim_dir | is-not-empty) {
@@ -257,7 +307,8 @@ def uped [] {
 
 	let vim_paths = [
 		([$env.USERPROFILE, "vimfiles"] | path join),
-		([$env.USERPROFILE, ".vim"] | path join)
+		([$env.USERPROFILE, ".vim"] | path join),
+		(if ($MsysHome | is-not-empty) { [$MsysHome, ".vim"] | path join } else { "" })
 	]
 	let vim_dir = ($vim_paths | where { |p| ($p | is-not-empty) and ([$p, ".git"] | path join | path exists) } | get -o 0)
 	if ($vim_dir | is-not-empty) {
@@ -281,7 +332,10 @@ def uprc [] {
 		([$env.USERPROFILE, ".config", "profile"] | path join),
 		([$env.USERPROFILE, ".profile"] | path join),
 		([$env.USERPROFILE, "OneDrive", "Documentos", "Profile"] | path join),
-		([$env.USERPROFILE, "Documents", "Profile"] | path join)
+		([$env.USERPROFILE, "Documents", "Profile"] | path join),
+		(if ($MsysHome | is-not-empty) { [$MsysHome, ".local", "share", "profile"] | path join } else { "" }),
+		(if ($MsysHome | is-not-empty) { [$MsysHome, ".config", "profile"] | path join } else { "" }),
+		(if ($MsysHome | is-not-empty) { [$MsysHome, ".profile"] | path join } else { "" })
 	]
 	let target = ($candidates | where { |p| ($p | is-not-empty) and ([$p, ".git"] | path join | path exists) } | get -o 0)
 
@@ -304,7 +358,10 @@ def upvt [] {
 		($env.VAULT_DIR? | default ""),
 		([$env.USERPROFILE, ".local", "share", "vault"] | path join),
 		([$env.USERPROFILE, ".config", "vault"] | path join),
-		([$env.USERPROFILE, ".vault"] | path join)
+		([$env.USERPROFILE, ".vault"] | path join),
+		(if ($MsysHome | is-not-empty) { [$MsysHome, ".local", "share", "vault"] | path join } else { "" }),
+		(if ($MsysHome | is-not-empty) { [$MsysHome, ".config", "vault"] | path join } else { "" }),
+		(if ($MsysHome | is-not-empty) { [$MsysHome, ".vault"] | path join } else { "" })
 	]
 	let target = ($candidates | where { |p| ($p | is-not-empty) and ([$p, ".git"] | path join | path exists) } | get -o 0)
 
@@ -323,7 +380,10 @@ def upsh [] {
 		([$env.USERPROFILE, ".local", "share", "shell"] | path join),
 		([$env.USERPROFILE, ".config", "shell"] | path join),
 		([$env.USERPROFILE, ".shell"] | path join),
-		"C:\\Program Files\\Shell"
+		"C:\\Program Files\\Shell",
+		(if ($MsysHome | is-not-empty) { [$MsysHome, ".local", "share", "shell"] | path join } else { "" }),
+		(if ($MsysHome | is-not-empty) { [$MsysHome, ".config", "shell"] | path join } else { "" }),
+		(if ($MsysHome | is-not-empty) { [$MsysHome, ".shell"] | path join } else { "" })
 	]
 	let target = ($candidates | where { |p| ($p | is-not-empty) and ([$p, ".git"] | path join | path exists) } | get -o 0)
 

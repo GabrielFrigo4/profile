@@ -18,25 +18,44 @@ local startup = {
 -- SYSTEM
 -- ================================
 
-local function exists(path)
-	local ok, err, code = os.rename(path, path)
-	if ok then
+local function is_dir(p)
+	if not p or p == "" then return false end
+	if path and path.is_dir then return path.is_dir(p) end
+	if os.isdir then return os.isdir(p) end
+	local ok, _, code = os.rename(p, p)
+	if ok or code == 13 or code == 17 then return true end
+	return false
+end
+
+local function is_file(p)
+	if not p or p == "" then return false end
+	if path and path.is_file then return path.is_file(p) end
+	if os.isfile then return os.isfile(p) end
+	local f = io.open(p, "r")
+	if f then f:close() return true end
+	return false
+end
+
+local function exists(p)
+	if not p or p == "" then return false end
+	return is_dir(p) or is_file(p)
+end
+
+local function is_git_repo(dir)
+	if not dir or dir == "" then return false end
+	if path and path.is_dir and path.is_dir(dir .. [[\.git]]) then return true end
+	if os.isdir and os.isdir(dir .. [[\.git]]) then return true end
+	local f = io.open(dir .. [[\.git\HEAD]], "r") or io.open(dir .. [[\.git\config]], "r") or io.open(dir .. [[\.git]], "r")
+	if f then
+		f:close()
 		return true
-	elseif not ok then
-		if code == 13 then
-			return true
-		end
 	end
-	return false, err, code
+	return false
 end
 
-local function is_dir(path)
-	return (exists(path .. "/") and exists(path))
-end
-
-local function is_file(path)
-	return (not exists(path .. "/") and exists(path))
-end
+-- ================================
+-- ENVIRONMENT
+-- ================================
 
 local current = {
 	prompt = nil,
@@ -45,6 +64,49 @@ local current = {
 	cwd = nil,
 	dir = nil,
 }
+
+-- ================================
+-- MSYS2 ENVIRONMENT
+-- ================================
+
+local function trim(s)
+	return (string.gsub(s, "^%s*(.-)%s*$", "%1"))
+end
+
+local function get_msys2_home()
+	local explicit = os.getenv("MSYS2_HOME")
+	if explicit and is_dir(explicit) then return explicit end
+
+	local root = os.getenv("MSYS2_ROOT") or [[C:\msys64]]
+	local home_base = root .. [[\home]]
+	if not is_dir(home_base) then return nil end
+
+	local user = os.getenv("MSYS2_USER") or os.getenv("USERNAME") or ""
+	if user ~= "" then
+		if is_dir(home_base .. [[\]] .. user) then
+			return home_base .. [[\]] .. user
+		end
+		if is_dir(home_base .. [[\]] .. string.lower(user)) then
+			return home_base .. [[\]] .. string.lower(user)
+		end
+	end
+
+	local pipe = io.popen([[dir "]] .. home_base .. [[" /b /ad 2>nul]])
+	if pipe then
+		for line in pipe:lines() do
+			local folder = trim(line)
+			if folder ~= "" and is_dir(home_base .. [[\]] .. folder) then
+				pipe:close()
+				return home_base .. [[\]] .. folder
+			end
+		end
+		pipe:close()
+	end
+
+	return nil
+end
+
+MSYS_HOME = get_msys2_home()
 
 -- ================================
 -- CONSTANT
@@ -57,10 +119,6 @@ local function DEFAULT_BRANCH_DATA() return "" end
 -- ================================
 -- FUNCTIONS
 -- ================================
-
-local function trim(s)
-	return (string.gsub(s, "^%s*(.-)%s*$", "%1"))
-end
 
 local function split(str, pattern)
 	local str_list = {}
@@ -163,7 +221,7 @@ local function extract_prompt(prompt)
 	local prompt_venv = string.match(prompt, "^%((.-)%)")
 	local prompt_cwd = os.getcwd()
 	local prompt_dir = last(split(prompt_cwd, "\\"))
-	if prompt_cwd == os.getenv("HOME") then
+	if prompt_cwd == os.getenv("HOME") or prompt_cwd == os.getenv("USERPROFILE") or (MSYS_HOME and prompt_cwd == MSYS_HOME) then
 		prompt_dir = "~"
 	end
 
@@ -374,14 +432,14 @@ function pf:filter(prompt)
 			text_yellow("❮") .. text_bright_blue(" ") .. text_bright_green(user) .. text_yellow("❯")
 	end
 
-	local info = clink.promptcoroutine(get_git_branch)
-	if info ~= nil then
-		if info.branch ~= nil then
+	local binfo = clink.promptcoroutine(get_git_branch)
+	if binfo ~= nil then
+		if binfo.branch ~= nil then
 			prompt = prompt .. " " ..
-				text_yellow("❮") .. text_bright_magenta("  ") .. text_bright_red(info.branch) .. text_yellow("❯")
+				text_yellow("❮") .. text_bright_magenta("  ") .. text_bright_red(binfo.branch) .. text_yellow("❯")
 		end
-		current.branch = info.branch
-	elseif info == nil and current.branch ~= nil then
+		current.branch = binfo.branch
+	elseif binfo == nil and current.branch ~= nil then
 		prompt = prompt .. " " ..
 			text_yellow("❮") .. text_bright_magenta("  ") .. text_bright_red(current.branch) .. text_yellow("❯")
 	end
@@ -403,6 +461,42 @@ function pf:transientfilter(prompt)
 end
 
 -- ================================
+-- SSH KEY RESOLUTION
+-- ================================
+
+local function resolve_vault_ssh_key(explicit_key, key_name)
+	if explicit_key and explicit_key ~= "" and is_file(explicit_key) then
+		return explicit_key
+	end
+	local home = os.getenv("USERPROFILE") or os.getenv("HOME") or ""
+	local candidates = {}
+	local function add(p)
+		if p and p ~= "" then table.insert(candidates, p) end
+	end
+
+	if os.getenv("VAULT_DIR") then
+		add(os.getenv("VAULT_DIR") .. [[\keys\]] .. key_name)
+	end
+	if home ~= "" then
+		add(home .. [[\.local\share\vault\keys\]] .. key_name)
+		add(home .. [[\.config\vault\keys\]] .. key_name)
+		add(home .. [[\.vault\keys\]] .. key_name)
+	end
+	if MSYS_HOME then
+		add(MSYS_HOME .. [[\.local\share\vault\keys\]] .. key_name)
+		add(MSYS_HOME .. [[\.config\vault\keys\]] .. key_name)
+		add(MSYS_HOME .. [[\.vault\keys\]] .. key_name)
+	end
+
+	for _, p in ipairs(candidates) do
+		if is_file(p) then
+			return p
+		end
+	end
+	return nil
+end
+
+-- ================================
 -- ALIASES
 -- ================================
 
@@ -412,21 +506,25 @@ local aliases = {
 	-- --------------------------------
 	["upget"] = [[winget upgrade --all]],
 	["upscp"] = [[scoop update && scoop update --all]],
-	["upcho"] = [[sudo wt choco upgrade all]],
-	["upall"] = [[winget upgrade --all && scoop update && scoop update --all && sudo wt choco upgrade all]],
+	["upcho"] = [[powershell -NoProfile -Command "Start-Process choco -ArgumentList 'upgrade all -y' -Verb RunAs -Wait"]],
+	["upwin"] = [[powershell -NoProfile -Command "Get-WindowsUpdate -AcceptAll -Install -AutoReboot"]],
+	["upsys"] = [[winget upgrade --all && scoop update && scoop update --all && powershell -NoProfile -Command "Start-Process choco -ArgumentList 'upgrade all -y' -Verb RunAs -Wait"]],
+
+	["goto-msys"] = [[cd /d "]] .. (MSYS_HOME or [[C:\msys64]]) .. [["]],
+	["show-msys"] = [[start "" "]] .. (MSYS_HOME or [[C:\msys64]]) .. [["]],
 
 	["frigo-server"] = (function()
 		local ip = os.getenv("FRIGO_SERVER_IP") or "144.22.210.65"
-		local key = os.getenv("FRIGO_SERVER_KEY")
-		if key and key ~= "" then
+		local key = resolve_vault_ssh_key(os.getenv("FRIGO_SERVER_KEY"), "ssh-key-frigo-server.key")
+		if key then
 			return [[ssh -i "]] .. key .. [[" "ubuntu@]] .. ip .. [["]]
 		end
 		return [[ssh "ubuntu@]] .. ip .. [["]]
 	end)(),
 	["orbs-server"] = (function()
 		local ip = os.getenv("ORBS_SERVER_IP") or "137.131.238.161"
-		local key = os.getenv("ORBS_SERVER_KEY")
-		if key and key ~= "" then
+		local key = resolve_vault_ssh_key(os.getenv("ORBS_SERVER_KEY"), "ssh-key-orbs-server.key")
+		if key then
 			return [[ssh -i "]] .. key .. [[" "ubuntu@]] .. ip .. [["]]
 		end
 		return [[ssh "ubuntu@]] .. ip .. [["]]
@@ -504,15 +602,6 @@ local aliases = {
 	["wget"] = [[curl -O]],
 	["env"] = [[set]],
 	["export"] = [[set]],
-
-	-- --------------------------------
-	-- Package Managers
-	-- --------------------------------
-	["upget"] = [[winget upgrade --all]],
-	["upscp"] = [[scoop update && scoop update --all]],
-	["upcho"] = [[choco upgrade all -y]],
-	["upwin"] = [[powershell -NoProfile -Command "Get-WindowsUpdate -AcceptAll -Install -AutoReboot"]],
-	["upsys"] = [[winget upgrade --all && scoop update && scoop update --all && choco upgrade all -y]],
 }
 
 for alias, _ in pairs(aliases) do
@@ -522,7 +611,6 @@ end
 
 local function filter_alias(text)
 	local cmd, args = text:match("^%s*(%S+)(.*)")
-
 	if cmd and aliases[cmd] then
 		return aliases[cmd] .. args
 	end
@@ -556,7 +644,6 @@ local function run_lua_logic(code)
 	end
 
 	local func, err = load("return " .. code)
-
 	if not func then
 		func, err = load(code)
 	end
@@ -577,7 +664,6 @@ end
 
 local function filter_lua_cmd(text)
 	local cmd, args = text:match("^%s*(%S+)%s+(.*)")
-
 	if not cmd then
 		cmd = text:match("^%s*(%S+)%s*$")
 		args = ""
@@ -591,7 +677,6 @@ local function filter_lua_cmd(text)
 		end
 		return ""
 	end
-
 	return nil
 end
 
@@ -634,7 +719,7 @@ local function cmd_upgit(args)
 	local count = 0
 	for line in pipe:lines() do
 		local repo = trim(line)
-		if repo ~= "" and exists(repo .. [[\.git]]) then
+		if repo ~= "" and is_git_repo(repo) then
 			count = count + 1
 			_ui_sub("Atualizando " .. repo .. "...")
 			local ok = os.execute([[git -C "]] .. repo .. [[" pull --ff-only 2>nul]])
@@ -664,7 +749,10 @@ local function cmd_uped()
 	if not is_dir(emacs_dir) and appdata ~= "" then
 		emacs_dir = appdata .. [[\.emacs.d]]
 	end
-	if is_dir(emacs_dir .. [[\.git]]) then
+	if not is_dir(emacs_dir) and MSYS_HOME then
+		emacs_dir = MSYS_HOME .. [[\.emacs.d]]
+	end
+	if is_git_repo(emacs_dir) then
 		found = true
 		_ui_sub("Atualizando Emacs em " .. emacs_dir .. "...")
 		os.execute([[git -C "]] .. emacs_dir .. [[" pull --ff-only]])
@@ -676,10 +764,13 @@ local function cmd_uped()
 	end
 
 	local helix_dir = appdata ~= "" and (appdata .. [[\helix]]) or (home .. [[\.config\helix]])
-	if not is_dir(helix_dir .. [[\.git]]) and is_dir(home .. [[\.config\helix\.git]]) then
+	if not is_dir(helix_dir) and is_dir(home .. [[\.config\helix]]) then
 		helix_dir = home .. [[\.config\helix]]
 	end
-	if is_dir(helix_dir .. [[\.git]]) then
+	if not is_dir(helix_dir) and MSYS_HOME and is_dir(MSYS_HOME .. [[\.config\helix]]) then
+		helix_dir = MSYS_HOME .. [[\.config\helix]]
+	end
+	if is_git_repo(helix_dir) then
 		found = true
 		_ui_sub("Atualizando Helix em " .. helix_dir .. "...")
 		os.execute([[git -C "]] .. helix_dir .. [[" pull --ff-only]])
@@ -687,10 +778,13 @@ local function cmd_uped()
 	end
 
 	local nvim_dir = localappdata ~= "" and (localappdata .. [[\nvim]]) or (home .. [[\.config\nvim]])
-	if not is_dir(nvim_dir .. [[\.git]]) and is_dir(home .. [[\.config\nvim\.git]]) then
+	if not is_dir(nvim_dir) and is_dir(home .. [[\.config\nvim]]) then
 		nvim_dir = home .. [[\.config\nvim]]
 	end
-	if is_dir(nvim_dir .. [[\.git]]) then
+	if not is_dir(nvim_dir) and MSYS_HOME and is_dir(MSYS_HOME .. [[\.config\nvim]]) then
+		nvim_dir = MSYS_HOME .. [[\.config\nvim]]
+	end
+	if is_git_repo(nvim_dir) then
 		found = true
 		_ui_sub("Atualizando NeoVim em " .. nvim_dir .. "...")
 		os.execute([[git -C "]] .. nvim_dir .. [[" pull --ff-only]])
@@ -698,10 +792,13 @@ local function cmd_uped()
 	end
 
 	local vim_dir = home .. [[\vimfiles]]
-	if not is_dir(vim_dir .. [[\.git]]) and is_dir(home .. [[\.vim\.git]]) then
+	if not is_dir(vim_dir) and is_dir(home .. [[\.vim]]) then
 		vim_dir = home .. [[\.vim]]
 	end
-	if is_dir(vim_dir .. [[\.git]]) then
+	if not is_dir(vim_dir) and MSYS_HOME and is_dir(MSYS_HOME .. [[\.vim]]) then
+		vim_dir = MSYS_HOME .. [[\.vim]]
+	end
+	if is_git_repo(vim_dir) then
 		found = true
 		_ui_sub("Atualizando Vim em " .. vim_dir .. "...")
 		os.execute([[git -C "]] .. vim_dir .. [[" pull --ff-only]])
@@ -717,18 +814,27 @@ end
 
 local function cmd_uprc()
 	local home = os.getenv("USERPROFILE") or os.getenv("HOME") or ""
-	local candidates = {
-		os.getenv("PROFILE_DIR"),
-		home .. [[\.local\share\profile]],
-		home .. [[\.config\profile]],
-		home .. [[\.profile]],
-		home .. [[\OneDrive\Documentos\Profile]],
-		home .. [[\Documents\Profile]],
-	}
+	local candidates = {}
+	local function add(p)
+		if p and p ~= "" then table.insert(candidates, p) end
+	end
+
+	add(os.getenv("PROFILE_DIR"))
+	add(home .. [[\.local\share\profile]])
+	add(home .. [[\.config\profile]])
+	add(home .. [[\.profile]])
+	add(home .. [[\OneDrive\Documentos\Profile]])
+	add(home .. [[\Documents\Profile]])
+
+	if MSYS_HOME then
+		add(MSYS_HOME .. [[\.local\share\profile]])
+		add(MSYS_HOME .. [[\.config\profile]])
+		add(MSYS_HOME .. [[\.profile]])
+	end
 
 	local target = nil
 	for _, p in ipairs(candidates) do
-		if p and p ~= "" and is_dir(p .. [[\.git]]) then
+		if is_git_repo(p) then
 			target = p
 			break
 		end
@@ -750,16 +856,25 @@ end
 
 local function cmd_upvt()
 	local home = os.getenv("USERPROFILE") or os.getenv("HOME") or ""
-	local candidates = {
-		os.getenv("VAULT_DIR"),
-		home .. [[\.local\share\vault]],
-		home .. [[\.config\vault]],
-		home .. [[\.vault]],
-	}
+	local candidates = {}
+	local function add(p)
+		if p and p ~= "" then table.insert(candidates, p) end
+	end
+
+	add(os.getenv("VAULT_DIR"))
+	add(home .. [[\.local\share\vault]])
+	add(home .. [[\.config\vault]])
+	add(home .. [[\.vault]])
+
+	if MSYS_HOME then
+		add(MSYS_HOME .. [[\.local\share\vault]])
+		add(MSYS_HOME .. [[\.config\vault]])
+		add(MSYS_HOME .. [[\.vault]])
+	end
 
 	local target = nil
 	for _, p in ipairs(candidates) do
-		if p and p ~= "" and is_dir(p .. [[\.git]]) then
+		if is_git_repo(p) then
 			target = p
 			break
 		end
@@ -776,17 +891,26 @@ end
 
 local function cmd_upsh()
 	local home = os.getenv("USERPROFILE") or os.getenv("HOME") or ""
-	local candidates = {
-		os.getenv("SHELL_REPO_DIR"),
-		home .. [[\.local\share\shell]],
-		home .. [[\.config\shell]],
-		home .. [[\.shell]],
-		[[C:\Program Files\Shell]],
-	}
+	local candidates = {}
+	local function add(p)
+		if p and p ~= "" then table.insert(candidates, p) end
+	end
+
+	add(os.getenv("SHELL_REPO_DIR"))
+	add(home .. [[\.local\share\shell]])
+	add(home .. [[\.config\shell]])
+	add(home .. [[\.shell]])
+	add([[C:\Program Files\Shell]])
+
+	if MSYS_HOME then
+		add(MSYS_HOME .. [[\.local\share\shell]])
+		add(MSYS_HOME .. [[\.config\shell]])
+		add(MSYS_HOME .. [[\.shell]])
+	end
 
 	local target = nil
 	for _, p in ipairs(candidates) do
-		if p and p ~= "" and is_dir(p .. [[\.git]]) then
+		if is_git_repo(p) then
 			target = p
 			break
 		end
@@ -806,7 +930,7 @@ local function cmd_upall()
 	_ui_step("Atualizando gerenciadores de pacotes do sistema...")
 	os.execute([[winget upgrade --all]])
 	os.execute([[scoop update && scoop update --all]])
-	os.execute([[choco upgrade all -y]])
+	os.execute([[powershell -NoProfile -Command "Start-Process choco -ArgumentList 'upgrade all -y' -Verb RunAs -Wait"]])
 	_ui_ok("Pacotes do sistema atualizados!")
 	cmd_uprc()
 	cmd_upvt()
