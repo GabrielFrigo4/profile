@@ -82,7 +82,7 @@ function Goto-Downloads { Set-Location -Path "${Downloads}" }
 function Goto-Virtual-Store { Set-Location -Path "${VIRTUAL_STORE}" }
 function Goto-FASM-Store { Set-Location -Path "${FASM_STORE}" }
 function Goto-Machine { Set-Location -Path "$SYSTEM32" }
-function Goto-Msys { Set-Location -Path (if ($MsysHome) { $MsysHome } else { 'C:\msys64' }) }
+function Goto-Msys { Set-Location -Path $(if ($MsysHome) { $MsysHome } else { 'C:\msys64' }) }
 
 function Show-Explorer { explorer.exe . }
 function Show-User { explorer.exe "${Home}" }
@@ -95,7 +95,7 @@ function Show-Downloads { explorer.exe "${Downloads}" }
 function Show-Virtual-Store { explorer.exe "${VIRTUAL_STORE}" }
 function Show-FASM-Store { explorer.exe "${FASM_STORE}" }
 function Show-Machine { explorer.exe "$SYSTEM32" }
-function Show-Msys { explorer.exe (if ($MsysHome) { $MsysHome } else { 'C:\msys64' }) }
+function Show-Msys { explorer.exe $(if ($MsysHome) { $MsysHome } else { 'C:\msys64' }) }
 
 ### ================================
 ### SISTEMA E ADMINISTRACAO
@@ -510,12 +510,14 @@ New-Alias "wsl-man" "Wsl-Manual"
 function Resolve-VaultSshKey([string]$explicitKey, [string]$keyName) {
 	if ($explicitKey -and (Test-Path $explicitKey)) { return $explicitKey }
 	$homeDir = if ($env:USERPROFILE) { $env:USERPROFILE } elseif ($env:HOME) { $env:HOME } else { "~" }
+
 	$candidates = @(
-		(if ($env:VAULT_DIR) { Join-Path $env:VAULT_DIR "keys\$keyName" }),
+		$(if ($env:VAULT_DIR) { Join-Path $env:VAULT_DIR "keys\$keyName" }),
 		(Join-Path $homeDir ".local\share\vault\keys\$keyName"),
 		(Join-Path $homeDir ".config\vault\keys\$keyName"),
 		(Join-Path $homeDir ".vault\keys\$keyName")
 	)
+
 	if ($MsysHome) {
 		$candidates += @(
 			(Join-Path $MsysHome ".local\share\vault\keys\$keyName"),
@@ -523,6 +525,7 @@ function Resolve-VaultSshKey([string]$explicitKey, [string]$keyName) {
 			(Join-Path $MsysHome ".vault\keys\$keyName")
 		)
 	}
+
 	return ($candidates | Where-Object { $_ -and (Test-Path $_) } | Select-Object -First 1)
 }
 
