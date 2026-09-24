@@ -70,24 +70,33 @@ Nem todas as tecnologias de nicho ou sistemas clássicos possuem slugs diretos n
 
 O Markdown moderno deve utilizar diagramas Mermaid em cercaduras de código (`mermaid`) em vez de imagens estáticas PNG/JPG que envelhecem e não podem ser versionadas via `git diff`:
 
-### 2.1. Fluxogramas Verticais Top-Down (`flowchart TD`)
+### 2.1. Arquitetura Hierárquica Híbrida (`flowchart TD` + Cards Horizontais)
 
-Prefira a direção **Top-Down (`flowchart TD`)** para diagramas de arquitetura em camadas. Ela aproveita muito melhor a largura da viewport, distribui nós em blocos expansíveis e previne o esticamento horizontal excessivo que quebra o layout em telas menores:
+Diagramas de arquitetura em camadas devem evitar o empilhamento 100% vertical infinito (que estica a página desnecessariamente) e o alinhamento 100% horizontal puro (que quebra em viewports menores).
+
+O padrão canônico do ecossistema é a **Arquitetura Hierárquica Híbrida**:
+
+- **Macro-Estrutura Top-Down (`flowchart TD`):** Organiza a progressão lógica entre camadas (`S1 --> S2 --> S3`).
+- **Nível Interno Horizontal (`direction LR` + `~~~`):** Dentro de cada `subgraph`, defina `direction LR` e una nós vizinhos com **elos invisíveis (`~~~`)** para forçar o motor Dagre a dispor os cards lado a lado na horizontal.
 
 ```mermaid
 flowchart TD
-    subgraph OS ["🖥️ Plataformas"]
+    subgraph S1 ["🖥️ 1. Infraestrutura & Plataformas"]
+        direction LR
         BSD["FreeBSD"]
         LNX["Linux"]
         WIN["Windows"]
+        BSD ~~~ LNX ~~~ WIN
     end
 
-    subgraph CTX ["🎯 Contextos"]
-        DSK["Desktop"]
-        SRV["Server"]
+    subgraph S2 ["🎯 2. Contextos & Runtimes"]
+        direction LR
+        DSK["Desktop (Wayland/X11)"]
+        SRV["Server (Jails/Containers)"]
+        DSK ~~~ SRV
     end
 
-    OS --> CTX
+    S1 --> S2
 ```
 
 ### 2.2. Diagramas de Sequência (`sequenceDiagram`)
