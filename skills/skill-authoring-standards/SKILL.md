@@ -58,6 +58,22 @@ O ecossistema estabelece uma distinção rigorosa entre habilidades portáteis d
 - **Especialização do Projeto:** Devem codificar regras operacionais, flags de Makefile, alvos de compilação, scripts de teste e particularidades do fluxo daquele repositório.
 - **Não Redundância:** Não devem duplicar manuais gerais de linguagem ou boas práticas universais já cobertos pelas skills globais.
 
+### 🏛️ A Regra Áurea da Fonte Canônica (Grandes Repositórios vs. Clones de Runtime)
+
+Quando o desenvolvedor ou o agente for criar, refatorar ou atualizar qualquer **Skill Global, arquivo de configuração ou dotfile**:
+
+- **Regra Fundamental de Modificação:** A alteração **DEVE SEMPRE** ser realizada na raiz de desenvolvimento do **Grande Repositório Canônico / Super-Hub** (isto é, em `Environment/Profile/skills/...`, `Environment/Editor/...`, etc.), e **NUNCA** diretamente no clone de runtime do usuário (`~/.local/share/profile`) ou através dos links simbólicos ativos (`~/.gemini/config/skills/`).
+- **Exceção Única (Ambiente Isolado):** A modificação direta em clones de runtime só é admitida se o ambiente atual for headless, efêmero ou remoto e **não contiver** os grandes repositórios clonados na estação.
+- **Por que essa regra é inegociável?**
+    1.  **Prevenção de Árvores de Trabalho Sujas:** Alterar arquivos apontados por links simbólicos (`~/.gemini/config/skills/`) altera o clone `~/.local/share/profile` sem commit, gerando arquivos modificados não rastreados (`unstaged changes`).
+    2.  **Preservação dos Atualizadores Automáticos:** Uma árvore de runtime suja bloqueia imediatamente comandos de sincronização rápida do usuário (`uped`, `uprc`, `upall`, `git pull --ff-only`, `make update`).
+    3.  **Fluxo Canônico de Propagação:**
+        1. Modifique e teste no grande repositório (`Environment/Profile/skills/...`).
+        2. Formate com Prettier (`npx prettier --write`).
+        3. Commite e dê push no repositório de origem (`Profile`).
+        4. Atualize o ponteiro do submódulo no repositório central (`Environment`).
+        5. Atualize o clone de runtime via `git pull` limpo ou script de sync.
+
 ### ⚖️ A Invariante da Perenidade Cognitiva (Skills vs. TODO.md)
 
 O ecossistema impõe uma **separação ontológica rigorosa** entre a memória procedimental perene e a governança de tarefas:

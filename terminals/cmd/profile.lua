@@ -842,7 +842,14 @@ local function cmd_uprc()
 
 	if target then
 		_ui_step("Atualizando Universal Profile em: " .. target .. "...")
-		os.execute([[git -C "]] .. target .. [[" pull --ff-only]])
+		local handle = io.popen([[git -C "]] .. target .. [[" status --porcelain 2>nul]])
+		local status = handle and handle:read("*a") or ""
+		if handle then handle:close() end
+		if status and status:match("%S") then
+			_ui_warn("Alterações locais não commitadas detectadas em: " .. target .. ". Ignorando git pull para preservar dados.")
+		else
+			os.execute([[git -C "]] .. target .. [[" pull --ff-only]])
+		end
 		local installer = target .. [[\install.ps1]]
 		if exists(installer) then
 			_ui_sub("Sincronizando dotfiles e links via install.ps1...")

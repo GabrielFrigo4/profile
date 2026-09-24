@@ -366,7 +366,12 @@ function Update-Profile {
 
 	if ($target) {
 		_ui_step "Atualizando Universal Profile em: $target..."
-		git -C $target pull --ff-only
+		$dirty = git -C $target status --porcelain 2>$null
+		if ($dirty) {
+			_ui_warn "Alterações locais não commitadas detectadas em: $target. Ignorando git pull para preservar dados."
+		} else {
+			git -C $target pull --ff-only
+		}
 		$installer = Join-Path $target "install.ps1"
 		if (Test-Path $installer) {
 			_ui_sub "Sincronizando dotfiles e links via install.ps1..."

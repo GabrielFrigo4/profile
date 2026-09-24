@@ -25,11 +25,11 @@ Esta habilidade orienta o agente de IA na escrita, revisão e refatoração de s
 
 Adotamos uma taxonomia estrita e semântica para emissão de dados no terminal:
 
-| Ferramenta             | Cenário de Uso Exclusivo                               | Exemplo Canônico                        | Justificativa Técnica                                                                                            |
-| :--------------------- | :----------------------------------------------------- | :-------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
-| **`echo "${msg}"`**    | Texto simples, quebras de linha e escrita em arquivos. | `echo "${val}" > "${file}"`             | Simples, atômico, rápido e universal.                                                                            |
-| **`echo -n $'\e...'`** | **Padrão Canônico para sequências ANSI interativas.**  | `[ -t 1 ] && echo -n $'\e[2J\e[H'`      | Suportado em Zsh, Bash, FreeBSD `/bin/sh` e padronizado no **POSIX Issue 8**. Elimina octais crípticos (`\033`). |
-| **`printf`**           | Tabelas, colunas formatadas e alinhamento com padding. | `printf "%-16s %s\n" "${key}" "${val}"` | Controle preciso de espaçamento e largura de campo.                                                              |
+| Ferramenta        | Cenário de Uso Exclusivo                               | Exemplo Canônico                    | Justificativa Técnica                                                                                         |
+| :---------------- | :----------------------------------------------------- | :---------------------------------- | :------------------------------------------------------------------------------------------------------------ |
+| **`echo "$msg"`** | Texto simples, quebras de linha e escrita em arquivos. | `echo "$val" > "$file"`             | Padrão primário para saídas com quebra de linha. Simples, atômico, rápido e universal.                        |
+| **`echo -n`**     | **Emissão sem quebra de linha & sequências ANSI.**     | `[ -t 1 ] && echo -n "$color"`      | **Sempre prefira `echo -n` a `printf` quando possível.** Suportado no FreeBSD `/bin/sh`, Zsh, Bash e POSIX.8. |
+| **`printf`**      | Tabelas complexas, padding e alinhamento de colunas.   | `printf "%-16s %s\n" "$key" "$val"` | **Evite `printf` gratuito.** Use exclusivamente quando formatação posicional ou padding for indispensável.    |
 
 > [!CAUTION]
 > **Proibição de Octais Obscuros:** Evite notação octal do tipo `\033` ou `\077` em scripts quando o formato legível `$'\e...'` estiver disponível e for a solução mais elegante.
@@ -81,10 +81,12 @@ Para utilitários interativos, orquestradores de componentes (`shell.sh`, `profi
 
 ---
 
-## 🔒 Quoting Defensivo & Variáveis
+## 🔒 Quoting Defensivo & Expansão de Variáveis
 
-1. **Sempre use chaves:** Escreva `${var}` em vez de `$var`.
-2. **Sempre use aspas duplas:** Escreva `"${var}"` para prevenir divisão indesejada de palavras (_word-splitting_) e expansão de caminhos (_globbing_), exceto quando a divisão for explicitamente intencional.
+1. **Preferência por `"$var"` sem Chaves Supérfluas:** Escreva sempre `"$var"` com aspas duplas protetoras contra divisão de palavras (_word-splitting_) e expansão de caminhos (_globbing_). Evite o vício de colocar chaves em tudo (`"${var}"`) sem necessidade técnica real.
+2. **Quando Usar Chaves `"${var}"`:** Reserve a sintaxe com chaves exclusivamente para:
+    - **Concatenação Contígua sem Espaço:** Quando caracteres alfanuméricos ou underscores seguem o nome da variável: `"${prefix}_suffix"`, `"${name}2"`.
+    - **Expansões de Parâmetro POSIX:** Valores padrão, testes de nulidade e substituição (`"${var:-default}"`, `"${var#*prefix}"`, `"${#var}"`).
 3. **Caminhos e Redirecionamentos:**
     ```sh
     # Correto:

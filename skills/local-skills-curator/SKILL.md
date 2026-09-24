@@ -50,6 +50,14 @@ Toda skill local deve obedecer rigorosamente ao princípio do hermetismo:
 
 ---
 
+## 🏛️ Regra da Fonte da Verdade: Grandes Repositórios vs. Clones de Runtime
+
+- **Onde Editar Skills Globais:** Sempre edite no super-repositório canônico de desenvolvimento (`Environment/Profile/skills/`), e **NUNCA** diretamente no clone de runtime (`~/.local/share/profile` ou através dos links simbólicos ativos em `~/.gemini/config/skills/`).
+- **Exceção Estrita:** Edições diretamente no clone de runtime só são admitidas se o ambiente atual for headless ou remoto e **não** possuir os repositórios canônicos clonados.
+- **Justificativa:** Modificações nos clones de runtime deixam a árvore de trabalho suja (`unstaged changes`), bloqueando comandos de atualização (`uped`, `uprc`, `git pull --ff-only`, `make update`).
+
+---
+
 ## 📐 Orçamento de Linhas da Camada Cognitiva
 
 Toda skill local ou global deve respeitar a disciplina de linhas:

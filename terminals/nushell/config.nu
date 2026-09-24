@@ -341,7 +341,12 @@ def uprc [] {
 
 	if ($target | is-not-empty) {
 		_ui_step $"Atualizando Universal Profile em: ($target)..."
-		^git -C $target pull --ff-only
+		let dirty = (^git -C $target status --porcelain | str trim)
+		if ($dirty | is-not-empty) {
+			_ui_warn $"Alterações locais não commitadas detectadas em: ($target). Ignorando git pull para preservar dados."
+		} else {
+			^git -C $target pull --ff-only
+		}
 		let installer = ([$target, "install.ps1"] | path join)
 		if ($installer | path exists) {
 			_ui_sub "Sincronizando dotfiles e links via install.ps1..."

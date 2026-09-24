@@ -31,6 +31,7 @@ Toda governança implantada por esta skill deve garantir:
 4. **Permissões Canônicas em 4 Dígitos Octais:** `chmod 0755`, `chmod 0644`, `chmod 0700`, `chmod 0600`.
 5. **Os 18 Princípios de Engenharia:** 17 Princípios UNIX (Eric S. Raymond) + Soberania do Usuário.
 6. **Hermeticidade e Isolamento de Git Hooks:** Os hooks em `.githooks/` devem ser 100% autônomos. NUNCA devem chamar scripts contidos em skills de IA externas ou globais. Toda automação do hook deve usar utilitários locais do repositório (`scripts/` locais) ou lógica direta em POSIX `/bin/sh`.
+7. **Regra Áurea da Fonte Canônica (Grandes Repos vs. Clones de Runtime):** Alterações em dotfiles, scripts de perfil e skills globais devem ser realizadas exclusivamente na raiz do grande repositório canônico (`Environment/Profile/`), e NUNCA diretamente nos clones locais de runtime (`~/.local/share/profile` ou links simbólicos), prevenindo sujeira na árvore de trabalho e bloqueios em atualizações automatizadas.
 
 ---
 
