@@ -60,19 +60,19 @@ O ecossistema estabelece uma distinção rigorosa entre habilidades portáteis d
 
 ### 🏛️ A Regra Áurea da Fonte Canônica (Grandes Repositórios vs. Clones de Runtime)
 
-Quando o desenvolvedor ou o agente for criar, refatorar ou atualizar qualquer **Skill Global, arquivo de configuração ou dotfile**:
+Quando o desenvolvedor ou o agente for criar, refatorar ou atualizar qualquer **Skill Global, arquivo de configuração, dotfile ou componente do ecossistema** (`Setup`, `Shell`, `Profile`, `Vault`, `Emacs`, `Helix`, `NeoVim`, `Vim`):
 
-- **Regra Fundamental de Modificação:** A alteração **DEVE SEMPRE** ser realizada na raiz de desenvolvimento do **Grande Repositório Canônico / Super-Hub** (isto é, em `Environment/Profile/skills/...`, `Environment/Editor/...`, etc.), e **NUNCA** diretamente no clone de runtime do usuário (`~/.local/share/profile`) ou através dos links simbólicos ativos (`~/.gemini/config/skills/`).
-- **Exceção Única (Ambiente Isolado):** A modificação direta em clones de runtime só é admitida se o ambiente atual for headless, efêmero ou remoto e **não contiver** os grandes repositórios clonados na estação.
+- **Regra Fundamental de Modificação:** A alteração **DEVE SEMPRE** ser realizada prioritariamente na raiz de desenvolvimento do **Grande Repositório Canônico / Super-Hub** no Environment (geralmente em `~/Documents/Environment/` ou `~/Documentos/Environment/`), e **NUNCA** diretamente nos clones locais de runtime (`~/.local/share/profile`, `~/.emacs.d`, `~/.config/nvim`, etc.) ou através dos links simbólicos ativos (`~/.gemini/config/skills/`).
+- **Condição Estrita para Editar em Clones de Runtime:** A modificação direta em clones de runtime só é admitida se o repositório canônico no Environment **NÃO existir** E o agente **NÃO estiver nele** (ambas as condições estritamente negadas simultaneamente, como em servidores remotos ou máquinas headless que apenas possuem o runtime instalado).
 - **Por que essa regra é inegociável?**
-    1.  **Prevenção de Árvores de Trabalho Sujas:** Alterar arquivos apontados por links simbólicos (`~/.gemini/config/skills/`) altera o clone `~/.local/share/profile` sem commit, gerando arquivos modificados não rastreados (`unstaged changes`).
-    2.  **Preservação dos Atualizadores Automáticos:** Uma árvore de runtime suja bloqueia imediatamente comandos de sincronização rápida do usuário (`uped`, `uprc`, `upall`, `git pull --ff-only`, `make update`).
+    1.  **Prevenção de Árvores de Trabalho Sujas:** Alterar arquivos nos clones de runtime (ou por links simbólicos) deixa a working tree com alterações não commitadas (`unstaged changes`), quebrando qualquer `git pull`, `make update`, `uped`, `uprc`, etc.
+    2.  **Integridade da Fonte da Verdade:** As melhorias e correções de bugs devem nascer versionadas no repositório canônico, passando pelos quality gates (`pre-commit`, `make audit`, formatadores) antes de serem distribuídas ao runtime.
     3.  **Fluxo Canônico de Propagação:**
-        1. Modifique e teste no grande repositório (`Environment/Profile/skills/...`).
-        2. Formate com Prettier (`npx prettier --write`).
-        3. Commite e dê push no repositório de origem (`Profile`).
+        1. Modifique e teste no grande repositório (`Environment/...`).
+        2. Formate com Prettier / Linters canônicos.
+        3. Commite e dê push no repositório de origem.
         4. Atualize o ponteiro do submódulo no repositório central (`Environment`).
-        5. Atualize o clone de runtime via `git pull` limpo ou script de sync.
+        5. Atualize o clone de runtime via `git pull --ff-only` limpo ou script de sync.
 
 ### ⚖️ A Invariante da Perenidade Cognitiva (Skills vs. TODO.md)
 

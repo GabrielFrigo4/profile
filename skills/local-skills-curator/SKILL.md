@@ -52,9 +52,9 @@ Toda skill local deve obedecer rigorosamente ao princípio do hermetismo:
 
 ## 🏛️ Regra da Fonte da Verdade: Grandes Repositórios vs. Clones de Runtime
 
-- **Onde Editar Skills Globais:** Sempre edite no super-repositório canônico de desenvolvimento (`Environment/Profile/skills/`), e **NUNCA** diretamente no clone de runtime (`~/.local/share/profile` ou através dos links simbólicos ativos em `~/.gemini/config/skills/`).
-- **Exceção Estrita:** Edições diretamente no clone de runtime só são admitidas se o ambiente atual for headless ou remoto e **não** possuir os repositórios canônicos clonados.
-- **Justificativa:** Modificações nos clones de runtime deixam a árvore de trabalho suja (`unstaged changes`), bloqueando comandos de atualização (`uped`, `uprc`, `git pull --ff-only`, `make update`).
+- **Prioridade Absoluta:** Toda e qualquer alteração de engenharia em componentes do ecossistema (`Setup`, `Shell`, `Profile`, `Vault`, `Emacs`, `Helix`, `NeoVim`, `Vim`) ou skills globais deve ser realizada prioritariamente no grande repositório canônico (`~/Documents/Environment/` ou `~/Documentos/Environment/`), e **NUNCA** diretamente no clone de runtime (`~/.local/share/profile` ou links simbólicos).
+- **Condição Estrita para Editar no Clone de Runtime:** Somente é admitido editar diretamente nos clones de runtime se o repositório canônico no Environment **NÃO existir** E você **NÃO estiver nele** (ambas as condições estritamente negadas simultaneamente).
+- **Justificativa:** Modificações nos clones de runtime deixam a árvore de trabalho suja (`unstaged changes`), bloqueando comandos de atualização rápida (`uped`, `uprc`, `upall`, `git pull --ff-only`, `make update`).
 
 ---
 
