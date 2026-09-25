@@ -132,7 +132,23 @@ Em papers acadêmicos e monografias que apresentam implementações (em C++, Go,
 
 ---
 
-## 📚 5. Literatura de Referência & Links Oficiais
+## ✍️ 5. Redação Acadêmica Rigorosa: Estilo Direto e Sem Floreios (No-Fluff & Math-First)
+
+> **Regra de Ouro (O Teste do Leitor Não-Nativo):** Uma pessoa que não é nativa na língua em que o documento foi escrito (ou uma ferramenta de tradução acadêmica) deve conseguir ler o texto técnico diretamente sem se confundir. O assunto científico já é inerentemente complexo; o texto deve funcionar como uma lente transparente para os conceitos formais, eliminando ruídos estilísticos, regionalismos e analogias não convencionais.
+
+A eficácia de um documento acadêmico ou relatório técnico reside na clareza conceitual e na precisão matemática, nunca em artifícios retóricos ou vocabulário rebuscado:
+
+1. **Sintaxe Não Complexa:** Privilegie períodos curtos a médios na ordem direta (sujeito-verbo-objeto). Evite aninhamento convoluto de orações subordinadas.
+2. **Tom Estritamente Acadêmico e Impessoal:** Empregue terceira pessoa ou voz passiva sintética ("demonstra-se", "analisa-se"). Evite coloquialismos e opiniões subjetivas.
+3. **Sem Floreios nem Adjetivos Hiperbólicos:** Elimine adjetivação valorativa ("fantástico", "supremacia absoluta", "revolucionário", "fascinante") e metáforas literárias ou dramáticas.
+4. **Pouco Rebuscada:** Utilize linguagem culta, simples e contemporânea. Rejeite termos arcaicos ou pretensiosos ("outrossim", "peremptório", "hodierno", "fulcral", "precípuo").
+5. **Sem Palavras Extras (Economia Textual):** Elimine clichês e expressões de enchimento ("vale ressaltar que", "com o intuito de", "cabe enfatizar que"). Vá direto ao núcleo do argumento.
+6. **Prioridade Matemática (Math-First):** Formalize ideias por meio de definições, proposições, equações explícitas e notação simbólica estrita em vez de longos parágrafos narrativos aproximados.
+7. **Precisão Terminológica Estrita (Zero Anti-Jargão):** Nunca utilize termos matemáticos com definição formal profunda (como isomorfismo, topologia, canônico, geometria, convergência, invariante) como meros sinônimos estéticos ou analogias retóricas. Cada vocábulo deve ser empregado exclusivamente em seu significado técnico real.
+
+---
+
+## 📚 6. Literatura de Referência & Links Oficiais
 
 Recomenda-se enfaticamente ao agente de IA e aos autores a consulta às referências seminais:
 
