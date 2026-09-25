@@ -139,6 +139,9 @@ Uma configuração limpa nunca espalha arquivos na raiz do `~/.emacs.d`:
 Todo módulo deve ser defensivo contra ambientes headless, sistemas bare-metal sem GUI e ausência de binários externos:
 
 ```elisp
+;; [OBRIGATÓRIO] Todo arquivo .el DEVE iniciar estritamente com lexical-binding na Linha 1
+;;; -*- lexical-binding: t -*-
+
 ;; [OBRIGATÓRIO] Falha graciosa e isolada com condition-case
 (condition-case err
     (require 'meu-modulo)
