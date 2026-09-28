@@ -32,14 +32,18 @@ Adotamos uma taxonomia estrita e semântica para emissão de dados no terminal:
 | **`printf`**      | Tabelas complexas, padding e alinhamento de colunas.   | `printf "%-16s %s\n" "$key" "$val"` | **Evite `printf` gratuito.** Use exclusivamente quando formatação posicional ou padding for indispensável.    |
 
 > [!CAUTION]
-> **Proibição de Octais Obscuros:** Evite notação octal do tipo `\033` ou `\077` em scripts quando o formato legível `$'\e...'` estiver disponível e for a solução mais elegante.
+> **Proibição Estrita de Octais para Caracteres & Bytes:** Nunca utilize notação octal (`\033`, `\001`, `\077`, etc.) para caracteres de escape ou bytes de controle.
+>
+> 1. **Fuga do `printf` e Escapes ANSI:** Priorize sempre `[ -t 1 ] && echo -n "$color"` com `$'\e...'` para escapar cores e saídas ANSI no terminal, eliminando `printf` desnecessário e chamadas obscuras com octais.
+> 2. **Hexadecimal para Bytes de Controle:** Para caracteres de controle não-imprimíveis, delimitadores de prompt (como o `Ctrl+A` do KornShell) ou bytes arbitrários, utilize **estritamente notação hexadecimal** (`$'\x01'`, `\x1b`, etc.) e nunca octal.
+> 3. **Exceção Única e Exclusiva para Octal:** Notação octal é aceita e exigida **exclusivamente** em utilitários e chamadas de sistema POSIX que operam nativamente em base 8, tais como permissões e máscaras de sistema de arquivos (`chmod 0755`, `chmod 0644`, `chmod 0700`, `chmod 0600`, `umask 022`). Em qualquer outro contexto, o uso de octal é terminantemente proibido.
 
 > [!NOTE]
 > **Peculiaridade Crítica do OpenBSD `ksh` (PD-KSH):**
 > O `ksh` nativo do OpenBSD (`/bin/ksh` e seu port portátil `oksh`) não implementa expansão ANSI-C `$''`. Ele interpreta `$'\e...'` literalmente como texto bruto `$\e[...]`.
 >
-> - Para sequências ANSI no OpenBSD `ksh`, capture o caractere escape dinamicamente via `_esc="$(printf '\033')"` e utilize `"${_esc}[32m"`.
-> - No `PS1` do OpenBSD `ksh`, qualquer sequência ANSI invisível (largura zero) **DEVE** ser delimitada pelo caractere de controle `\001` (ex: `\001${_esc}[32m\001`). Sem essa delimitação, o editor de linha do `ksh` calcula incorretamente o comprimento do prompt, corrompendo a rolagem de histórico e a quebra de linha.
+> - Para sequências ANSI no OpenBSD `ksh`, capture o caractere escape dinamicamente via `_esc="$(printf '\x1b' 2>"/dev/null" || echo -n $'\x1b')"` e utilize `"${_esc}[32m"`.
+> - No `PS1` do OpenBSD `ksh`, qualquer sequência ANSI invisível (largura zero) **DEVE** ser delimitada pelo caractere de controle hexadecimal `\x01` (`0x01`) (ex: `\x01${_esc}[32m\x01`). Sem essa delimitação, o editor de linha do `ksh` calcula incorretamente o comprimento do prompt, corrompendo a rolagem de histórico e a quebra de linha.
 
 ### Padrão Semântico de Emissão de UI
 

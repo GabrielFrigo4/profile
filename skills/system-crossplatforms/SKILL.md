@@ -207,7 +207,7 @@ Para prevenir conhecimento estático ou desatualizado, o agente deve consultar a
 ### 🐡 4. OpenBSD (Segurança Pragmática e Minimalismo)
 
 - **Mecanismos de Confinamento:** Suporte a `pledge(2)` (restringe chamadas de sistema por processo) e `unveil(2)` (restringe visibilidade da árvore de arquivos).
-- **Shell Nativo da Base (`/bin/ksh`):** Derivado do PD-KSH. Não possui expansão ANSI-C `$''` (interpreta literalmente). Cores ANSI exigem captura dinâmica do byte escape `_esc="$(printf '\033')"`, e caracteres invisíveis de prompt no `PS1` exigem obrigatoriamente delimitação por `\001` para não desalinhar o editor de linha.
+- **Shell Nativo da Base (`/bin/ksh`):** Derivado do PD-KSH. Não possui expansão ANSI-C `$''` (interpreta literalmente). Cores ANSI exigem captura dinâmica do byte escape `_esc="$(printf '\x1b' 2>"/dev/null" || echo -n $'\x1b')"`, e caracteres invisíveis de prompt no `PS1` exigem obrigatoriamente delimitação hexadecimal por `\x01` (`0x01`) para não desalinhar o editor de linha.
 - **Userland & Pacotes:** Ausência absoluta de GNUismos nos utilitários da base. Gerenciamento de pacotes via `pkg_add` / `pkg_delete` com repositórios declarados em `/etc/installurl`.
 - **Comportamento em CI/CD:** Em runners automatizados (ex: `vmactions/openbsd-vm`), o sistema parte de uma instalação limpa onde `zsh` não existe por padrão. Scripts de teste e benchmarks devem ser 100% defensivos, checando `command -v "${sh}"` antes de qualquer execução.
 - **Elevação de Privilégios:** O utilitário canônico é o `doas` nativo com `/etc/doas.conf`.
