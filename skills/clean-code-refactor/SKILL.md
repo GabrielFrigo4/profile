@@ -1,6 +1,6 @@
 ---
 name: clean-code-refactor
-description: Runbook cognitivo para auditoria e refatoração de código POSIX, scripts de shell e dotfiles conforme os 18 princípios Clean Code do ecossistema.
+description: Runbook cognitivo para auditoria e refatoração de código POSIX, scripts de shell e dotfiles conforme os 22 princípios de engenharia UNIX + Clean Code do ecossistema.
 ---
 
 # 🧹 Clean Code Refactor Skill

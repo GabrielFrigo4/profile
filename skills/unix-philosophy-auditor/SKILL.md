@@ -77,7 +77,7 @@ Ao emitir o diagnóstico para o desenvolvedor:
 ```markdown
 ### 🏛️ Relatório de Auditoria Unix — <Nome do Arquivo / Módulo>
 
-- **Pontuação de Aderência:** X / 18 princípios satisfeitos.
+- **Pontuação de Aderência:** X / 22 princípios satisfeitos.
 - **Violações Detectadas:**
     - ⚠️ **Regra do Silêncio (Regra 11):** Script emite 15 linhas de progresso sem flag `-v`.
     - ⚠️ **Regra da Composição (Regra 3):** Códigos ANSI emitidos mesmo quando `stdout` é redirecionado para pipe.

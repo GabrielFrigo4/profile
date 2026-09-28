@@ -130,7 +130,7 @@ clean:
 ### 3. Criação de `AGENTS.md` e `PRINCIPLES.md`
 
 - Utilize a skill `repo-governance-bootstrap` para popular `AGENTS.md` com a identidade e comandos do projeto.
-- Gere o `PRINCIPLES.md` contextualizando os 18 princípios ao domínio específico da linguagem e negócio.
+- Gere o `PRINCIPLES.md` contextualizando os 22 princípios de engenharia UNIX + Clean Code ao domínio específico da linguagem e negócio.
 
 ### 4. Permissões Canônicas
 

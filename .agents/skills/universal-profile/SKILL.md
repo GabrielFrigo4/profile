@@ -8,7 +8,7 @@ description: >-
 
 # Universal Profile — Development & Dotfiles Runbook
 
-Este guia detalha o fluxo operacional para estender, refatorar e auditar o repositório **Universal Profile Environment** (`Profile`), garantindo aderência rigorosa aos 18 Princípios de Engenharia e às normas de Clean Code para dotfiles e inteligência artificial.
+Este guia detalha o fluxo operacional para estender, refatorar e auditar o repositório **Universal Profile Environment** (`Profile`), garantindo aderência rigorosa aos 22 Princípios de Engenharia UNIX + Clean Code para dotfiles e inteligência artificial.
 
 ---
 

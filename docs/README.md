@@ -14,7 +14,7 @@ Esta pasta reúne a documentação técnica que sustenta o ecossistema do reposi
 
 - **[ARCHITECTURE.md](ARCHITECTURE.md)** — Arquitetura do Quarteto de Produtividade, fluxos de integração e fronteiras dos repositórios (`Setup`, `Profile`, `Shell`, `Vault`).
 - **[PHILOSOPHY.md](PHILOSOPHY.md)** — A regra de ouro: _Clean Host_ e a separação estrita entre máquina e usuário.
-- **[../PRINCIPLES.md](../PRINCIPLES.md)** — Os 18 Princípios de Engenharia e Clean Code para dotfiles e inteligência artificial.
+- **[../PRINCIPLES.md](../PRINCIPLES.md)** — Os 22 Princípios de Engenharia UNIX + Clean Code para dotfiles e inteligência artificial.
 
 ---
 
