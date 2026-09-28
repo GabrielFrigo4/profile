@@ -31,6 +31,7 @@ O **Profile** é a **identidade de trabalho** do desenvolvedor. Opera estritamen
 11. **Governança de Roadmap (Opção C):** O repositório mantém seu [TODO.md](TODO.md) atualizado com a Matriz de Status e Backlog de Grandes Épicos, sincronizado com o badge no `README.md`.
 12. **A Regra Áurea da Fonte Canônica para Edição (Bancada vs. Clones de Runtime):** Toda modificação em dotfiles, scripts de perfil, terminais ou skills globais DEVE ser realizada prioritariamente na bancada de desenvolvimento do **Environment** (`~/Documents/Environment/Profile` ou `~/Documentos/Environment/Profile`).
     **Condição Estrita para Editar em Clones de Runtime:** Apenas se o repositório canônico no Environment **NÃO existir** E o agente **NÃO estiver nele** (ambas as condições estritamente negadas simultaneamente) é que se admite editar diretamente no clone de runtime (`~/.local/share/profile` ou links simbólicos de `~/.gemini/config/skills/`). Isso previne sujar árvores de trabalho de runtime (`unstaged changes`), preserva os atualizadores automáticos (`uprc`, `git pull --ff-only`) e garante versionamento canônico dos commits.
+13. **Refatoração Sem Legado / Soberania Monousuário (Clean-Break / Zero-Cruft Invariant):** O ecossistema é estritamente pessoal, governado e operado por um único desenvolvedor soberano (Gabriel Frigo). É terminantemente proibido manter "sujeira" de retrocompatibilidade, shims temporários, wrappers obsoletos, seções de compatibilidade legada ou aliases de transição ao renomear variáveis, comandos, funções, diretórios ou arquivos, salvo se expressamente ordenado pelo usuário. Toda refatoração deve ser atômica, direta, definitiva e limpa (_clean break_), expurgando o identificador antigo integralmente da base de código.
 
 ---
 
@@ -53,6 +54,7 @@ Se durante a execução de qualquer tarefa (seja criação de novas features, co
     - **Invariante Out-of-the-Box:** Garantir modos octais corretos no Git Index e auto-cura em tempo de execução sem requerer intervenção manual pós-clone.
     - **Emissão Semântica de UI:** Substituir imediatamente `echo` avulsos com emojis ou texto ad-hoc pelas rotinas canônicas `_ui_*`.
     - **Curadoria Cognitiva:** Capturar decisões estruturais e regras tácitas em skills locais compactas (`.agents/skills/`), mantendo-as atualizadas e expurgando runbooks obsoletos para evitar débito cognitivo, preservando sempre o hermetismo de produção (`rm -rf .agents`).
+    - **Refatoração Sem Legado:** Expurgar sumariamente aliases obsoletos, variáveis mortas e shims de compatibilidade deixados para trás em renomeações passadas, mantendo o código puro e direto.
 
 ## 📖 Referências Obrigatórias
 
