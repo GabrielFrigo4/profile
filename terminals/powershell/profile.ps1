@@ -347,6 +347,12 @@ function Update-Editors {
 }
 
 function Update-Profile {
+	param(
+		[switch]$Status,
+		[switch]$Pull,
+		[switch]$DryRun,
+		[switch]$Backup
+	)
 	$candidates = @(
 		$env:PROFILE_DIR,
 		(Join-Path $HOME ".local\share\profile"),
@@ -372,10 +378,23 @@ function Update-Profile {
 		} else {
 			git -C $target pull --ff-only
 		}
-		$installer = Join-Path $target "install.ps1"
-		if (Test-Path $installer) {
-			_ui_sub "Sincronizando dotfiles e links via install.ps1..."
-			& $installer
+		$shSync = Join-Path $target "profile.sh"
+		if (Test-Path $shSync) {
+			_ui_sub "Sincronizando dotfiles via profile.sh (MSYS2 / POSIX)..."
+			$syncArgs = @("sync")
+			if ($Status) { $syncArgs += "--status" }
+			if ($Pull)   { $syncArgs += "--pull" }
+			if ($DryRun) { $syncArgs += "--dry-run" }
+			if ($Backup) { $syncArgs += "--backup" }
+			$argStr = $syncArgs -join " "
+			$targetPosix = ($target -replace '\\', '/')
+			if (Get-Command "bash" -ErrorAction SilentlyContinue) {
+				bash -c "cd '$targetPosix' && ./profile.sh $argStr"
+			} elseif (Get-Command "sh" -ErrorAction SilentlyContinue) {
+				sh -c "cd '$targetPosix' && ./profile.sh $argStr"
+			} else {
+				_ui_warn "MSYS2/Bash não detectado no PATH para executar profile.sh sync."
+			}
 		}
 		_ui_ok "Universal Profile atualizado e sincronizado com sucesso!"
 	} else {
@@ -497,6 +516,7 @@ New-Alias "upgit" "Update-Git"
 New-Alias "uped" "Update-Editors"
 New-Alias "uprc" "Update-Profile"
 New-Alias "upprofile" "Update-Profile"
+New-Alias "sync-profile" "Update-Profile"
 New-Alias "upvt" "Update-Vault"
 New-Alias "upall" "Update-All"
 

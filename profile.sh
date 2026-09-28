@@ -60,7 +60,7 @@ _profile_is_sourced() {
 }
 
 ### ================================
-### SUBCOMANDOS DE LINHA DE COMANDO
+### SUBCOMANDOS DE LINHA
 ### ================================
 _profile_help() {
 	cat <<- EOF
@@ -69,96 +69,140 @@ _profile_help() {
 		Uso:
 		  profile.sh [sync|update|test|audit|help] [opcoes]
 		  . profile.sh              # Sourceia e exporta variaveis de ambiente
+
+		Opcoes de Sincronizacao:
+		  --dry-run                 Simula operacoes sem alterar arquivos
+		  --backup                  Cria backup (.bak) antes de substituir
+		  --status                  Audita e compara divergencias (drift)
+		  --pull                    Reconcilia alteracoes do sistema para o Git
 	EOF
 }
 
-_profile_link() {
-	_src="$1" _dst="$2" _dry_run="${3:-0}" _backup="${4:-0}" _timestamp="${5:-}"
-	[ ! -e "${_src}" ] && return 0
-
-	if [ "${_dry_run}" -eq 1 ]; then
-		_ui_sub "[DRY-RUN] ${_dst} -> ${_src}"
+_profile_item() {
+	_src="$1" _dst="$2" _m="${3:-sync}" _dry="${4:-0}" _bak="${5:-0}" _ts="${6:-}"
+	if [ "${_m}" = "status" ]; then
+		[ ! -e "${_dst}" ] && [ ! -L "${_dst}" ] && { _ui_warn "[MISSING] ${_dst}"; return 0; }
+		[ -L "${_dst}" ] && { [ "$(readlink "${_dst}" 2> "/dev/null" || true)" = "${_src}" ] && _ui_ok "[IN-SYNC] ${_dst}" || _ui_warn "[DRIFT] ${_dst}"; return 0; }
+		[ -d "${_src}" ] && [ -d "${_dst}" ] && { _ui_ok "[IN-SYNC-DIR] ${_dst}"; return 0; }
+		cmp -s "${_src}" "${_dst}" 2> "/dev/null" && _ui_ok "[IN-SYNC] ${_dst}" || _ui_warn "[DRIFT] ${_dst}"
 		return 0
 	fi
-
-	_dst_dir="$(dirname "${_dst}")"
-	[ ! -d "${_dst_dir}" ] && mkdir -p "${_dst_dir}"
-
+	if [ "${_m}" = "pull" ]; then
+		[ ! -f "${_dst}" ] || [ ! -f "${_src}" ] || [ -L "${_dst}" ] && return 0
+		if ! cmp -s "${_src}" "${_dst}" 2> "/dev/null"; then
+			[ "${_dry}" -eq 1 ] && _ui_sub "[DRY-RUN PULL] ${_dst} -> ${_src}" || { cp -f "${_dst}" "${_src}" && _ui_ok "[RECONCILED] ${_src} <- ${_dst}"; }
+		fi
+		return 0
+	fi
+	[ ! -e "${_src}" ] && return 0
+	[ "${_dry}" -eq 1 ] && { _ui_sub "[DRY-RUN] ${_dst} -> ${_src}"; return 0; }
+	mkdir -p "$(dirname "${_dst}")"
 	if [ -L "${_dst}" ]; then
 		[ "$(readlink "${_dst}" 2> "/dev/null" || true)" = "${_src}" ] && { _ui_sub "[OK] ${_dst}"; return 0; }
 		rm -f "${_dst}"
 	elif [ -e "${_dst}" ]; then
-		mv "${_dst}" "${_dst}.bak.${_timestamp}"
-		_ui_warn "[BACKUP] ${_dst}.bak.${_timestamp}"
+		cmp -s "${_src}" "${_dst}" 2> "/dev/null" && { _ui_sub "[OK] ${_dst}"; return 0; }
+		[ "${_bak}" -eq 1 ] && { mv "${_dst}" "${_dst}.bak.${_ts}"; _ui_warn "[BACKUP] ${_dst}.bak.${_ts}"; } || rm -rf "${_dst}"
 	fi
-
-	ln -sf "${_src}" "${_dst}"
-	_ui_ok "[LINK] ${_dst}"
+	export MSYS="winsymlinks:nativestrict"
+	ln -sf "${_src}" "${_dst}" 2> "/dev/null" && _ui_ok "[LINK] ${_dst}" || { cp -rf "${_src}" "${_dst}" && _ui_warn "[COPY] ${_dst} (Modo de Desenvolvedor desativado)"; }
 }
 
+### ================================
+### SINCRONIZACAO DE DOTFILES
+### ================================
 _profile_sync() {
-	_dry_run=0
-	_backup=0
-	_timestamp="$(date +%Y%m%d%H%M%S)"
-	_os_type="$(uname -s)"
-	_cfg="${XDG_CONFIG_HOME:-${HOME}/.config}"
-	_data="${XDG_DATA_HOME:-${HOME}/.local/share}"
+	_dry_run=0 _backup=0 _mode="sync" _timestamp="$(date +%Y%m%d%H%M%S)" _os_type="$(uname -s)"
+	_cfg="${XDG_CONFIG_HOME:-${HOME}/.config}" _data="${XDG_DATA_HOME:-${HOME}/.local/share}"
+	_is_win=0 _win_home="${USERPROFILE:-${HOME}}" _win_app="${APPDATA:-${_win_home}/AppData/Roaming}" _win_local="${LOCALAPPDATA:-${_win_home}/AppData/Local}"
+
+	case "${_os_type}" in
+		MINGW*|MSYS*|CYGWIN*|*_NT*)
+			_is_win=1
+			if command -v cygpath > "/dev/null" 2>&1; then
+				_win_home="$(cygpath -u "${USERPROFILE:-/c/Users/${USER}}")"
+				_win_app="$(cygpath -u "${APPDATA:-${_win_home}/AppData/Roaming}")"
+				_win_local="$(cygpath -u "${LOCALAPPDATA:-${_win_home}/AppData/Local}")"
+			fi
+			;;
+	esac
 
 	for _arg in "$@"; do
 		case "${_arg}" in
 			--dry-run) _dry_run=1 ;;
-			--backup) _backup=1 ;;
+			--backup)  _backup=1 ;;
+			--status)  _mode="status" ;;
+			--pull)    _mode="pull" ;;
 		esac
 	done
 
-	_ui_step "Sincronizando ecossistema declarativo (${_os_type}) a partir de: ${_PROFILE_ROOT}"
-	[ "${_dry_run}" -eq 1 ] && _ui_warn "Modo DRY-RUN ativado (nenhum arquivo será modificado)."
+	_sync() { _profile_item "${_PROFILE_ROOT}/$1" "$2" "${_mode}" "${_dry_run}" "${_backup}" "${_timestamp}"; }
+	_ui_step "Sincronizando ecossistema (${_os_type} - ${_mode}) a partir de: ${_PROFILE_ROOT}"
+	[ "${_dry_run}" -eq 1 ] && _ui_warn "Modo DRY-RUN ativado (nenhum arquivo sera modificado)."
 
 	_ui_step "Formatadores globais e linters..."
-	_profile_link "${_PROFILE_ROOT}/tools/.clang-format" "${HOME}/.clang-format" "${_dry_run}" "${_backup}" "${_timestamp}"
-	_profile_link "${_PROFILE_ROOT}/tools/.prettierrc" "${HOME}/.prettierrc" "${_dry_run}" "${_backup}" "${_timestamp}"
-	_profile_link "${_PROFILE_ROOT}/tools/.stylua.toml" "${HOME}/.stylua.toml" "${_dry_run}" "${_backup}" "${_timestamp}"
-	_profile_link "${_PROFILE_ROOT}/tools/.editorconfig" "${HOME}/.editorconfig" "${_dry_run}" "${_backup}" "${_timestamp}"
-	_profile_link "${_PROFILE_ROOT}/tools/clangd.yaml" "${_cfg}/clangd/config.yaml" "${_dry_run}" "${_backup}" "${_timestamp}"
-	_profile_link "${_PROFILE_ROOT}/tools/mermaid-puppeteer.json" "${HOME}/.mermaid-puppeteer-config.json" "${_dry_run}" "${_backup}" "${_timestamp}"
-	_profile_link "${_PROFILE_ROOT}/tools/mermaid-theme.json" "${HOME}/.mermaid-theme-config.json" "${_dry_run}" "${_backup}" "${_timestamp}"
+	for _f in .clang-format .prettierrc .stylua.toml .editorconfig; do
+		_sync "tools/${_f}" "${HOME}/${_f}"
+		[ "${_is_win}" -eq 1 ] && _sync "tools/${_f}" "${_win_home}/${_f}"
+	done
+	_sync "tools/mermaid-puppeteer.json" "${HOME}/.mermaid-puppeteer-config.json"
+	_sync "tools/mermaid-theme.json" "${HOME}/.mermaid-theme-config.json"
+	_sync "tools/clangd.yaml" "${_cfg}/clangd/config.yaml"
+	[ "${_is_win}" -eq 1 ] && _sync "tools/clangd.yaml" "${_win_local}/clangd/config.yaml"
 
 	_ui_step "Editores modernos (Zed, VSCode, VSCodium, Antigravity)..."
-	_profile_link "${_PROFILE_ROOT}/editors/zed/settings.json" "${_cfg}/zed/settings.json" "${_dry_run}" "${_backup}" "${_timestamp}"
+	_sync "editors/zed/settings.json" "${_cfg}/zed/settings.json"
 	if [ "${_os_type}" = "Darwin" ]; then
 		_app="${HOME}/Library/Application Support"
-		_profile_link "${_PROFILE_ROOT}/editors/vscode/settings.json" "${_app}/Code/User/settings.json" "${_dry_run}" "${_backup}" "${_timestamp}"
-		_profile_link "${_PROFILE_ROOT}/editors/vscodium/settings.json" "${_app}/VSCodium/User/settings.json" "${_dry_run}" "${_backup}" "${_timestamp}"
-		_profile_link "${_PROFILE_ROOT}/editors/antigravity/settings.json" "${_app}/Antigravity/User/settings.json" "${_dry_run}" "${_backup}" "${_timestamp}"
+		_sync "editors/vscode/settings.json" "${_app}/Code/User/settings.json"
+		_sync "editors/vscodium/settings.json" "${_app}/VSCodium/User/settings.json"
+		_sync "editors/antigravity/settings.json" "${_app}/Antigravity/User/settings.json"
+	elif [ "${_is_win}" -eq 1 ]; then
+		_sync "editors/vscode/settings.json" "${_win_app}/Code/User/settings.json"
+		_sync "editors/vscodium/settings.json" "${_win_app}/VSCodium/User/settings.json"
+		_sync "editors/antigravity/settings.json" "${_win_app}/Antigravity/User/settings.json"
+		_sync "editors/zed/settings.json" "${_win_app}/Zed/settings.json"
 	else
-		_profile_link "${_PROFILE_ROOT}/editors/vscode/settings.json" "${_cfg}/Code/User/settings.json" "${_dry_run}" "${_backup}" "${_timestamp}"
-		_profile_link "${_PROFILE_ROOT}/editors/vscode/settings.json" "${_cfg}/vscode-oss/User/settings.json" "${_dry_run}" "${_backup}" "${_timestamp}"
-		_profile_link "${_PROFILE_ROOT}/editors/vscodium/settings.json" "${_cfg}/VSCodium/User/settings.json" "${_dry_run}" "${_backup}" "${_timestamp}"
-		_profile_link "${_PROFILE_ROOT}/editors/antigravity/settings.json" "${_cfg}/Antigravity/User/settings.json" "${_dry_run}" "${_backup}" "${_timestamp}"
+		_sync "editors/vscode/settings.json" "${_cfg}/Code/User/settings.json"
+		_sync "editors/vscode/settings.json" "${_cfg}/vscode-oss/User/settings.json"
+		_sync "editors/vscodium/settings.json" "${_cfg}/VSCodium/User/settings.json"
+		_sync "editors/antigravity/settings.json" "${_cfg}/Antigravity/User/settings.json"
 	fi
 
 	_ui_step "Emuladores de terminal e shells alternativos..."
-	_profile_link "${_PROFILE_ROOT}/terminals/konsole/Bash.profile" "${_data}/konsole/Bash.profile" "${_dry_run}" "${_backup}" "${_timestamp}"
-	_profile_link "${_PROFILE_ROOT}/terminals/konsole/Shell.profile" "${_data}/konsole/Shell.profile" "${_dry_run}" "${_backup}" "${_timestamp}"
-	_profile_link "${_PROFILE_ROOT}/terminals/konsole/Zsh.profile" "${_data}/konsole/Zsh.profile" "${_dry_run}" "${_backup}" "${_timestamp}"
-	_profile_link "${_PROFILE_ROOT}/terminals/nushell/config.nu" "${_cfg}/nushell/config.nu" "${_dry_run}" "${_backup}" "${_timestamp}"
-	_profile_link "${_PROFILE_ROOT}/terminals/nushell/env.nu" "${_cfg}/nushell/env.nu" "${_dry_run}" "${_backup}" "${_timestamp}"
-	_profile_link "${_PROFILE_ROOT}/terminals/powershell/profile.ps1" "${_cfg}/powershell/profile.ps1" "${_dry_run}" "${_backup}" "${_timestamp}"
-	_profile_link "${_PROFILE_ROOT}/terminals/powershell/Microsoft.PowerShell_profile.ps1" "${_cfg}/powershell/Microsoft.PowerShell_profile.ps1" "${_dry_run}" "${_backup}" "${_timestamp}"
+	_sync "terminals/nushell/config.nu" "${_cfg}/nushell/config.nu"
+	_sync "terminals/nushell/env.nu" "${_cfg}/nushell/env.nu"
+	_sync "terminals/powershell/profile.ps1" "${_cfg}/powershell/profile.ps1"
+	_sync "terminals/powershell/Microsoft.PowerShell_profile.ps1" "${_cfg}/powershell/Microsoft.PowerShell_profile.ps1"
+	if [ "${_is_win}" -eq 1 ]; then
+		_sync "terminals/windows-terminal/settings.json" "${_win_local}/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json"
+		_sync "terminals/cmd/profile.lua" "${_win_local}/clink/profile.lua"
+		_sync "terminals/cmd/profile.cmd" "${_win_local}/clink/profile.cmd"
+		_sync "terminals/cmd/profile.cmd" "${_win_home}/profile.cmd"
+		_sync "terminals/powershell/profile.ps1" "${_win_home}/Documents/PowerShell/profile.ps1"
+		_sync "terminals/powershell/Microsoft.PowerShell_profile.ps1" "${_win_home}/Documents/PowerShell/Microsoft.PowerShell_profile.ps1"
+		_sync "terminals/nushell/config.nu" "${_win_app}/nushell/config.nu"
+		_sync "terminals/nushell/env.nu" "${_win_app}/nushell/env.nu"
+	else
+		_sync "terminals/konsole/Bash.profile" "${_data}/konsole/Bash.profile"
+		_sync "terminals/konsole/Shell.profile" "${_data}/konsole/Shell.profile"
+		_sync "terminals/konsole/Zsh.profile" "${_data}/konsole/Zsh.profile"
+	fi
 
-	_ui_step "Skills portáteis de IA (Antigravity & Gemini)..."
-	_profile_link "${_PROFILE_ROOT}/skills" "${HOME}/.gemini/config/skills" "${_dry_run}" "${_backup}" "${_timestamp}"
+	_ui_step "Skills portateis de IA (Antigravity & Gemini)..."
+	_sync "skills" "${HOME}/.gemini/config/skills"
+	[ "${_is_win}" -eq 1 ] && _sync "skills" "${_win_home}/.gemini/config/skills"
 
-	_ui_ok "Sincronização concluída com sucesso!"
+	_ui_ok "Operacao (${_mode}) concluida com sucesso!"
 }
 
 _profile_update() {
-	_ui_step "Atualizando repositório em: ${_PROFILE_ROOT}"
+	_ui_step "Atualizando repositorio em: ${_PROFILE_ROOT}"
 	_status="$(command git -C "${_PROFILE_ROOT}" status --porcelain 2> "/dev/null" || true)"
 	_has_dirty=0
 	if [ -n "${_status}" ]; then
 		_has_dirty=1
-		_ui_warn "Alterações locais detectadas em ${_PROFILE_ROOT} (criando auto-stash)..."
+		_ui_warn "Alteracoes locais detectadas em ${_PROFILE_ROOT} (criando auto-stash)..."
 		command git -C "${_PROFILE_ROOT}" stash push -u -m "autostash-before-update-$(date +%s)" > "/dev/null" 2>&1 || true
 	fi
 	command git -C "${_PROFILE_ROOT}" pull --ff-only 2> "/dev/null" || command git -C "${_PROFILE_ROOT}" pull --rebase 2> "/dev/null" || command git -C "${_PROFILE_ROOT}" pull
@@ -170,15 +214,15 @@ _profile_update() {
 _profile_test() {
 	_ui_step "Validando sintaxe POSIX dos scripts..."
 	find "${_PROFILE_ROOT}" -name "*.sh" -not -path "*/.git/*" -exec sh -n {} +
-	_ui_ok "Todos os scripts estão sintaticamente corretos!"
+	_ui_ok "Todos os scripts estao sintaticamente corretos!"
 }
 
 _profile_audit() {
-	_ui_step "Executando auditoria estática..."
+	_ui_step "Executando auditoria estatica..."
 	if command -v python3 > "/dev/null" 2>&1 && [ -f "${_PROFILE_ROOT}/audit/all.py" ]; then
 		python3 "${_PROFILE_ROOT}/audit/all.py"
 	else
-		_ui_info "Python3 ou audit/all.py ausente; executando apenas teste sintático."
+		_ui_info "Python3 ou audit/all.py ausente; executando apenas teste sintatico."
 		_profile_test
 	fi
 }

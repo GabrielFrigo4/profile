@@ -35,3 +35,12 @@ Configura esquema de cores e inicialização integrada com PowerShell 7, MSYS2 U
 ### 3. CMD com Clink & Lua
 
 Injeta suporte a atalhos de readline Unix, histórico persistente e script Lua de completação inteligente no prompt tradicional do Windows.
+
+### 4. Windows: Arquitetura MSYS2 Soberano & Terminais Nativos
+
+Os terminais nativos do Windows (PowerShell, NuShell, CMD) são consumidores de camada fina:
+
+- Provêm prompts ultra-rápidos e atalhos familiares (`doskey`, `alias`, cmdlets).
+- Carregam o cofre privado (`vault.ps1`, `vault.nu`, `vault.cmd`, `vault.lua`).
+- Delegam comandos de manutenção e sincronização de dotfiles (`uprc`, `sync-profile`) diretamente ao motor POSIX canônico `profile.sh` via MSYS2 bash.
+- Suportam `vault-perms` multiplataforma com endurecimento de segurança via `icacls`.

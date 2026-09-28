@@ -6,15 +6,15 @@
 
 ## 📊 Status do Projeto
 
-| Área                             |   Status   | Cobertura / Estado                                                                 |
-| :------------------------------- | :--------: | :--------------------------------------------------------------------------------- |
-| **🪟 Terminais Windows**         | 🟢 Estável | PowerShell, NuShell e CMD/Clink padronizados com `_ui_*` e família `up*`           |
-| **🐧 Terminais UNIX**            | 🟢 Estável | Konsole, Windows Terminal e integrações de terminal XDG                            |
-| **📝 Configurações de Editores** | 🟢 Estável | VS Code, Antigravity e Zed sincronizados via links declarativos                    |
-| **🛠️ Linters & Formatadores**    | 🟢 Estável | `.clang-format`, `.prettierrc`, `.stylua.toml`, `.editorconfig`                    |
-| **🤖 Portable AI Skills**        | 🟢 Estável | Catálogo de skills portáteis orientadas a ação e compatíveis com agentes           |
-| **🔄 Sincronização & Links**     | 🟢 Estável | Scripts `profile.sh` (UNIX) e `install.ps1` (Windows) com auto-cura e idempotência |
-| **🧪 Suite de Auditoria**        |  🟢 100%   | 100% de conformidade com linters de monólitos, nanos, banners e formatos           |
+| Área                             |   Status   | Cobertura / Estado                                                                |
+| :------------------------------- | :--------: | :-------------------------------------------------------------------------------- |
+| **🪟 Terminais Windows**         | 🟢 Estável | PowerShell, NuShell e CMD/Clink padronizados com `_ui_*` e família `up*`          |
+| **🐧 Terminais UNIX**            | 🟢 Estável | Konsole, Windows Terminal e integrações de terminal XDG                           |
+| **📝 Configurações de Editores** | 🟢 Estável | VS Code, Antigravity e Zed sincronizados via links declarativos                   |
+| **🛠️ Linters & Formatadores**    | 🟢 Estável | `.clang-format`, `.prettierrc`, `.stylua.toml`, `.editorconfig`                   |
+| **🤖 Portable AI Skills**        | 🟢 Estável | Catálogo de skills portáteis orientadas a ação e compatíveis com agentes          |
+| **🔄 Sincronização & Links**     | 🟢 Estável | Motor unificado `profile.sh` (UNIX & MSYS2 Soberano) com auto-cura e idempotência |
+| **🧪 Suite de Auditoria**        |  🟢 100%   | 100% de conformidade com linters de monólitos, nanos, banners e formatos          |
 
 ---
 
@@ -30,7 +30,7 @@
 ### 2. 🛡️ Resiliência e Auto-Cura de Symlinks
 
 - [x] Reforçar a auto-detecção de links quebrados ou sobrescritos em `profile.sh` com idempotência ativa (`[OK]`).
-- [x] Aprimorar o tratamento de backups automáticos e cascata de links (`SymbolicLink` -> `Junction` / `HardLink` -> `Copy`) em `install.ps1`.
+- [x] Unificação do motor em `profile.sh` com suporte a MSYS2, expurgo limpo de `install.ps1`, cascata de links e reconciliação bidirecional (`--pull` / `--status`).
 - [x] Garantir que o Profile possa ser restaurado e sincronizado de forma estritamente idempotente.
 
 ### 3. 🌐 Governança XDG e Multiplataforma

@@ -123,12 +123,39 @@ sh "${HOME}/.profile/profile.sh" sync
 
 ---
 
-### 🪟 Windows (Nativo via PowerShell)
+### 🪟 Windows (MSYS2 como Centro de Comando Soberano & Terminais Nativos)
 
-```powershell
-git clone "https://github.com/GabrielFrigo4/profile" "$HOME\.local\share\profile"
-& "$HOME\.local\share\profile\install.ps1"
+O ecossistema segue a filosofia **UNIX First**. No Windows, o **MSYS2** atua como o centro de comando e sincronização soberano (cidadão Classe 1.5), enquanto PowerShell, NuShell e CMD/Clink atuam como consumidores rápidos (Classe 2) que delegam a manutenção ao motor unificado POSIX `profile.sh`.
+
+#### Recomendações de Ambiente Windows
+
+1. **Modo Desenvolvedor (Recomendado):** Permite a criação de symlinks nativos NTFS sem privilégios de administrador:
+    ```cmd
+    reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" /t REG_DWORD /f /v "AllowDevelopmentWithoutDevLicense" /d "1"
+    ```
+2. **Sudo Nativo (Windows 11):** Ative para comandos com elevação direta sem trocar de janela:
+    ```cmd
+    sudo config --enable normal
+    ```
+    _(Ou utilize o [`gsudo`](https://gerardog.github.io/gsudo/))._
+
+#### Sincronização via MSYS2 / POSIX Bash:
+
+```sh
+git clone "https://github.com/GabrielFrigo4/profile" "${HOME}/.local/share/profile"
+sh "${HOME}/.local/share/profile/profile.sh" sync
 ```
+
+#### Sincronização a partir de PowerShell, NuShell ou CMD:
+
+Após clonar no caminho canônico (`$HOME\.local\share\profile`), execute em qualquer terminal nativo:
+
+- **Sincronização padrão:** `uprc` ou `sync-profile`
+- **Auditoria de divergências:** `sync-profile -Status` (ou `profile.sh sync --status`)
+- **Reconciliação reversa (Host ➔ Git):** `sync-profile -Pull` (ou `profile.sh sync --pull`)
+
+> [!NOTE]
+> Caso o Modo Desenvolvedor não esteja ativado no Windows, o motor `profile.sh` realiza automaticamente um **fallback gracioso para cópia física** com avisos semânticos `_ui_warn`. Utilize `sync-profile -Pull` a qualquer momento para levar alterações feitas nos arquivos de configuração do Windows de volta ao repositório Git.
 
 ---
 

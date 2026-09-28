@@ -381,14 +381,50 @@ def uprc [] {
 		} else {
 			^git -C $target pull --ff-only
 		}
-		let installer = ([$target, "install.ps1"] | path join)
-		if ($installer | path exists) {
-			_ui_sub "Sincronizando dotfiles e links via install.ps1..."
-			^pwsh -NoProfile -ExecutionPolicy Bypass -File $installer
+		let sh_sync = ([$target, "profile.sh"] | path join)
+		if ($sh_sync | path exists) {
+			_ui_sub "Sincronizando dotfiles via profile.sh (MSYS2 / POSIX)..."
+			let target_posix = ($target | str replace -a '\' '/')
+			if (which bash | is-not-empty) {
+				^bash -c $"cd '($target_posix)' && ./profile.sh sync"
+			} else if (which sh | is-not-empty) {
+				^sh -c $"cd '($target_posix)' && ./profile.sh sync"
+			} else {
+				_ui_warn "Ambiente MSYS2/Bash não detectado no PATH para executar profile.sh sync."
+			}
 		}
 		_ui_ok "Universal Profile atualizado e sincronizado com sucesso!"
 	} else {
 		_ui_info "Repositório do Profile não encontrado."
+	}
+}
+
+def vault-perms [path?: string] {
+	if (which bash | is-not-empty) {
+		^bash -c "command -v vault-perms >/dev/null 2>&1 && vault-perms || true"
+	} else if (which sh | is-not-empty) {
+		^sh -c "command -v vault-perms >/dev/null 2>&1 && vault-perms || true"
+	} else {
+		let user = ($env.USERNAME? | default ($env.USER? | default "user"))
+		let home = ($env.USERPROFILE? | default ($env.HOME? | default "~"))
+		let target = if ($path | is-not-empty) { $path } else {
+			let candidates = [
+				($env.VAULT_DIR? | default ""),
+				$"($home)/.local/share/vault",
+				$"($home)/.config/vault",
+				$"($home)/.vault"
+			]
+			$candidates | where { |p| ($p | is-not-empty) and ($p | path exists) } | get -o 0
+		}
+		if ($target == null or not ($target | path exists)) {
+			_ui_err $"Diretório do Vault não encontrado: ($target)"
+			return
+		}
+		_ui_step $"Ajustando permissões de segurança em ($target)..."
+		let win_target = ($target | path expand | str replace -a '/' '\')
+		^icacls $win_target /inheritance:r /grant:r $"($user):\(OI\)\(CI\)F" /c /q
+		^icacls $"($win_target)\\*" /reset /t /c /q
+		_ui_ok $"Permissões ajustadas com sucesso [acesso restrito a '($user)']."
 	}
 }
 
@@ -445,6 +481,7 @@ def upall [] {
 }
 
 alias upprofile = uprc;
+alias sync-profile = uprc;
 alias update-git = upgit;
 alias update-editors = uped;
 alias update-profile = uprc;

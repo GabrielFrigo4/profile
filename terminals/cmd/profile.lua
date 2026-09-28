@@ -108,6 +108,48 @@ end
 
 MSYS_HOME = get_msys2_home()
 
+local function to_unix_path(p)
+	local u = p:gsub("\\", "/")
+	local drive, rest = u:match("^([A-Za-z]):(.*)")
+	if drive then
+		return "/" .. drive:lower() .. rest
+	end
+	return u
+end
+
+local function get_bash_cmd()
+	local roots = { os.getenv("MSYS2_ROOT"), [[C:\msys64]], [[D:\msys64]], [[E:\msys64]] }
+	for _, r in ipairs(roots) do
+		if r and is_file(r .. [[\usr\bin\bash.exe]]) then
+			return [["]] .. r .. [[\usr\bin\bash.exe"]]
+		end
+	end
+	return "bash"
+end
+
+local function load_vault_lua()
+	local home = os.getenv("USERPROFILE") or os.getenv("HOME") or ""
+	local candidates = {}
+	local function add(p) if p and p ~= "" then table.insert(candidates, p) end end
+	add(os.getenv("VAULT_DIR"))
+	add(home .. [[\.local\share\vault]])
+	add(home .. [[\.config\vault]])
+	add(home .. [[\.vault]])
+	if MSYS_HOME then
+		add(MSYS_HOME .. [[\.local\share\vault]])
+		add(MSYS_HOME .. [[\.config\vault]])
+		add(MSYS_HOME .. [[\.vault]])
+	end
+	for _, p in ipairs(candidates) do
+		local f = p .. [[\vault.lua]]
+		if is_file(f) then
+			pcall(dofile, f)
+			break
+		end
+	end
+end
+load_vault_lua()
+
 -- ================================
 -- CONSTANT
 -- ================================
@@ -840,7 +882,7 @@ local function cmd_uped()
 	end
 end
 
-local function cmd_uprc()
+local function cmd_uprc(args)
 	local home = os.getenv("USERPROFILE") or os.getenv("HOME") or ""
 	local candidates = {}
 	local function add(p)
@@ -869,19 +911,27 @@ local function cmd_uprc()
 	end
 
 	if target then
-		_ui_step("Atualizando Universal Profile em: " .. target .. "...")
-		local handle = io.popen([[git -C "]] .. target .. [[" status --porcelain 2>nul]])
-		local status = handle and handle:read("*a") or ""
-		if handle then handle:close() end
-		if status and status:match("%S") then
-			_ui_warn("Alterações locais não commitadas detectadas em: " .. target .. ". Ignorando git pull para preservar dados.")
-		else
-			os.execute([[git -C "]] .. target .. [[" pull --ff-only]])
+		local flags = args and trim(args) or ""
+		local is_query = flags:find("%-%-status") or flags:find("%-s")
+		local is_pull = flags:find("%-%-pull")
+		local is_dry = flags:find("%-%-dry%-run") or flags:find("%-n")
+		if not is_query and not is_pull and not is_dry then
+			_ui_step("Atualizando Universal Profile em: " .. target .. "...")
+			local handle = io.popen([[git -C "]] .. target .. [[" status --porcelain 2>nul]])
+			local status = handle and handle:read("*a") or ""
+			if handle then handle:close() end
+			if status and status:match("%S") then
+				_ui_warn("Alterações locais não commitadas detectadas em: " .. target .. ". Ignorando git pull para preservar dados.")
+			else
+				os.execute([[git -C "]] .. target .. [[" pull --ff-only]])
+			end
 		end
-		local installer = target .. [[\install.ps1]]
-		if exists(installer) then
-			_ui_sub("Sincronizando dotfiles e links via install.ps1...")
-			os.execute([[powershell -NoProfile -ExecutionPolicy Bypass -File "]] .. installer .. [["]])
+		local script = target .. [[\profile.sh]]
+		if exists(script) then
+			_ui_sub("Sincronizando dotfiles e links via profile.sh (MSYS2)...")
+			local bash = get_bash_cmd()
+			local unix_target = to_unix_path(target)
+			os.execute(bash .. [[ -c "MSYS=winsymlinks:nativestrict ']] .. unix_target .. [[/profile.sh' sync ]] .. flags .. [["]])
 		end
 		_ui_ok("Universal Profile atualizado e sincronizado com sucesso!")
 	else
@@ -919,6 +969,44 @@ local function cmd_upvt()
 		_ui_step("Atualizando Universal Vault em: " .. target .. "...")
 		os.execute([[git -C "]] .. target .. [[" pull --ff-only]])
 		_ui_ok("Universal Vault atualizado com sucesso!")
+	else
+		_ui_info("Repositório do Vault não encontrado.")
+	end
+end
+
+local function cmd_vault_perms(args)
+	local home = os.getenv("USERPROFILE") or os.getenv("HOME") or ""
+	local candidates = {}
+	local function add(p)
+		if p and p ~= "" then table.insert(candidates, p) end
+	end
+
+	add(os.getenv("VAULT_DIR"))
+	add(home .. [[\.local\share\vault]])
+	add(home .. [[\.config\vault]])
+	add(home .. [[\.vault]])
+
+	if MSYS_HOME then
+		add(MSYS_HOME .. [[\.local\share\vault]])
+		add(MSYS_HOME .. [[\.config\vault]])
+		add(MSYS_HOME .. [[\.vault]])
+	end
+
+	local target = nil
+	for _, p in ipairs(candidates) do
+		if is_dir(p) then
+			target = p
+			break
+		end
+	end
+
+	if target then
+		local user = os.getenv("USERNAME") or "user"
+		_ui_step("Ajustando permissões de segurança em " .. target .. "...")
+		os.execute([[icacls "]] .. target .. [[" /inheritance:r /grant:r "]] .. user .. [[":(OI)(CI)F /c /q >nul 2>&1]])
+		os.execute([[icacls "]] .. target .. [[\*" /reset /t /c /q >nul 2>&1]])
+		os.execute([[git -C "]] .. target .. [[" config core.hooksPath .githooks >nul 2>&1]])
+		_ui_ok("Permissões ajustadas com sucesso [acesso restrito a '" .. user .. "'].")
 	else
 		_ui_info("Repositório do Vault não encontrado.")
 	end
@@ -981,8 +1069,10 @@ local updater_commands = {
 	["uprc"] = cmd_uprc,
 	["upprofile"] = cmd_uprc,
 	["update-profile"] = cmd_uprc,
+	["sync-profile"] = cmd_uprc,
 	["upvt"] = cmd_upvt,
 	["update-vault"] = cmd_upvt,
+	["vault-perms"] = cmd_vault_perms,
 	["upsh"] = cmd_upsh,
 	["update-shell"] = cmd_upsh,
 	["upall"] = cmd_upall,
