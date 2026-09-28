@@ -165,8 +165,8 @@ Em READMEs, todo bloco de comandos de terminal, instruções de instalação (`g
 
 ````markdown
 ```sh
-git clone "https://github.com/GabrielFrigo4/repo.git"
-cd repo
+git clone "https://github.com/GabrielFrigo4/environment.git"
+cd environment
 make setup
 ```
 ````

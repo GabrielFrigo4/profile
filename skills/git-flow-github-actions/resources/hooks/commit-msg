@@ -1,0 +1,43 @@
+#!/usr/bin/env sh
+# ----------------------------------------------------------------
+# Hook: Git Semantic Commit-Message Validator
+# License: MIT (c) 2026 GabrielFrigo
+# ----------------------------------------------------------------
+
+set -e
+
+_msg_file="${1:-}"
+if [ -z "${_msg_file}" ] || [ ! -f "${_msg_file}" ]; then
+	exit 0
+fi
+
+_clean_msg=$(grep -v '^[[:space:]]*#' "${_msg_file}" | tr '\n' ' ' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+
+case "${_clean_msg}" in
+	Merge*|Revert*|fixup!*|squash!*)
+		exit 0
+		;;
+esac
+
+if [ -z "${_clean_msg}" ]; then
+	echo "❌ [commit-msg] A mensagem de commit não pode estar vazia!" >&2
+	exit 1
+fi
+
+_char_count=$(printf "%s" "${_clean_msg}" | wc -m)
+if [ "${_char_count}" -lt 8 ]; then
+	echo "❌ [commit-msg] Mensagem muito curta (mínimo de 8 caracteres)." >&2
+	exit 1
+fi
+
+_pattern='^(add|update|fix|docs|feat|chore|refactor|style|ci|test)(\([a-zA-Z0-9_-]+\))?:[[:space:]]+.+'
+if ! echo "${_clean_msg}" | grep -E -q "${_pattern}"; then
+	echo "❌ [commit-msg] Convenção semântica violada!" >&2
+	echo "   Formatos aceitos:" >&2
+	echo "     <tipo>: <descrição no imperativo>" >&2
+	echo "     <tipo>(<escopo>): <descrição no imperativo>" >&2
+	echo "   Tipos permitidos: add, update, fix, docs, feat, chore, refactor, style, ci, test" >&2
+	exit 1
+fi
+
+exit 0

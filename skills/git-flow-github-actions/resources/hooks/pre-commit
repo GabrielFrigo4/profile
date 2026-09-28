@@ -1,0 +1,60 @@
+#!/usr/bin/env sh
+# ----------------------------------------------------------------
+# Hook: Git Pre-Commit Quality Gate Runner
+# License: MIT (c) 2026 GabrielFrigo
+# ----------------------------------------------------------------
+
+set -e
+
+_repo_root="$(git rev-parse --show-toplevel 2> "/dev/null" || pwd)"
+cd "${_repo_root}"
+
+echo "🔍 [pre-commit] Executando quality gates locais..."
+
+### --------------------------------
+### Whitespace & Formatação
+### --------------------------------
+echo "  ↳ Verificando whitespaces e quebras de linha (git diff --check)..."
+if ! git diff --check --cached; then
+	echo "❌ [pre-commit] Erro de formatação ou whitespace detectado!" >&2
+	exit 1
+fi
+
+### --------------------------------
+### Anti-Vazamento de Arquivos Proibidos
+### --------------------------------
+echo "  ↳ Verificando ausência de arquivos temporários ou segredos..."
+_leaked=$(git diff --cached --name-only | grep -E '(\.tmp|\.temp|\.bak|\.DS_Store|thumbs\.db|\.env$|\.key$)' 2> "/dev/null" || true)
+if [ -n "${_leaked}" ]; then
+	echo "❌ [pre-commit] Arquivo temporário ou sensível bloqueado: ${_leaked}" >&2
+	exit 1
+fi
+
+### --------------------------------
+### Sintaxe de Shell POSIX
+### --------------------------------
+if [ -d "scripts" ] || [ -f "install.sh" ]; then
+	echo "  ↳ Validando sintaxe de scripts shell (sh -n)..."
+	find . -name "*.sh" -not -path "*/.git/*" -exec sh -n {} +
+fi
+
+### --------------------------------
+### Formatação Markdown com Prettier
+### --------------------------------
+if command -v prettier > "/dev/null" 2>&1; then
+	echo "  ↳ Validating staged Markdown files with Prettier..."
+	_unformatted=""
+	for _md in $(git diff --cached --name-only --diff-filter=d | grep '\.md$' || true); do
+		if [ -f "${_md}" ] && ! prettier --check "${_md}" > "/dev/null" 2>&1; then
+			_unformatted="${_unformatted} ${_md}"
+		fi
+	done
+	if [ -n "${_unformatted}" ]; then
+		echo "❌ [pre-commit] Arquivos Markdown desformatados:${_unformatted}" >&2
+		echo "   Execute 'prettier --write <arquivo>' antes de commitar." >&2
+		exit 1
+	fi
+fi
+
+echo "✅ [pre-commit] Todos os quality gates passaram com sucesso!"
+exit 0

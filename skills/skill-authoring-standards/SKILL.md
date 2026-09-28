@@ -27,17 +27,13 @@ flowchart TD
     C1 --> C2 --> C3 --> C4 --> C5 --> C6
 ```
 
-### Hierarquia de Resolução & Precedência Unix (Local > Global):
+### Hierarquia de Resolução & Precedência Unix (Local > Global > Built-in):
 
-Inspirado na filosofia UNIX onde o escopo mais local e específico sempre sobrepõe o global:
-
-1. **Local do Repositório (`<repo>/.agents/skills/`):** Tem **prioridade máxima**. Sobrescreve ou especializa qualquer skill homônima de nível de usuário ou de sistema. Permite que um projeto defina contratos, runbooks e regras específicas para o agente de IA sem poluir o ambiente global.
-2. **Global do Usuário (`~/.gemini/config/skills/` via `Profile/skills/`):** Habilidades perenes de engenharia, sistemas operacionais, padrões de linguagem e ferramentas de terminal, disponíveis para o agente em qualquer workspace do usuário.
-3. **Built-in da IDE (`builtin/skills`):** Habilidades fundamentais fornecidas pelo ecossistema Antigravity, atuando como base e fallback de último nível.
+1. **Local do Repositório (`<repo>/.agents/skills/`):** Prioridade máxima. Sobrescreve ou especializa skills globais para aquele projeto sem poluir o ambiente global.
+2. **Global do Usuário (`~/.gemini/config/skills/` via `Profile/skills/`):** Padrões perenes de engenharia, sistemas operacionais e ferramentas de terminal.
+3. **Built-in da IDE (`builtin/skills`):** Habilidades fundamentais fornecidas pelo ecossistema Antigravity, base e fallback de último nível.
 
 ### 🌐 Skills Globais vs. 🎯 Skills Locais: Dualidade Arquitetural
-
-O ecossistema estabelece uma distinção rigorosa entre habilidades portáteis de engenharia e runbooks de repositório:
 
 | Dimensão                 | Skills Globais (`Profile/skills/`)                      | Skills Locais (`<repo>/.agents/skills/`)          |
 | :----------------------- | :------------------------------------------------------ | :------------------------------------------------ |
@@ -47,199 +43,82 @@ O ecossistema estabelece uma distinção rigorosa entre habilidades portáteis d
 | **Acoplamento**          | Zero acoplamento a caminhos ou repositórios privados    | Acoplamento aceitável aos scripts e alvos do repo |
 | **Precedência**          | Fallback geral de usuário                               | Prioridade máxima sobre skills globais            |
 
-#### 1. Diretrizes para Skills Globais (`Profile/skills/`)
+- **Diretrizes Globais:** Devem ser universais, agnósticas de caminhos absolutos e focadas em padrões atemporais.
+- **Diretrizes Locais:** Devem codificar regras operacionais, alvos de build e particularidades do fluxo do repositório.
 
-- **Universalidade Estrita:** Devem ser concebidas para funcionar em qualquer base de código ou projeto em que o usuário trabalhar.
-- **Agnósticas de Implementação:** Proibido codificar caminhos absolutos, variáveis de ambiente ou ferramentas exclusivas de um único repositório privado.
-- **Estudos de Caso Ilustrativos:** Se for necessário exemplificar como uma regra teórica funciona na prática (como o Quarteto de Produtividade em `xdg-fhs-standards`), faça-o estritamente como caso de estudo ilustrativo, mantendo a regra central abstrata e aplicável universalmente.
+### 🏛️ A Regra Áurea da Fonte Canônica (Bancada vs. Clones de Runtime)
 
-#### 2. Diretrizes para Skills Locais (`<repo>/.agents/skills/`)
+Toda e qualquer alteração de engenharia em qualquer componente (`Setup`, `Shell`, `Profile`, `Vault`, `Emacs`, `Helix`, `NeoVim`, `Vim`) ou skills globais **DEVE SER SEMPRE** realizada prioritariamente na raiz de desenvolvimento do **Grande Repositório / Super-Hub** no Environment (`~/Documents/Environment/`), e **NUNCA** diretamente nos clones locais de runtime (`~/.local/share/profile`, `~/.emacs.d`, `~/.config/nvim`) ou links ativos (`~/.gemini/config/skills/`).
 
-- **Especialização do Projeto:** Devem codificar regras operacionais, flags de Makefile, alvos de compilação, scripts de teste e particularidades do fluxo daquele repositório.
-- **Não Redundância:** Não devem duplicar manuais gerais de linguagem ou boas práticas universais já cobertos pelas skills globais.
-
-### 🏛️ A Regra Áurea da Fonte Canônica (Grandes Repositórios vs. Clones de Runtime)
-
-Quando o desenvolvedor ou o agente for criar, refatorar ou atualizar qualquer **Skill Global, arquivo de configuração, dotfile ou componente do ecossistema** (`Setup`, `Shell`, `Profile`, `Vault`, `Emacs`, `Helix`, `NeoVim`, `Vim`):
-
-- **Regra Fundamental de Modificação:** A alteração **DEVE SEMPRE** ser realizada prioritariamente na raiz de desenvolvimento do **Grande Repositório Canônico / Super-Hub** no Environment (geralmente em `~/Documents/Environment/` ou `~/Documentos/Environment/`), e **NUNCA** diretamente nos clones locais de runtime (`~/.local/share/profile`, `~/.emacs.d`, `~/.config/nvim`, etc.) ou através dos links simbólicos ativos (`~/.gemini/config/skills/`).
-- **Condição Estrita para Editar em Clones de Runtime:** A modificação direta em clones de runtime só é admitida se o repositório canônico no Environment **NÃO existir** E o agente **NÃO estiver nele** (ambas as condições estritamente negadas simultaneamente, como em servidores remotos ou máquinas headless que apenas possuem o runtime instalado).
-- **Por que essa regra é inegociável?**
-    1.  **Prevenção de Árvores de Trabalho Sujas:** Alterar arquivos nos clones de runtime (ou por links simbólicos) deixa a working tree com alterações não commitadas (`unstaged changes`), quebrando qualquer `git pull`, `make update`, `uped`, `uprc`, etc.
-    2.  **Integridade da Fonte da Verdade:** As melhorias e correções de bugs devem nascer versionadas no repositório canônico, passando pelos quality gates (`pre-commit`, `make audit`, formatadores) antes de serem distribuídas ao runtime.
-    3.  **Fluxo Canônico de Propagação:**
-        1. Modifique e teste no grande repositório (`Environment/...`).
-        2. Formate com Prettier / Linters canônicos.
-        3. Commite e dê push no repositório de origem.
-        4. Atualize o ponteiro do submódulo no repositório central (`Environment`).
-        5. Atualize o clone de runtime via `git pull --ff-only` limpo ou script de sync.
+- _Exceção:_ Apenas admitida se o super-hub no Environment NÃO existir E o agente NÃO estiver nele (ambas negadas simultaneamente).
 
 ### ⚖️ A Invariante da Perenidade Cognitiva (Skills vs. TODO.md)
 
-O ecossistema impõe uma **separação ontológica rigorosa** entre a memória procedimental perene e a governança de tarefas:
+| Documento       | Natureza & Papel             | Volatilidade        | O Que Deve Conter                              | O Que NUNCA Deve Conter                          |
+| :-------------- | :--------------------------- | :------------------ | :--------------------------------------------- | :----------------------------------------------- |
+| **`README.md`** | Vitrine Pública & Onboarding | Baixa               | Portais, badges, arquitetura e quickstart      | Backlog granular, runbooks cognitivos densos     |
+| **`TODO.md`**   | Roadmap & Governança         | **Alta (Dinâmico)** | Matriz de status, épicos em andamento, sprints | Invariantes teóricas, manuais procedimentais     |
+| **`SKILL.md`**  | Runbooks Cognitivos          | **Nula (Perene)**   | Heurísticas, métodos e padrões atemporais      | **Tarefas de sprint, cópia de TODO.md, backlog** |
+| **`AGENTS.md`** | Constituição Operacional     | Baixa               | Contratos invioláveis e Boy Scout Rule         | Backlog de tarefas, código de implementação      |
 
-| Documento       | Natureza & Papel              | Volatilidade        | O Que Deve Conter                                                | O Que NUNCA Deve Conter                          |
-| :-------------- | :---------------------------- | :------------------ | :--------------------------------------------------------------- | :----------------------------------------------- |
-| **`README.md`** | Vitrine Pública & Onboarding  | Baixa               | Portais, badges, sistemas suportados, arquitetura e quickstart   | Backlog granular, runbooks cognitivos densos     |
-| **`TODO.md`**   | Roadmap & Governança Dinâmica | **Alta (Dinâmico)** | Matriz de maturidade/status, épicos em andamento, sprints        | Invariantes teóricas, manuais procedimentais     |
-| **`SKILL.md`**  | Runbooks Cognitivos & Métodos | **Nula (Perene)**   | _Como_ pensar, projetar e auditar; heurísticas e padrões eternos | **Tarefas de sprint, cópia de TODO.md, backlog** |
-| **`AGENTS.md`** | Constituição Operacional      | Baixa               | Contratos invioláveis, regras de integridade e Boy Scout Rule    | Backlog de tarefas, código de implementação      |
-
-#### Proibição Absoluta de Débito Cognitivo & Tarefas Efêmeras em Skills:
-
-- **Proibição de Listas de Afazeres:** É expressamente proibido transformar skills em espelhos de tarefas pendentes do `TODO.md` ou checklists de sprint. O `TODO.md` é volátil; skills ensinam métodos invariantes.
-- **O Teste dos 5 Anos:** _"Quando todas as tarefas pendentes forem concluídas e o `TODO.md` estiver limpo, o conteúdo desta skill continuará 100% verdadeiro, relevante e acionável daqui a 5 anos?"_ Se depender de tarefas em aberto, pertencia ao `TODO.md`.
+- **O Teste dos 5 Anos:** _"Quando o `TODO.md` for zerado, o conteúdo desta skill continuará 100% verdadeiro e acionável daqui a 5 anos?"_ Se depender de tarefas em aberto, pertencia ao `TODO.md`.
 
 ---
 
 ## 🗂️ Estrutura Modular de uma Skill (Além do `SKILL.md`)
 
-Uma Portable AI Skill no padrão canônico **não se limita a um único arquivo `SKILL.md`**. Ela pode e deve ser estruturada como um módulo completo de automação cognitiva quando a tarefa envolver ferramentas auxiliares, testes ou dados:
-
 ```text
 skills/<nome-da-skill>/
-├── SKILL.md
-├── scripts/
-├── references/
-├── examples/
-└── resources/
+├── SKILL.md          # Runbook principal com frontmatter YAML (obrigatório)
+├── scripts/          # Utilitários executáveis invocados pelo agente
+├── references/       # Manuais, tabelas de decisão e especificações densas
+├── examples/         # Implementações de referência e snippets
+└── resources/        # Templates estáticos, esquemas e modelos
 ```
-
-- `SKILL.md`: Runbook principal obrigatório com frontmatter YAML e instruções operacionais.
-- `scripts/`: Utilitários executáveis opcionais (Python, Shell POSIX) invocados sob demanda pelo agente.
-- `references/`: Manuais, especificações, tabelas de decisão e notas densas complementares.
-- `examples/`: Implementações de referência, snippets e arquivos modelo.
-- `resources/`: Templates estáticos, esquemas JSON/YAML ou dados canônicos.
-
-> [!TIP]
-> **Utilitários Executáveis em `scripts/`:**
-> Sempre que uma validação for repetitiva, complexa ou exigir chamadas de rede/parsing estruturado (como inspecionar links, auditar sintaxe ou processar JSON), **forneça um script executável dentro da própria skill** (ex: `scripts/verify_links.py`). O agente de IA pode invocar o script diretamente via terminal.
 
 > [!CAUTION]
-> **Regra da Soberania & Hermetismo de Produção: Código de Produção NUNCA Consome Skills!**
-> É **estritamente proibido** fazer com que scripts de produção, Makefiles, carregadores de shell (`*.sh`, `*.rc`), aliases, dotfiles ou scripts de `.githooks/` chamem ou dependam de utilitários e arquivos contidos dentro de pastas de skills (seja em `~/.gemini/config/skills/` ou `.agents/skills/`).
->
-> **Por que isso é um erro arquitetural grave?**
->
-> 1. **Invariante do Teste de Fogo (`rm -rf .agents`):** O repositório Git DEVE ser 100% autônomo e autossuficiente. Se outro desenvolvedor clonar o repositório, executar `rm -rf .agents` ou rodar em uma pipeline limpa de CI/CD (GitHub Actions, bare-metal), nenhum script ou build pode quebrar por ausência de arquivos de IA.
-> 2. **Separação Ontológica Rígida:**
->     - **Código de Produção & `.githooks/`:** Quality gates e rotinas determinísticas e autônomas do próprio repositório, sem acoplamento a IA.
->     - **Scripts de Skills:** Ferramentas e runbooks estritamente cognitivos sob demanda para a **mente do Agente de IA e operadores humanos**.
-
----
-
-## 📋 Anatomia Obrigatória de um Arquivo `SKILL.md`
-
-Todo arquivo `SKILL.md` DEVE seguir a anatomia canônica:
-
-```markdown
----
-name: nome-da-skill
-description: Resumo conciso de uma a duas frases descrevendo o escopo e gatilhos de ativação.
----
-
-# 🏷️ Título Descritivo com Emoji Canônico
-
-Parágrafo de introdução delimitando o papel do agente de IA e o problema resolvido.
-
----
-
-## 🎯 Seções Hierárquicas e Procedimentos Guiados
-
-Conteúdo técnico, comandos canônicos e diretrizes.
-
----
-
-## 🔗 Links Oficiais de Referência & Obras Recomendadas
-
-Links oficiais para prevenir conhecimento estático ou desatualizado.
-```
+> **Hermetismo de Produção (`rm -rf .agents`):** Código de produção (Makefiles, scripts de shell, CI/CD, hooks) **NUNCA** consome ou referencia arquivos de skills. Se `.agents/` for sumariamente deletado, 100% do projeto continua compilando, testando e operando perfeitamente.
 
 ---
 
 ## 📐 Orçamento de Linhas & Limites Canônicos (17 – 128 – 256)
 
-Para proteger a janela de contexto (_Context Window_) e forçar modularidade UNIX:
-
-| Faixa de Linhas                 | Classificação             | Diretriz Operacional                                          |
-| :------------------------------ | :------------------------ | :------------------------------------------------------------ |
-| **$\ge 17$ linhas**             | Mínimo Substancial        | Previne micro-runbooks vazios ou sem valor procedimental.     |
-| **$17 \text{ a } 128$ linhas**  | **Sweet Spot Executivo**  | Meta de design para fluxos diretos, acionáveis e rápidos.     |
-| **$129 \text{ a } 256$ linhas** | Faixa de Densidade        | Permitido para matrizes multi-OS, tabelas e regras densas.    |
-| **$> 256$ linhas**              | **Erro Fatal (Monólito)** | Proibido. Exige modularização em `references/` ou `scripts/`. |
-
-- **Invariante do Hermetismo:** Toda skill local em `<repo>/.agents/skills/` deve respeitar o teste `rm -rf .agents`. O código do projeto NUNCA depende da skill para compilar ou rodar.
-- **Curadoria do Ciclo de Vida:** A IA deve atuar ativamente via [`local-skills-curator`](../local-skills-curator/SKILL.md), atualizando ou expurgando skills para evitar acúmulo de regras mortas.
+| Faixa de Linhas                 | Classificação             | Diretriz Operacional                                                         |
+| :------------------------------ | :------------------------ | :--------------------------------------------------------------------------- |
+| **$\ge 17$ linhas**             | Mínimo Substancial        | Previne micro-runbooks sem valor procedimental.                              |
+| **$17 \text{ a } 128$ linhas**  | **Sweet Spot Executivo**  | Meta de design para fluxos diretos, acionáveis e rápidos.                    |
+| **$129 \text{ a } 256$ linhas** | Faixa de Densidade        | Permitido para matrizes multi-OS, tabelas e regras densas.                   |
+| **$> 256$ linhas**              | **Erro Fatal (Monólito)** | Proibido. Exige modularização em `references/`, `examples/` ou `resources/`. |
 
 ---
 
 ## 📚 A Regra das Fontes Canônicas, Links & Citação Bibliográfica
 
-Para garantir rigor técnico, evitar premissas estáticas ou obsoletas e assegurar integridade de rede:
-
-### 1. A Regra da Homepage Obrigatória
-
-- **Paridade entre Raiz e Documentação Específica:** Sempre que uma documentação técnica aprofundada, manual, RFC, release note ou subpágina for linkada, **a Homepage oficial (portal raiz) da tecnologia DEVE acompanhar o link**:
-    - Exemplo:
-        ```markdown
-        - **The FreeBSD Project:** <https://www.freebsd.org/> | Releases: <https://www.freebsd.org/releases/> | Shell (`sh`): <https://man.freebsd.org/sh>
-        - **The Open Group (POSIX):** <https://www.opengroup.org/> | Especificações Base: <https://pubs.opengroup.org/onlinepubs/9699919799/>
-        - **Proxmox Virtual Environment:** <https://proxmox.com/en/> | Documentação: <https://pve.proxmox.com/pve-docs/>
-        - **Game of Trees (Got):** <https://gameoftrees.org/> | Manual: <https://gameoftrees.org/manual.html>
-        ```
-- Isso garante que tanto o leitor humano quanto o agente de IA tenham acesso imediato ao portal principal e à documentação técnica específica.
-
-### 2. Proibição Absoluta de Links Fictícios, Quebrados ou Privados
-
-- **Links Quebrados (404, DNS, Timeouts):** É terminantemente proibido incluir URLs inexistentes, domínios expirados ou rotas desatualizadas.
-- **Repositórios Privados:** NUNCA crie links markdown para repositórios privados da organização (como o `Vault`), pois retornarão HTTP 404 para agentes e operadores não autenticados. Cite-os apenas em negrito formal (ex: `**Vault** (Privado)`).
-- **Sem Falsos Placeholders:** Não use URLs inventadas (`example.com`, `meu-link-aqui.com`) em links clicáveis. Se uma tecnologia não tiver site oficial público, cite apenas seu nome formal em negrito.
-
-### 3. Citação Formal de Obras de Literatura Técnica
-
-Quando diretrizes da skill forem fundamentadas em livros clássicos ou tratados de engenharia, **o autor, o título da obra, ano e editora devem ser registrados com precisão**:
-
-- _The Art of UNIX Programming_ (Eric S. Raymond, 2003, Addison-Wesley) — para filosofia UNIX, modularidade, simplicidade e transparência.
-- _Clean Code: A Handbook of Agile Software Craftsmanship_ (Robert C. Martin, 2008, Prentice Hall) — para legibilidade, nomes descritivos e Boy Scout Rule.
-- _The Practice of Programming_ (Brian W. Kernighan & Rob Pike, 1999, Addison-Wesley) — para simplicidade, depuração e portabilidade.
-- _The UNIX Programming Environment_ (Brian W. Kernighan & Rob Pike, 1984, Prentice Hall) — para scripts de shell e composição de ferramentas.
-- _Managing Projects with GNU Make_ (Robert Mecklenburg, 3ª ed., O'Reilly Media) — para regras de Makefiles.
+1. **A Regra da Homepage Obrigatória:** Sempre que uma documentação técnica ou subpágina for linkada, a Homepage oficial da tecnologia DEVE acompanhar o link.
+2. **Proibição de Links Fictícios ou Privados:** Proibido incluir URLs inexistentes, rotas quebradas ou repositórios privados (cite o `**Vault**` em negrito puro, sem hyperlink).
+3. **Citação Formal de Obras:** Registrar autor, título, ano e editora com precisão (_The Art of UNIX Programming_, _Clean Code_, _The Practice of Programming_, _Managing Projects with GNU Make_).
 
 ---
 
-## 🧪 Auditoria Automatizada com o Verificador Integrado
+## 🧪 Auditoria Automatizada de Links & Qualidade
 
-Esta skill fornece um utilitário oficial multithreaded para auditar links em massa em qualquer skill ou repositório:
-
-- **Script Canônico:** [`scripts/verify_links.py`](scripts/verify_links.py)
-
-### Como Executar:
-
-Para verificar todas as skills do catálogo:
+Utilize o utilitário oficial multithreaded para auditar links em massa:
 
 ```sh
-python3 "${PROFILE_DIR:-${HOME}/.local/share/profile}/skills/skill-authoring-standards/scripts/verify_links.py"
+# Verificar todo o catálogo de skills
+python3 Profile/skills/skill-authoring-standards/scripts/verify_links.py Profile/skills
+
+# Verificar uma skill isolada
+python3 Profile/skills/skill-authoring-standards/scripts/verify_links.py Profile/skills/<skill>/SKILL.md
 ```
-
-Para verificar uma skill específica ou arquivo isolado:
-
-```sh
-python3 "${PROFILE_DIR:-${HOME}/.local/share/profile}/skills/skill-authoring-standards/scripts/verify_links.py" skills/<nome-da-skill>/SKILL.md
-```
-
-- Testa status HTTP (200 OK, redirecionamentos, proteções WAF/anti-bot).
-- Suporta codificação percentual de caracteres para badges (Shields.io).
-- Retorna código de saída `1` se houver links quebrados ou inacessíveis, servindo perfeitamente para hooks de pré-commit ou pipelines de CI/CD.
 
 ---
 
 ## 🛡️ Padrões de Código e Shell em Skills
 
-Ao incluir trechos de código executável ou automações em skills:
-
-1. **Shebang Universal:** Utilize sempre `#!/usr/bin/env sh` (POSIX) ou `#!/usr/bin/env python3`. Nunca hardcode `/bin/bash`.
+1. **Shebang Universal:** Sempre `#!/usr/bin/env sh` (POSIX) ou `#!/usr/bin/env python3`.
 2. **Taxonomia de Emissão:** `echo "${msg}"` para texto simples; `[ -t 1 ] && echo -n $'\e...'` para ANSI; `printf` para tabelas.
-3. **Quoting Defensivo:** Proteção rigorosa de variáveis `"${var}"` e redirecionamentos cotados `> "/dev/null" 2>&1`.
+3. **Quoting Defensivo:** Proteção rigorosa de `"${var}"` e redirecionamentos cotados `> "/dev/null" 2>&1`.
 4. **Makefiles Universais:** Cabeçalho `.POSIX: .SILENT:`, `MAKEFLAGS += --no-print-directory -s` e atribuição `!=`.
 
 ---
@@ -247,19 +126,7 @@ Ao incluir trechos de código executável ou automações em skills:
 ## 🚀 Roteiro de Publicação e Registro no Catálogo
 
 1. **Criação do Diretório:** Crie a pasta em `Environment/Profile/skills/<nome-da-skill>/`.
-2. **Redação do `SKILL.md`:** Escreva o conteúdo seguindo os padrões desta diretriz.
-3. **Registro no Catálogo:** Atualize a tabela em [skills/README.md](../README.md), incrementando o contador total de runbooks.
-4. **Validação de Links e Formatação:**
-    - Execute o verificador de links integrado:
-        ```sh
-        python3 "${PROFILE_DIR:-${HOME}/.local/share/profile}/skills/skill-authoring-standards/scripts/verify_links.py" skills/<nome-da-skill>/SKILL.md
-        ```
-    - Execute a formatação canônica com Prettier em todo o diretório `skills/`:
-        ```sh
-        npx prettier --write skills/
-        ```
-5. **Sincronização com o Runtime Global:** Execute o comando canônico:
-    ```sh
-    profile.sh sync
-    ```
-6. **Auditoria Git:** Valide com o hook de pre-commit (`.githooks/pre-commit`) e submeta as alterações via `git commit` e `git push`.
+2. **Redação do `SKILL.md`:** Escreva o conteúdo seguindo os limites orçamentários ($\le 256$ linhas).
+3. **Registro no Catálogo:** Atualize a tabela em [skills/README.md](../README.md).
+4. **Validação de Links e Formatação:** Execute `verify_links.py` e formate com `prettier --write`.
+5. **Quality Gates:** Valide com `.githooks/pre-commit` e submeta via git commit.
