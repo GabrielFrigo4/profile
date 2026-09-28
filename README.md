@@ -123,9 +123,13 @@ sh "${HOME}/.profile/profile.sh" sync
 
 ---
 
-### 🪟 Windows (MSYS2 como Centro de Comando Soberano & Terminais Nativos)
+### 🪟 Windows (Arquitetura Tripartite: Ouro, Prata e Bronze)
 
-O ecossistema segue a filosofia **UNIX First**. No Windows, o **MSYS2** atua como o centro de comando e sincronização soberano (cidadão Classe 1.5), enquanto PowerShell, NuShell e CMD/Clink atuam como consumidores rápidos (Classe 2) que delegam a manutenção ao motor unificado POSIX `profile.sh`.
+O ecossistema adota a filosofia **UNIX First** e uma hierarquia tripartite de soberania e responsabilidade:
+
+- 🥇 **Classe 1 (Ouro) — UNIX Nativo:** Linux, FreeBSD, OpenBSD, macOS e illumos operam com soberania total, POSIX estrito, symlinks atômicos nativos e máxima fidelidade ao ecossistema.
+- 🥈 **Classe 2 (Prata) — MSYS2 Soberano:** No Windows, o MSYS2 atua como o **Centro de Comando e automação soberano**. Executa os scripts canônicos `.sh` (`profile.sh`, `vault.sh`), compilação nativa e manipulação de symlinks NTFS via `MSYS=winsymlinks:nativestrict`.
+- 🥉 **Classe 3 (Bronze) — Terminais Nativos do Windows:** PowerShell, NuShell e CMD/Clink atuam como **consumidores rápidos de camada fina** (_thin consumers_), provendo prompts interativos e delegando a manutenção estrutural ao motor POSIX da Classe 2, com resolução defensiva que filtra terminantemente stubs do WSL (`System32\bash.exe`).
 
 #### Recomendações de Ambiente Windows
 

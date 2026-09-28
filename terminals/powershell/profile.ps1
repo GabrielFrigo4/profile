@@ -26,6 +26,38 @@ function Get-Msys2UserHome {
 	return $null
 }
 
+function Get-Msys2Bash {
+	$roots = @(
+		$env:MSYS2_ROOT,
+		'C:\msys64',
+		'D:\msys64',
+		'E:\msys64',
+		(Join-Path $env:LOCALAPPDATA 'Programs\msys64'),
+		'C:\Program Files\Git'
+	)
+	foreach ($r in $roots) {
+		if ($r) {
+			$bin = Join-Path $r 'usr\bin\bash.exe'
+			if (Test-Path $bin) { return $bin }
+			$bin = Join-Path $r 'bin\bash.exe'
+			if (Test-Path $bin) { return $bin }
+		}
+	}
+	$cmds = Get-Command 'bash.exe', 'bash' -ErrorAction SilentlyContinue
+	foreach ($c in $cmds) {
+		if ($c.Source -and ($c.Source -notmatch '(?i)[\\/]system32[\\/]')) {
+			return $c.Source
+		}
+	}
+	$shs = Get-Command 'sh.exe', 'sh' -ErrorAction SilentlyContinue
+	foreach ($s in $shs) {
+		if ($s.Source -and ($s.Source -notmatch '(?i)[\\/]system32[\\/]')) {
+			return $s.Source
+		}
+	}
+	return $null
+}
+
 $MsysHome = Get-Msys2UserHome
 
 $vaultCandidates = @(
@@ -387,13 +419,17 @@ function Update-Profile {
 			if ($DryRun) { $syncArgs += "--dry-run" }
 			if ($Backup) { $syncArgs += "--backup" }
 			$argStr = $syncArgs -join " "
-			$targetPosix = ($target -replace '\\', '/')
-			if (Get-Command "bash" -ErrorAction SilentlyContinue) {
-				bash -c "cd '$targetPosix' && ./profile.sh $argStr"
-			} elseif (Get-Command "sh" -ErrorAction SilentlyContinue) {
-				sh -c "cd '$targetPosix' && ./profile.sh $argStr"
+			$bash = Get-Msys2Bash
+			if ($bash) {
+				$targetPosix = ($target -replace '\\', '/')
+				if ($targetPosix -match '^[A-Za-z]:') {
+					$drive = $targetPosix.Substring(0, 1).ToLower()
+					$rest = $targetPosix.Substring(2)
+					$targetPosix = "/$drive$rest"
+				}
+				& $bash -c "MSYS=winsymlinks:nativestrict '$targetPosix/profile.sh' $argStr"
 			} else {
-				_ui_warn "MSYS2/Bash não detectado no PATH para executar profile.sh sync."
+				_ui_warn "Ambiente MSYS2/Bash não detectado no PATH (excluído WSL em System32)."
 			}
 		}
 		_ui_ok "Universal Profile atualizado e sincronizado com sucesso!"

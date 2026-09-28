@@ -118,13 +118,37 @@ local function to_unix_path(p)
 end
 
 local function get_bash_cmd()
-	local roots = { os.getenv("MSYS2_ROOT"), [[C:\msys64]], [[D:\msys64]], [[E:\msys64]] }
+	local roots = {
+		os.getenv("MSYS2_ROOT"),
+		[[C:\msys64]],
+		[[D:\msys64]],
+		[[E:\msys64]],
+		(os.getenv("LOCALAPPDATA") or "") .. [[\Programs\msys64]],
+		[[C:\Program Files\Git]],
+	}
 	for _, r in ipairs(roots) do
-		if r and is_file(r .. [[\usr\bin\bash.exe]]) then
-			return [["]] .. r .. [[\usr\bin\bash.exe"]]
+		if r and r ~= "" then
+			if is_file(r .. [[\usr\bin\bash.exe]]) then
+				return [["]] .. r .. [[\usr\bin\bash.exe"]]
+			elseif is_file(r .. [[\bin\bash.exe]]) then
+				return [["]] .. r .. [[\bin\bash.exe"]]
+			end
 		end
 	end
-	return "bash"
+
+	local pipe = io.popen([[where bash.exe 2>nul]])
+	if pipe then
+		for line in pipe:lines() do
+			local p = trim(line)
+			if p ~= "" and not p:lower():find("system32") and is_file(p) then
+				pipe:close()
+				return [["]] .. p .. [["]]
+			end
+		end
+		pipe:close()
+	end
+
+	return nil
 end
 
 local function load_vault_lua()
@@ -930,8 +954,12 @@ local function cmd_uprc(args)
 		if exists(script) then
 			_ui_sub("Sincronizando dotfiles e links via profile.sh (MSYS2)...")
 			local bash = get_bash_cmd()
-			local unix_target = to_unix_path(target)
-			os.execute(bash .. [[ -c "MSYS=winsymlinks:nativestrict ']] .. unix_target .. [[/profile.sh' sync ]] .. flags .. [["]])
+			if bash then
+				local unix_target = to_unix_path(target)
+				os.execute(bash .. [[ -c "MSYS=winsymlinks:nativestrict ']] .. unix_target .. [[/profile.sh' sync ]] .. flags .. [["]])
+			else
+				_ui_warn("Ambiente MSYS2/Bash não detectado no PATH (excluído WSL em System32).")
+			end
 		end
 		_ui_ok("Universal Profile atualizado e sincronizado com sucesso!")
 	else
