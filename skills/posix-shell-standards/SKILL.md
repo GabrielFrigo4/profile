@@ -3,179 +3,45 @@ name: posix-shell-standards
 description: Manual cognitivo e validador de padrões de shell POSIX, baseline FreeBSD /bin/sh, taxonomia de emissão (echo vs echo -n $'\e...' vs printf), quoting rigoroso e programação defensiva.
 ---
 
-# 🐚 POSIX Shell Standards & Portability Skill
+# 🐚 Padrões de Shell POSIX & Portabilidade Rigorosa
 
-Esta habilidade orienta o agente de IA na escrita, revisão e refatoração de scripts de shell no ecossistema, garantindo que o código seja **estritamente portátil**, limpo, defensivo e compatível com **FreeBSD `/bin/sh`**, Linux (Bash/Dash), macOS (Zsh) e Windows (MSYS2).
-
----
-
-## 🧭 Linha de Base (Baseline): FreeBSD `/bin/sh`
-
-1. O shell nativo do FreeBSD (`/bin/sh`) é a nossa régua máxima de portabilidade para scripts compartilhados de sistema.
-2. Todo script portátil DEVE usar o shebang:
-    ```sh
-    #!/usr/bin/env sh
-    ```
-3. NUNCA use `#!/bin/sh` ou `#!/bin/bash` diretamente (o caminho absoluto de executáveis varia entre Linux `/bin`, FreeBSD `/usr/local/bin` e macOS).
-4. Evite extensões exclusivas do Bash (`[[ ... ]]`, arrays indexados `arr=(...)`, `<<<` herestrings, `&>`).
+Esta habilidade orienta a escrita, revisão e refatoração de scripts de shell no ecossistema soberano, garantindo código **estritamente portátil**, limpo, defensivo e aderente ao **Tier 2 (Extended)** sob o baseline **FreeBSD `/bin/sh`**, Linux (Bash/Dash), macOS (Zsh) e OpenBSD (ksh).
 
 ---
 
-## 📢 Taxonomia Canônica de Emissão
+## 🧭 Pilares de Portabilidade & Engenharia UNIX
 
-Adotamos uma taxonomia estrita e semântica para emissão de dados no terminal:
-
-| Ferramenta        | Cenário de Uso Exclusivo                               | Exemplo Canônico                    | Justificativa Técnica                                                                                         |
-| :---------------- | :----------------------------------------------------- | :---------------------------------- | :------------------------------------------------------------------------------------------------------------ |
-| **`echo "$msg"`** | Texto simples, quebras de linha e escrita em arquivos. | `echo "$val" > "$file"`             | Padrão primário para saídas com quebra de linha. Simples, atômico, rápido e universal.                        |
-| **`echo -n`**     | **Emissão sem quebra de linha & sequências ANSI.**     | `[ -t 1 ] && echo -n "$color"`      | **Sempre prefira `echo -n` a `printf` quando possível.** Suportado no FreeBSD `/bin/sh`, Zsh, Bash e POSIX.8. |
-| **`printf`**      | Tabelas complexas, padding e alinhamento de colunas.   | `printf "%-16s %s\n" "$key" "$val"` | **Evite `printf` gratuito.** Use exclusivamente quando formatação posicional ou padding for indispensável.    |
-
-> [!CAUTION]
-> **Proibição Estrita de Octais para Caracteres & Bytes:** Nunca utilize notação octal (`\033`, `\001`, `\077`, etc.) para caracteres de escape ou bytes de controle.
->
-> 1. **Fuga do `printf` e Escapes ANSI:** Priorize sempre `[ -t 1 ] && echo -n "$color"` com `$'\e...'` para escapar cores e saídas ANSI no terminal, eliminando `printf` desnecessário e chamadas obscuras com octais.
-> 2. **Hexadecimal para Bytes de Controle:** Para caracteres de controle não-imprimíveis, delimitadores de prompt (como o `Ctrl+A` do KornShell) ou bytes arbitrários, utilize **estritamente notação hexadecimal** (`$'\x01'`, `\x1b`, etc.) e nunca octal.
-> 3. **Exceção Única e Exclusiva para Octal:** Notação octal é aceita e exigida **exclusivamente** em utilitários e chamadas de sistema POSIX que operam nativamente em base 8, tais como permissões e máscaras de sistema de arquivos (`chmod 0755`, `chmod 0644`, `chmod 0700`, `chmod 0600`, `umask 022`). Em qualquer outro contexto, o uso de octal é terminantemente proibido.
-
-> [!NOTE]
-> **Peculiaridade Crítica do OpenBSD `ksh` (PD-KSH):**
-> O `ksh` nativo do OpenBSD (`/bin/ksh` e seu port portátil `oksh`) não implementa expansão ANSI-C `$''`. Ele interpreta `$'\e...'` literalmente como texto bruto `$\e[...]`.
->
-> - Para sequências ANSI no OpenBSD `ksh`, capture o caractere escape dinamicamente via `_esc="$(printf '\x1b' 2>"/dev/null" || echo -n $'\x1b')"` e utilize `"${_esc}[32m"`.
-> - No `PS1` do OpenBSD `ksh`, qualquer sequência ANSI invisível (largura zero) **DEVE** ser delimitada pelo caractere de controle hexadecimal `\x01` (`0x01`) (ex: `\x01${_esc}[32m\x01`). Sem essa delimitação, o editor de linha do `ksh` calcula incorretamente o comprimento do prompt, corrompendo a rolagem de histórico e a quebra de linha.
-
-### Padrão Semântico de Emissão de UI
-
-Para utilitários interativos, orquestradores de componentes (`shell.sh`, `profile.sh`), comandos de sincronização e atualizadores universais (`update-*`), **evite espalhar sequências de escape ANSI soltas ou chamadas arbitrárias de `echo` com emojis**. Centralize a emissão na biblioteca semântica padronizada (`library/ui.sh`):
-
-1. **Detecção Defensiva de TTY (`_ui_has_color`):**
-   Cores e sequências visuais só devem ser renderizadas quando o descritor `stdout` for um terminal interativo (`[ -t 1 ]`) e `$TERM` não for nulo nem `dumb`:
-
-    ```sh
-    _ui_has_color() {
-        [ -t 1 ] || return 1
-        case "${TERM:-}" in
-            dumb|"") return 1 ;;
-            *) return 0 ;;
-        esac
-    }
-    ```
-
-2. **Paleta Semântica Canônica & Fallback Gracioso:**
-   Cada função encapsula uma intenção semântica com fallback em texto plano limpo para pipelines e redirecionamentos:
-
-| Função           | Prefixo TTY (Colorido)                      | Fallback Não-Interativo | Finalidade Semântica                                 |
-| :--------------- | :------------------------------------------ | :---------------------- | :--------------------------------------------------- |
-| **`_ui_step`**   | `\e[1;36m==>\e[0m ` (Ciano)                 | `==> `                  | Início de etapa primária de um fluxo                 |
-| **`_ui_sub`**    | `\e[1;34m  ↳\e[0m ` (Azul)                  | ` ->`                   | Subtarefa, ação aninhada ou item inspecionado        |
-| **`_ui_ok`**     | `\e[1;32m  ✅\e[0m ` (Verde)                | ` OK`                   | Conclusão bem-sucedida de operação                   |
-| **`_ui_warn`**   | `\e[1;33m  ⚠️ \e[0m ` (Amarelo)             | ` WARN`                 | Alerta preventivo ou falha não-bloqueante            |
-| **`_ui_err`**    | `\e[1;31m  ❌\e[0m ` (Vermelho em `stderr`) | ` FAIL` em `stderr`     | Falha crítica ou erro direcionado para `>&2`         |
-| **`_ui_info`**   | `\e[1;35m  ℹ️ \e[0m ` (Magenta)             | ` INFO`                 | Informação contextual, notas ou recargas             |
-| **`_ui_banner`** | Régua dupla de 64 `=` em Ciano              | Régua plana de 64 `=`   | Delimitador de abertura/encerramento de rotina ampla |
-
-> [!TIP]
-> **Paridade Multiplataforma (Windows):**
-> O padrão semântico `_ui_*` é replicado com fidelidade visual idêntica nos perfis de terminal do Windows mantidos no [Profile](https://github.com/GabrielFrigo4/profile):
->
-> - **PowerShell:** Funções `_ui_step`, `_ui_sub`, `_ui_ok`, `_ui_warn`, `_ui_err`, `_ui_info`, `_ui_banner` em `profile.ps1`.
-> - **NuShell:** Comandos nativos `_ui_step`, `_ui_sub`, `_ui_ok`, etc., em `config.nu`.
-> - **CMD / Clink:** Helpers Lua e emissores com escape ANSI em `profile.lua` e macros de fallback em `profile.cmd`.
+1. **Baseline FreeBSD `/bin/sh`:** O shell nativo do FreeBSD é o piso universal de compatibilidade. Shebang obrigatório: `#!/usr/bin/env sh`.
+2. **Taxonomia Estrita de Emissão:** `echo "$msg"` para texto simples; `echo -n` para fluxos sem quebra e sequências de escape ANSI; `printf` reservado estritamente para formatação de tabelas e padding posicional.
+3. **Banimento de Octais para Caracteres/Bytes:** Proibição irrestrita de escapes octais (`\033`, `\001`). Usar escapes hexadecimais (`\x1b`, `\x01`) ou `$'\e...'`. Octais são admitidos exclusivamente em permissões POSIX (`chmod 0755`, `0644`, `0700`, `0600`).
+4. **Quoting Defensivo & Zero Chaves Supérfluas:** Empregar `"$var"` sem chaves desnecessárias. Reservar `"${var}"` unicamente para concatenações contíguas (`"${prefix}_suffix"`) ou expansões de parâmetros POSIX (`"${var:-default}"`).
+5. **Comentários Estruturais em 3 Camadas:** Headers com 64 hífens, seções internas com réguas de 32 colunas (`### ================================`), e zero comentários narrativos inline.
 
 ---
 
-## 🔒 Quoting Defensivo & Expansão de Variáveis
+## 📚 Módulos Especializados da Subpasta references/
 
-1. **Preferência por `"$var"` sem Chaves Supérfluas:** Escreva sempre `"$var"` com aspas duplas protetoras contra divisão de palavras (_word-splitting_) e expansão de caminhos (_globbing_). Evite o vício de colocar chaves em tudo (`"${var}"`) sem necessidade técnica real.
-2. **Quando Usar Chaves `"${var}"`:** Reserve a sintaxe com chaves exclusivamente para:
-    - **Concatenação Contígua sem Espaço:** Quando caracteres alfanuméricos ou underscores seguem o nome da variável: `"${prefix}_suffix"`, `"${name}2"`.
-    - **Expansões de Parâmetro POSIX:** Valores padrão, testes de nulidade e substituição (`"${var:-default}"`, `"${var#*prefix}"`, `"${#var}"`).
-3. **Caminhos e Redirecionamentos:**
-    ```sh
-    # Correto:
-    command > "/dev/null" 2>&1
+Consulte as regras detalhadas e especificações técnicas nos subarquivos:
 
-    # Proibido:
-    command > /dev/null 2>&1
-    ```
-4. **Verificação de Executáveis:** NUNCA use `which`. Use sempre `command -v`:
-    ```sh
-    command -v doas > "/dev/null" 2>&1 && ELEVATE="doas"
-    ```
+- **[bashisms-traps.md](references/bashisms-traps.md):** Catálogo de armadilhas não-portáteis (`[[ ]]` vs `[ ]`, arrays vs parâmetros posicionais, `source` vs `.`, `&>` vs `> ... 2>&1`, substituição de processo).
+- **[ansi-sequences.md](references/ansi-sequences.md):** Engenharia de sequências ANSI e escapes, supressão de `printf` supérfluo, peculiaridades de prompt no OpenBSD `ksh` (`\x01`) e diretrizes de terminal TTY.
+- **[defensive-runtime.md](references/defensive-runtime.md):** Práticas de tempo de execução (traps de saída, arquivos temporários com `mktemp`, sanitização de caminhos, subshells em pipelines e verificação via `command -v`).
+- **[ui-framework.md](references/ui-framework.md):** Padrão universal de emissão de interface `_ui_*` (`_ui_step`, `_ui_ok`, `_ui_err`, `_ui_warn`, `_ui_banner`), detecção de cores e paridade multiplataforma (Windows PowerShell/NuShell).
 
 ---
 
-## 🔐 Permissões Canônicas em 4 Dígitos Octais
+## 👑 Hierarquia Canônica de Shells
 
-Sempre utilize a notação octal de 4 dígitos nos comandos `chmod`:
+Em documentações, benchmarks, Makefiles e testes interativos, respeite sempre a ordem canônica:
 
-- `chmod 0755`: Diretórios e scripts de shell executáveis.
-- `chmod 0644`: Arquivos de configuração, dotfiles estáticos e documentações Markdown.
-- `chmod 0700`: Diretórios privados e scripts com acesso a segredos (Vault).
-- `chmod 0600`: Chaves privadas SSH, tokens de autenticação e arquivos `.env`.
-- `chmod 0440`: Arquivos de sistema de privilégios (`/etc/sudoers.d/*`, `/etc/doas.conf`).
-- `chmod 4750`: Utilitários SUID com grupo restrito a `wheel` (Core POSIX).
+1. **`zsh`** (ergonomia máxima de terminal e autocompletion interativo)
+2. **`bash`** (padrão de compatibilidade e ecossistemas corporativos)
+3. **`sh`** (FreeBSD `/bin/sh` base) ou **`ksh`** (OpenBSD `/bin/ksh` base)
 
 ---
 
-## 🧱 Arquitetura de Comentários em Três Camadas (Regra do Não-Vazamento)
+## 🔗 Referências Oficiais
 
-1. **Camada 1 (Header Banner - Linhas 2-4):** Delimitado por exatamente **64 hífens**:
-    ```sh
-    #!/usr/bin/env sh
-    # ----------------------------------------------------------------
-    # Utility: Nome da Ferramenta ou Receita
-    # ----------------------------------------------------------------
-    ```
-2. **Camada 2 (Delimitadores Estruturais de 32 Caracteres):**
-    - Seções Principais (32 `=`):
-        ```sh
-        ### ================================
-        ### SECAO PRINCIPAL
-        ### ================================
-        ```
-    - Subseções (32 `-`):
-        ```sh
-        ### --------------------------------
-        ### Subsecao Interna
-        ### --------------------------------
-        ```
-    - **Regra do Não-Vazamento:** O título deve ter no máximo 32 caracteres (total de 36 colunas com `### `).
-3. **Camada 3 (Zero Comentários Narrativos):** O código deve ser autoexplicativo por funções pequenas, nomes claros e separação por linhas em branco. Comentários explicativos inline são proibidos.
-
----
-
-## 🛡️ Heredocs e Guards Interativos
-
-1. **Heredocs Indentados (`cat <<- 'EOF'`):**
-   O hífen descarta tabulações iniciais, permitindo alinhar o bloco dentro de funções sem poluir a coluna zero.
-2. **Interactive Guard:**
-   Para scripts carregados em novos terminais (`.bashrc`, `.zshrc`, `.shrc`):
-    ```sh
-    case "$-" in
-        *i*) ;;
-        *) return ;;
-    esac
-    ```
-
----
-
-## 👑 Ordem Canônica de Prevalência & Enumeração de Shells
-
-Em qualquer enumeração, checklist, pipeline de CI/CD, Makefile, script de benchmark ou documentação, a ordem DEVE SEMPRE respeitar a hierarquia canônica de ergonomia e conveniência:
-
-1. **`zsh`** (topo da cadeia de ergonomia, autocompletion visual e produtividade interativa)
-2. **`bash`** (padrão corporativo universal e compatibilidade retroativa)
-3. **`sh`** (FreeBSD `/bin/sh` como base system exclusivo) ou **`ksh`** (OpenBSD `/bin/ksh` como base system exclusivo)
-
----
-
-## 📚 Literatura de Referência & Ferramentas Oficiais
-
-Recomenda-se enfaticamente ao agente de IA e aos operadores o estudo das fontes oficiais de portabilidade:
-
-- **The Open Group Base Specifications (POSIX IEEE 1003.1):** <https://pubs.opengroup.org/onlinepubs/9699919799/> | Shell (`sh`): <https://pubs.opengroup.org/onlinepubs/9699919799/utilities/sh.html>
-- **ShellCheck (Linter Estático de Shell):** <https://www.shellcheck.net/> | GitHub: <https://github.com/koalaman/shellcheck>
-- **The FreeBSD Project:** <https://www.freebsd.org/> | Manual Pages: <https://man.freebsd.org/> | Shell (`sh`): <https://man.freebsd.org/sh>
-- **Obra Clássica de Referência:** _The UNIX Programming Environment_ (Brian W. Kernighan & Rob Pike, 1984, Prentice Hall) — o clássico fundamental sobre composição de comandos, pipes e scripts de shell idiomáticos.
+- [POSIX.1-2024 Shell Command Language (IEEE 1003.1)](https://pubs.opengroup.org/onlinepubs/9699919799/utilities/sh.html)
+- [FreeBSD sh(1) Manual Page](https://man.freebsd.org/sh)
+- [ShellCheck Static Analysis Engine](https://www.shellcheck.net/)

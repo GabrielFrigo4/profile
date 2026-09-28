@@ -1,14 +1,14 @@
 ---
 name: agentic-governance-standards
 description: >-
-    Runbook cognitivo para governança agentic unificada no ecossistema soberano, definindo
-    normas para a tríade AGENTS.md (Constituição), .agents/rules/ (Cláusulas Pétreas) e a
-    Arquitetura em 2 Tiers de skills (Lean vs Extended).
+    Runbook cognitivo definitivo para governança agentic no ecossistema soberano, definindo
+    normas para a tríade AGENTS.md, .agents/rules/, ciclo de contexto em 2 estágios,
+    arquitetura de skills em 2 tiers (Lean vs Extended) e simetria técnica.
 ---
 
 # 🧠 Governança Agentic & Padrões Canônicos de IA
 
-Esta habilidade orienta o desenvolvedor e o agente de IA na concepção, estruturação e governança de artefatos agentic (`AGENTS.md`, `.agents/rules/` e `skills/`) no ecossistema soberano.
+Esta habilidade orienta o desenvolvedor e o agente de IA na concepção, estruturação, consolidação e governança de artefatos agentic (`AGENTS.md`, `.agents/rules/` e `skills/`) no ecossistema soberano.
 
 ---
 
@@ -22,29 +22,44 @@ Todo repositório no ecossistema estrutura sua inteligência em 3 camadas comple
     - Orçamento estrito: **Sweet Spot de 17 a 128 linhas** (teto máximo de 256 linhas). Zero tutoriais ou manuais procedimentais.
 2. **`.agents/rules/` (As Cláusulas Pétreas):**
     - Regras técnicas granulares, filtros de linting estritos e restrições sintáticas invariantes (ex: shebangs, quoting, buffers, modos POSIX).
-    - Injetadas de forma imperativa. Orçamento estrito: **$\le 128$ linhas**.
+    - Injetadas de forma imperativa por contexto/extensão. Orçamento estrito: **$\le 128$ linhas**.
 3. **`.agents/skills/` (Os Runbooks Operacionais sob Demanda):**
     - Procedimentos mentais, fluxos de engenharia e conhecimentos de domínio ativados dinamicamente via Progressive Disclosure.
 
 ---
 
-## 🗂️ A Arquitetura de Skills em 2 Tiers (Lean vs. Extended)
+## ⚡ A Dinâmica de Contexto em 2 Estágios
 
-Evite o anti-padrão de fragmentar skills sem necessidade ou criar monólitos impenetráveis:
+As skills operam sob um ciclo de carregamento em duas etapas distintas:
 
-### Tier 1: Lean Skill (Padrão de Ouro — 80% das Skills)
+1. **Estágio 1: Em Repouso (Sempre Ativo no System Prompt):**
+    - O modelo recebe apenas a tabela de `name` e `description`.
+    - **O Imposto de Contexto:** Cada skill consome entre **40 e 80 tokens por turno** mesmo sem ser chamada.
+    - **Diretriz de Design:** Manter o número total de skills sob controle rigoroso via **Consolidação Horizontal** para poupar a janela de contexto.
+2. **Estágio 2: Sob Demanda (Ativação via `view_file`):**
+    - O modelo lê o `SKILL.md` apenas quando o trigger na `description` é disparado pela intenção do usuário.
+    - Se a skill for Tier 2, navega pontualmente nos subarquivos em `references/` conforme o subdomínio exato da tarefa.
+
+---
+
+## 🗂️ A Arquitetura em 2 Tiers: Fusão Horizontal vs. Expansão Vertical
+
+Evite os extremos da fragmentação caótica (dezenas de micro-skills) e do monólito impenetrável (> 256 linhas):
+
+### Tier 1: Lean Skill (Padrão de Ouro — Modelos Mentais Heurísticos)
 
 - **Estrutura:** Exclusivamente um único arquivo `SKILL.md` autocontido ($\le 128$ linhas).
-- **Quando usar:** Diretrizes conceituais, heurísticas de auditoria, filosofias de design e workflows atômicos (ex: `deep-investigation`, `proactive-guardian`, `clean-break-refactoring`).
-- **Vantagem:** Zero sobrecarga de I/O de ferramentas (`list_dir`, `view_file` extra), máxima velocidade e mínimo consumo de tokens de contexto.
+- **Quando usar:** Filosofias de engenharia, modelos mentais atemporais e guardiões comportamentais que devem ser lidos num único relance (ex: `antifragile-engineering`, `clean-break-refactoring`, `proactive-guardian`, `unix-philosophy-auditor`).
+- **Vantagem:** Zero chamadas extras de ferramentas (`view_file`), velocidade de execução instantânea e foco conceitual.
 
-### Tier 2: Extended Skill (Composta sob Demanda)
+### Tier 2: Extended Skill (Domínios Densos & Simetria Técnica)
 
-- **Estrutura:** `SKILL.md` conciso no sweet spot ($\le 128$ linhas) + subpastas funcionais:
-    - `scripts/`: Utilitários executáveis (`.py`, `.sh`) invocados diretamente via bash para automações determinísticas (não gasta tokens computando).
-    - `references/`: Manuais densos, tabelas de compatibilidade e manpages de baixa frequência (5% dos casos).
-    - `resources/templates/` ou `examples/`: Boilerplates completos prontos para cópia sem poluir o fluxo de raciocínio.
-- **Quando usar:** Domínios extensos ou ferramentas complexas que explodiriam o teto de 256 linhas (ex: `posix-shell`, `clean-code-refactor`).
+- **Estrutura:** `SKILL.md` conciso no sweet spot ($\le 128$ linhas) atuando como manifesto e roteador + subpastas funcionais:
+    - `references/`: Manuais densos, manpages e subdomínios técnicos particionados (ex: `references/<topico>.md`).
+    - `scripts/`: Utilitários executáveis (`.py`, `.sh`) invocados diretamente via shell para tarefas determinísticas (zero gasto de tokens computando).
+    - `examples/` ou `resources/`: Boilerplates completos e templates de configuração.
+- **Padrão da Consolidação Horizontal:** Fundir múltiplos tópicos afins ou matrizes de sistemas operacionais em uma única skill (ex: 4 nuvens $\rightarrow$ `cloud-sovereignty`; 8 shells $\rightarrow$ `os-shell-targets`) para reduzir o imposto do Estágio 1.
+- **Padrão da Expansão Vertical (Simetria de Domínio):** Em stacks complexas (como `c-engineering` e `cpp-engineering`), manter espelhamento temático sob `references/` (`language-modern.md`, `systems-os.md`, `io-multiplexing.md`, `concurrency.md`) para garantir paridade conceitual entre ecossistemas irmãos.
 
 ---
 
