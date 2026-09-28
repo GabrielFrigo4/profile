@@ -78,7 +78,7 @@ fi
 Quando uma função descobre a localização real de um recurso após uma falha de caminho estático ou variável desatualizada, ela não guarda essa descoberta para si. Ela **repara o ambiente da sessão corrente**:
 
 ```sh
-export FRIGO_SERVER_KEY="${_resolved_key}"
+export PERSONAL_SERVER_KEY="${_resolved_key}"
 ```
 
 Isso garante que subprocessos, ferramentas subordinadas (editores, Git, IDEs) e chamadas subsequentes aproveitem o estado curado sem novo overhead de busca.

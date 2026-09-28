@@ -539,21 +539,23 @@ local aliases = {
 	["goto-msys"] = [[cd /d "]] .. (MSYS_HOME or [[C:\msys64]]) .. [["]],
 	["show-msys"] = [[start "" "]] .. (MSYS_HOME or [[C:\msys64]]) .. [["]],
 
-	["frigo-server"] = (function()
-		local ip = os.getenv("FRIGO_SERVER_IP") or "144.22.210.65"
-		local key = resolve_vault_ssh_key(os.getenv("FRIGO_SERVER_KEY"), "ssh-key-frigo-server.key")
+	["personal-server"] = (function()
+		local ip = os.getenv("PERSONAL_SERVER_IP") or "144.22.210.65"
+		local user = os.getenv("PERSONAL_SERVER_USER") or "ubuntu"
+		local key = resolve_vault_ssh_key(os.getenv("PERSONAL_SERVER_KEY"), "ssh-key-personal-server.key")
 		if key then
-			return [[ssh -i "]] .. key .. [[" "ubuntu@]] .. ip .. [["]]
+			return [[ssh -i "]] .. key .. [[" "]] .. user .. [[@]] .. ip .. [["]]
 		end
-		return [[ssh "ubuntu@]] .. ip .. [["]]
+		return [[ssh "]] .. user .. [[@]] .. ip .. [["]]
 	end)(),
-	["orbs-server"] = (function()
-		local ip = os.getenv("ORBS_SERVER_IP") or "137.131.238.161"
-		local key = resolve_vault_ssh_key(os.getenv("ORBS_SERVER_KEY"), "ssh-key-orbs-server.key")
+	["venture-server"] = (function()
+		local ip = os.getenv("VENTURE_SERVER_IP") or "137.131.238.161"
+		local user = os.getenv("VENTURE_SERVER_USER") or "ubuntu"
+		local key = resolve_vault_ssh_key(os.getenv("VENTURE_SERVER_KEY"), "ssh-key-venture-server.key")
 		if key then
-			return [[ssh -i "]] .. key .. [[" "ubuntu@]] .. ip .. [["]]
+			return [[ssh -i "]] .. key .. [[" "]] .. user .. [[@]] .. ip .. [["]]
 		end
-		return [[ssh "ubuntu@]] .. ip .. [["]]
+		return [[ssh "]] .. user .. [[@]] .. ip .. [["]]
 	end)(),
 
 	["ek"] = [[taskkill /IM emacs.exe /F]],

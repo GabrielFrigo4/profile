@@ -14,6 +14,7 @@
 > 📖 **Arquitetura Unificada do Ecossistema:** Conheça a matriz completa de responsabilidades, ciclo de boot e segregação de privilégios em [ENVIRONMENT.md](ENVIRONMENT.md).
 > 📜 **Princípios de Engenharia & Dotfiles:** Conheça os 18 princípios e diretrizes Clean Code em [PRINCIPLES.md](PRINCIPLES.md).
 > 🗺️ **Roadmap & Status do Projeto:** Acompanhe o planejamento e a matriz de status em [TODO.md](TODO.md).
+> 🤝 **Guia de Contribuição & Setup:** Instruções de bancada, ganchos Git e quality gates em [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ---
 
@@ -27,6 +28,7 @@
 ![NetBSD](https://img.shields.io/badge/NetBSD-Supported-orange?logo=netbsd&logoColor=white)
 ![illumos](https://img.shields.io/badge/illumos-Supported-orange?logo=openzfs&logoColor=white)
 [![Roadmap](https://img.shields.io/badge/🗺️_Roadmap-TODO.md-teal)](TODO.md)
+[![Contributing](https://img.shields.io/badge/🤝_Contributing-CONTRIBUTING.md-orange)](CONTRIBUTING.md)
 
 O **Universal Profile** opera com paridade multiplataforma absoluta em **FreeBSD**, **Linux**, **macOS**, **OpenBSD**, **NetBSD**, **illumos** e **Windows** (nativo via PowerShell e sob MSYS2 via POSIX). Todas as configurações e links simbólicos são orquestrados de forma declarativa e atômica (`ln -sf`) sem necessidade de privilégios de superusuário (`sudo`).
 
@@ -130,20 +132,18 @@ git clone "https://github.com/GabrielFrigo4/profile" "$HOME\.local\share\profile
 
 ---
 
-## 🧪 Quality Gates & Ganchos Git (.githooks)
+## 🚀 Setup do Projeto & Ganchos Git
 
-Para habilitar a validação de dotfiles, Markdown e linters antes de cada commit:
-
-```sh
-chmod 0755 .githooks/pre-commit
-git config core.hooksPath .githooks
-```
-
-Para executar a validação estática de formatos e links manualmente:
+Para configurar o ambiente de desenvolvimento local, ativar os quality gates automáticos e validar a integridade do repositório:
 
 ```sh
-python3 audit/all.py
+make hooks   # Configura .githooks e permissões canônicas
+make test    # Valida sintaxe POSIX e integridade dos symlinks
+make audit   # Executa auditoria estática de dotfiles e linters
+make ci      # Bateria completa de validação local
 ```
+
+> 🤝 **Instruções Detalhadas:** Consulte o [CONTRIBUTING.md](CONTRIBUTING.md) para convenções de commits, regras de symlinks atômicos, portabilidade de dotfiles e diretrizes de desenvolvimento.
 
 ---
 

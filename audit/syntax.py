@@ -45,6 +45,17 @@ def check_script(full_path, repo_root):
                 issues.append(
                     f"L{idx}: chmod simbólico '{mode}' (esperado octal de 4 dígitos)")
 
+    try:
+        res_git = subprocess.run(["git", "ls-files", "-s", "--", rel_path],
+                                 cwd=repo_root, capture_output=True, text=True)
+        if res_git.returncode == 0 and res_git.stdout.strip():
+            git_mode = res_git.stdout.split()[0]
+            has_sb = bool(lines and lines[0].startswith("#!"))
+            if has_sb and git_mode != "100755":
+                issues.append(f"Modo Git Index não-executável: {git_mode} (esperado: 100755)")
+    except Exception:
+        pass
+
     return rel_path, issues
 
 

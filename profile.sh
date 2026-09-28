@@ -7,6 +7,21 @@ set -eu
 _PROFILE_ROOT="$(cd "$(dirname "$0")" && pwd)"
 export PROFILE_DIR="${_PROFILE_ROOT}"
 
+_self_heal_perms() {
+	if [ -d "${_PROFILE_ROOT}/.git" ] && command -v git > "/dev/null" 2>&1; then
+		git -C "${_PROFILE_ROOT}" config core.hooksPath .githooks 2> "/dev/null" || true
+	fi
+	if [ -d "${_PROFILE_ROOT}/.githooks" ]; then
+		chmod 0755 "${_PROFILE_ROOT}/.githooks/"* 2> "/dev/null" || true
+	fi
+	[ -f "${_PROFILE_ROOT}/profile.sh" ] && chmod 0755 "${_PROFILE_ROOT}/profile.sh" 2> "/dev/null" || true
+	[ -f "${_PROFILE_ROOT}/install.sh" ] && chmod 0755 "${_PROFILE_ROOT}/install.sh" 2> "/dev/null" || true
+	if [ -d "${_PROFILE_ROOT}/audit" ]; then
+		chmod 0755 "${_PROFILE_ROOT}/audit/"*.py 2> "/dev/null" || true
+	fi
+}
+_self_heal_perms
+
 ### ================================
 ### ANSI & SEMANTIC UI EMISSION
 ### ================================

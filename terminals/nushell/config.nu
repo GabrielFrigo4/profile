@@ -191,24 +191,24 @@ alias Show-FASM-Store = explorer.exe $"($FASM_STORE)";
 alias Show-Machine = explorer.exe $"($System32)";
 alias Show-Msys = explorer.exe (if ($MsysHome | is-not-empty) { $MsysHome } else { "C:\\msys64" });
 
-def --wrapped frigo-server [...rest] {
-	let ip = ($env.FRIGO_SERVER_IP? | default "144.22.210.65")
-	let user = ($env.FRIGO_SERVER_USER? | default "ubuntu")
-	let key = (resolve-vault-ssh-key ($env.FRIGO_SERVER_KEY? | default "") "ssh-key-frigo-server.key")
+def --wrapped personal-server [...rest] {
+	let ip = ($env.PERSONAL_SERVER_IP? | default "144.22.210.65")
+	let user = ($env.PERSONAL_SERVER_USER? | default "ubuntu")
+	let key = (resolve-vault-ssh-key ($env.PERSONAL_SERVER_KEY? | default "") "ssh-key-personal-server.key")
 	if ($key | is-not-empty) {
-		$env.FRIGO_SERVER_KEY = $key
+		$env.PERSONAL_SERVER_KEY = $key
 		ssh -i $key $"($user)@($ip)" ...$rest
 	} else {
 		ssh $"($user)@($ip)" ...$rest
 	}
 }
 
-def --wrapped orbs-server [...rest] {
-	let ip = ($env.ORBS_SERVER_IP? | default "137.131.238.161")
-	let user = ($env.ORBS_SERVER_USER? | default "ubuntu")
-	let key = (resolve-vault-ssh-key ($env.ORBS_SERVER_KEY? | default "") "ssh-key-orbs-server.key")
+def --wrapped venture-server [...rest] {
+	let ip = ($env.VENTURE_SERVER_IP? | default "137.131.238.161")
+	let user = ($env.VENTURE_SERVER_USER? | default "ubuntu")
+	let key = (resolve-vault-ssh-key ($env.VENTURE_SERVER_KEY? | default "") "ssh-key-venture-server.key")
 	if ($key | is-not-empty) {
-		$env.ORBS_SERVER_KEY = $key
+		$env.VENTURE_SERVER_KEY = $key
 		ssh -i $key $"($user)@($ip)" ...$rest
 	} else {
 		ssh $"($user)@($ip)" ...$rest

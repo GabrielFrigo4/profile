@@ -534,24 +534,24 @@ function Resolve-VaultSshKey([string]$explicitKey, [string]$keyName) {
 	return ($candidates | Where-Object { $_ -and (Test-Path $_) } | Select-Object -First 1)
 }
 
-function frigo-server {
-	$ip = if ($env:FRIGO_SERVER_IP) { $env:FRIGO_SERVER_IP } else { "144.22.210.65" }
-	$user = if ($env:FRIGO_SERVER_USER) { $env:FRIGO_SERVER_USER } else { "ubuntu" }
-	$key = Resolve-VaultSshKey $env:FRIGO_SERVER_KEY "ssh-key-frigo-server.key"
+function personal-server {
+	$ip = if ($env:PERSONAL_SERVER_IP) { $env:PERSONAL_SERVER_IP } else { "144.22.210.65" }
+	$user = if ($env:PERSONAL_SERVER_USER) { $env:PERSONAL_SERVER_USER } else { "ubuntu" }
+	$key = Resolve-VaultSshKey $env:PERSONAL_SERVER_KEY "ssh-key-personal-server.key"
 	if ($key) {
-		$env:FRIGO_SERVER_KEY = $key
+		$env:PERSONAL_SERVER_KEY = $key
 		ssh -i $key "${user}@${ip}" $args
 	} else {
 		ssh "${user}@${ip}" $args
 	}
 }
 
-function orbs-server {
-	$ip = if ($env:ORBS_SERVER_IP) { $env:ORBS_SERVER_IP } else { "137.131.238.161" }
-	$user = if ($env:ORBS_SERVER_USER) { $env:ORBS_SERVER_USER } else { "ubuntu" }
-	$key = Resolve-VaultSshKey $env:ORBS_SERVER_KEY "ssh-key-orbs-server.key"
+function venture-server {
+	$ip = if ($env:VENTURE_SERVER_IP) { $env:VENTURE_SERVER_IP } else { "137.131.238.161" }
+	$user = if ($env:VENTURE_SERVER_USER) { $env:VENTURE_SERVER_USER } else { "ubuntu" }
+	$key = Resolve-VaultSshKey $env:VENTURE_SERVER_KEY "ssh-key-venture-server.key"
 	if ($key) {
-		$env:ORBS_SERVER_KEY = $key
+		$env:VENTURE_SERVER_KEY = $key
 		ssh -i $key "${user}@${ip}" $args
 	} else {
 		ssh "${user}@${ip}" $args
