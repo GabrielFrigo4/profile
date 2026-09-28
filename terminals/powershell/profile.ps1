@@ -652,8 +652,8 @@ function prompt {
 		$b = (git symbolic-ref --short HEAD 2>$null)
 		if ($b) {
 			$dirty = ""
-			git diff-index --quiet HEAD 2>$null
-			if ($LASTEXITCODE -ne 0) { $dirty = "$yellow*" }
+			$status = (git status --porcelain=v1 -uno --ignore-submodules=dirty 2>$null)
+			if ($status) { $dirty = "$yellow*" }
 			$gitInfo = " $gray❮$red󰊢 $magenta$b$dirty$gray❯"
 		}
 	} catch { }

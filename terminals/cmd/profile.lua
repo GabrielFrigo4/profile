@@ -182,11 +182,11 @@ local function get_git_branch()
 	end
 
 	local is_dirty = false
-	local dh = io.popen([[git diff-index --quiet HEAD 2>nul && echo 0 || echo 1]])
+	local dh = io.popen([[git status --porcelain=v1 -uno --ignore-submodules=dirty 2>nul]])
 	if dh then
 		local dres = dh:read("*l")
 		dh:close()
-		if dres and trim(dres) == "1" then
+		if dres and trim(dres) ~= "" then
 			is_dirty = true
 		end
 	end

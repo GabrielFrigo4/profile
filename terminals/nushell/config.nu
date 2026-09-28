@@ -97,8 +97,8 @@ def create_left_prompt [] {
 	let branch = (do -i { git symbolic-ref --short HEAD } | complete)
 	if $branch.exit_code == 0 and ($branch.stdout | str trim | is-not-empty) {
 		let bname = ($branch.stdout | str trim)
-		let dirty_check = (do -i { git diff-index --quiet HEAD } | complete)
-		let indicator = (if $dirty_check.exit_code != 0 { $"($yellow)*" } else { "" })
+		let dirty_check = (do -i { git status --porcelain=v1 -uno --ignore-submodules=dirty } | complete)
+		let indicator = (if ($dirty_check.stdout | str trim | is-not-empty) { $"($yellow)*" } else { "" })
 		$git_info = $" ($gray)❮($red)󰊢 ($magenta)($bname)($indicator)($gray)❯"
 	}
 
