@@ -91,10 +91,10 @@ CFLAGS     ?= -Wall -Wextra -Werror -pedantic -std=c23 -O2
 all: help
 
 help:
-	cmd() { printf "    \033[36mmake %-28s\033[0m %s\n" "$$1" "$$2"; }; \
-	sec() { printf "\n  \033[1;33m%s\033[0m\n" "$$1"; }; \
-	sub() { printf "  \033[1;34m  ── %s ──\033[0m\n" "$$1"; }; \
-	printf "\n  \033[1;37m%s — Catálogo de Comandos\033[0m (v%s)\n" "$(APP)" "$(VERSION)"; \
+	cmd() { printf "    \x1b[36mmake %-28s\x1b[0m %s\n" "$$1" "$$2"; }; \
+	sec() { printf "\n  \x1b[1;33m%s\x1b[0m\n" "$$1"; }; \
+	sub() { printf "  \x1b[1;34m  ── %s ──\x1b[0m\n" "$$1"; }; \
+	printf "\n  \x1b[1;37m%s — Catálogo de Comandos\x1b[0m (v%s)\n" "$(APP)" "$(VERSION)"; \
 	printf "  ============================================================\n"; \
 	sec "Desenvolvimento & Compilação:"; \
 	cmd "build"             "Compila o binário de produção em bin/"; \

@@ -29,9 +29,10 @@ Toda governança implantada por esta skill deve garantir:
     - Zero Comentários Narrativos: código autoexplicativo, blocos separados por linhas em branco.
 3. **Githooks POSIX Defensivos:** Executáveis via `#!/usr/bin/env sh`, permissão `chmod 0755`, sem bashismos.
 4. **Permissões Canônicas em 4 Dígitos Octais:** `chmod 0755`, `chmod 0644`, `chmod 0700`, `chmod 0600`.
-5. **Os 18 Princípios de Engenharia:** 17 Princípios UNIX (Eric S. Raymond) + Soberania do Usuário.
+5. **Os 22 Princípios de Engenharia:** 17 Princípios UNIX (Eric S. Raymond) + Soberania do Usuário + Autonomia Reentrante + Hermetismo de Produção + Desacoplamento Dev-Hub + Antifragilidade & Resiliência Ativa.
 6. **Hermeticidade e Isolamento de Git Hooks:** Os hooks em `.githooks/` devem ser 100% autônomos. NUNCA devem chamar scripts contidos em skills de IA externas ou globais. Toda automação do hook deve usar utilitários locais do repositório (`scripts/` locais) ou lógica direta em POSIX `/bin/sh`.
 7. **Regra Áurea da Fonte Canônica (Grandes Repositórios vs. Clones de Runtime):** Alterações em qualquer componente do ecossistema (`Setup`, `Shell`, `Profile`, `Vault`, `Emacs`, `Helix`, `NeoVim`, `Vim`) ou skills globais devem ser realizadas exclusivamente na bancada do grande repositório canônico (`~/Documents/Environment/` ou `~/Documentos/Environment/`). Só é admitido editar no clone de runtime se o repositório canônico no Environment NÃO existir E você NÃO estiver nele (ambas as condições estritamente negadas simultaneamente), prevenindo sujeira na árvore de trabalho e bloqueios em atualizações automatizadas.
+8. **Orçamento Unificado de Linhas (Regra 17 – 128 – 256):** Tanto arquivos de runbook (`SKILL.md`) quanto diretrizes constitucionais (`AGENTS.md`) devem respeitar rigorosamente o piso de 17 linhas, o sweet spot executivo de $\le 128$ linhas e o teto máximo rígido de 256 linhas (monólito fatal).
 
 ---
 
@@ -39,12 +40,12 @@ Toda governança implantada por esta skill deve garantir:
 
 ```
 <repo-root>/
-├── AGENTS.md                  # Briefing de IA, identidade, regras críticas e referências
-├── PRINCIPLES.md              # 18 Princípios de Engenharia contextualizados ao projeto
+├── AGENTS.md                  # Briefing de IA, identidade, regras críticas e referências (<= 256 linhas)
+├── PRINCIPLES.md              # 22 Princípios de Engenharia contextualizados ao projeto
 ├── Makefile                   # Orquestrador POSIX silencioso compatível com bmake e gmake
 ├── .agents/
 │   ├── rules/                 # Regras contextuais ativas (clean-code, linguagem, etc.)
-│   └── skills/                # Procedimentos e runbooks locais do projeto
+│   └── skills/                # Procedimentos e runbooks locais do projeto (<= 256 linhas)
 ├── .githooks/
 │   ├── pre-commit             # Quality gate (whitespace, sintaxe, quoting, clean code)
 │   └── commit-msg             # Validador semântico (add:, fix:, feat:, docs:, etc.)
@@ -76,10 +77,10 @@ Crie ou atualize o `AGENTS.md` no padrão institucional:
 
 ### Passo 3: Criação do `PRINCIPLES.md` Contextualizado
 
-Adapte os **18 Princípios de Design** à realidade técnica do repositório:
+Adapte os **22 Princípios de Design** à realidade técnica do repositório:
 
 - Não copie cegamente textos de outros projetos (ex: falar de provisionamento de pacotes num projeto de IA ou em C puro).
-- Traduza cada uma das 17 regras UNIX + Soberania do Usuário para o domínio exato do projeto.
+- Traduza as 17 regras UNIX + as 5 regras de soberania/autonomia para o domínio exato do projeto.
 - Conclua com as diretrizes de **Clean Code** e a arquitetura de comentários em 3 camadas.
 
 ### Passo 4: Padronização do `Makefile`

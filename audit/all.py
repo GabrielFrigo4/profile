@@ -14,6 +14,7 @@ SCRIPTS = [
     ("banners.py", "audit/banners.py", "Geometria de Banners & Réguas (32/64 cols)"),
     ("links.py", "audit/links.py", "Integridade de Links Relativos (.md)"),
     ("formats.py", "audit/formats.py", "Validação de Formatos (JSON, YAML, PS1, REG)"),
+    ("skills.py", "audit/skills.py", "Orçamento e Integridade de Skills (17-128-256)"),
 ]
 
 def main():
