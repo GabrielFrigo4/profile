@@ -12,11 +12,10 @@ Este diretório contém os arquivos de configuração do **NuShell**, definindo 
 
 ## 📂 Catálogo de Arquivos
 
-| Arquivo                    | Tipo                 | Descrição                                           |
-| :------------------------- | :------------------- | :-------------------------------------------------- |
-| [`config.nu`](config.nu)   | NuScript Declarativo | Configuração de atalhos, tabelas e temas do NuShell |
-| [`env.nu`](env.nu)         | NuScript Declarativo | Variáveis de ambiente e carregamento do ecossistema |
-| [`nushell.nu`](nushell.nu) | NuScript             | Utilitários complementares de pipeline              |
+| Arquivo                  | Tipo                 | Descrição                                           |
+| :----------------------- | :------------------- | :-------------------------------------------------- |
+| [`config.nu`](config.nu) | NuScript Declarativo | Configuração de atalhos, tabelas e temas do NuShell |
+| [`env.nu`](env.nu)       | NuScript Declarativo | Variáveis de ambiente e carregamento do ecossistema |
 
 ---
 

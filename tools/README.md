@@ -10,6 +10,7 @@
 | :--------------------------- | :-------------------------------- | :--------------------------------- | :--------------------------------------------- |
 | **`clangd.yaml`**            | Clangd (LSP C/C++)                | `~/.config/clangd/config.yaml`     | `%LOCALAPPDATA%\clangd\config.yaml`            |
 | **`.clang-format`**          | Clang Format                      | `~/.clang-format`                  | `%USERPROFILE%\.clang-format`                  |
+| **`.editorconfig`**          | EditorConfig                      | `~/.editorconfig`                  | `%USERPROFILE%\.editorconfig`                  |
 | **`.prettierrc`**            | Prettier (JS/TS/HTML/CSS/MD/JSON) | `~/.prettierrc`                    | `%USERPROFILE%\.prettierrc`                    |
 | **`.stylua.toml`**           | StyLua (Lua)                      | `~/.stylua.toml`                   | `%USERPROFILE%\.stylua.toml`                   |
 | **`mermaid-puppeteer.json`** | Mermaid CLI (Puppeteer)           | `~/.mermaid-puppeteer-config.json` | `%USERPROFILE%\.mermaid-puppeteer-config.json` |

@@ -10,7 +10,7 @@
 | :------------------- | :-------------- | :------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------- |
 | **Konsole (KDE)**    | Linux & FreeBSD | [`Bash.profile`](konsole/Bash.profile), [`Zsh.profile`](konsole/Zsh.profile), [`Shell.profile`](konsole/Shell.profile)     | `~/.local/share/konsole/`                                         |
 | **Windows Terminal** | Windows         | [`settings.json`](windows-terminal/settings.json)                                                                          | `%LOCALAPPDATA%\Packages\Microsoft.WindowsTerminal_*\LocalState\` |
-| **Nushell**          | Multiplataforma | [`config.nu`](nushell/config.nu), [`env.nu`](nushell/env.nu), [`nushell.nu`](nushell/nushell.nu)                           | `~/.config/nushell/` ou `%APPDATA%\nushell\`                      |
+| **Nushell**          | Multiplataforma | [`config.nu`](nushell/config.nu), [`env.nu`](nushell/env.nu)                                                               | `~/.config/nushell/` ou `%APPDATA%\nushell\`                      |
 | **PowerShell**       | Windows / Multi | [`profile.ps1`](powershell/profile.ps1), [`Microsoft.PowerShell_profile.ps1`](powershell/Microsoft.PowerShell_profile.ps1) | `$HOME\Documents\PowerShell\`                                     |
 | **CMD (Clink)**      | Windows         | [`profile.cmd`](cmd/profile.cmd), [`profile.lua`](cmd/profile.lua), [`setup-profile.reg`](cmd/setup-profile.reg)           | `%USERPROFILE%\` e `%PROGRAMFILES(x86)%\clink\`                   |
 

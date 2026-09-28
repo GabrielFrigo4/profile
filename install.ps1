@@ -13,12 +13,19 @@ $ErrorActionPreference = "Stop"
 $RepoRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $Timestamp = (Get-Date).ToString("yyyyMMddHHmmss")
 
-Write-Host "🎨 [Profile] Sincronizando dotfiles no Windows a partir de: $RepoRoot" -ForegroundColor Cyan
+function _ui_step([string]$msg) { Write-Host "==> $msg" -ForegroundColor Cyan }
+function _ui_sub([string]$msg)  { Write-Host "  ↳ $msg" -ForegroundColor Blue }
+function _ui_ok([string]$msg)   { Write-Host "  ✅ $msg" -ForegroundColor Green }
+function _ui_warn([string]$msg) { Write-Host "  ⚠️  $msg" -ForegroundColor Yellow }
+function _ui_err([string]$msg)  { Write-Host "  ❌ $msg" -ForegroundColor Red }
+function _ui_info([string]$msg) { Write-Host "  ℹ️  $msg" -ForegroundColor Magenta }
+
+_ui_step "Sincronizando dotfiles no Windows a partir de: $RepoRoot"
 if ($DryRun) {
-    Write-Host "  ⚠️ Modo DRY-RUN ativado (nenhum link sera criado)." -ForegroundColor Yellow
+    _ui_warn "Modo DRY-RUN ativado (nenhum link sera criado)."
 }
 
-function Link-File {
+function Link-Item-Safe {
     param(
         [string]$Source,
         [string]$Destination
@@ -27,7 +34,7 @@ function Link-File {
     if (-not (Test-Path $Source)) { return }
 
     if ($DryRun) {
-        Write-Host "  [DRY-RUN] $Destination -> $Source" -ForegroundColor DarkGray
+        _ui_sub "[DRY-RUN] $Destination -> $Source"
         return
     }
 
@@ -36,11 +43,18 @@ function Link-File {
         New-Item -ItemType Directory -Path $ParentDir -Force | Out-Null
     }
 
+    $isDir = (Get-Item $Source) -is [System.IO.DirectoryInfo]
+
     if (Test-Path $Destination) {
+        $destItem = Get-Item $Destination -Force
+        if ($destItem.LinkType -and ($destItem.Target -eq $Source -or $destItem.Target -contains $Source)) {
+            _ui_sub "[OK] $Destination"
+            return
+        }
         if ($Backup) {
             $BackupPath = "$Destination.bak.$Timestamp"
             Move-Item -Path $Destination -Destination $BackupPath -Force
-            Write-Host "  [BACKUP] $BackupPath" -ForegroundColor Magenta
+            _ui_warn "[BACKUP] $BackupPath"
         } else {
             Remove-Item -Path $Destination -Force -Recurse
         }
@@ -48,47 +62,80 @@ function Link-File {
 
     try {
         New-Item -ItemType SymbolicLink -Path $Destination -Target $Source -Force | Out-Null
-        Write-Host "  [LINK] $Destination" -ForegroundColor Green
+        _ui_ok "[LINK] $Destination"
+        return
     } catch {
-        New-Item -ItemType HardLink -Path $Destination -Target $Source -Force | Out-Null
-        Write-Host "  [HARDLINK] $Destination" -ForegroundColor Yellow
+        if ($isDir) {
+            try {
+                New-Item -ItemType Junction -Path $Destination -Target $Source -Force | Out-Null
+                _ui_ok "[JUNCTION] $Destination"
+                return
+            } catch { }
+        } else {
+            try {
+                New-Item -ItemType HardLink -Path $Destination -Target $Source -Force | Out-Null
+                _ui_ok "[HARDLINK] $Destination"
+                return
+            } catch { }
+        }
+
+        try {
+            Copy-Item -Path $Source -Destination $Destination -Recurse -Force | Out-Null
+            _ui_warn "[COPY] $Destination (Symlinks restritos pelo SO)"
+        } catch {
+            _ui_err "[FAIL] $Destination ($_)"
+        }
     }
 }
 
-Write-Host "↳ 1. Formatadores globais e linters..." -ForegroundColor Cyan
-Link-File "$RepoRoot\tools\.clang-format" "$HOME\.clang-format"
-Link-File "$RepoRoot\tools\.prettierrc" "$HOME\.prettierrc"
-Link-File "$RepoRoot\tools\.stylua.toml" "$HOME\.stylua.toml"
-Link-File "$RepoRoot\tools\.editorconfig" "$HOME\.editorconfig"
-
-Write-Host "↳ 2. Editores modernos (VS Code & Antigravity)..." -ForegroundColor Cyan
-if ($env:APPDATA) {
-    Link-File "$RepoRoot\editors\vscode\settings.json" "$env:APPDATA\Code\User\settings.json"
-    Link-File "$RepoRoot\editors\antigravity\settings.json" "$env:APPDATA\Antigravity\User\settings.json"
+_ui_step "Formatadores globais e linters..."
+Link-Item-Safe "$RepoRoot\tools\.clang-format" "$HOME\.clang-format"
+Link-Item-Safe "$RepoRoot\tools\.prettierrc" "$HOME\.prettierrc"
+Link-Item-Safe "$RepoRoot\tools\.stylua.toml" "$HOME\.stylua.toml"
+Link-Item-Safe "$RepoRoot\tools\.editorconfig" "$HOME\.editorconfig"
+Link-Item-Safe "$RepoRoot\tools\mermaid-puppeteer.json" "$HOME\.mermaid-puppeteer-config.json"
+Link-Item-Safe "$RepoRoot\tools\mermaid-theme.json" "$HOME\.mermaid-theme-config.json"
+if ($env:LOCALAPPDATA) {
+    Link-Item-Safe "$RepoRoot\tools\clangd.yaml" "$env:LOCALAPPDATA\clangd\config.yaml"
 }
 
-Write-Host "↳ 3. Windows Terminal..." -ForegroundColor Cyan
-$WtPath = "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
-Link-File "$RepoRoot\terminals\windows-terminal\settings.json" $WtPath
+_ui_step "Editores modernos (VS Code, VSCodium, Antigravity, Zed)..."
+if ($env:APPDATA) {
+    Link-Item-Safe "$RepoRoot\editors\vscode\settings.json" "$env:APPDATA\Code\User\settings.json"
+    Link-Item-Safe "$RepoRoot\editors\vscodium\settings.json" "$env:APPDATA\VSCodium\User\settings.json"
+    Link-Item-Safe "$RepoRoot\editors\antigravity\settings.json" "$env:APPDATA\Antigravity\User\settings.json"
+    Link-Item-Safe "$RepoRoot\editors\zed\settings.json" "$env:APPDATA\Zed\settings.json"
+}
 
-Write-Host "↳ 4. Clink (CMD)..." -ForegroundColor Cyan
-$ClinkDir = "$env:LOCALAPPDATA\clink"
-Link-File "$RepoRoot\terminals\cmd\profile.lua" "$ClinkDir\profile.lua"
-Link-File "$RepoRoot\terminals\cmd\profile.cmd" "$ClinkDir\profile.cmd"
+_ui_step "Windows Terminal..."
+if ($env:LOCALAPPDATA) {
+    $WtPath = "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
+    Link-Item-Safe "$RepoRoot\terminals\windows-terminal\settings.json" $WtPath
+}
 
-Write-Host "↳ 5. PowerShell Profiles..." -ForegroundColor Cyan
+_ui_step "Clink (CMD)..."
+if ($env:LOCALAPPDATA) {
+    $ClinkDir = "$env:LOCALAPPDATA\clink"
+    Link-Item-Safe "$RepoRoot\terminals\cmd\profile.lua" "$ClinkDir\profile.lua"
+    Link-Item-Safe "$RepoRoot\terminals\cmd\profile.cmd" "$ClinkDir\profile.cmd"
+}
+Link-Item-Safe "$RepoRoot\terminals\cmd\profile.cmd" "$HOME\profile.cmd"
+
+_ui_step "PowerShell Profiles..."
 $PsDocs = "$HOME\Documents\PowerShell"
 $WinPsDocs = "$HOME\Documents\WindowsPowerShell"
-Link-File "$RepoRoot\terminals\powershell\profile.ps1" "$PsDocs\profile.ps1"
-Link-File "$RepoRoot\terminals\powershell\Microsoft.PowerShell_profile.ps1" "$PsDocs\Microsoft.PowerShell_profile.ps1"
-Link-File "$RepoRoot\terminals\powershell\profile.ps1" "$WinPsDocs\profile.ps1"
+Link-Item-Safe "$RepoRoot\terminals\powershell\profile.ps1" "$PsDocs\profile.ps1"
+Link-Item-Safe "$RepoRoot\terminals\powershell\Microsoft.PowerShell_profile.ps1" "$PsDocs\Microsoft.PowerShell_profile.ps1"
+Link-Item-Safe "$RepoRoot\terminals\powershell\profile.ps1" "$WinPsDocs\profile.ps1"
 
-Write-Host "↳ 6. NuShell..." -ForegroundColor Cyan
+_ui_step "NuShell..."
 if ($env:APPDATA) {
     $NuDir = "$env:APPDATA\nushell"
-    Link-File "$RepoRoot\terminals\nushell\config.nu" "$NuDir\config.nu"
-    Link-File "$RepoRoot\terminals\nushell\env.nu" "$NuDir\env.nu"
-    Link-File "$RepoRoot\terminals\nushell\nushell.nu" "$NuDir\nushell.nu"
+    Link-Item-Safe "$RepoRoot\terminals\nushell\config.nu" "$NuDir\config.nu"
+    Link-Item-Safe "$RepoRoot\terminals\nushell\env.nu" "$NuDir\env.nu"
 }
 
-Write-Host "✅ [Profile] Instalação concluída com sucesso no Windows!" -ForegroundColor Green
+_ui_step "Skills portáteis de IA (Antigravity & Gemini)..."
+Link-Item-Safe "$RepoRoot\skills" "$HOME\.gemini\config\skills"
+
+_ui_ok "Instalação e sincronização concluídas com sucesso no Windows!"
