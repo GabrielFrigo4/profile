@@ -5,6 +5,10 @@
 #>
 
 if ($Host.Name -eq 'ConsoleHost') {
-	Import-Module Terminal-Icons
-	. "~/.oh-my-posh.ps1";
+	if (Get-Module -ListAvailable -Name Terminal-Icons) {
+		Import-Module Terminal-Icons
+	}
+	if (Test-Path "~/.oh-my-posh.ps1") {
+		. "~/.oh-my-posh.ps1"
+	}
 }

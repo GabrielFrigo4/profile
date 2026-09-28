@@ -168,17 +168,32 @@ end
 local function get_git_branch()
 	local handle = io.popen([[git symbolic-ref --short HEAD 2>nul]])
 	if handle == nil then
-		return { branch = DEFAULT_BRANCH_DATA() }
+		return { branch = DEFAULT_BRANCH_DATA(), is_dirty = false }
 	end
 	local content = handle:read("*a")
 	handle:close()
 
 	if content == nil then
-		return { branch = DEFAULT_BRANCH_DATA() }
+		return { branch = DEFAULT_BRANCH_DATA(), is_dirty = false }
 	end
 	local branch_data = content:match("(.+)\n")
+	if not branch_data then
+		return { branch = nil, is_dirty = false }
+	end
+
+	local is_dirty = false
+	local dh = io.popen([[git diff-index --quiet HEAD 2>nul && echo 0 || echo 1]])
+	if dh then
+		local dres = dh:read("*l")
+		dh:close()
+		if dres and trim(dres) == "1" then
+			is_dirty = true
+		end
+	end
+
 	local branch_info = {
 		branch = branch_data,
+		is_dirty = is_dirty,
 	}
 	return branch_info
 end
@@ -416,42 +431,53 @@ function pf:filter(prompt)
 	current.cwd = prompt_info.cwd
 	current.dir = prompt_info.dir
 
-	prompt = text_yellow("❮ ") .. text_yellow(" ") .. text_bright_cyan(prompt_info.dir) .. text_yellow(" ❯─")
-	prompt = text_yellow("❮ ") .. text_bright_green(os.date(" %a, %d %b")) .. text_yellow(" ❯─") .. prompt
-	prompt = text_yellow("┌──❮ ") .. text_bright_green(os.date(" %H:%M")) .. text_yellow(" ❯─") .. prompt
-	prompt = text_bright_blue("") ..
-		background_bright_blue(text_black(" " .. icon .. " " .. info .. " ")) ..
-		background_bright_cyan(text_bright_blue("")) ..
-		background_bright_cyan(text_black("  cmd ")) .. text_bright_cyan("\n") .. prompt
+	local line1 = text_bright_black("") ..
+		text_bright_blue(icon .. " ") ..
+		text_bright_magenta(info) ..
+		text_bright_black("─") ..
+		text_bright_blue(" ") ..
+		text_bright_magenta("cmd") ..
+		text_bright_black("\n")
+
+	local time_str = os.date("%H:%M:%S")
+	local date_str = os.date("%d/%m/%y")
+
+	local line2 = text_bright_black("┌──❮") ..
+		text_bright_blue(" ") .. text_bright_green(time_str) .. text_bright_black("❯─❮") ..
+		text_bright_blue(" ") .. text_bright_green(date_str) .. text_bright_black("❯─❮") ..
+		text_bright_yellow(" ") .. text_bright_cyan(prompt_info.dir) .. text_bright_black("❯─ ")
 
 	if admin then
-		prompt = prompt .. " " ..
-			text_yellow("❮") .. text_bright_blue(" ") .. text_bright_red("admin") .. text_yellow("❯")
+		line2 = line2 .. text_bright_black("❮") .. text_bright_blue(" ") .. text_bright_red("admin") .. text_bright_black("❯")
 	else
-		prompt = prompt .. " " ..
-			text_yellow("❮") .. text_bright_blue(" ") .. text_bright_green(user) .. text_yellow("❯")
+		line2 = line2 .. text_bright_black("❮") .. text_bright_blue(" ") .. text_bright_green(user) .. text_bright_black("❯")
 	end
 
 	local binfo = clink.promptcoroutine(get_git_branch)
-	if binfo ~= nil then
-		if binfo.branch ~= nil then
-			prompt = prompt .. " " ..
-				text_yellow("❮") .. text_bright_magenta("  ") .. text_bright_red(binfo.branch) .. text_yellow("❯")
-		end
-		current.branch = binfo.branch
-	elseif binfo == nil and current.branch ~= nil then
-		prompt = prompt .. " " ..
-			text_yellow("❮") .. text_bright_magenta("  ") .. text_bright_red(current.branch) .. text_yellow("❯")
+	local active_branch = nil
+	local active_dirty = false
+	if binfo ~= nil and binfo.branch ~= nil then
+		active_branch = binfo.branch
+		active_dirty = binfo.is_dirty
+		current.branch = active_branch
+		current.is_dirty = active_dirty
+	elseif current.branch ~= nil then
+		active_branch = current.branch
+		active_dirty = current.is_dirty or false
+	end
+
+	if active_branch then
+		local dirty_ind = active_dirty and text_bright_yellow("*") or ""
+		line2 = line2 .. " " .. text_bright_black("❮") .. text_bright_red("󰊢 ") .. text_bright_magenta(active_branch) .. dirty_ind .. text_bright_black("❯")
 	end
 
 	if prompt_info.venv ~= nil then
-		prompt = prompt .. " " ..
-			text_yellow("❮") .. text_bright_blue(" ") .. text_bright_cyan(prompt_info.venv) .. text_yellow("❯")
+		line2 = line2 .. " " .. text_bright_black("❮") .. text_bright_blue(" ") .. text_bright_cyan(prompt_info.venv) .. text_bright_black("❯")
 	end
 
-	prompt = prompt .. text_yellow("\n└─") .. text_bright_blue(" ")
+	local line3 = text_bright_black("\n└─") .. text_bright_blue(" ")
 
-	prompt = GET_RESET() .. prompt .. GET_RESET()
+	prompt = GET_RESET() .. line1 .. line2 .. line3 .. GET_RESET()
 	current.prompt = prompt
 	return prompt
 end
