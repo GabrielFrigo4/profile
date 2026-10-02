@@ -54,6 +54,23 @@ Expõe a interface gráfica e computacional de baixo nível diretamente para o m
 - **Inferência de IA Local Acelerada:** Execução eficiente de modelos locais (LLMs compactos, transcrição de áudio via Whisper e visão computacional) com aceleração direta de hardware.
 - **Overhead Reduzido de CPU:** Menor consumo de ciclos de processador em chamadas de desenho (_draw calls_), viabilizando taxas de quadros (FPS) mais estáveis em engines modernas (Three.js, Babylon.js e stacks em Rust/Wasm).
 
+### Tabela Completa de Flags WebGPU (Linux / FreeBSD)
+
+| Chave                                       | Valor de Fábrica | Mudar Para | O que faz                                                    |
+| :------------------------------------------ | :--------------: | :--------: | :----------------------------------------------------------- |
+| `dom.webgpu.enabled`                        |     `false`      |   `true`   | Ativa a API WebGPU para o JavaScript da página               |
+| `gfx.webrender.all`                         |     `false`      |   `true`   | Força aceleração gráfica por hardware na GPU                 |
+| `dom.webgpu.wgpu-backend`                   |   `""` (vazio)   |  `vulkan`  | Força o uso do Vulkan nativo (evita cair no llvmpipe da CPU) |
+| `dom.webgpu.allow-present-without-readback` |     `false`      |   `true`   | Renderização zero-copy (não copia buffers para a CPU)        |
+| `gfx.webgpu.ignore-status`                  |     `false`      |   `true`   | Ignora bloqueios preventivos de driver sobre a stack Mesa    |
+
+### Flags WebGPU no Windows (Firefox)
+
+| Chave                     | Valor de Fábrica |    Mudar Para     | Motivo no Windows                                                      |
+| :------------------------ | :--------------: | :---------------: | :--------------------------------------------------------------------- |
+| `dom.webgpu.enabled`      |     `false`      |      `true`       | No canal estável do Firefox no Windows, ainda vem desligada por padrão |
+| `dom.webgpu.wgpu-backend` |   `""` (vazio)   | `dx12` (ou vazio) | No Windows, o DX12 é o padrão ouro de fábrica para aceleração de IA    |
+
 ---
 
 ## 🚀 Integração com o Host Wayland

@@ -14,9 +14,10 @@ Esta pasta organiza ajustes de performance, privacidade e compatibilidade de API
 
 ## 📂 Catálogo de Navegadores
 
-| Navegador           | Destino / Documento                      | Descrição                                                                   |
-| :------------------ | :--------------------------------------- | :-------------------------------------------------------------------------- |
-| **Mozilla Firefox** | [`firefox/README.md`](firefox/README.md) | Configuração de clipboard assíncrono para consoles de cloud e flags Wayland |
+| Navegador           | Destino / Documento                        | Descrição                                                                   |
+| :------------------ | :----------------------------------------- | :-------------------------------------------------------------------------- |
+| **Mozilla Firefox** | [`firefox/README.md`](firefox/README.md)   | Configuração de clipboard assíncrono para consoles de cloud e flags Wayland |
+| **Chromium**        | [`chromium/README.md`](chromium/README.md) | Configuração de WebGPU, aceleração Vulkan e flags `chrome://flags`          |
 
 ---
 

@@ -43,7 +43,7 @@ Essas diretrizes são de aplicação obrigatória para qualquer modificação ou
 - **Orçamento de Linhas (Regra 8 - 128):** Piso de 8 linhas e teto de 128 linhas úteis.
 - **Camada 1 (Header Banner):** Exclusivo para linhas 2 a 4 de scripts utilitários, delimitado por 64 hífens (`# ----------------------------------------------------------------`).
 - **Camada 2 (Delimitadores Estruturais de Corpo):** Réguas simétricas de 32 caracteres (`### ================================` ou `### --------------------------------`). O título DEVE ter no máximo 32 caracteres e JAMAIS vazar além da régua (total de 36 colunas com `### `).
-- **Camada 3 (Zero Comentários Narrativos):** Proibição absoluta de comentários narrativos ou inline em scripts, dotfiles, templates e documentações. Separe blocos lógicos exclusivamente por linhas em branco.
+- **Camada 3 (Zero Comentários Narrativos):** Evite comentários narrativos ou inline em scripts, dotfiles, templates e documentações. Separe blocos lógicos por linhas em branco.
 
 ## 7. Padrão Universal de READMEs
 

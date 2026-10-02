@@ -7,7 +7,7 @@ MAKEFLAGS += --no-print-directory -s
 # Makefile: Profile Dotfiles
 # ----------------------------------------------------------------
 
-.PHONY: help hooks audit sync test fix-banners ci
+.PHONY: help hooks audit sync test format prettier fix-banners ci
 
 ### ================================
 ### HELP & DOCUMENTATION
@@ -26,6 +26,8 @@ help:
 	sec "Qualidade & Auditoria:"; \
 	cmd "test"           "Valida sintaxe POSIX dos scripts utilitários"; \
 	cmd "audit"          "Executa auditoria estática completa (JSON/YAML/TOML/links)"; \
+	cmd "format"         "Formata documentações Markdown com Prettier"; \
+	cmd "prettier"       "Formata documentações Markdown com Prettier"; \
 	cmd "ci"             "Executa suite completa de CI local"; \
 	echo ""
 
@@ -52,6 +54,17 @@ test:
 	echo "🧪 Validando sintaxe POSIX dos scripts..."
 	find . -name "*.sh" -not -path "*/.git/*" -exec sh -n {} +
 	echo "✅ Todos os scripts do Profile são válidos!"
+
+format: prettier
+	echo "✅ Formatação concluída!"
+
+prettier:
+	echo "🎨 Formatando documentações Markdown com Prettier..."
+	if command -v prettier > "/dev/null" 2>&1; then \
+		prettier --write "**/*.md" 2> "/dev/null" || true; \
+	elif command -v npx > "/dev/null" 2>&1; then \
+		npx prettier --write "**/*.md" 2> "/dev/null" || true; \
+	fi
 
 fix-banners:
 	echo "📏 Normalizando réguas de banners de cabeçalho e seções..."

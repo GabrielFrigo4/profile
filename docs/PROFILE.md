@@ -11,7 +11,7 @@ O repositório **[Profile](https://github.com/GabrielFrigo4/profile)** é o sant
 ### Camadas de Responsabilidade:
 
 1. **[`editors/`](../editors/README.md), [`terminals/`](../terminals/README.md), [`tools/`](../tools/README.md):** Arquivos declarativos puros (`settings.json`, `.clang-format`, `.stylua.toml`, `config.nu`).
-2. **[`skills/`](../skills/README.md):** Runbooks e habilidades portáteis de IA (`SKILL.md` com YAML Frontmatter) para assistentes autônomos.
+2. **[`agents/`](../agents/README.md):** Runbooks de IA (`skills/`) e regras transversais de governança (`rules/`) para assistentes autônomos.
 3. **[`profile.sh`](../profile.sh):** Interface unificada de componente para sincronização atômica (`profile.sh sync`), testes e auditoria.
 
 ---

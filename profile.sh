@@ -189,9 +189,13 @@ _profile_sync() {
 		_sync "terminals/konsole/Zsh.profile" "${_data}/konsole/Zsh.profile"
 	fi
 
-	_ui_step "Skills portateis de IA (Antigravity & Gemini)..."
-	_sync "skills" "${HOME}/.gemini/config/skills"
-	[ "${_is_win}" -eq 1 ] && _sync "skills" "${_win_home}/.gemini/config/skills"
+	_ui_step "Agentes de IA (Skills & Rules para Antigravity & Gemini)..."
+	_sync "agents/skills" "${HOME}/.gemini/config/skills"
+	_sync "agents/rules" "${HOME}/.gemini/config/rules"
+	if [ "${_is_win}" -eq 1 ]; then
+		_sync "agents/skills" "${_win_home}/.gemini/config/skills"
+		_sync "agents/rules" "${_win_home}/.gemini/config/rules"
+	fi
 
 	_ui_ok "Operacao (${_mode}) concluida com sucesso!"
 }

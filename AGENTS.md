@@ -31,23 +31,23 @@ O **Profile** é a **identidade de trabalho** do desenvolvedor. Opera estritamen
 11. **Governança de Roadmap (Opção C):** O repositório mantém seu [TODO.md](TODO.md) atualizado com a Matriz de Status e Backlog de Grandes Épicos, sincronizado com o badge no `README.md`.
 12. **A Regra Áurea da Fonte Canônica para Edição (Bancada vs. Clones de Runtime):** Toda modificação em dotfiles, scripts de perfil, terminais ou skills globais DEVE ser realizada prioritariamente na bancada de desenvolvimento do **Environment** (`~/Documents/Environment/Profile` ou `~/Documentos/Environment/Profile`).
     **Condição Estrita para Editar em Clones de Runtime:** Apenas se o repositório canônico no Environment **NÃO existir** E o agente **NÃO estiver nele** (ambas as condições estritamente negadas simultaneamente) é que se admite editar diretamente no clone de runtime (`~/.local/share/profile` ou links simbólicos de `~/.gemini/config/skills/`). Isso previne sujar árvores de trabalho de runtime (`unstaged changes`), preserva os atualizadores automáticos (`uprc`, `git pull --ff-only`) e garante versionamento canônico dos commits.
-13. **Refatoração Sem Legado / Soberania Monousuário (Clean-Break / Zero-Cruft Invariant):** O ecossistema é estritamente pessoal, governado e operado por um único desenvolvedor soberano (Gabriel Frigo). É terminantemente proibido manter "sujeira" de retrocompatibilidade, shims temporários, wrappers obsoletos, seções de compatibilidade legada ou aliases de transição ao renomear variáveis, comandos, funções, diretórios ou arquivos, salvo se expressamente ordenado pelo usuário. Toda refatoração deve ser atômica, direta, definitiva e limpa (_clean break_), expurgando o identificador antigo integralmente da base de código.
+13. **Refatoração Sem Legado (Clean-Break / Zero-Cruft Invariant):** O ecossistema é monousuário soberano. Não mantenha shims temporários, wrappers obsoletos ou aliases de transição ao renomear variáveis, comandos ou caminhos. Toda refatoração deve ser direta, atômica e limpa (_clean break_).
 
 ---
 
 ## 🛡️ Regra da Proatividade e Correção Contínua (Boy Scout Rule)
 
-O agente de IA **DEVE SER ATIVAMENTE PROATIVO** na manutenção e aplicação dos padrões canônicos deste repositório.
+O agente de IA atua de forma proativa na manutenção e aplicação dos padrões canônicos deste repositório.
 
-Se durante a execução de qualquer tarefa (seja criação de novas features, correções pontuais, refatorações ou investigação) o agente identificar qualquer linha de código, script, Makefile ou documentação fora dos padrões estabelecidos, **NÃO DEVE HESITAR NEM IGNORAR**:
+Ao identificar linhas ou artefatos fora dos padrões estabelecidos:
 
-1. **Notificar concisamente** o usuário sobre a divergência encontrada.
-2. **Corrigir imediatamente a inconformidade**, aplicando o padrão canônico correspondente:
-    - **Comentários Narrativos:** Eliminar imediatamente comentários óbvios que apenas narram código executável.
+1. **Notificar concisamente** o usuário sobre o ajuste realizado.
+2. **Corrigir a inconformidade**, aplicando o padrão correspondente:
+    - **Comentários Narrativos:** Eliminar comentários óbvios que apenas narram código executável.
     - **Banners Estruturais:** Ajustar réguas para exatamente 64 hífens no topo ou 32 caracteres com `### ` no corpo.
     - **Portabilidade POSIX:** Substituir bashismos (`[[ ]]`, `&>`, arrays, `source`) por sintaxe estrita POSIX `/bin/sh`.
     - **Shebang Universal:** Garantir sempre `#!/usr/bin/env sh` ou `#!/usr/bin/env python3`.
-    - **Sequências ANSI & Escapes:** Eliminar terminantemente octais (`\033`, `\001`) para caracteres ou bytes. Usar `[ -t 1 ] && echo -n $'\e...'` para sequências de escape, notação hexadecimal (`\x01`, `\x1b`) para bytes/controles e fugir de `printf` desnecessário. Notação octal é estritamente aceita apenas onde o sistema operacional a exige nativamente (permissões POSIX: `chmod 0755`, `chmod 0644`, `umask`).
+    - **Sequências ANSI & Escapes:** Não use octais (`\033`, `\001`) para caracteres ou escapes. Use `[ -t 1 ] && echo -n $'\e...'` ou notação hexadecimal (`\x01`, `\x1b`). Octal é exclusivo para permissões POSIX (`chmod 0755`, `chmod 0644`, `umask`).
     - **Redirecionamento Seguro:** Envolver destinos em aspas duplas (ex: `> "/dev/null" 2>&1`).
     - **Makefiles:** Assegurar cabeçalho `.POSIX: .SILENT:`, `MAKEFLAGS += --no-print-directory -s`, alinhamento estético de variáveis e zero `@` redundante.
     - **Permissões Canônicas:** Aplicar 4 dígitos octais (`chmod 0755`, `chmod 0644`, `chmod 0700`, `chmod 0600`).

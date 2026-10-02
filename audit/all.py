@@ -15,6 +15,7 @@ SCRIPTS = [
     ("links.py", "audit/links.py", "Integridade de Links Relativos (.md)"),
     ("formats.py", "audit/formats.py", "Validação de Formatos (JSON, YAML, PS1, REG)"),
     ("skills.py", "audit/skills.py", "Orçamento e Integridade de Skills (17-128-256)"),
+    ("tone.py", "audit/tone.py", "Tom Técnico, Economia de Tokens & Escapes ANSI"),
 ]
 
 def main():
@@ -49,7 +50,7 @@ def main():
 
     print("=" * 80)
     if overall_success:
-        print("🎉 SUCESSO ABSOLUTO: 100% dos testes de auditoria foram aprovados!")
+        print("🎉 SUCESSO: 100% dos testes de auditoria foram aprovados!")
         print("=" * 80 + "\n")
         sys.exit(0)
     else:

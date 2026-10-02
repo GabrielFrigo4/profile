@@ -24,6 +24,8 @@ Esta pasta centraliza os scripts de inspeção de código para manter o reposit�
 | [`banners.py`](banners.py)     | Python 3  | Valida geometria de réguas (32/64 cols), não-vazamento e suporte a `--fix`    |
 | [`links.py`](links.py)         | Python 3  | Valida integridade de 100% dos links relativos em arquivos Markdown (`.md`)   |
 | [`formats.py`](formats.py)     | Python 3  | Valida sintaxe de JSON, JSONC, YAML (multi-doc), PowerShell (`.ps1`) e `.reg` |
+| [`skills.py`](skills.py)       | Python 3  | Valida integridade e orçamento de linhas de Skills (17 - 128 - 256)           |
+| [`tone.py`](tone.py)           | Python 3  | Valida tom técnico sóbrio, densidade de sinal e banimento de octais ANSI      |
 
 ---
 
@@ -46,4 +48,6 @@ python3 audit/syntax.py
 python3 audit/banners.py
 python3 audit/links.py
 python3 audit/formats.py
+python3 audit/skills.py
+python3 audit/tone.py
 ```
