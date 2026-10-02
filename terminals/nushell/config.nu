@@ -8,7 +8,6 @@
 
 $env.config.buffer_editor = "notepad++";
 $env.config.show_banner = false;
-$env.HOME = $"($env.USERPROFILE)";
 
 let _msys_root = ($env.MSYS2_ROOT? | default "C:\\msys64")
 let _msys_home_base = ($env.MSYS2_HOME? | default ([$_msys_root, "home"] | path join))
@@ -42,11 +41,11 @@ def get-msys-bash [] {
 			if ($bin2 | path exists) { return $bin2 }
 		}
 	}
-	let detected = (which -a bash | where { |it| not ($it.path | str downcase | str contains "system32") } | get -o 0)
+	let detected = (which -a bash | where { |it| not ($it.path | str lowercase | str contains "system32") } | get -o 0)
 	if ($detected | is-not-empty) {
 		return $detected.path
 	}
-	let detected_sh = (which -a sh | where { |it| not ($it.path | str downcase | str contains "system32") } | get -o 0)
+	let detected_sh = (which -a sh | where { |it| not ($it.path | str lowercase | str contains "system32") } | get -o 0)
 	if ($detected_sh | is-not-empty) {
 		return $detected_sh.path
 	}
@@ -100,46 +99,6 @@ let FASM_STORE = $"($VIRTUAL_STORE)\\Program Files\\FASM";
 let FASM2_STORE = $"($VIRTUAL_STORE)\\Program Files\\FASM2";
 let FASMG_STORE = $"($VIRTUAL_STORE)\\Program Files\\FASMG";
 let FASMARM_STORE = $"($VIRTUAL_STORE)\\Program Files\\FASMARM";
-
-### ================================
-### PROMPT THEME
-### ================================
-
-def create_left_prompt [] {
-	let gray = (ansi -e '90m')
-	let blue = (ansi -e '94m')
-	let green = (ansi -e '92m')
-	let yellow = (ansi -e '93m')
-	let magenta = (ansi -e '95m')
-	let cyan = (ansi -e '96m')
-	let red = (ansi -e '91m')
-	let reset = (ansi reset)
-
-	let time = (date now | format date "%H:%M:%S")
-	let date = (date now | format date "%d/%m/%y")
-	let home_dir = ($env.HOME? | default ($env.USERPROFILE? | default "~"))
-	let dir = (if ($env.PWD == $home_dir) { "~" } else { $env.PWD | path basename })
-	let user = ($env.USER? | default ($env.USERNAME? | default "user"))
-
-	mut git_info = ""
-	let branch = (do -i { git symbolic-ref --short HEAD } | complete)
-	if $branch.exit_code == 0 and ($branch.stdout | str trim | is-not-empty) {
-		let bname = ($branch.stdout | str trim)
-		let dirty_check = (do -i { git status --porcelain=v1 -uno --ignore-submodules=dirty } | complete)
-		let indicator = (if ($dirty_check.stdout | str trim | is-not-empty) { $"($yellow)*" } else { "" })
-		$git_info = $" ($gray)❮($red)󰊢 ($magenta)($bname)($indicator)($gray)❯"
-	}
-
-	let line1 = $"($gray)($blue)󰍲 ($magenta)Windows($gray)─($blue) ($magenta)nu($gray)"
-	let line2 = $"($gray)┌──❮($blue) ($green)($time)($gray)❯─❮($blue) ($green)($date)($gray)❯─❮($yellow) ($cyan)($dir)($gray)❯─ ❮($blue) ($green)($user)($gray)❯($git_info)"
-	let line3 = $"($gray)└─($blue)($reset) "
-
-	$"\n($line1)\n($line2)\n($line3)"
-}
-
-$env.PROMPT_COMMAND = { || create_left_prompt }
-$env.PROMPT_COMMAND_RIGHT = { || "" }
-$env.PROMPT_INDICATOR = { || "" }
 
 ### ================================
 ### WINDOWS FUNCTIONS
