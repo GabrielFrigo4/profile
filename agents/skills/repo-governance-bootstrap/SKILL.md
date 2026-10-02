@@ -31,12 +31,15 @@ Toda governança implantada por esta skill deve garantir:
 4. **Permissões Canônicas em 4 Dígitos Octais:** `chmod 0755`, `chmod 0644`, `chmod 0700`, `chmod 0600`.
 5. **Os 22 Princípios de Engenharia:** 17 Princípios UNIX (Eric S. Raymond) + Soberania do Usuário + Autonomia Reentrante + Hermetismo de Produção + Desacoplamento Dev-Hub + Antifragilidade & Resiliência Ativa.
 6. **Hermeticidade e Isolamento de Git Hooks:** Os hooks em `.githooks/` devem ser 100% autônomos. NUNCA devem chamar scripts contidos em skills de IA externas ou globais. Toda automação do hook deve usar utilitários locais do repositório (`scripts/` locais) ou lógica direta em POSIX `/bin/sh`.
-7. **Regra Áurea da Fonte Canônica (Grandes Repositórios vs. Clones de Runtime):** Alterações em qualquer componente do ecossistema (`Setup`, `Shell`, `Profile`, `Vault`, `Emacs`, `Helix`, `NeoVim`, `Vim`) ou skills globais devem ser realizadas exclusivamente na bancada do grande repositório canônico (`~/Documents/Environment/` ou `~/Documentos/Environment/`). Só é admitido editar no clone de runtime se o repositório canônico no Environment NÃO existir E você NÃO estiver nele (ambas as condições estritamente negadas simultaneamente), prevenindo sujeira na árvore de trabalho e bloqueios em atualizações automatizadas.
+7. **Regra Áurea da Fonte Canônica & Pipeline Dev-to-Prod:** Alterações em qualquer componente (`Setup`, `Shell`, `Profile`, `Vault`, `Emacs`, `Helix`, `NeoVim`, `Vim`), templates ou skills globais devem ser realizadas exclusivamente no clone de desenvolvimento (`~/Documents/Environment/`). A propagação para os clones de runtime (`/usr/local/share/shell`, `~/.local/share/profile`, `~/.emacs.d`, etc.) deve ocorrer exclusivamente via `git push` no dev e `git pull` na produção (ou via `update-all`). Não copie arquivos manualmente (`cp`) da bancada para produção, pois isso deixa a árvore de produção suja e bloqueia atualizações automáticas. Edição direta em produção só é admitida se o repositório canônico `Environment` não existir na máquina hospedeira.
 8. **Orçamento Unificado de Linhas (Regra 17 – 128 – 256):** Tanto arquivos de runbook (`SKILL.md`) quanto diretrizes constitucionais (`AGENTS.md`) devem respeitar o piso de 17 linhas, o sweet spot executivo de $\le 128$ linhas e o teto máximo de 256 linhas (modularizar para evitar monólitos).
 
 ---
 
 ## 📋 Checklist de Arquivos a Gerar / Auditar
+
+> [!TIP]
+> **Scaffold Rápido (Plano A vs. Plano B):** Se `~/Documents/Environment/Template` estiver presente no host, copie a estrutura base dele (`cp -r ~/Documents/Environment/Template/ <novo-repo>/`) como ponto de partida canônico sempre atualizado. Caso o host não contenha `Environment`, gere os arquivos usando as instruções passo a passo abaixo.
 
 ```
 <repo-root>/

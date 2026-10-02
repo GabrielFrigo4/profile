@@ -9,6 +9,30 @@ Esta habilidade orienta o agente de IA na criação do zero de novos repositóri
 
 ---
 
+## 🏛️ Fonte Canônica de Scaffold: `Environment/Template`
+
+O ecossistema mantém um template vivo, canônico e continuamente testado localizado em:
+`~/Documents/Environment/Template` (ou `${WORKSPACE_ROOT}/Environment/Template`).
+
+Ao criar ou inicializar um novo repositório, o agente deve seguir a seguinte hierarquia de resolução:
+
+1. **Plano A (Com `Environment/Template` no host):**
+    - Copie a estrutura base de `Environment/Template/` para a nova pasta do projeto (`cp -r ~/Documents/Environment/Template/ <novo-projeto>/`).
+    - A pasta já contém a governança mais atualizada: `.githooks/` (`pre-commit`, `commit-msg`), `.agents/` (`clean-code.md`, `principles.md`), `.github/workflows/ci.yml`, `Makefile`, `PRINCIPLES.md`, `AGENTS.md`, `TODO.md`, `CONTRIBUTING.md`, `.prettierrc`, `.gitignore` e `VERSION`.
+    - Ajuste apenas as diretrizes, alvos e arquivos fontes específicos da linguagem e do negócio conforme os perfis abaixo.
+
+2. **Plano B (Fallback Autônomo / Sem `Environment` no host):**
+    - Caso o host seja uma máquina remota, VPS, container efêmero ou ambiente sem o clone de desenvolvimento `Environment`, gere a estrutura do zero utilizando as receitas canônicas embutidas nesta skill.
+
+### 🔄 Invariante Dev-to-Prod (Git Push -> Git Pull)
+
+- **Origem Canônica:** Toda modificação em templates, componentes (`Shell`, `Profile`, `Setup`, `Vault`, editores) ou skills é realizada exclusivamente no clone de desenvolvimento (`~/Documents/Environment/...`).
+- **Propagação Soberana:** O tráfego de atualizações para clones de produção (`/usr/local/share/shell`, `~/.local/share/profile`, `~/.emacs.d`, etc.) é feito **estritamente via `git push` no dev e `git pull` na produção** (via `update-all`, `upsh`, etc.).
+- **Proibição de `cp` Manual:** Não use `cp` para transferir arquivos diretamente da bancada de desenvolvimento para os clones de produção; isso suja a árvore de trabalho (`uncommitted changes`) e quebra o `git pull` automatizado.
+- **Exceção Única para Edição Direta:** Só é admitido editar arquivos diretamente nos clones de runtime se o repositório canônico `Environment` não existir na máquina hospedeira.
+
+---
+
 ## 🏗️ Perfis de Repositórios Suportados
 
 Ao solicitar a criação de um novo repositório, o agente deve selecionar o perfil adequado:

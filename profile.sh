@@ -114,7 +114,8 @@ _profile_item() {
 _profile_sync() {
 	_dry_run=0 _backup=0 _mode="sync" _timestamp="$(date +%Y%m%d%H%M%S)" _os_type="$(uname -s)"
 	_cfg="${XDG_CONFIG_HOME:-${HOME}/.config}" _data="${XDG_DATA_HOME:-${HOME}/.local/share}"
-	_is_win=0 _win_home="${USERPROFILE:-${HOME}}" _win_app="${APPDATA:-${_win_home}/AppData/Roaming}" _win_local="${LOCALAPPDATA:-${_win_home}/AppData/Local}"
+	_is_win=0 _win_home="${USERPROFILE:-${HOME}}"
+	_win_app="${APPDATA:-${_win_home}/AppData/Roaming}" _win_local="${LOCALAPPDATA:-${_win_home}/AppData/Local}"
 
 	case "${_os_type}" in
 		MINGW*|MSYS*|CYGWIN*|*_NT*)
