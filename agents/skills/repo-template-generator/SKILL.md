@@ -28,7 +28,7 @@ Ao criar ou inicializar um novo repositório, o agente deve seguir a seguinte hi
 
 - **Origem Canônica:** Toda modificação em templates, componentes (`Shell`, `Profile`, `Setup`, `Vault`, editores) ou skills é realizada exclusivamente no clone de desenvolvimento (`~/Documents/Environment/...`).
 - **Propagação Soberana:** O tráfego de atualizações para clones de produção (`/usr/local/share/shell`, `~/.local/share/profile`, `~/.emacs.d`, etc.) é feito **estritamente via `git push` no dev e `git pull` na produção** (via `update-all`, `upsh`, etc.).
-- **Proibição de `cp` Manual:** Não use `cp` para transferir arquivos diretamente da bancada de desenvolvimento para os clones de produção; isso suja a árvore de trabalho (`uncommitted changes`) e quebra o `git pull` automatizado.
+- **Zero `cp` Manual para Produção:** Evite transferir arquivos manualmente da bancada para os clones de produção via `cp`. Utilize estritamente o ciclo `git push` no dev e `git pull` na produção para manter a árvore de trabalho limpa.
 - **Exceção Única para Edição Direta:** Só é admitido editar arquivos diretamente nos clones de runtime se o repositório canônico `Environment` não existir na máquina hospedeira.
 
 ---
