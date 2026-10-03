@@ -241,37 +241,19 @@ function Browser-Search {
 ### EMISSAO E UI SEMANTICA
 ### ================================
 
-function _ui_emit([string]$prefix, [ConsoleColor]$color, [string]$msg, [switch]$isErr) {
-	[Console]::ForegroundColor = $color
-	if ($isErr) {
-		[Console]::Error.Write($prefix)
-		[Console]::ResetColor()
-		[Console]::Error.WriteLine(" $msg")
-	} else {
-		[Console]::Write($prefix)
-		[Console]::ResetColor()
-		[Console]::WriteLine(" $msg")
-	}
-}
+$script:_esc = [char]27
 
-function _ui_step([string]$msg) { _ui_emit "==>"   Cyan    $msg }
-function _ui_sub([string]$msg)  { _ui_emit "  ↳"   Blue    $msg }
-function _ui_ok([string]$msg)   { _ui_emit "  ✅"  Green   $msg }
-function _ui_warn([string]$msg) { _ui_emit "  ⚠️ " Yellow  $msg }
-function _ui_err([string]$msg)  { _ui_emit "  ❌"  Red     $msg -isErr }
-function _ui_info([string]$msg) { _ui_emit "  ℹ️ " Magenta $msg }
+function _ui_step([string]$msg) { Write-Host "$script:_esc[1;36m==>$script:_esc[0m $msg" }
+function _ui_sub([string]$msg)  { Write-Host "$script:_esc[1;34m  ↳$script:_esc[0m $msg" }
+function _ui_ok([string]$msg)   { Write-Host "$script:_esc[1;32m  ✅$script:_esc[0m $msg" }
+function _ui_warn([string]$msg) { Write-Host "$script:_esc[1;33m  ⚠️ $script:_esc[0m $msg" }
+function _ui_err([string]$msg)  { [Console]::Error.WriteLine("$script:_esc[1;31m  ❌$script:_esc[0m $msg") }
+function _ui_info([string]$msg) { Write-Host "$script:_esc[1;35m  ℹ️ $script:_esc[0m $msg" }
 
-function _ui_banner([string]$title) {
-	$sep = "=" * 64
-	[Console]::WriteLine()
-	[Console]::ForegroundColor = [ConsoleColor]::Cyan
-	[Console]::WriteLine($sep)
-	[Console]::ForegroundColor = [ConsoleColor]::White
-	[Console]::WriteLine("  $title")
-	[Console]::ForegroundColor = [ConsoleColor]::Cyan
-	[Console]::WriteLine($sep)
-	[Console]::ResetColor()
-	[Console]::WriteLine()
+function _ui_banner([string]$title) {$sep = "=" * 64
+	Write-Host "`n$script:_esc[1;36m$sep$script:_esc[0m"
+	Write-Host "$script:_esc[1m  $title$script:_esc[0m"
+	Write-Host "$script:_esc[1;36m$sep$script:_esc[0m`n"
 }
 
 ### ================================
