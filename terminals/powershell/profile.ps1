@@ -241,45 +241,37 @@ function Browser-Search {
 ### EMISSAO E UI SEMANTICA
 ### ================================
 
-function _ui_step([string]$msg) {
-	Write-Host "==>" -ForegroundColor Cyan -NoNewline
-	Write-Host " $msg"
+function _ui_emit([string]$prefix, [ConsoleColor]$color, [string]$msg, [switch]$isErr) {
+	[Console]::ForegroundColor = $color
+	if ($isErr) {
+		[Console]::Error.Write($prefix)
+		[Console]::ResetColor()
+		[Console]::Error.WriteLine(" $msg")
+	} else {
+		[Console]::Write($prefix)
+		[Console]::ResetColor()
+		[Console]::WriteLine(" $msg")
+	}
 }
 
-function _ui_sub([string]$msg) {
-	Write-Host "  ↳" -ForegroundColor Blue -NoNewline
-	Write-Host " $msg"
-}
-
-function _ui_ok([string]$msg) {
-	Write-Host "  ✅" -ForegroundColor Green -NoNewline
-	Write-Host " $msg"
-}
-
-function _ui_warn([string]$msg) {
-	Write-Host "  ⚠️ " -ForegroundColor Yellow -NoNewline
-	Write-Host " $msg"
-}
-
-function _ui_err([string]$msg) {
-	[Console]::ForegroundColor = [ConsoleColor]::Red
-	[Console]::Error.Write("  ❌")
-	[Console]::ResetColor()
-	[Console]::Error.WriteLine(" $msg")
-}
-
-function _ui_info([string]$msg) {
-	Write-Host "  ℹ️ " -ForegroundColor Magenta -NoNewline
-	Write-Host " $msg"
-}
+function _ui_step([string]$msg) { _ui_emit "==>"   Cyan    $msg }
+function _ui_sub([string]$msg)  { _ui_emit "  ↳"   Blue    $msg }
+function _ui_ok([string]$msg)   { _ui_emit "  ✅"  Green   $msg }
+function _ui_warn([string]$msg) { _ui_emit "  ⚠️ " Yellow  $msg }
+function _ui_err([string]$msg)  { _ui_emit "  ❌"  Red     $msg -isErr }
+function _ui_info([string]$msg) { _ui_emit "  ℹ️ " Magenta $msg }
 
 function _ui_banner([string]$title) {
 	$sep = "=" * 64
-	Write-Host ""
-	Write-Host $sep -ForegroundColor Cyan
-	Write-Host "  $title" -ForegroundColor White
-	Write-Host $sep -ForegroundColor Cyan
-	Write-Host ""
+	[Console]::WriteLine()
+	[Console]::ForegroundColor = [ConsoleColor]::Cyan
+	[Console]::WriteLine($sep)
+	[Console]::ForegroundColor = [ConsoleColor]::White
+	[Console]::WriteLine("  $title")
+	[Console]::ForegroundColor = [ConsoleColor]::Cyan
+	[Console]::WriteLine($sep)
+	[Console]::ResetColor()
+	[Console]::WriteLine()
 }
 
 ### ================================
