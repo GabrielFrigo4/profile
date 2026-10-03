@@ -6,6 +6,10 @@
 zhuangtongfa.material-theme
 pkief.material-icon-theme
 
+# --- Graphics, Shaders & GPU ---
+antaalt.shader-validator
+teaqu.shader-studio
+
 # --- Formatters & Linters ---
 charliermarsh.ruff
 esbenp.prettier-vscode
