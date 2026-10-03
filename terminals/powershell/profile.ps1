@@ -241,87 +241,18 @@ function Browser-Search {
 ### EMISSAO E UI SEMANTICA
 ### ================================
 
-$script:_ui_esc           = [char]27
-$script:_ui_color_reset   = "$([char]27)[0m"
-$script:_ui_color_bold    = "$([char]27)[1m"
-$script:_ui_color_cyan    = "$([char]27)[1;36m"
-$script:_ui_color_green   = "$([char]27)[1;32m"
-$script:_ui_color_yellow  = "$([char]27)[1;33m"
-$script:_ui_color_red     = "$([char]27)[1;31m"
-$script:_ui_color_blue    = "$([char]27)[1;34m"
-$script:_ui_color_magenta = "$([char]27)[1;35m"
-
-function _ui_has_color([int]$fd = 1) {
-	if ($fd -eq 2) {
-		if ([Console]::IsErrorRedirected) { return $false }
-	} else {
-		if ([Console]::IsOutputRedirected) { return $false }
-	}
-	if ($env:TERM -eq "dumb") { return $false }
-	return $true
-}
-
-function _ui_step([string]$msg) {
-	if (_ui_has_color 1) {
-		Write-Host "${script:_ui_color_cyan}==>${script:_ui_color_reset} $msg"
-	} else {
-		Write-Host "==> $msg"
-	}
-}
-
-function _ui_sub([string]$msg) {
-	if (_ui_has_color 1) {
-		Write-Host "${script:_ui_color_blue}  ↳${script:_ui_color_reset} $msg"
-	} else {
-		Write-Host "  -> $msg"
-	}
-}
-
-function _ui_ok([string]$msg) {
-	if (_ui_has_color 1) {
-		Write-Host "${script:_ui_color_green}  ✅${script:_ui_color_reset} $msg"
-	} else {
-		Write-Host "  OK $msg"
-	}
-}
-
-function _ui_warn([string]$msg) {
-	if (_ui_has_color 1) {
-		Write-Host "${script:_ui_color_yellow}  ⚠️ ${script:_ui_color_reset} $msg"
-	} else {
-		Write-Host "  WARN $msg"
-	}
-}
-
-function _ui_err([string]$msg) {
-	if (_ui_has_color 2) {
-		[Console]::Error.WriteLine("${script:_ui_color_red}  ❌${script:_ui_color_reset} $msg")
-	} else {
-		[Console]::Error.WriteLine("  FAIL $msg")
-	}
-}
-
-function _ui_info([string]$msg) {
-	if (_ui_has_color 1) {
-		Write-Host "${script:_ui_color_magenta}  ℹ️ ${script:_ui_color_reset} $msg"
-	} else {
-		Write-Host "  INFO $msg"
-	}
-}
+function _ui_step([string]$msg) { Write-Host "`e[1;36m==>`e[0m $msg" }
+function _ui_sub([string]$msg)  { Write-Host "`e[1;34m  ↳`e[0m $msg" }
+function _ui_ok([string]$msg)   { Write-Host "`e[1;32m  ✅`e[0m $msg" }
+function _ui_warn([string]$msg) { Write-Host "`e[1;33m  ⚠️ `e[0m $msg" }
+function _ui_err([string]$msg)  { [Console]::Error.WriteLine("`e[1;31m  ❌`e[0m $msg") }
+function _ui_info([string]$msg) { Write-Host "`e[1;35m  ℹ️ `e[0m $msg" }
 
 function _ui_banner([string]$title) {
 	$sep = "=" * 64
-	Write-Host ""
-	if (_ui_has_color 1) {
-		Write-Host "${script:_ui_color_bold}${script:_ui_color_cyan}${sep}${script:_ui_color_reset}"
-		Write-Host "${script:_ui_color_bold}  ${title}${script:_ui_color_reset}"
-		Write-Host "${script:_ui_color_bold}${script:_ui_color_cyan}${sep}${script:_ui_color_reset}"
-	} else {
-		Write-Host $sep
-		Write-Host "  $title"
-		Write-Host $sep
-	}
-	Write-Host ""
+	Write-Host "`n`e[1;36m$sep`e[0m"
+	Write-Host "`e[1m  $title`e[0m"
+	Write-Host "`e[1;36m$sep`e[0m`n"
 }
 
 ### ================================
