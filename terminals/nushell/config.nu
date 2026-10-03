@@ -216,72 +216,23 @@ alias oz = zed .;
 ### EMISSAO E UI SEMANTICA
 ### ================================
 
-def _ui_has_color [is_err: bool = false] {
-	let is_term = if $is_err { is-terminal -e } else { is-terminal -o }
-	let term = ($env.TERM? | default "")
-	$is_term and $term != "dumb" and ($term != "")
-}
+# ----------------------------------------------------------------
+# Utility: Universal Shell UI & Emission Helper (Nushell)
+# ----------------------------------------------------------------
 
-def _ui_step [msg: string] {
-	if (_ui_has_color) {
-		print $"(ansi cyan_bold)==>(ansi reset) ($msg)"
-	} else {
-		print $"==> ($msg)"
-	}
-}
-
-def _ui_sub [msg: string] {
-	if (_ui_has_color) {
-		print $"(ansi blue_bold)  ↳(ansi reset) ($msg)"
-	} else {
-		print $"  -> ($msg)"
-	}
-}
-
-def _ui_ok [msg: string] {
-	if (_ui_has_color) {
-		print $"(ansi green_bold)  ✅(ansi reset) ($msg)"
-	} else {
-		print $"  OK ($msg)"
-	}
-}
-
-def _ui_warn [msg: string] {
-	if (_ui_has_color) {
-		print $"(ansi yellow_bold)  ⚠️ (ansi reset) ($msg)"
-	} else {
-		print $"  WARN ($msg)"
-	}
-}
-
-def _ui_err [msg: string] {
-	if (_ui_has_color true) {
-		print -e $"(ansi red_bold)  ❌(ansi reset) ($msg)"
-	} else {
-		print -e $"  FAIL ($msg)"
-	}
-}
-
-def _ui_info [msg: string] {
-	if (_ui_has_color) {
-		print $"(ansi magenta_bold)  ℹ️ (ansi reset) ($msg)"
-	} else {
-		print $"  INFO ($msg)"
-	}
-}
+def _ui_step [msg: string] { print $"(ansi cyan_bold)==>(ansi reset) ($msg)" }
+def _ui_sub  [msg: string] { print $"(ansi blue_bold)  ↳(ansi reset) ($msg)" }
+def _ui_ok   [msg: string] { print $"(ansi green_bold)  ✅(ansi reset) ($msg)" }
+def _ui_warn [msg: string] { print $"(ansi yellow_bold)  ⚠️ (ansi reset) ($msg)" }
+def _ui_err  [msg: string] { print -e $"(ansi red_bold)  ❌(ansi reset) ($msg)" }
+def _ui_info [msg: string] { print $"(ansi magenta_bold)  ℹ️ (ansi reset) ($msg)" }
 
 def _ui_banner [title: string] {
 	let sep = "================================================================"
 	print ""
-	if (_ui_has_color) {
-		print $"(ansi cyan_bold)($sep)(ansi reset)"
-		print $"(ansi bold)  ($title)(ansi reset)"
-		print $"(ansi cyan_bold)($sep)(ansi reset)"
-	} else {
-		print $sep
-		print $"  ($title)"
-		print $sep
-	}
+	print $"(ansi cyan_bold)($sep)(ansi reset)"
+	print $"(ansi bold)  ($title)(ansi reset)"
+	print $"(ansi cyan_bold)($sep)(ansi reset)"
 	print ""
 }
 
