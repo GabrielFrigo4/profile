@@ -124,6 +124,16 @@ _profile_sync() {
 				_win_home="$(cygpath -u "${USERPROFILE:-/c/Users/${USER}}")"
 				_win_app="$(cygpath -u "${APPDATA:-${_win_home}/AppData/Roaming}")"
 				_win_local="$(cygpath -u "${LOCALAPPDATA:-${_win_home}/AppData/Local}")"
+				_od_win="${OneDriveConsumer:-${OneDrive:-${USERPROFILE}\\OneDrive}}"
+				_win_onedrive="$(cygpath -u "${_od_win}")"
+			else
+				_win_onedrive="${_win_home}/OneDrive"
+			fi
+
+			if [ -d "${_win_onedrive}/Documentos" ]; then
+				_win_docs="${_win_onedrive}/Documentos"
+			else
+				_win_docs="${_win_onedrive}/Documents"
 			fi
 			;;
 	esac
@@ -180,8 +190,8 @@ _profile_sync() {
 		_sync "terminals/cmd/profile.lua" "${_win_local}/clink/profile.lua"
 		_sync "terminals/cmd/profile.cmd" "${_win_local}/clink/profile.cmd"
 		_sync "terminals/cmd/profile.cmd" "${_win_home}/profile.cmd"
-		_sync "terminals/powershell/profile.ps1" "${_win_home}/Documents/PowerShell/profile.ps1"
-		_sync "terminals/powershell/Microsoft.PowerShell_profile.ps1" "${_win_home}/Documents/PowerShell/Microsoft.PowerShell_profile.ps1"
+		_sync "terminals/powershell/profile.ps1" "${_win_docs}/PowerShell/profile.ps1"
+		_sync "terminals/powershell/Microsoft.PowerShell_profile.ps1" "${_win_docs}/PowerShell/Microsoft.PowerShell_profile.ps1"
 		_sync "terminals/nushell/config.nu" "${_win_app}/nushell/config.nu"
 		_sync "terminals/nushell/env.nu" "${_win_app}/nushell/env.nu"
 	else
