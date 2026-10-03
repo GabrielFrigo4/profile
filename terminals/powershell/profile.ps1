@@ -241,19 +241,45 @@ function Browser-Search {
 ### EMISSAO E UI SEMANTICA
 ### ================================
 
-function _ui_step([string]$msg) { Write-Host "$([char]27)[1;36m==>$([char]27)[0m$msg" }
-function _ui_sub([string]$msg)  { Write-Host "$([char]27)[1;34m  ↳$([char]27)[0m$msg" }
-function _ui_ok([string]$msg)   { Write-Host "$([char]27)[1;32m  ✅$([char]27)[0m$msg" }
-function _ui_warn([string]$msg) { Write-Host "$([char]27)[1;33m  ⚠️ $([char]27)[0m$msg" }
-function _ui_err([string]$msg)  { [Console]::Error.WriteLine("$([char]27)[1;31m  ❌$([char]27)[0m$msg") }
-function _ui_info([string]$msg) { Write-Host "$([char]27)[1;35m  ℹ️ $([char]27)[0m$msg" }
+function _ui_step([string]$msg) {
+	Write-Host "==>" -ForegroundColor Cyan -NoNewline
+	Write-Host " $msg"
+}
+
+function _ui_sub([string]$msg) {
+	Write-Host "  ↳" -ForegroundColor Blue -NoNewline
+	Write-Host " $msg"
+}
+
+function _ui_ok([string]$msg) {
+	Write-Host "  ✅" -ForegroundColor Green -NoNewline
+	Write-Host " $msg"
+}
+
+function _ui_warn([string]$msg) {
+	Write-Host "  ⚠️ " -ForegroundColor Yellow -NoNewline
+	Write-Host " $msg"
+}
+
+function _ui_err([string]$msg) {
+	[Console]::ForegroundColor = [ConsoleColor]::Red
+	[Console]::Error.Write("  ❌")
+	[Console]::ResetColor()
+	[Console]::Error.WriteLine(" $msg")
+}
+
+function _ui_info([string]$msg) {
+	Write-Host "  ℹ️ " -ForegroundColor Magenta -NoNewline
+	Write-Host " $msg"
+}
 
 function _ui_banner([string]$title) {
 	$sep = "=" * 64
-	$esc = [char]27
-	Write-Host "`n$esc[1;36m$sep$esc[0m"
-	Write-Host "$esc[1m  $title$esc[0m"
-	Write-Host "$esc[1;36m$sep$esc[0m`n"
+	Write-Host ""
+	Write-Host $sep -ForegroundColor Cyan
+	Write-Host "  $title" -ForegroundColor White
+	Write-Host $sep -ForegroundColor Cyan
+	Write-Host ""
 }
 
 ### ================================

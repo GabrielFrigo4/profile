@@ -231,7 +231,7 @@ def _ui_banner [title: string] {
 	let sep = "================================================================"
 	print ""
 	print $"(ansi cyan_bold)($sep)(ansi reset)"
-	print $"(char esc)[1m  ($title)(ansi reset)"
+	print $"(char escape)[1m  ($title)(ansi reset)"
 	print $"(ansi cyan_bold)($sep)(ansi reset)"
 	print ""
 }
