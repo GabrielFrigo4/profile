@@ -241,19 +241,17 @@ function Browser-Search {
 ### EMISSAO E UI SEMANTICA
 ### ================================
 
-$script:_esc = [char]27
-
-function _ui_step([string]$msg) { Write-Host "$script:_esc[1;36m==>$script:_esc[0m $msg" }
-function _ui_sub([string]$msg)  { Write-Host "$script:_esc[1;34m  ↳$script:_esc[0m $msg" }
-function _ui_ok([string]$msg)   { Write-Host "$script:_esc[1;32m  ✅$script:_esc[0m $msg" }
-function _ui_warn([string]$msg) { Write-Host "$script:_esc[1;33m  ⚠️ $script:_esc[0m $msg" }
-function _ui_err([string]$msg)  { [Console]::Error.WriteLine("$script:_esc[1;31m  ❌$script:_esc[0m $msg") }
-function _ui_info([string]$msg) { Write-Host "$script:_esc[1;35m  ℹ️ $script:_esc[0m $msg" }
+function _ui_step([string]$msg) { Write-Host "$([char]27)[1;36m==>$([char]27)[0m $msg" }
+function _ui_sub([string]$msg)  { Write-Host "$([char]27)[1;34m  ↳$([char]27)[0m $msg" }
+function _ui_ok([string]$msg)   { Write-Host "$([char]27)[1;32m  ✅$([char]27)[0m $msg" }
+function _ui_warn([string]$msg) { Write-Host "$([char]27)[1;33m  ⚠️ $([char]27)[0m $msg" }
+function _ui_err([string]$msg)  { [Console]::Error.WriteLine("$([char]27)[1;31m  ❌$([char]27)[0m $msg") }
+function _ui_info([string]$msg) { Write-Host "$([char]27)[1;35m  ℹ️ $([char]27)[0m $msg" }
 
 function _ui_banner([string]$title) {$sep = "=" * 64
-	Write-Host "`n$script:_esc[1;36m$sep$script:_esc[0m"
-	Write-Host "$script:_esc[1m  $title$script:_esc[0m"
-	Write-Host "$script:_esc[1;36m$sep$script:_esc[0m`n"
+	Write-Host "`n$([char]27)[1;36m$sep$([char]27)[0m"
+	Write-Host "$([char]27)[1m  $title$([char]27)[0m"
+	Write-Host "$([char]27)[1;36m$sep$([char]27)[0m`n"
 }
 
 ### ================================
