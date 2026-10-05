@@ -56,7 +56,7 @@ def main():
     parser.add_argument("--all", action="store_true", help="Exibe todos os scripts auditados")
     args = parser.parse_args()
 
-    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
     fatal_nanos, warning_scripts, regular_scripts = scan_nano_scripts(
         root_dir, hard_min=args.hard_min, soft_min=args.soft_min, whitelist=DEFAULT_WHITELIST)
 

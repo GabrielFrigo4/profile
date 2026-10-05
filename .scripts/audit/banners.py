@@ -82,7 +82,7 @@ def check_file(full_path, repo_root, fix=False):
 
 
 def main():
-    repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
     fix_mode = "--fix" in sys.argv
     args = [a for a in sys.argv[1:] if a != "--fix"]
 

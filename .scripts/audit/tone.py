@@ -163,7 +163,7 @@ def main():
     if args.path:
         target_dir = os.path.abspath(args.path)
     else:
-        target_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        target_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
 
     all_issues, total_files = scan_directory(target_dir)
 

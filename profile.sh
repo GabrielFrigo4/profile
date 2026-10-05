@@ -16,8 +16,8 @@ _self_heal_perms() {
 	fi
 	[ -f "${_PROFILE_ROOT}/profile.sh" ] && chmod 0755 "${_PROFILE_ROOT}/profile.sh" 2> "/dev/null" || true
 	[ -f "${_PROFILE_ROOT}/install.sh" ] && chmod 0755 "${_PROFILE_ROOT}/install.sh" 2> "/dev/null" || true
-	if [ -d "${_PROFILE_ROOT}/audit" ]; then
-		chmod 0755 "${_PROFILE_ROOT}/audit/"*.py 2> "/dev/null" || true
+	if [ -d "${_PROFILE_ROOT}/.scripts/audit" ]; then
+		chmod 0755 "${_PROFILE_ROOT}/.scripts/audit/"*.py 2> "/dev/null" || true
 	fi
 }
 _self_heal_perms
@@ -234,10 +234,10 @@ _profile_test() {
 
 _profile_audit() {
 	_ui_step "Executando auditoria estatica..."
-	if command -v python3 > "/dev/null" 2>&1 && [ -f "${_PROFILE_ROOT}/audit/all.py" ]; then
-		python3 "${_PROFILE_ROOT}/audit/all.py"
+	if command -v python3 > "/dev/null" 2>&1 && [ -f "${_PROFILE_ROOT}/.scripts/audit/all.py" ]; then
+		python3 "${_PROFILE_ROOT}/.scripts/audit/all.py"
 	else
-		_ui_info "Python3 ou audit/all.py ausente; executando apenas teste sintatico."
+		_ui_info "Python3 ou .scripts/audit/all.py ausente; executando apenas teste sintatico."
 		_profile_test
 	fi
 }

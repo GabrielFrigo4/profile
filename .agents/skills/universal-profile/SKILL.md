@@ -46,7 +46,7 @@ Antes de criar qualquer arquivo, posicione-o na pasta correta:
 ```sh
 git diff --check
 
-python3 scripts/audit/all.py
+python3 .scripts/audit/all.py
 
 ./.githooks/pre-commit
 ```

@@ -8,18 +8,18 @@ import subprocess
 import sys
 
 SCRIPTS = [
-    ("monoliths.py", "audit/monoliths.py", "Controle de Monólitos (<= 256 linhas)"),
-    ("nanos.py", "audit/nanos.py", "Controle de Micro-scripts (>= 8 linhas)"),
-    ("syntax.py", "audit/syntax.py", "Sintaxe POSIX, Shebangs & Diretrizes Shell"),
-    ("banners.py", "audit/banners.py", "Geometria de Banners & Réguas (32/64 cols)"),
-    ("links.py", "audit/links.py", "Integridade de Links Relativos (.md)"),
-    ("formats.py", "audit/formats.py", "Validação de Formatos (JSON, YAML, PS1, REG)"),
-    ("skills.py", "audit/skills.py", "Orçamento e Integridade de Skills (17-128-256)"),
-    ("tone.py", "audit/tone.py", "Tom Técnico, Economia de Tokens & Escapes ANSI"),
+    ("monoliths.py", ".scripts/audit/monoliths.py", "Controle de Monólitos (<= 256 linhas)"),
+    ("nanos.py", ".scripts/audit/nanos.py", "Controle de Micro-scripts (>= 8 linhas)"),
+    ("syntax.py", ".scripts/audit/syntax.py", "Sintaxe POSIX, Shebangs & Diretrizes Shell"),
+    ("banners.py", ".scripts/audit/banners.py", "Geometria de Banners & Réguas (32/64 cols)"),
+    ("links.py", ".scripts/audit/links.py", "Integridade de Links Relativos (.md)"),
+    ("formats.py", ".scripts/audit/formats.py", "Validação de Formatos (JSON, YAML, PS1, REG)"),
+    ("skills.py", ".scripts/audit/skills.py", "Orçamento e Integridade de Skills (17-128-256)"),
+    ("tone.py", ".scripts/audit/tone.py", "Tom Técnico, Economia de Tokens & Escapes ANSI"),
 ]
 
 def main():
-    repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
     results = []
     overall_success = True
 

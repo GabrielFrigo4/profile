@@ -45,7 +45,7 @@ hooks:
 ### ================================
 audit:
 	echo "🔍 Executando suíte de auditoria do Profile..."
-	python3 audit/all.py
+	python3 .scripts/audit/all.py
 
 sync:
 	sh profile.sh sync
@@ -68,7 +68,7 @@ prettier:
 
 fix-banners:
 	echo "📏 Normalizando réguas de banners de cabeçalho e seções..."
-	python3 audit/banners.py --fix
+	python3 .scripts/audit/banners.py --fix
 	echo "✅ Réguas de banners normalizadas com sucesso!"
 
 ci: test audit

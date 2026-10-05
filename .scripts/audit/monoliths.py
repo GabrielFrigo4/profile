@@ -62,7 +62,7 @@ def main():
     args = parser.parse_args()
 
     root_dir = os.path.abspath(os.path.join(
-        os.path.dirname(__file__), ".."))
+        os.path.dirname(__file__), "../.."))
     fatal_monoliths, warning_scripts, clean_scripts = scan_repository(
         root_dir, soft_limit=args.soft_limit, hard_limit=args.hard_limit, whitelist=DEFAULT_WHITELIST)
 

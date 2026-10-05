@@ -86,7 +86,7 @@ def main():
     parser.add_argument("--max-lines", type=int, default=256, help="Teto rígido fatal (padrão: 256)")
     args = parser.parse_args()
 
-    repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
     skills_dir = os.path.join(repo_root, "skills")
 
     errors, warnings, clean_skills = scan_skills(

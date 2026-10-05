@@ -6,7 +6,7 @@
 
 ## 🎯 Finalidade
 
-Esta pasta centraliza os scripts de inspeção de código para manter o repositório em conformidade estrita com o [`PRINCIPLES.md`](../PRINCIPLES.md):
+Esta pasta centraliza os scripts de inspeção de código para manter o repositório em conformidade estrita com o [`PRINCIPLES.md`](../../PRINCIPLES.md):
 
 - **Equilíbrio Arquitetural:** Regra de Linhas (Piso < 8 fatal, Aviso <= 16, Sweet Spot 17-128, Aviso 129-255, Teto > 256 fatal).
 - **Legibilidade no GitHub:** Facilitar a consulta direta das receitas no navegador.
@@ -36,18 +36,18 @@ Execute a partir da raiz do repositório:
 ### Suíte Completa (Recomendado)
 
 ```sh
-python3 audit/all.py
+python3 .scripts/audit/all.py
 ```
 
 ### Execuções Individuais
 
 ```sh
-python3 audit/monoliths.py
-python3 audit/nanos.py
-python3 audit/syntax.py
-python3 audit/banners.py
-python3 audit/links.py
-python3 audit/formats.py
-python3 audit/skills.py
-python3 audit/tone.py
+python3 .scripts/audit/monoliths.py
+python3 .scripts/audit/nanos.py
+python3 .scripts/audit/syntax.py
+python3 .scripts/audit/banners.py
+python3 .scripts/audit/links.py
+python3 .scripts/audit/formats.py
+python3 .scripts/audit/skills.py
+python3 .scripts/audit/tone.py
 ```

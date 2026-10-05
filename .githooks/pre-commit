@@ -101,9 +101,9 @@ fi
 ### --------------------------------
 ### Architecture Audit Suite
 ### --------------------------------
-if [ -f "audit/all.py" ] && command -v python3 > "/dev/null" 2>&1; then
+if [ -f ".scripts/audit/all.py" ] && command -v python3 > "/dev/null" 2>&1; then
 	echo "  ↳ Running Python architecture audit suite..."
-	if ! python3 audit/all.py; then
+	if ! python3 .scripts/audit/all.py; then
 		echo "❌ [pre-commit] Architecture audit failed!" >&2
 		exit 1
 	fi

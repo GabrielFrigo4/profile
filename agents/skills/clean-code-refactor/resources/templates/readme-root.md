@@ -32,5 +32,5 @@
 ## 🧪 Auditoria & Quality Gates
 
 ```sh
-python3 scripts/audit/all.py
+python3 .scripts/audit/all.py
 ```

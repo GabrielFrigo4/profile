@@ -25,7 +25,7 @@ No ecossistema do **Quarteto de Produtividade**, o diretório **`agents/`** cent
 | **[Setup](https://github.com/GabrielFrigo4/setup)**                                                            | **O "COMO" (Provisionamento Ativo)**    | Receitas atômicas de automação e scripts de sistema (`.sh`, `.cmd`, `.ps1`).        | **Sistema Operacional** (com privilégios de administrador / root).                          |
 | **[`editors/`](../editors/README.md), [`terminals/`](../terminals/README.md), [`tools/`](../tools/README.md)** | **O "O QUÊ" (Estado Declarativo)**      | Arquivos estáticos puros (`.json`, `.toml`, `.yaml`, `.el`, `.vim`, `.profile`).    | **Usuário & Aplicações** (espaço do `$HOME`, zero sudo).                                    |
 | **`agents/`** _(esta pasta)_                                                                                   | **Inteligência de IA (Rules & Skills)** | Regras globais (`rules/`) e pacotes modulares de procedimentos guiados (`skills/`). | **Agentes de IA** (Antigravity, Gemini, OpenAI, Claude) para execução assistida e autônoma. |
-| **[`audit/`](../audit/README.md)**                                                                             | **Auditoria & Quality Gates**           | Validação estática de integridade, links e formatos (`audit/`).                     | **Desenvolvedor** (execução pontual em linha de comando).                                   |
+| **[`.scripts/audit/`](../.scripts/audit/README.md)**                                                           | **Auditoria & Quality Gates**           | Validação estática de integridade, links e formatos (`audit/`).                     | **Desenvolvedor** (execução pontual em linha de comando).                                   |
 | **[`docs/`](../docs/README.md)**                                                                               | **Documentação Humana**                 | Filosofia, arquitetura, manuais de SO e guias técnicos.                             | **Desenvolvedor** (leitura técnica e arquitetural).                                         |
 
 ---
@@ -240,7 +240,7 @@ Como o formato segue o padrão aberto Markdown + YAML Frontmatter:
 Conforme estabelecido em [`../PRINCIPLES.md`](../PRINCIPLES.md):
 
 1. **Progressive Disclosure (Regra da Economia):** Mantenha o `SKILL.md` conciso (focado no workflow). Manuais extensos devem ficar em `references/`, permitindo que o modelo só consuma tokens quando estritamente necessário.
-2. **Permissões Canônicas em 4 Dígitos:** Documentos (`.md`, `.yaml`, `.json`) utilizam `chmod 0644`. Scripts executáveis em `scripts/` utilizam `chmod 0755`.
+2. **Permissões Canônicas em 4 Dígitos:** Documentos (`.md`, `.yaml`, `.json`) utilizam `chmod 0644`. Scripts executáveis em `.scripts/` utilizam `chmod 0755`.
 3. **Idempotência & Verificação:** Toda skill deve instruir a IA a validar o estado atual antes de aplicar alterações e verificar o resultado após a conclusão.
 4. **Desacoplamento Absoluto:** Cada skill deve ser autocontida, sem dependências ocultas de outras skills.
 5. **Orçamento de Linhas (Regra 17 – 128 – 256):** Toda skill deve ter $\ge 17$ linhas, mirar no _sweet spot_ executivo de $17\text{ a } 128$ linhas, admitir $129\text{ a } 256$ linhas apenas para matrizes densas e respeitar o limite máximo fatal de 256 linhas (monólito).

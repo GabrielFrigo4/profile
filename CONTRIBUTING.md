@@ -35,7 +35,7 @@ make audit
     - O mecanismo de aplicação (`profile.sh`) opera com idempotência estrita sem privilégios administrativos (`$HOME`).
 
 2. **Invariante de Clonagem "Out-of-the-Box" (Zero-Tweaks Invariant):**
-    - Scripts executáveis (`profile.sh`, `install.sh`, `audit/*.py`) e ganchos Git devem ter modo canônico `100755` no Git Index.
+    - Scripts executáveis (`profile.sh`, `install.sh`, `.scripts/audit/*.py`) e ganchos Git devem ter modo canônico `100755` no Git Index.
     - Dotfiles, templates, arquivos de configuração (`.json`, `.toml`, `.yaml`) e skills devem ter modo `100644`.
     - Se cometer um erro de modo no Git Index, corrija com:
         ```sh

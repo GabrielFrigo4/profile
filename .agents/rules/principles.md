@@ -56,4 +56,4 @@ Antes de concluir qualquer alteração no Profile:
 
 1. `git diff --check` (deve retornar 0 erros).
 2. `./.githooks/pre-commit` (deve passar 100%).
-3. `python3 scripts/audit/all.py` (deve aprovar 100% dos testes).
+3. `python3 .scripts/audit/all.py` (deve aprovar 100% dos testes).

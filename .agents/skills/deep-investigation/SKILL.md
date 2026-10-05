@@ -45,4 +45,4 @@ Nível 3: Release Notes e Commit Logs Upstream
 
 1. **Isolar o Erro:** Capture a linha e a chave exata rejeitada pelo parser ou pelo editor.
 2. **Validar contra o Schema Oficial:** Confirme se o tipo da propriedade (boolean, string, array) corresponde à versão ativa da ferramenta.
-3. **Testar Sintaxe:** Valide com `python3 scripts/audit/formats.py` e garanta conformidade estrita.
+3. **Testar Sintaxe:** Valide com `python3 .scripts/audit/formats.py` e garanta conformidade estrita.

@@ -80,7 +80,7 @@ Diferente do **Setup** (que exige `sudo`/`root` para instalar pacotes no sistema
 - **[`tools/`](tools/README.md)** — **Formatadores & Linters Globais:** `.clang-format`, `.prettierrc`, `.stylua.toml`, `clangd.yaml`.
 - **[`browsers/`](browsers/README.md)** — **Navegadores:** Ajustes e perfis de navegadores (Firefox).
 - **[`agents/`](agents/README.md)** — **Artefatos de IA (Skills & Rules):** Catálogo de skills cognitivas e regras canônicas transversais para Google Antigravity/Gemini com sincronização automatizada.
-- **[`audit/`](audit/README.md)** — Suíte de validação estática de integridade, formatos e links.
+- **[`.scripts/audit/`](.scripts/audit/README.md)** — Suíte de validação estática de integridade, formatos e links.
 - **[`docs/`](docs/README.md)** — Documentação técnica completa da estação de trabalho e arquitetura.
 
 ---

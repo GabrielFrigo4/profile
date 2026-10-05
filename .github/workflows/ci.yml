@@ -33,7 +33,7 @@ jobs:
 
             - name: Run Profile Audit Suite
               run: |
-                  python3 audit/all.py
+                  python3 .scripts/audit/all.py
 
             - name: Validate Shell Script Syntax
               run: |
