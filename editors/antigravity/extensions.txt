@@ -6,21 +6,31 @@
 zhuangtongfa.material-theme
 pkief.material-icon-theme
 
+# --- Graphics, Shaders & GPU ---
+antaalt.shader-validator
+teaqu.shader-studio
+
 # --- Formatters & Linters ---
+charliermarsh.ruff
 esbenp.prettier-vscode
 xaver.clang-format
 llvm-vs-code-extensions.vscode-clangd
-ms-python.autopep8
 sumneko.lua
 redhat.vscode-xml
 
-# --- Language Servers & Toolchains ---
-ms-python.python
+# --- Language Servers, Toolchains & Debugging ---
 golang.go
 ziglang.vscode-zig
+ms-vscode.cpp-devtools
 ms-vscode.cmake-tools
 twxs.cmake
 ms-azuretools.vscode-containers
+
+# --- Python Ecosystem ---
+ms-python.python
+ms-python.vscode-pylance
+ms-python.debugpy
+ms-python.vscode-python-envs
 
 # --- Syntax Highlighting & Assembly ---
 dan-c-underwood.arm

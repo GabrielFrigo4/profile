@@ -83,7 +83,15 @@
 	"[c]": { "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd" },
 	"[cpp]": { "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd" },
 	"[go]": { "editor.defaultFormatter": "golang.go" },
-	"[python]": { "editor.defaultFormatter": "ms-python.autopep8" },
+	"[python]": {
+		"editor.defaultFormatter": "charliermarsh.ruff",
+		"editor.insertSpaces": true,
+		"editor.tabSize": 4,
+		"editor.codeActionsOnSave": {
+			"source.organizeImports": "explicit",
+			"source.fixAll": "explicit"
+		}
+	},
 	"[lua]": { "editor.defaultFormatter": "sumneko.lua" },
 	"[xml]": { "editor.defaultFormatter": "redhat.vscode-xml" },
 	"[jsonc]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
@@ -97,6 +105,7 @@
 	// LSP (LANGUAGE SERVERS)
 	// ==========================================
 	"python.languageServer": "Pylance",
+	"ruff.enable": true,
 
 	// ==========================================
 	// FERRAMENTAS
@@ -115,4 +124,5 @@
 	// ==========================================
 	"antigravity.marketplaceGalleryItemURL": "https://marketplace.visualstudio.com/items",
 	"antigravity.marketplaceExtensionGalleryServiceURL": "https://marketplace.visualstudio.com/_apis/public/gallery",
+	"explorer.confirmPasteNative": false
 }
