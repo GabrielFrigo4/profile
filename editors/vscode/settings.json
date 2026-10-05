@@ -42,22 +42,65 @@
 	"git.confirmSync": false,
 
 	// ==========================================
-	// TERMINAL
+	// DEFAULTS
+	// ==========================================
+	"terminal.integrated.defaultProfile.windows": "pwsh",
+	"terminal.integrated.defaultProfile.linux": "zsh",
+	"terminal.integrated.defaultProfile.osx": "zsh",
+
+	// ==========================================
+	// WINDOWS
 	// ==========================================
 	"terminal.integrated.profiles.windows": {
-		"MSYS2 UCRT64": {
+		"PowerShell": {
+			"path": "powershell.exe",
+		},
+		"Nushell": {
+			"path": "nu.exe",
+		},
+		"pwsh": {
+			"path": "pwsh.exe",
+		},
+		"cmd": {
 			"path": "cmd.exe",
-			"args": [
-				"/c",
-				"C:\\msys64\\msys2_shell.cmd -defterm -here -no-start -ucrt64 -shell bash",
-			],
+		},
+		"MSYS2 UCRT64": {
+			"path": "C:\\msys64\\msys2_shell.cmd",
+			"args": ["-defterm", "-here", "-no-start", "-ucrt64", "-shell", "zsh"],
+		},
+		"MSYS2 CLANG64": {
+			"path": "C:\\msys64\\msys2_shell.cmd",
+			"args": ["-defterm", "-here", "-no-start", "-clang64", "-shell", "zsh"],
+		},
+		"MSYS2 CLANGARM64": {
+			"path": "C:\\msys64\\msys2_shell.cmd",
+			"args": ["-defterm", "-here", "-no-start", "-clangarm64", "-shell", "zsh"],
+		},
+		"MSYS2 MINGW64": {
+			"path": "C:\\msys64\\msys2_shell.cmd",
+			"args": ["-defterm", "-here", "-no-start", "-mingw64", "-shell", "zsh"],
 		},
 		"MSYS2 MSYS": {
-			"path": "cmd.exe",
-			"args": [
-				"/c",
-				"C:\\msys64\\msys2_shell.cmd -defterm -here -no-start -msys -shell bash",
-			],
+			"path": "C:\\msys64\\msys2_shell.cmd",
+			"args": ["-defterm", "-here", "-no-start", "-msys", "-shell", "zsh"],
+		},
+	},
+
+	// ==========================================
+	// LINUX & BSD
+	// ==========================================
+	"terminal.integrated.profiles.linux": {
+		"zsh": {
+			"path": "zsh",
+			"args": ["-l"],
+		},
+		"bash": {
+			"path": "bash",
+			"args": ["-l"],
+		},
+		"sh": {
+			"path": "sh",
+			"args": ["-l"],
 		},
 	},
 
@@ -139,5 +182,5 @@
 	// ==========================================
 	"github.copilot.enable": { "*": false },
 	"editor.inlineSuggest.enabled": false,
-	"explorer.confirmPasteNative": false
+	"explorer.confirmPasteNative": false,
 }
