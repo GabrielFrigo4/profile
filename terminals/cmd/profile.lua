@@ -810,26 +810,95 @@ local function cmd_upgit(args)
 		return
 	end
 
-	local count = 0
+	local repos = {}
 	for line in pipe:lines() do
 		local repo = trim(line)
 		if repo ~= "" and is_git_repo(repo) then
-			count = count + 1
-			_ui_sub("Atualizando " .. repo .. "...")
-			local ok = os.execute([[git -C "]] .. repo .. [[" pull --ff-only 2>nul]])
-			if not ok or ok ~= 0 then
-				os.execute([[git -C "]] .. repo .. [[" pull]])
-			end
+			table.insert(repos, repo)
 		end
 	end
 	pipe:close()
 
-	if count == 0 then
-		_ui_info("Nenhum repositório Git encontrado em " .. root .. " (profundidade máxima de busca).")
-	else
-		print("")
-		_ui_ok("Varredura e atualização de repositórios Git concluída!")
+	local function depth(p)
+		local _, c = p:gsub([[\]], "")
+		return c
 	end
+
+	table.sort(repos, function(a, b)
+		return depth(a) < depth(b)
+	end)
+
+	if #repos == 0 then
+		_ui_info("Nenhum repositório Git encontrado em " .. root .. " (profundidade máxima de busca).")
+		return
+	end
+
+	for _, repo in ipairs(repos) do
+		_ui_sub("Atualizando " .. repo .. "...")
+		local ok = os.execute([[git -C "]] .. repo .. [[" pull --ff-only 2>nul]])
+		if not ok or ok ~= 0 then
+			os.execute([[git -C "]] .. repo .. [[" pull]])
+		end
+	end
+	print("")
+	_ui_ok("Varredura e atualização de repositórios Git concluída!")
+end
+
+local function cmd_psgit(args)
+	local root = args and trim(args) or ""
+	if root == "" then root = "." end
+
+	_ui_step("Buscando e enviando repositórios Git em: " .. root)
+	print("")
+
+	local pipe = io.popen([[for /r "]] .. root .. [[" %d in (.) do @if exist "%d\.git" echo %~fd]])
+	if not pipe then
+		_ui_err("Falha ao iniciar varredura Git.")
+		return
+	end
+
+	local repos = {}
+	for line in pipe:lines() do
+		local repo = trim(line)
+		if repo ~= "" and is_git_repo(repo) then
+			table.insert(repos, repo)
+		end
+	end
+	pipe:close()
+
+	local function depth(p)
+		local _, c = p:gsub([[\]], "")
+		return c
+	end
+
+	table.sort(repos, function(a, b)
+		return depth(a) > depth(b)
+	end)
+
+	if #repos == 0 then
+		_ui_info("Nenhum repositório Git encontrado em " .. root .. ".")
+		return
+	end
+
+	for _, repo in ipairs(repos) do
+		local check = io.popen([[git -C "]] .. repo .. [[" cherry -v 2>nul]])
+		local unpushed = check and check:read("*a") or ""
+		if check then check:close() end
+
+		if trim(unpushed) ~= "" then
+			_ui_sub("Enviando " .. repo .. "...")
+			local ok = os.execute([[git -C "]] .. repo .. [[" push]])
+			if ok == 0 or ok == true then
+				_ui_ok(repo .. ": push concluído com sucesso!")
+			else
+				_ui_err(repo .. ": falha no push.")
+			end
+		else
+			_ui_ok(repo .. ": já atualizado com o remote.")
+		end
+	end
+	print("")
+	_ui_ok("Varredura e envio de repositórios Git concluídos!")
 end
 
 local function cmd_uped()
@@ -1091,7 +1160,10 @@ end
 
 local updater_commands = {
 	["upgit"] = cmd_upgit,
+	["plgit"] = cmd_upgit,
 	["update-git"] = cmd_upgit,
+	["psgit"] = cmd_psgit,
+	["push-git"] = cmd_psgit,
 	["uped"] = cmd_uped,
 	["update-editors"] = cmd_uped,
 	["uprc"] = cmd_uprc,

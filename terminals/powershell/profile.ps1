@@ -299,7 +299,8 @@ function Update-Git {
 	_ui_step "Buscando e atualizando repositórios Git em: $targetPath"
 	Write-Host ""
 
-	$gitDirs = Get-ChildItem -Path $targetPath -Directory -Recurse -Depth 3 -Force -Filter ".git" -ErrorAction SilentlyContinue
+	$gitDirs = Get-ChildItem -Path $targetPath -Directory -Recurse -Depth 3 -Force -Filter ".git" -ErrorAction SilentlyContinue |
+		Sort-Object { $_.FullName.Split([IO.Path]::DirectorySeparatorChar).Count }
 	if (-not $gitDirs) {
 		_ui_info "Nenhum repositório Git encontrado em $targetPath (profundidade máxima: 3)."
 		return
@@ -315,6 +316,45 @@ function Update-Git {
 	}
 	Write-Host ""
 	_ui_ok "Varredura e atualização de repositórios Git concluída!"
+}
+
+function Push-Git {
+	param(
+		[parameter(Position=0, Mandatory=$false)][string] $Path = "."
+	)
+	$targetPath = if ($Path) { (Resolve-Path $Path).Path } else { (Get-Location).Path }
+	if (-not (Test-Path $targetPath)) {
+		_ui_err "Diretório não encontrado: $targetPath"
+		return
+	}
+
+	_ui_step "Buscando e enviando repositórios Git em: $targetPath"
+	Write-Host ""
+
+	$gitDirs = Get-ChildItem -Path $targetPath -Directory -Recurse -Depth 3 -Force -Filter ".git" -ErrorAction SilentlyContinue |
+		Sort-Object { $_.FullName.Split([IO.Path]::DirectorySeparatorChar).Count } -Descending
+	if (-not $gitDirs) {
+		_ui_info "Nenhum repositório Git encontrado em $targetPath (profundidade máxima: 3)."
+		return
+	}
+
+	foreach ($gitDir in $gitDirs) {
+		$repoDir = $gitDir.Parent.FullName
+		$unpushed = git -C $repoDir cherry -v 2>$null
+		if ($unpushed) {
+			_ui_sub "Enviando $repoDir..."
+			git -C $repoDir push
+			if ($LASTEXITCODE -eq 0) {
+				_ui_ok "$repoDir: push concluído com sucesso!"
+			} else {
+				_ui_err "$repoDir: falha no push."
+			}
+		} else {
+			_ui_ok "$repoDir: já atualizado com o remote."
+		}
+	}
+	Write-Host ""
+	_ui_ok "Varredura e envio de repositórios Git concluídos!"
 }
 
 function Update-Editors {
@@ -547,6 +587,8 @@ New-Alias "upsh" "Update-Shell"
 New-Alias "upmod" "Update-Module"
 New-Alias "upwin" "Update-Windows"
 New-Alias "upgit" "Update-Git"
+New-Alias "plgit" "Update-Git"
+New-Alias "psgit" "Push-Git"
 New-Alias "uped" "Update-Editors"
 New-Alias "uprc" "Update-Profile"
 New-Alias "upprofile" "Update-Profile"

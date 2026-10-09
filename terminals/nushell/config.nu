@@ -288,6 +288,35 @@ def upgit [target_dir?: string] {
 	_ui_ok "Varredura e atualização de repositórios Git concluída!"
 }
 
+def psgit [target_dir?: string] {
+	let root = if ($target_dir | is-empty) { "." } else { $target_dir }
+	_ui_step $"Buscando e enviando repositórios Git em: ($root)"
+	print ""
+
+	let g1 = (try { glob $"($root)/.git" } catch { [] })
+	let g2 = (try { glob $"($root)/*/.git" } catch { [] })
+	let g3 = (try { glob $"($root)/*/*/.git" } catch { [] })
+	let repos = ($g3 | append $g2 | append $g1 | uniq)
+
+	if ($repos | is-empty) {
+		_ui_info $"Nenhum repositório Git encontrado em ($root) (profundidade máxima: 3)."
+		return
+	}
+
+	for repo in $repos {
+		let dir = ($repo | path dirname)
+		let unpushed = (do { ^git -C $dir cherry -v } | complete).stdout
+		if ($unpushed | str trim | is-not-empty) {
+			_ui_sub $"Enviando ($dir)..."
+			^git -C $dir push
+		} else {
+			_ui_ok $"($dir): já atualizado com o remote."
+		}
+	}
+	print ""
+	_ui_ok "Varredura e envio de repositórios Git concluídos!"
+}
+
 def uped [] {
 	_ui_step "Atualizando a Suíte de Editores no Windows..."
 	mut found = false
@@ -489,6 +518,9 @@ def upall [] {
 alias upprofile = uprc;
 alias sync-profile = uprc;
 alias update-git = upgit;
+alias plgit = upgit;
+alias pull-git = upgit;
+alias push-git = psgit;
 alias update-editors = uped;
 alias update-profile = uprc;
 alias update-vault = upvt;
