@@ -154,12 +154,14 @@ _profile_sync() {
 			;;
 	esac
 
+	_with_ext=0
 	for _arg in "$@"; do
 		case "${_arg}" in
-			--dry-run) _dry_run=1 ;;
-			--backup)  _backup=1 ;;
-			--status)  _mode="status" ;;
-			--pull)    _mode="pull" ;;
+			--dry-run|-n)    _dry_run=1 ;;
+			--backup|-b)     _backup=1 ;;
+			--status|-s)     _mode="status" ;;
+			--pull)          _mode="pull" ;;
+			--extensions|-e) _with_ext=1 ;;
 		esac
 	done
 
@@ -230,6 +232,13 @@ _profile_sync() {
 	if [ "${_is_win}" -eq 1 ] && [ "${_win_home}" != "${HOME}" ]; then
 		_sync "agents/skills" "${_win_home}/.gemini/config/skills"
 		_sync "agents/rules" "${_win_home}/.gemini/config/rules"
+	fi
+
+	if [ "${_with_ext}" -eq 1 ] && command -v _profile_extensions > "/dev/null" 2>&1; then
+		_ext_flags="install"
+		[ "${_dry_run}" -eq 1 ] && _ext_flags="${_ext_flags} --dry-run"
+		[ "${_mode}" = "status" ] && _ext_flags="status"
+		_profile_extensions ${_ext_flags}
 	fi
 
 	_ui_ok "Operacao (${_mode}) concluida com sucesso!"

@@ -11,6 +11,7 @@ export PROFILE_DIR="${_PROFILE_ROOT}"
 _self_heal_perms
 . "${_PROFILE_ROOT}/core/ui.sh"
 . "${_PROFILE_ROOT}/core/sync.sh"
+. "${_PROFILE_ROOT}/core/extensions.sh"
 
 ### ================================
 ### DETECCAO DE INVOCACAO
@@ -37,14 +38,15 @@ _profile_help() {
 		Universal Profile — Interface Unificada de Componente
 
 		Uso:
-		  profile.sh [sync|update|test|audit|help] [opcoes]
+		  profile.sh [sync|update|extensions|test|audit|help] [opcoes]
 		  . profile.sh              # Sourceia e exporta variaveis de ambiente
 
 		Opcoes de Sincronizacao:
-		  --dry-run                 Simula operacoes sem alterar arquivos
-		  --backup                  Cria backup (.bak) antes de substituir
-		  --status                  Audita e compara divergencias (drift)
+		  --dry-run, -n             Simula operacoes sem alterar arquivos
+		  --backup, -b              Cria backup (.bak) antes de substituir
+		  --status, -s              Audita e compara divergencias (drift)
 		  --pull                    Reconcilia alteracoes do sistema para o Git
+		  --extensions, -e          Sincroniza extensoes declaradas de IDE
 	EOF
 }
 
@@ -94,10 +96,11 @@ _cmd="${1:-help}"
 shift 2> "/dev/null" || true
 
 case "${_cmd}" in
-	sync)   _profile_sync "$@" ;;
-	update) _profile_update "$@" ;;
-	test)   _profile_test ;;
-	audit)  _profile_audit ;;
+	sync)       _profile_sync "$@" ;;
+	update)     _profile_update "$@" ;;
+	extensions) _profile_extensions "$@" ;;
+	test)       _profile_test ;;
+	audit)      _profile_audit ;;
 	help|-h|--help) _profile_help ;;
 	*)
 		_ui_err "Comando desconhecido: ${_cmd}"

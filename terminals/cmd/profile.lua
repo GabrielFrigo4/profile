@@ -798,10 +798,19 @@ end
 -- ================================
 
 local function cmd_upgit(args)
-	local root = args and trim(args) or ""
-	if root == "" then root = "." end
+	local flags = args and trim(args) or ""
+	local is_status = flags:find("%-%-status") or flags:find("%-s")
+	local is_dry = flags:find("%-%-dry%-run") or flags:find("%-n")
+	local root = "."
+	for word in flags:gmatch("%S+") do
+		if not word:match("^%-") then
+			root = word
+			break
+		end
+	end
 
-	_ui_step("Buscando e atualizando repositórios Git em: " .. root)
+	local action_title = is_status and "Auditando status de" or (is_dry and "Simulando atualização de" or "Buscando e atualizando")
+	_ui_step(action_title .. " repositórios Git em: " .. root)
 	print("")
 
 	local pipe = io.popen([[for /r "]] .. root .. [[" %d in (.) do @if exist "%d\.git" echo %~fd]])
@@ -834,21 +843,59 @@ local function cmd_upgit(args)
 	end
 
 	for _, repo in ipairs(repos) do
-		_ui_sub("Atualizando " .. repo .. "...")
-		local ok = os.execute([[git -C "]] .. repo .. [[" pull --ff-only 2>nul]])
-		if not ok or ok ~= 0 then
-			os.execute([[git -C "]] .. repo .. [[" pull]])
+		local branch_pipe = io.popen([[git -C "]] .. repo .. [[" branch --show-current 2>nul]])
+		local branch = branch_pipe and branch_pipe:read("*l") or ""
+		if branch_pipe then branch_pipe:close() end
+		local branch_lbl = (branch and branch ~= "") and branch or "detached"
+
+		if is_status then
+			local st_pipe = io.popen([[git -C "]] .. repo .. [[" status -s 2>nul]])
+			local st = st_pipe and st_pipe:read("*a") or ""
+			if st_pipe then st_pipe:close() end
+
+			local ch_pipe = io.popen([[git -C "]] .. repo .. [[" cherry -v 2>nul]])
+			local unpushed = ch_pipe and ch_pipe:read("*a") or ""
+			if ch_pipe then ch_pipe:close() end
+
+			if (st and trim(st) ~= "") or (unpushed and trim(unpushed) ~= "") then
+				_ui_warn(repo .. " [" .. branch_lbl .. "]: divergências detectadas")
+				if unpushed and trim(unpushed) ~= "" then
+					print("  \x1b[1;33m↳ Commits pendentes de push\x1b[0m")
+				end
+				if st and trim(st) ~= "" then
+					print("  \x1b[90m" .. trim(st) .. "\x1b[0m")
+				end
+			else
+				_ui_ok(repo .. " [" .. branch_lbl .. "]: sincronizado e limpo")
+			end
+		elseif is_dry then
+			_ui_sub("[DRY-RUN PULL] " .. repo .. " [" .. branch_lbl .. "]")
+		else
+			_ui_sub("Atualizando " .. repo .. "...")
+			local ok = os.execute([[git -C "]] .. repo .. [[" pull --ff-only 2>nul]])
+			if not ok or ok ~= 0 then
+				os.execute([[git -C "]] .. repo .. [[" pull]])
+			end
 		end
 	end
 	print("")
-	_ui_ok("Varredura e atualização de repositórios Git concluída!")
+	_ui_ok("Operação Git concluída!")
 end
 
 local function cmd_psgit(args)
-	local root = args and trim(args) or ""
-	if root == "" then root = "." end
+	local flags = args and trim(args) or ""
+	local is_status = flags:find("%-%-status") or flags:find("%-s")
+	local is_dry = flags:find("%-%-dry%-run") or flags:find("%-n")
+	local root = "."
+	for word in flags:gmatch("%S+") do
+		if not word:match("^%-") then
+			root = word
+			break
+		end
+	end
 
-	_ui_step("Buscando e enviando repositórios Git em: " .. root)
+	local action_title = is_status and "Auditando commits pendentes em" or (is_dry and "Simulando push de" or "Buscando e enviando")
+	_ui_step(action_title .. " repositórios Git em: " .. root)
 	print("")
 
 	local pipe = io.popen([[for /r "]] .. root .. [[" %d in (.) do @if exist "%d\.git" echo %~fd]])
@@ -885,93 +932,142 @@ local function cmd_psgit(args)
 		local unpushed = check and check:read("*a") or ""
 		if check then check:close() end
 
+		local branch_pipe = io.popen([[git -C "]] .. repo .. [[" branch --show-current 2>nul]])
+		local branch = branch_pipe and branch_pipe:read("*l") or ""
+		if branch_pipe then branch_pipe:close() end
+		local branch_lbl = (branch and branch ~= "") and branch or "detached"
+
 		if trim(unpushed) ~= "" then
-			_ui_sub("Enviando " .. repo .. "...")
-			local ok = os.execute([[git -C "]] .. repo .. [[" push]])
-			if ok == 0 or ok == true then
-				_ui_ok(repo .. ": push concluído com sucesso!")
+			if is_status then
+				_ui_warn(repo .. " [" .. branch_lbl .. "]: commits pendentes de envio")
+				print("  \x1b[1;33m" .. trim(unpushed) .. "\x1b[0m")
+			elseif is_dry then
+				_ui_sub("[DRY-RUN PUSH] " .. repo .. " [" .. branch_lbl .. "]")
 			else
-				_ui_err(repo .. ": falha no push.")
+				_ui_sub("Enviando " .. repo .. " [" .. branch_lbl .. "]...")
+				local ok = os.execute([[git -C "]] .. repo .. [[" push]])
+				if ok == 0 or ok == true then
+					_ui_ok(repo .. ": push concluído com sucesso!")
+				else
+					_ui_err(repo .. ": falha no push.")
+				end
 			end
 		else
-			_ui_ok(repo .. ": já atualizado com o remote.")
+			if is_status then
+				_ui_ok(repo .. " [" .. branch_lbl .. "]: nada a enviar")
+			else
+				_ui_ok(repo .. ": já atualizado com o remote.")
+			end
 		end
 	end
 	print("")
-	_ui_ok("Varredura e envio de repositórios Git concluídos!")
+	_ui_ok("Operação Push Git concluída!")
 end
 
-local function cmd_uped()
-	_ui_step("Atualizando a Suíte de Editores no Windows...")
+local function cmd_sync_extensions(args)
+	_ui_step("Sincronizando extensões de IDE declarativas...")
+	local home = os.getenv("USERPROFILE") or os.getenv("HOME") or ""
+	local candidates = {}
+	local function add(p)
+		if p and p ~= "" then table.insert(candidates, p) end
+	end
+
+	add(os.getenv("PROFILE_DIR"))
+	add(home .. [[\.local\share\profile]])
+	add(home .. [[\.config\profile]])
+	add(home .. [[\.profile]])
+	add(home .. [[\OneDrive\Documentos\Profile]])
+	add(home .. [[\Documents\Profile]])
+
+	if MSYS_HOME then
+		add(MSYS_HOME .. [[\.local\share\profile]])
+		add(MSYS_HOME .. [[\.config\profile]])
+		add(MSYS_HOME .. [[\.profile]])
+	end
+
+	local target = nil
+	for _, p in ipairs(candidates) do
+		if is_file(p .. [[\profile.sh]]) then
+			target = p
+			break
+		end
+	end
+
+	if target then
+		local bash = get_bash_cmd()
+		local flags = args and trim(args) or ""
+		if bash then
+			local unix_target = to_unix_path(target)
+			os.execute(bash .. [[ -c "MSYS=winsymlinks:nativestrict ']] .. unix_target .. [[/profile.sh' extensions ]] .. flags .. [["]])
+		else
+			_ui_warn("Ambiente MSYS2/Bash não detectado no PATH.")
+		end
+	else
+		_ui_info("Repositório do Profile não encontrado.")
+	end
+end
+
+local function cmd_uped(args)
+	local flags = args and trim(args) or ""
+	local is_status = flags:find("%-%-status") or flags:find("%-s")
+	local is_dry = flags:find("%-%-dry%-run") or flags:find("%-n")
+	local is_ext = flags:find("%-%-extensions") or flags:find("%-e")
+	local action_title = is_status and "Auditando status da" or (is_dry and "Simulando atualização da" or "Atualizando a")
+	_ui_step(action_title .. " Suíte de Editores no Windows...")
 	local home = os.getenv("USERPROFILE") or os.getenv("HOME") or ""
 	local appdata = os.getenv("APPDATA") or ""
 	local localappdata = os.getenv("LOCALAPPDATA") or ""
 	local found = false
 
-	local emacs_dir = home .. [[\.emacs.d]]
-	if not is_dir(emacs_dir) and appdata ~= "" then
-		emacs_dir = appdata .. [[\.emacs.d]]
-	end
-	if not is_dir(emacs_dir) and MSYS_HOME then
-		emacs_dir = MSYS_HOME .. [[\.emacs.d]]
-	end
-	if is_git_repo(emacs_dir) then
-		found = true
-		_ui_sub("Atualizando Emacs em " .. emacs_dir .. "...")
-		os.execute([[git -C "]] .. emacs_dir .. [[" pull --ff-only]])
-		if exists(emacs_dir .. [[\.gitmodules]]) then
-			_ui_sub("Sincronizando submódulos Elisp...")
-			os.execute([[git -C "]] .. emacs_dir .. [[" submodule update --init --recursive --remote --merge]])
+	local function update_editor(name, dir, has_submodules)
+		if is_git_repo(dir) then
+			found = true
+			if is_status then
+				_ui_sub("Status de " .. name .. " em " .. dir .. "...")
+				os.execute([[git -C "]] .. dir .. [[" status -s -b]])
+			elseif is_dry then
+				_ui_sub("[DRY-RUN] Atualização de " .. name .. " em " .. dir .. "...")
+				_ui_sub([[git -C "]] .. dir .. [[" pull --ff-only]])
+			else
+				_ui_sub("Atualizando " .. name .. " em " .. dir .. "...")
+				os.execute([[git -C "]] .. dir .. [[" pull --ff-only]])
+				if has_submodules and exists(dir .. [[\.gitmodules]]) then
+					_ui_sub("Sincronizando submódulos Elisp...")
+					os.execute([[git -C "]] .. dir .. [[" submodule update --init --recursive --remote --merge]])
+				end
+				_ui_ok(name .. " atualizado com sucesso!")
+			end
 		end
-		_ui_ok("Emacs atualizado com sucesso!")
 	end
+
+	local emacs_dir = home .. [[\.emacs.d]]
+	if not is_dir(emacs_dir) and appdata ~= "" then emacs_dir = appdata .. [[\.emacs.d]] end
+	if not is_dir(emacs_dir) and MSYS_HOME then emacs_dir = MSYS_HOME .. [[\.emacs.d]] end
+	update_editor("Emacs", emacs_dir, true)
 
 	local helix_dir = appdata ~= "" and (appdata .. [[\helix]]) or (home .. [[\.config\helix]])
-	if not is_dir(helix_dir) and is_dir(home .. [[\.config\helix]]) then
-		helix_dir = home .. [[\.config\helix]]
-	end
-	if not is_dir(helix_dir) and MSYS_HOME and is_dir(MSYS_HOME .. [[\.config\helix]]) then
-		helix_dir = MSYS_HOME .. [[\.config\helix]]
-	end
-	if is_git_repo(helix_dir) then
-		found = true
-		_ui_sub("Atualizando Helix em " .. helix_dir .. "...")
-		os.execute([[git -C "]] .. helix_dir .. [[" pull --ff-only]])
-		_ui_ok("Helix atualizado com sucesso!")
-	end
+	if not is_dir(helix_dir) and is_dir(home .. [[\.config\helix]]) then helix_dir = home .. [[\.config\helix]] end
+	if not is_dir(helix_dir) and MSYS_HOME and is_dir(MSYS_HOME .. [[\.config\helix]]) then helix_dir = MSYS_HOME .. [[\.config\helix]] end
+	update_editor("Helix", helix_dir, false)
 
 	local nvim_dir = localappdata ~= "" and (localappdata .. [[\nvim]]) or (home .. [[\.config\nvim]])
-	if not is_dir(nvim_dir) and is_dir(home .. [[\.config\nvim]]) then
-		nvim_dir = home .. [[\.config\nvim]]
-	end
-	if not is_dir(nvim_dir) and MSYS_HOME and is_dir(MSYS_HOME .. [[\.config\nvim]]) then
-		nvim_dir = MSYS_HOME .. [[\.config\nvim]]
-	end
-	if is_git_repo(nvim_dir) then
-		found = true
-		_ui_sub("Atualizando NeoVim em " .. nvim_dir .. "...")
-		os.execute([[git -C "]] .. nvim_dir .. [[" pull --ff-only]])
-		_ui_ok("NeoVim atualizado com sucesso!")
-	end
+	if not is_dir(nvim_dir) and is_dir(home .. [[\.config\nvim]]) then nvim_dir = home .. [[\.config\nvim]] end
+	if not is_dir(nvim_dir) and MSYS_HOME and is_dir(MSYS_HOME .. [[\.config\nvim]]) then nvim_dir = MSYS_HOME .. [[\.config\nvim]] end
+	update_editor("NeoVim", nvim_dir, false)
 
 	local vim_dir = home .. [[\vimfiles]]
-	if not is_dir(vim_dir) and is_dir(home .. [[\.vim]]) then
-		vim_dir = home .. [[\.vim]]
-	end
-	if not is_dir(vim_dir) and MSYS_HOME and is_dir(MSYS_HOME .. [[\.vim]]) then
-		vim_dir = MSYS_HOME .. [[\.vim]]
-	end
-	if is_git_repo(vim_dir) then
-		found = true
-		_ui_sub("Atualizando Vim em " .. vim_dir .. "...")
-		os.execute([[git -C "]] .. vim_dir .. [[" pull --ff-only]])
-		_ui_ok("Vim atualizado com sucesso!")
-	end
+	if not is_dir(vim_dir) and is_dir(home .. [[\.vim]]) then vim_dir = home .. [[\.vim]] end
+	if not is_dir(vim_dir) and MSYS_HOME and is_dir(MSYS_HOME .. [[\.vim]]) then vim_dir = MSYS_HOME .. [[\.vim]] end
+	update_editor("Vim", vim_dir, false)
 
 	if not found then
 		_ui_info("Nenhum repositório de editor encontrado nos caminhos canônicos (~/.emacs.d, helix, nvim, vimfiles).")
 	else
 		_ui_ok("Suíte de Editores sincronizada com sucesso!")
+	end
+
+	if is_ext then
+		cmd_sync_extensions(args)
 	end
 end
 
@@ -1036,7 +1132,7 @@ local function cmd_uprc(args)
 	end
 end
 
-local function cmd_upvt()
+local function cmd_upvt(args)
 	local home = os.getenv("USERPROFILE") or os.getenv("HOME") or ""
 	local candidates = {}
 	local function add(p)
@@ -1063,8 +1159,26 @@ local function cmd_upvt()
 	end
 
 	if target then
+		local flags = args and trim(args) or ""
+		local is_status = flags:find("%-%-status") or flags:find("%-s")
+		local is_dry = flags:find("%-%-dry%-run") or flags:find("%-n")
+		if is_status then
+			_ui_step("Status do Universal Vault em: " .. target .. "...")
+			os.execute([[git -C "]] .. target .. [[" status -s -b]])
+			return
+		end
+		if is_dry then
+			_ui_step("[DRY-RUN] Atualização do Universal Vault em: " .. target .. "...")
+			_ui_sub([[git -C "]] .. target .. [[" pull --ff-only]])
+			return
+		end
 		_ui_step("Atualizando Universal Vault em: " .. target .. "...")
 		os.execute([[git -C "]] .. target .. [[" pull --ff-only]])
+		local v_lua = target .. [[\vault.lua]]
+		if is_file(v_lua) then
+			_ui_sub("Recarregando segredos e ambiente do Vault...")
+			pcall(dofile, v_lua)
+		end
 		_ui_ok("Universal Vault atualizado com sucesso!")
 	else
 		_ui_info("Repositório do Vault não encontrado.")
@@ -1109,7 +1223,7 @@ local function cmd_vault_perms(args)
 	end
 end
 
-local function cmd_upsh()
+local function cmd_upsh(args)
 	local home = os.getenv("USERPROFILE") or os.getenv("HOME") or ""
 	local candidates = {}
 	local function add(p)
@@ -1137,6 +1251,19 @@ local function cmd_upsh()
 	end
 
 	if target then
+		local flags = args and trim(args) or ""
+		local is_status = flags:find("%-%-status") or flags:find("%-s")
+		local is_dry = flags:find("%-%-dry%-run") or flags:find("%-n")
+		if is_status then
+			_ui_step("Status do Universal Shell em: " .. target .. "...")
+			os.execute([[git -C "]] .. target .. [[" status -s -b]])
+			return
+		end
+		if is_dry then
+			_ui_step("[DRY-RUN] Atualização do Universal Shell em: " .. target .. "...")
+			_ui_sub([[git -C "]] .. target .. [[" pull --ff-only]])
+			return
+		end
 		_ui_step("Atualizando Universal Shell em: " .. target .. "...")
 		os.execute([[git -C "]] .. target .. [[" pull --ff-only]])
 		_ui_ok("Universal Shell atualizado com sucesso!")
@@ -1145,7 +1272,29 @@ local function cmd_upsh()
 	end
 end
 
-local function cmd_upall()
+local function cmd_upall(args)
+	local flags = args and trim(args) or ""
+	local is_status = flags:find("%-%-status") or flags:find("%-s")
+	local is_dry = flags:find("%-%-dry%-run") or flags:find("%-n")
+
+	if is_status then
+		_ui_banner("Status Global do Ecossistema")
+		cmd_uprc(args)
+		cmd_upvt(args)
+		cmd_upsh(args)
+		cmd_uped(args)
+		_ui_banner("Verificação de Status Concluída")
+		return
+	end
+	if is_dry then
+		_ui_banner("Simulação Global do Ecossistema (Dry-Run)")
+		cmd_uprc(args)
+		cmd_upvt(args)
+		cmd_upsh(args)
+		cmd_uped(args)
+		_ui_banner("Simulação Concluída")
+		return
+	end
 	_ui_banner("Atualização Global do Ecossistema e Sistema")
 	_ui_step("Atualizando gerenciadores de pacotes do sistema...")
 	os.execute([[winget upgrade --all]])
@@ -1154,6 +1303,7 @@ local function cmd_upall()
 	_ui_ok("Pacotes do sistema atualizados!")
 	cmd_uprc()
 	cmd_upvt()
+	cmd_upsh()
 	cmd_uped()
 	_ui_banner("Atualização Global Concluída com Sucesso")
 end
@@ -1164,6 +1314,9 @@ local updater_commands = {
 	["update-git"] = cmd_upgit,
 	["psgit"] = cmd_psgit,
 	["push-git"] = cmd_psgit,
+	["sync-extensions"] = cmd_sync_extensions,
+	["update-extensions"] = cmd_sync_extensions,
+	["upext"] = cmd_sync_extensions,
 	["uped"] = cmd_uped,
 	["update-editors"] = cmd_uped,
 	["uprc"] = cmd_uprc,

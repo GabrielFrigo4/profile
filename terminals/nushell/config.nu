@@ -261,9 +261,15 @@ def upsys [] {
 	_ui_ok "Atualização de pacotes do sistema concluída!"
 }
 
-def upgit [target_dir?: string] {
-	let root = if ($target_dir | is-empty) { "." } else { $target_dir }
-	_ui_step $"Buscando e atualizando repositórios Git em: ($root)"
+def upgit [...args: string] {
+	let sub_args = ($args | str join " ")
+	let is_status = ($sub_args | str contains "--status") or ($sub_args | str contains "-s")
+	let is_dry = ($sub_args | str contains "--dry-run") or ($sub_args | str contains "-n")
+	let non_flags = ($args | where { |a| not ($a | str starts-with "-") })
+	let root = if ($non_flags | is-empty) { "." } else { $non_flags | first }
+
+	let action_title = if ($is_status) { "Auditando status de" } else if ($is_dry) { "Simulando atualização de" } else { "Buscando e atualizando" }
+	_ui_step $"($action_title) repositórios Git em: ($root)"
 	print ""
 
 	let g1 = (try { glob $"($root)/.git" } catch { [] })
@@ -278,19 +284,42 @@ def upgit [target_dir?: string] {
 
 	for repo in $repos {
 		let dir = ($repo | path dirname)
-		_ui_sub $"Atualizando ($dir)..."
-		let res = (do { ^git -C $dir pull --ff-only } | complete)
-		if $res.exit_code != 0 {
-			^git -C $dir pull
+		let branch = (do { ^git -C $dir branch --show-current } | complete).stdout | str trim
+		let branch_lbl = if ($branch | is-empty) { "detached" } else { $branch }
+
+		if ($is_status) {
+			let st = (do { ^git -C $dir status -s } | complete).stdout | str trim
+			let unpushed = (do { ^git -C $dir cherry -v } | complete).stdout | str trim
+			if ($st | is-not-empty) or ($unpushed | is-not-empty) {
+				_ui_warn $"($dir) [($branch_lbl)]: divergências detectadas"
+				if ($unpushed | is-not-empty) { print $"  (ansi yellow_bold)↳ Commits pendentes de push(ansi reset)" }
+				if ($st | is-not-empty) { print $"  (ansi dark_gray)($st)(ansi reset)" }
+			} else {
+				_ui_ok $"($dir) [($branch_lbl)]: sincronizado e limpo"
+			}
+		} else if ($is_dry) {
+			_ui_sub $"[DRY-RUN PULL] ($dir) [($branch_lbl)]"
+		} else {
+			_ui_sub $"Atualizando ($dir)..."
+			let res = (do { ^git -C $dir pull --ff-only } | complete)
+			if $res.exit_code != 0 {
+				^git -C $dir pull
+			}
 		}
 	}
 	print ""
-	_ui_ok "Varredura e atualização de repositórios Git concluída!"
+	_ui_ok "Operação Git concluída!"
 }
 
-def psgit [target_dir?: string] {
-	let root = if ($target_dir | is-empty) { "." } else { $target_dir }
-	_ui_step $"Buscando e enviando repositórios Git em: ($root)"
+def psgit [...args: string] {
+	let sub_args = ($args | str join " ")
+	let is_status = ($sub_args | str contains "--status") or ($sub_args | str contains "-s")
+	let is_dry = ($sub_args | str contains "--dry-run") or ($sub_args | str contains "-n")
+	let non_flags = ($args | where { |a| not ($a | str starts-with "-") })
+	let root = if ($non_flags | is-empty) { "." } else { $non_flags | first }
+
+	let action_title = if ($is_status) { "Auditando commits pendentes em" } else if ($is_dry) { "Simulando push de" } else { "Buscando e enviando" }
+	_ui_step $"($action_title) repositórios Git em: ($root)"
 	print ""
 
 	let g1 = (try { glob $"($root)/.git" } catch { [] })
@@ -305,20 +334,78 @@ def psgit [target_dir?: string] {
 
 	for repo in $repos {
 		let dir = ($repo | path dirname)
-		let unpushed = (do { ^git -C $dir cherry -v } | complete).stdout
-		if ($unpushed | str trim | is-not-empty) {
-			_ui_sub $"Enviando ($dir)..."
-			^git -C $dir push
+		let unpushed = (do { ^git -C $dir cherry -v } | complete).stdout | str trim
+		let branch = (do { ^git -C $dir branch --show-current } | complete).stdout | str trim
+		let branch_lbl = if ($branch | is-empty) { "detached" } else { $branch }
+
+		if ($unpushed | is-not-empty) {
+			if ($is_status) {
+				_ui_warn $"($dir) [($branch_lbl)]: commits pendentes de envio"
+				print $"  (ansi yellow_bold)($unpushed)(ansi reset)"
+			} else if ($is_dry) {
+				_ui_sub $"[DRY-RUN PUSH] ($dir) [($branch_lbl)]"
+			} else {
+				_ui_sub $"Enviando ($dir) [($branch_lbl)]..."
+				let res = (do { ^git -C $dir push } | complete)
+				if $res.exit_code == 0 {
+					_ui_ok $"($dir): push concluído com sucesso!"
+				} else {
+					_ui_err $"($dir): falha no push."
+				}
+			}
 		} else {
-			_ui_ok $"($dir): já atualizado com o remote."
+			if ($is_status) {
+				_ui_ok $"($dir) [($branch_lbl)]: nada a enviar"
+			} else {
+				_ui_ok $"($dir): já atualizado com o remote."
+			}
 		}
 	}
 	print ""
-	_ui_ok "Varredura e envio de repositórios Git concluídos!"
+	_ui_ok "Operação Push Git concluída!"
 }
 
-def uped [] {
-	_ui_step "Atualizando a Suíte de Editores no Windows..."
+def sync-extensions [...args: string] {
+	_ui_step "Sincronizando extensões de IDE declarativas..."
+	let candidates = [
+		($env.PROFILE_DIR? | default ""),
+		([$env.USERPROFILE, ".local", "share", "profile"] | path join),
+		([$env.USERPROFILE, ".config", "profile"] | path join),
+		([$env.USERPROFILE, ".profile"] | path join),
+		([$env.USERPROFILE, "OneDrive", "Documentos", "Profile"] | path join),
+		([$env.USERPROFILE, "Documents", "Profile"] | path join),
+		(if ($MsysHome | is-not-empty) { [$MsysHome, ".local", "share", "profile"] | path join } else { "" }),
+		(if ($MsysHome | is-not-empty) { [$MsysHome, ".config", "profile"] | path join } else { "" }),
+		(if ($MsysHome | is-not-empty) { [$MsysHome, ".profile"] | path join } else { "" })
+	]
+	let target = ($candidates | where { |p| ($p | is-not-empty) and ([$p, ".git"] | path join | path exists) } | get -o 0)
+
+	if ($target | is-not-empty) {
+		let sub_args = ($args | str join " ")
+		let bash = (get-msys-bash)
+		if ($bash | is-not-empty) {
+			mut target_posix = ($target | str replace -a '\' '/')
+			if ($target_posix | str starts-with "C:") or ($target_posix | str starts-with "c:") {
+				$target_posix = ($target_posix | str replace -r '^[Cc]:' '/c')
+			} else if ($target_posix | str starts-with "D:") or ($target_posix | str starts-with "d:") {
+				$target_posix = ($target_posix | str replace -r '^[Dd]:' '/d')
+			}
+			^$bash -c $"MSYS=winsymlinks:nativestrict '($target_posix)/profile.sh' extensions ($sub_args)"
+		} else {
+			_ui_warn "Ambiente MSYS2/Bash não detectado no PATH."
+		}
+	} else {
+		_ui_info "Repositório do Profile não encontrado."
+	}
+}
+
+def uped [...args: string] {
+	let sub_args = ($args | str join " ")
+	let is_status = ($sub_args | str contains "--status") or ($sub_args | str contains "-s")
+	let is_dry = ($sub_args | str contains "--dry-run") or ($sub_args | str contains "-n")
+	let is_ext = ($sub_args | str contains "--extensions") or ($sub_args | str contains "-e")
+	let action_title = if ($is_status) { "Auditando status da" } else if ($is_dry) { "Simulando atualização da" } else { "Atualizando a" }
+	_ui_step $"($action_title) Suíte de Editores no Windows..."
 	mut found = false
 
 	let emacs_paths = [
@@ -329,13 +416,21 @@ def uped [] {
 	let emacs_dir = ($emacs_paths | where { |p| ($p | is-not-empty) and ([$p, ".git"] | path join | path exists) } | get -o 0)
 	if ($emacs_dir | is-not-empty) {
 		$found = true
-		_ui_sub $"Atualizando Emacs em ($emacs_dir)..."
-		^git -C $emacs_dir pull --ff-only
-		if ([$emacs_dir, ".gitmodules"] | path join | path exists) {
-			_ui_sub "Sincronizando submódulos Elisp..."
-			^git -C $emacs_dir submodule update --init --recursive --remote --merge
+		if ($is_status) {
+			_ui_sub $"Status de Emacs em ($emacs_dir)..."
+			^git -C $emacs_dir status -s -b
+		} else if ($is_dry) {
+			_ui_sub $"[DRY-RUN] Atualização de Emacs em ($emacs_dir)..."
+			_ui_sub $"git -C ($emacs_dir) pull --ff-only"
+		} else {
+			_ui_sub $"Atualizando Emacs em ($emacs_dir)..."
+			^git -C $emacs_dir pull --ff-only
+			if ([$emacs_dir, ".gitmodules"] | path join | path exists) {
+				_ui_sub "Sincronizando submódulos Elisp..."
+				^git -C $emacs_dir submodule update --init --recursive --remote --merge
+			}
+			_ui_ok "Emacs atualizado com sucesso!"
 		}
-		_ui_ok "Emacs atualizado com sucesso!"
 	}
 
 	let helix_paths = [
@@ -346,9 +441,17 @@ def uped [] {
 	let helix_dir = ($helix_paths | where { |p| ($p | is-not-empty) and ([$p, ".git"] | path join | path exists) } | get -o 0)
 	if ($helix_dir | is-not-empty) {
 		$found = true
-		_ui_sub $"Atualizando Helix em ($helix_dir)..."
-		^git -C $helix_dir pull --ff-only
-		_ui_ok "Helix atualizado com sucesso!"
+		if ($is_status) {
+			_ui_sub $"Status de Helix em ($helix_dir)..."
+			^git -C $helix_dir status -s -b
+		} else if ($is_dry) {
+			_ui_sub $"[DRY-RUN] Atualização de Helix em ($helix_dir)..."
+			_ui_sub $"git -C ($helix_dir) pull --ff-only"
+		} else {
+			_ui_sub $"Atualizando Helix em ($helix_dir)..."
+			^git -C $helix_dir pull --ff-only
+			_ui_ok "Helix atualizado com sucesso!"
+		}
 	}
 
 	let nvim_paths = [
@@ -359,9 +462,17 @@ def uped [] {
 	let nvim_dir = ($nvim_paths | where { |p| ($p | is-not-empty) and ([$p, ".git"] | path join | path exists) } | get -o 0)
 	if ($nvim_dir | is-not-empty) {
 		$found = true
-		_ui_sub $"Atualizando NeoVim em ($nvim_dir)..."
-		^git -C $nvim_dir pull --ff-only
-		_ui_ok "NeoVim atualizado com sucesso!"
+		if ($is_status) {
+			_ui_sub $"Status de NeoVim em ($nvim_dir)..."
+			^git -C $nvim_dir status -s -b
+		} else if ($is_dry) {
+			_ui_sub $"[DRY-RUN] Atualização de NeoVim em ($nvim_dir)..."
+			_ui_sub $"git -C ($nvim_dir) pull --ff-only"
+		} else {
+			_ui_sub $"Atualizando NeoVim em ($nvim_dir)..."
+			^git -C $nvim_dir pull --ff-only
+			_ui_ok "NeoVim atualizado com sucesso!"
+		}
 	}
 
 	let vim_paths = [
@@ -372,15 +483,27 @@ def uped [] {
 	let vim_dir = ($vim_paths | where { |p| ($p | is-not-empty) and ([$p, ".git"] | path join | path exists) } | get -o 0)
 	if ($vim_dir | is-not-empty) {
 		$found = true
-		_ui_sub $"Atualizando Vim em ($vim_dir)..."
-		^git -C $vim_dir pull --ff-only
-		_ui_ok "Vim atualizado com sucesso!"
+		if ($is_status) {
+			_ui_sub $"Status de Vim em ($vim_dir)..."
+			^git -C $vim_dir status -s -b
+		} else if ($is_dry) {
+			_ui_sub $"[DRY-RUN] Atualização de Vim em ($vim_dir)..."
+			_ui_sub $"git -C ($vim_dir) pull --ff-only"
+		} else {
+			_ui_sub $"Atualizando Vim em ($vim_dir)..."
+			^git -C $vim_dir pull --ff-only
+			_ui_ok "Vim atualizado com sucesso!"
+		}
 	}
 
 	if (not $found) {
 		_ui_info "Nenhum repositório de editor encontrado nos caminhos canônicos (~/.emacs.d, helix, nvim, vimfiles)."
 	} else {
 		_ui_ok "Suíte de Editores sincronizada com sucesso!"
+	}
+
+	if ($is_ext) {
+		sync-extensions ...$args
 	}
 }
 
@@ -463,7 +586,7 @@ def vault-perms [path?: string] {
 	_ui_ok $"Permissões ajustadas com sucesso [acesso restrito a '($user)']."
 }
 
-def upvt [] {
+def upvt [...args: string] {
 	let candidates = [
 		($env.VAULT_DIR? | default ""),
 		([$env.USERPROFILE, ".local", "share", "vault"] | path join),
@@ -476,15 +599,29 @@ def upvt [] {
 	let target = ($candidates | where { |p| ($p | is-not-empty) and ([$p, ".git"] | path join | path exists) } | get -o 0)
 
 	if ($target | is-not-empty) {
+		let sub_args = ($args | str join " ")
+		let is_status = ($sub_args | str contains "--status") or ($sub_args | str contains "-s")
+		let is_dry = ($sub_args | str contains "--dry-run") or ($sub_args | str contains "-n")
+		if ($is_status) {
+			_ui_step $"Status do Universal Vault em: ($target)..."
+			^git -C $target status -s -b
+			return
+		}
+		if ($is_dry) {
+			_ui_step $"[DRY-RUN] Atualização do Universal Vault em: ($target)..."
+			_ui_sub $"git -C ($target) pull --ff-only"
+			return
+		}
 		_ui_step $"Atualizando Universal Vault em: ($target)..."
 		^git -C $target pull --ff-only
+		vault-perms $target
 		_ui_ok "Universal Vault atualizado com sucesso!"
 	} else {
 		_ui_info "Repositório do Vault não encontrado."
 	}
 }
 
-def upsh [] {
+def upsh [...args: string] {
 	let candidates = [
 		($env.SHELL_REPO_DIR? | default ""),
 		([$env.USERPROFILE, ".local", "share", "shell"] | path join),
@@ -498,6 +635,19 @@ def upsh [] {
 	let target = ($candidates | where { |p| ($p | is-not-empty) and ([$p, ".git"] | path join | path exists) } | get -o 0)
 
 	if ($target | is-not-empty) {
+		let sub_args = ($args | str join " ")
+		let is_status = ($sub_args | str contains "--status") or ($sub_args | str contains "-s")
+		let is_dry = ($sub_args | str contains "--dry-run") or ($sub_args | str contains "-n")
+		if ($is_status) {
+			_ui_step $"Status do Universal Shell em: ($target)..."
+			^git -C $target status -s -b
+			return
+		}
+		if ($is_dry) {
+			_ui_step $"[DRY-RUN] Atualização do Universal Shell em: ($target)..."
+			_ui_sub $"git -C ($target) pull --ff-only"
+			return
+		}
 		_ui_step $"Atualizando Universal Shell em: ($target)..."
 		^git -C $target pull --ff-only
 		_ui_ok "Universal Shell atualizado com sucesso!"
@@ -506,17 +656,43 @@ def upsh [] {
 	}
 }
 
-def upall [] {
+def upall [...args: string] {
+	let sub_args = ($args | str join " ")
+	let is_status = ($sub_args | str contains "--status") or ($sub_args | str contains "-s")
+	let is_dry = ($sub_args | str contains "--dry-run") or ($sub_args | str contains "-n")
+
+	if ($is_status) {
+		_ui_banner "Status Global do Ecossistema"
+		uprc --status
+		upvt --status
+		upsh --status
+		uped --status
+		_ui_banner "Verificação de Status Concluída"
+		return
+	}
+	if ($is_dry) {
+		_ui_banner "Simulação Global do Ecossistema (Dry-Run)"
+		uprc --dry-run
+		upvt --dry-run
+		upsh --dry-run
+		uped --dry-run
+		_ui_banner "Simulação Concluída"
+		return
+	}
 	_ui_banner "Atualização Global do Ecossistema e Sistema"
 	upsys
 	uprc
 	upvt
+	upsh
 	uped
 	_ui_banner "Atualização Global Concluída com Sucesso"
 }
 
 alias upprofile = uprc;
 alias sync-profile = uprc;
+alias sync-extensions = sync-extensions;
+alias update-extensions = sync-extensions;
+alias upext = sync-extensions;
 alias update-git = upgit;
 alias plgit = upgit;
 alias pull-git = upgit;

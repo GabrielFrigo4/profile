@@ -288,7 +288,9 @@ function Update-Windows {
 
 function Update-Git {
 	param(
-		[parameter(Position=0, Mandatory=$false)][string] $Path = "."
+		[parameter(Position=0, Mandatory=$false)][string] $Path = ".",
+		[switch]$Status,
+		[switch]$DryRun
 	)
 	$targetPath = if ($Path) { (Resolve-Path $Path).Path } else { (Get-Location).Path }
 	if (-not (Test-Path $targetPath)) {
@@ -296,7 +298,8 @@ function Update-Git {
 		return
 	}
 
-	_ui_step "Buscando e atualizando repositórios Git em: $targetPath"
+	$actionName = if ($Status) { "Auditando status de" } elseif ($DryRun) { "Simulando atualização de" } else { "Buscando e atualizando" }
+	_ui_step "$actionName repositórios Git em: $targetPath"
 	Write-Host ""
 
 	$gitDirs = Get-ChildItem -Path $targetPath -Directory -Recurse -Depth 3 -Force -Filter ".git" -ErrorAction SilentlyContinue |
@@ -308,19 +311,38 @@ function Update-Git {
 
 	foreach ($gitDir in $gitDirs) {
 		$repoDir = $gitDir.Parent.FullName
-		_ui_sub "Atualizando $repoDir..."
-		git -C $repoDir pull --ff-only 2>$null
-		if ($LASTEXITCODE -ne 0) {
-			git -C $repoDir pull
+		$branch = git -C $repoDir branch --show-current 2>$null
+		if (-not $branch) { $branch = "detached" }
+
+		if ($Status) {
+			$st = git -C $repoDir status -s 2>$null
+			$unpushed = git -C $repoDir cherry -v 2>$null
+			if ($st -or $unpushed) {
+				_ui_warn "$repoDir [$branch]: divergências detectadas"
+				if ($unpushed) { Write-Host "  ↳ Commits pendentes de push" -ForegroundColor DarkYellow }
+				if ($st) { $st | Select-Object -First 5 | ForEach-Object { Write-Host "    $_" -ForegroundColor DarkGray } }
+			} else {
+				_ui_ok "$repoDir [$branch]: sincronizado e limpo"
+			}
+		} elseif ($DryRun) {
+			_ui_sub "[DRY-RUN PULL] $repoDir [$branch]"
+		} else {
+			_ui_sub "Atualizando $repoDir..."
+			git -C $repoDir pull --ff-only 2>$null
+			if ($LASTEXITCODE -ne 0) {
+				git -C $repoDir pull
+			}
 		}
 	}
 	Write-Host ""
-	_ui_ok "Varredura e atualização de repositórios Git concluída!"
+	_ui_ok "Operação Git concluída!"
 }
 
 function Push-Git {
 	param(
-		[parameter(Position=0, Mandatory=$false)][string] $Path = "."
+		[parameter(Position=0, Mandatory=$false)][string] $Path = ".",
+		[switch]$Status,
+		[switch]$DryRun
 	)
 	$targetPath = if ($Path) { (Resolve-Path $Path).Path } else { (Get-Location).Path }
 	if (-not (Test-Path $targetPath)) {
@@ -328,7 +350,8 @@ function Push-Git {
 		return
 	}
 
-	_ui_step "Buscando e enviando repositórios Git em: $targetPath"
+	$actionName = if ($Status) { "Auditando commits pendentes em" } elseif ($DryRun) { "Simulando push de" } else { "Buscando e enviando" }
+	_ui_step "$actionName repositórios Git em: $targetPath"
 	Write-Host ""
 
 	$gitDirs = Get-ChildItem -Path $targetPath -Directory -Recurse -Depth 3 -Force -Filter ".git" -ErrorAction SilentlyContinue |
@@ -341,24 +364,44 @@ function Push-Git {
 	foreach ($gitDir in $gitDirs) {
 		$repoDir = $gitDir.Parent.FullName
 		$unpushed = git -C $repoDir cherry -v 2>$null
+		$branch = git -C $repoDir branch --show-current 2>$null
+		if (-not $branch) { $branch = "detached" }
+
 		if ($unpushed) {
-			_ui_sub "Enviando $repoDir..."
-			git -C $repoDir push
-			if ($LASTEXITCODE -eq 0) {
-				_ui_ok "$repoDir: push concluído com sucesso!"
+			if ($Status) {
+				_ui_warn "$repoDir [$branch]: commits pendentes de envio"
+				$unpushed | ForEach-Object { Write-Host "  ↳ $_" -ForegroundColor DarkYellow }
+			} elseif ($DryRun) {
+				_ui_sub "[DRY-RUN PUSH] $repoDir [$branch]"
 			} else {
-				_ui_err "$repoDir: falha no push."
+				_ui_sub "Enviando $repoDir ($branch)..."
+				git -C $repoDir push
+				if ($LASTEXITCODE -eq 0) {
+					_ui_ok "$repoDir: push concluído com sucesso!"
+				} else {
+					_ui_err "$repoDir: falha no push."
+				}
 			}
 		} else {
-			_ui_ok "$repoDir: já atualizado com o remote."
+			if ($Status) {
+				_ui_ok "$repoDir [$branch]: nada a enviar"
+			} else {
+				_ui_ok "$repoDir: já atualizado com o remote."
+			}
 		}
 	}
 	Write-Host ""
-	_ui_ok "Varredura e envio de repositórios Git concluídos!"
+	_ui_ok "Operação Push Git concluída!"
 }
 
 function Update-Editors {
-	_ui_step "Atualizando a Suíte de Editores no Windows..."
+	param(
+		[switch]$Status,
+		[switch]$DryRun,
+		[switch]$Extensions
+	)
+	$action = if ($Status) { "Auditando status da" } elseif ($DryRun) { "Simulando atualização da" } else { "Atualizando a" }
+	_ui_step "$action Suíte de Editores no Windows..."
 	$found = 0
 
 	$emacsPath = Join-Path $HOME ".emacs.d"
@@ -367,13 +410,21 @@ function Update-Editors {
 	}
 	if (Test-Path (Join-Path $emacsPath ".git")) {
 		$found = 1
-		_ui_sub "Atualizando Emacs em $emacsPath..."
-		git -C $emacsPath pull --ff-only
-		if (Test-Path (Join-Path $emacsPath ".gitmodules")) {
-			_ui_sub "Sincronizando submódulos Elisp..."
-			git -C $emacsPath submodule update --init --recursive --remote --merge
+		if ($Status) {
+			_ui_sub "Status de Emacs em $emacsPath..."
+			git -C $emacsPath status -s -b
+		} elseif ($DryRun) {
+			_ui_sub "[DRY-RUN] Atualização de Emacs em $emacsPath..."
+			_ui_sub "git -C $emacsPath pull --ff-only"
+		} else {
+			_ui_sub "Atualizando Emacs em $emacsPath..."
+			git -C $emacsPath pull --ff-only
+			if (Test-Path (Join-Path $emacsPath ".gitmodules")) {
+				_ui_sub "Sincronizando submódulos Elisp..."
+				git -C $emacsPath submodule update --init --recursive --remote --merge
+			}
+			_ui_ok "Emacs atualizado com sucesso!"
 		}
-		_ui_ok "Emacs atualizado com sucesso!"
 	}
 
 	$helixPath = if ($env:APPDATA) { Join-Path $env:APPDATA "helix" } else { Join-Path $HOME ".config\helix" }
@@ -382,9 +433,17 @@ function Update-Editors {
 	}
 	if (Test-Path (Join-Path $helixPath ".git")) {
 		$found = 1
-		_ui_sub "Atualizando Helix em $helixPath..."
-		git -C $helixPath pull --ff-only
-		_ui_ok "Helix atualizado com sucesso!"
+		if ($Status) {
+			_ui_sub "Status de Helix em $helixPath..."
+			git -C $helixPath status -s -b
+		} elseif ($DryRun) {
+			_ui_sub "[DRY-RUN] Atualização de Helix em $helixPath..."
+			_ui_sub "git -C $helixPath pull --ff-only"
+		} else {
+			_ui_sub "Atualizando Helix em $helixPath..."
+			git -C $helixPath pull --ff-only
+			_ui_ok "Helix atualizado com sucesso!"
+		}
 	}
 
 	$nvimPath = if ($env:LOCALAPPDATA) { Join-Path $env:LOCALAPPDATA "nvim" } else { Join-Path $HOME ".config\nvim" }
@@ -393,9 +452,17 @@ function Update-Editors {
 	}
 	if (Test-Path (Join-Path $nvimPath ".git")) {
 		$found = 1
-		_ui_sub "Atualizando NeoVim em $nvimPath..."
-		git -C $nvimPath pull --ff-only
-		_ui_ok "NeoVim atualizado com sucesso!"
+		if ($Status) {
+			_ui_sub "Status de NeoVim em $nvimPath..."
+			git -C $nvimPath status -s -b
+		} elseif ($DryRun) {
+			_ui_sub "[DRY-RUN] Atualização de NeoVim em $nvimPath..."
+			_ui_sub "git -C $nvimPath pull --ff-only"
+		} else {
+			_ui_sub "Atualizando NeoVim em $nvimPath..."
+			git -C $nvimPath pull --ff-only
+			_ui_ok "NeoVim atualizado com sucesso!"
+		}
 	}
 
 	$vimPath = Join-Path $HOME "vimfiles"
@@ -404,15 +471,105 @@ function Update-Editors {
 	}
 	if (Test-Path (Join-Path $vimPath ".git")) {
 		$found = 1
-		_ui_sub "Atualizando Vim em $vimPath..."
-		git -C $vimPath pull --ff-only
-		_ui_ok "Vim atualizado com sucesso!"
+		if ($Status) {
+			_ui_sub "Status de Vim em $vimPath..."
+			git -C $vimPath status -s -b
+		} elseif ($DryRun) {
+			_ui_sub "[DRY-RUN] Atualização de Vim em $vimPath..."
+			_ui_sub "git -C $vimPath pull --ff-only"
+		} else {
+			_ui_sub "Atualizando Vim em $vimPath..."
+			git -C $vimPath pull --ff-only
+			_ui_ok "Vim atualizado com sucesso!"
+		}
 	}
 
 	if ($found -eq 0) {
 		_ui_info "Nenhum repositório de editor encontrado nos caminhos canônicos (~/.emacs.d, helix, nvim, vimfiles)."
 	} else {
 		_ui_ok "Suíte de Editores sincronizada com sucesso!"
+	}
+
+	if ($Extensions) {
+		Sync-Extensions -Status:$Status -DryRun:$DryRun
+	}
+}
+
+function Sync-Extensions {
+	param(
+		[string]$Target = "auto",
+		[switch]$Status,
+		[switch]$DryRun,
+		[switch]$Export
+	)
+	_ui_step "Sincronizando extensões de IDE declarativas..."
+	$candidates = @(
+		$env:PROFILE_DIR,
+		(Join-Path $HOME ".local\share\profile"),
+		(Join-Path $HOME ".config\profile"),
+		(Join-Path $HOME ".profile"),
+		(Join-Path $HOME "OneDrive\Documentos\Profile"),
+		(Join-Path $HOME "Documents\Profile")
+	)
+	if ($MsysHome) {
+		$candidates += @(
+			(Join-Path $MsysHome ".local\share\profile"),
+			(Join-Path $MsysHome ".config\profile"),
+			(Join-Path $MsysHome ".profile")
+		)
+	}
+	$targetRepo = $candidates | Where-Object { $_ -and (Test-Path (Join-Path $_ "profile.sh")) } | Select-Object -First 1
+
+	$bash = Get-Msys2Bash
+	if ($targetRepo -and $bash) {
+		$argsList = @("extensions")
+		if ($Export) { $argsList += "export" }
+		elseif ($Status) { $argsList += "status" }
+		else { $argsList += "install" }
+		if ($DryRun) { $argsList += "--dry-run" }
+		if ($Target -ne "auto") { $argsList += $Target }
+
+		$argStr = $argsList -join " "
+		$targetPosix = ($targetRepo -replace '\\', '/')
+		if ($targetPosix -match '^[A-Za-z]:') {
+			$drive = $targetPosix.Substring(0, 1).ToLower()
+			$rest = $targetPosix.Substring(2)
+			$targetPosix = "/$drive$rest"
+		}
+		& $bash -c "MSYS=winsymlinks:nativestrict '$targetPosix/profile.sh' $argStr"
+	} else {
+		$ideCli = if (Get-Command "antigravity" -ErrorAction SilentlyContinue) { "antigravity" }
+			elseif (Get-Command "code" -ErrorAction SilentlyContinue) { "code" }
+			elseif (Get-Command "codium" -ErrorAction SilentlyContinue) { "codium" }
+			else { $null }
+
+		if (-not $ideCli) {
+			_ui_warn "Nenhuma CLI de editor encontrada (antigravity, code, codium)."
+			return
+		}
+
+		$ideFolder = if ($ideCli -eq "codium") { "vscodium" } elseif ($ideCli -eq "antigravity") { "antigravity" } else { "vscode" }
+		$extFile = if ($targetRepo) { Join-Path $targetRepo "editors\$ideFolder\extensions.txt" } else { $null }
+
+		if (-not $extFile -or -not (Test-Path $extFile)) {
+			_ui_info "Manifesto de extensões não encontrado ($ideFolder)."
+			return
+		}
+
+		Get-Content $extFile | ForEach-Object {
+			$line = $_.Trim()
+			if ($line -and -not $line.StartsWith("#")) {
+				if ($Status) {
+					_ui_sub "[DECLARADA] $line"
+				} elseif ($DryRun) {
+					_ui_sub "[DRY-RUN EXT] $ideCli --install-extension $line"
+				} else {
+					& $ideCli --install-extension $line --force *>$null
+					_ui_ok "[EXT] $line"
+				}
+			}
+		}
+		_ui_ok "Sincronização de extensões concluída!"
 	}
 }
 
@@ -421,7 +578,8 @@ function Update-Profile {
 		[switch]$Status,
 		[switch]$Pull,
 		[switch]$DryRun,
-		[switch]$Backup
+		[switch]$Backup,
+		[switch]$Extensions
 	)
 	$candidates = @(
 		$env:PROFILE_DIR,
@@ -441,21 +599,31 @@ function Update-Profile {
 	$target = $candidates | Where-Object { $_ -and (Test-Path (Join-Path $_ ".git")) } | Select-Object -First 1
 
 	if ($target) {
-		_ui_step "Atualizando Universal Profile em: $target..."
-		$dirty = git -C $target status --porcelain 2>$null
-		if ($dirty) {
-			_ui_warn "Alterações locais não commitadas detectadas em: $target. Ignorando git pull para preservar dados."
+		if ($Status) {
+			_ui_step "Status do Universal Profile em: $target..."
+			git -C $target status -s -b
+		} elseif ($DryRun) {
+			_ui_step "[DRY-RUN] Atualização do Universal Profile em: $target..."
+			_ui_sub "git -C $target pull --ff-only"
 		} else {
-			git -C $target pull --ff-only
+			_ui_step "Atualizando Universal Profile em: $target..."
+			$dirty = git -C $target status --porcelain 2>$null
+			if ($dirty) {
+				_ui_warn "Alterações locais não commitadas detectadas em: $target. Ignorando git pull para preservar dados."
+			} else {
+				git -C $target pull --ff-only
+			}
 		}
+
 		$shSync = Join-Path $target "profile.sh"
 		if (Test-Path $shSync) {
 			_ui_sub "Sincronizando dotfiles via profile.sh (MSYS2 / POSIX)..."
 			$syncArgs = @("sync")
-			if ($Status) { $syncArgs += "--status" }
-			if ($Pull)   { $syncArgs += "--pull" }
-			if ($DryRun) { $syncArgs += "--dry-run" }
-			if ($Backup) { $syncArgs += "--backup" }
+			if ($Status)     { $syncArgs += "--status" }
+			if ($Pull)       { $syncArgs += "--pull" }
+			if ($DryRun)     { $syncArgs += "--dry-run" }
+			if ($Backup)     { $syncArgs += "--backup" }
+			if ($Extensions) { $syncArgs += "--extensions" }
 			$argStr = $syncArgs -join " "
 			$bash = Get-Msys2Bash
 			if ($bash) {
@@ -477,6 +645,11 @@ function Update-Profile {
 }
 
 function Update-Vault {
+	param(
+		[switch]$Status,
+		[switch]$Keys,
+		[switch]$DryRun
+	)
 	$candidates = @(
 		$env:VAULT_DIR,
 		(Join-Path $HOME ".local\share\vault"),
@@ -493,8 +666,23 @@ function Update-Vault {
 	$target = $candidates | Where-Object { $_ -and (Test-Path (Join-Path $_ ".git")) } | Select-Object -First 1
 
 	if ($target) {
+		if ($Status) {
+			_ui_step "Status do Universal Vault em: $target..."
+			git -C $target status -s -b
+			return
+		}
+		if ($DryRun) {
+			_ui_step "[DRY-RUN] Atualização do Universal Vault em: $target..."
+			_ui_sub "git -C $target pull --ff-only"
+			return
+		}
 		_ui_step "Atualizando Universal Vault em: $target..."
 		git -C $target pull --ff-only
+		$vaultScript = Join-Path $target "vault.ps1"
+		if (Test-Path $vaultScript) {
+			_ui_sub "Recarregando variáveis e chaves de segurança..."
+			& $vaultScript
+		}
 		_ui_ok "Universal Vault atualizado com sucesso!"
 	} else {
 		_ui_info "Repositório do Vault não encontrado."
@@ -502,6 +690,10 @@ function Update-Vault {
 }
 
 function Update-Shell {
+	param(
+		[switch]$Status,
+		[switch]$DryRun
+	)
 	$candidates = @(
 		$env:SHELL_REPO_DIR,
 		(Join-Path $HOME ".local\share\shell"),
@@ -519,6 +711,16 @@ function Update-Shell {
 	$target = $candidates | Where-Object { $_ -and (Test-Path (Join-Path $_ ".git")) } | Select-Object -First 1
 
 	if ($target) {
+		if ($Status) {
+			_ui_step "Status do Universal Shell em: $target..."
+			git -C $target status -s -b
+			return
+		}
+		if ($DryRun) {
+			_ui_step "[DRY-RUN] Atualização do Universal Shell em: $target..."
+			_ui_sub "git -C $target pull --ff-only"
+			return
+		}
 		_ui_step "Atualizando Universal Shell em: $target..."
 		git -C $target pull --ff-only
 		_ui_ok "Universal Shell atualizado com sucesso!"
@@ -536,10 +738,33 @@ function Update-System {
 }
 
 function Update-All {
+	param(
+		[switch]$Status,
+		[switch]$DryRun
+	)
+	if ($Status) {
+		_ui_banner "Status Global do Ecossistema"
+		Update-Profile -Status
+		Update-Vault -Status
+		Update-Shell -Status
+		Update-Editors -Status
+		_ui_banner "Verificação de Status Concluída"
+		return
+	}
+	if ($DryRun) {
+		_ui_banner "Simulação Global do Ecossistema (Dry-Run)"
+		Update-Profile -DryRun
+		Update-Vault -DryRun
+		Update-Shell -DryRun
+		Update-Editors -DryRun
+		_ui_banner "Simulação Concluída"
+		return
+	}
 	_ui_banner "Atualização Global do Ecossistema e Sistema"
 	Update-System
 	Update-Profile
 	Update-Vault
+	Update-Shell
 	Update-Editors
 	_ui_banner "Atualização Global Concluída com Sucesso"
 }
@@ -590,6 +815,9 @@ New-Alias "upgit" "Update-Git"
 New-Alias "plgit" "Update-Git"
 New-Alias "psgit" "Push-Git"
 New-Alias "uped" "Update-Editors"
+New-Alias "sync-extensions" "Sync-Extensions"
+New-Alias "update-extensions" "Sync-Extensions"
+New-Alias "upext" "Sync-Extensions"
 New-Alias "uprc" "Update-Profile"
 New-Alias "upprofile" "Update-Profile"
 New-Alias "sync-profile" "Update-Profile"
