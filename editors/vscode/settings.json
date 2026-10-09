@@ -126,7 +126,7 @@
 	"[c]": { "editor.defaultFormatter": "xaver.clang-format" },
 	"[cpp]": { "editor.defaultFormatter": "xaver.clang-format" },
 	"[go]": { "editor.defaultFormatter": "golang.go" },
-		"[python]": {
+	"[python]": {
 		"editor.defaultFormatter": "charliermarsh.ruff",
 		"editor.insertSpaces": true,
 		"editor.tabSize": 4,
