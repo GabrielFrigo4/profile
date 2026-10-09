@@ -106,12 +106,13 @@ Em runners headless de CI/CD (GitHub Actions, SSH sem PTY), shells interativos (
 
 ---
 
-## 🛠️ As Quatro Regras de Ouro Multiplataforma
+## 🛠️ As Cinco Regras de Ouro Multiplataforma
 
 1. **Makefiles Universais (Paridade bmake & gmake):** Cabeçalho `.POSIX: .SILENT:`, `MAKEFLAGS += --no-print-directory -s`, `CC ?= cc`, `$(MAKE) -C` e atribuições dinâmicas com `!=`.
 2. **Shebangs Portáveis:** Invariavelmente `#!/usr/bin/env sh` para shell e `#!/usr/bin/env python3` para Python.
 3. **Programação Defensiva:** Checagem via `command -v`, redirecionamentos cotados `> "/dev/null" 2>&1`, taxonomia `echo` / `[ -t 1 ] && echo -n $'\e...'` / `printf`.
 4. **Permissões em 4 Dígitos:** `chmod 0755` para executáveis, `chmod 0644` para arquivos regulares, `chmod 0700`/`0600` para segredos.
+5. **Arquitetura de Provisionamento (Despachante Multi-OS Universal):** Em repositórios de provisionamento (`Setup`), scripts em `common/` atuam como despachantes dinâmicos de pacotes (`pkg` → `dnf` → `apt` → `pacman` [MSYS2/Arch] → `winget.exe`). Todo pacote suportado em múltiplos sistemas operacionais DEVE residir em `common/`, reservando pastas de SO (`linux/`, `freebsd/`, `windows/`) estritamente para recursos exclusivos daquela plataforma (dconf, Jails, udev, registro).
 
 ---
 
