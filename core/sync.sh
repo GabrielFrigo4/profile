@@ -199,7 +199,7 @@ _profile_sync() {
 	else
 		_sync "editors/zed/settings.json" "${_cfg}/zed/settings.json"
 		_sync "editors/vscode/settings.json" "${_cfg}/Code/User/settings.json"
-		_sync "editors/vscode/settings.json" "${_cfg}/vscode-oss/User/settings.json"
+		_sync "editors/vscode/settings.json" "${_cfg}/Code - OSS/User/settings.json"
 		_sync "editors/vscodium/settings.json" "${_cfg}/VSCodium/User/settings.json"
 		_sync "editors/antigravity/settings.json" "${_cfg}/Antigravity IDE/User/settings.json"
 	fi

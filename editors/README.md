@@ -14,14 +14,14 @@ Esta pasta reúne exclusivamente os **arquivos declarativos de configuração** 
 
 ## 📂 Catálogo de Configurações
 
-| Editor                          | Arquivos Declarativos             | Destino (Linux / FreeBSD)     | Destino (Windows)             |
-| :------------------------------ | :-------------------------------- | :---------------------------- | :---------------------------- |
-| **[Antigravity](antigravity/)** | `settings.json`, `extensions.txt` | `~/.config/Antigravity/User/` | `%APPDATA%\Antigravity\User\` |
-| **[VS Code](vscode/)**          | `settings.json`, `extensions.txt` | `~/.config/Code/User/`        | `%APPDATA%\Code\User\`        |
-| **[VS Codium](vscodium/)**      | `settings.json`, `extensions.txt` | `~/.config/VSCodium/User/`    | `%APPDATA%\VSCodium\User\`    |
-| **[Zed](zed/)**                 | `settings.json`                   | `~/.config/zed/`              | `%APPDATA%\Zed\`              |
-| **[Emacs](emacs/)**             | `lite.el` (standalone)            | `~/.emacs`                    | `%USERPROFILE%\.emacs`        |
-| **[Vim](vim/)**                 | `lite.vim` (standalone)           | `~/.vimrc`                    | `%USERPROFILE%\_vimrc`        |
+| Editor                          | Arquivos Declarativos             | Destino (Linux / FreeBSD)                            | Destino (Windows)             |
+| :------------------------------ | :-------------------------------- | :--------------------------------------------------- | :---------------------------- |
+| **[Antigravity](antigravity/)** | `settings.json`, `extensions.txt` | `~/.config/Antigravity/User/`                        | `%APPDATA%\Antigravity\User\` |
+| **[VS Code](vscode/)**          | `settings.json`, `extensions.txt` | `~/.config/Code/User/`, `~/.config/Code - OSS/User/` | `%APPDATA%\Code\User\`        |
+| **[VS Codium](vscodium/)**      | `settings.json`, `extensions.txt` | `~/.config/VSCodium/User/`                           | `%APPDATA%\VSCodium\User\`    |
+| **[Zed](zed/)**                 | `settings.json`                   | `~/.config/zed/`                                     | `%APPDATA%\Zed\`              |
+| **[Emacs](emacs/)**             | `lite.el` (standalone)            | `~/.emacs`                                           | `%USERPROFILE%\.emacs`        |
+| **[Vim](vim/)**                 | `lite.vim` (standalone)           | `~/.vimrc`                                           | `%USERPROFILE%\_vimrc`        |
 
 ---
 
