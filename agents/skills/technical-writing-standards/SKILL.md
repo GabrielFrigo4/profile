@@ -35,7 +35,7 @@ A documentação técnica do ecossistema deve proporcionar uma experiência impe
 Consulte as especificações detalhadas nos subarquivos dedicados:
 
 - **[readme-design.md](references/readme-design.md):** Engenharia de badges vetoriais com Shields.io e Simple Icons, improvisação canônica de slugs, hero sections, tabelas de catálogo e portais de repositórios.
-- **[diagrams-mermaid.md](references/diagrams-mermaid.md):** Diagramação em código Mermaid, arquitetura hierárquica híbrida (`flowchart TD` com `direction LR` e `~~~`), diagramas de sequência e citações seguras de rótulos.
+- **[diagrams-mermaid.md](references/diagrams-mermaid.md):** Diagramação em código Mermaid, hierarquia de 3 camadas (Mermaid > SVG > ASCII), prevenção do bug de listas ordenadas (`htmlLabels: false`), arquitetura híbrida (`flowchart TD` com `direction LR`) e pós-processamento SVG.
 - **[typography-style.md](references/typography-style.md):** Tipografia técnica, alinhamento de tabelas (`:---`, `:---:`, `---:`), admonitions do GitHub (`> [!NOTE]`, etc.), proteção de URLs com parênteses `<...>` e acessibilidade.
 - **[tone-and-economy.md](references/tone-and-economy.md):** Tom sóbrio, dicotomia de estilos (Sistema/IA vs Humano), gramática declarativa contrastiva e eliminação de token-bloat dramático.
 

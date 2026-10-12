@@ -289,9 +289,24 @@ function Update-Windows {
 function Update-Git {
 	param(
 		[parameter(Position=0, Mandatory=$false)][string] $Path = ".",
-		[switch]$Status,
-		[switch]$DryRun
+		[alias("s")][switch]$Status,
+		[alias("n")][switch]$DryRun,
+		[alias("h")][switch]$Help
 	)
+	if ($Help) {
+		Write-Host @"
+Uso: Update-Git [[-Path] <caminho>] [-Status] [-DryRun] [-Help] (alias: upgit, plgit)
+
+Localiza e atualiza repositórios Git recursivamente com proteção contra divergências.
+
+Parâmetros:
+  -Path <caminho>    Diretório raiz da busca (padrão: '.')
+  -Status, -s        Audita status de branches, commits divergentes e arquivos locais
+  -DryRun, -n        Simula a sincronização sem efetuar git pull
+  -Help, -h          Exibe esta ajuda
+"@
+		return
+	}
 	$targetPath = if ($Path) { (Resolve-Path $Path).Path } else { (Get-Location).Path }
 	if (-not (Test-Path $targetPath)) {
 		_ui_err "Diretório não encontrado: $targetPath"
@@ -341,9 +356,24 @@ function Update-Git {
 function Push-Git {
 	param(
 		[parameter(Position=0, Mandatory=$false)][string] $Path = ".",
-		[switch]$Status,
-		[switch]$DryRun
+		[alias("s")][switch]$Status,
+		[alias("n")][switch]$DryRun,
+		[alias("h")][switch]$Help
 	)
+	if ($Help) {
+		Write-Host @"
+Uso: Push-Git [[-Path] <caminho>] [-Status] [-DryRun] [-Help] (alias: psgit)
+
+Localiza repositórios Git recursivamente e envia commits pendentes upstream.
+
+Parâmetros:
+  -Path <caminho>    Diretório raiz da busca (padrão: '.')
+  -Status, -s        Audita commits locais pendentes de envio (cherry -v)
+  -DryRun, -n        Simula o envio de commits sem executar git push
+  -Help, -h          Exibe esta ajuda
+"@
+		return
+	}
 	$targetPath = if ($Path) { (Resolve-Path $Path).Path } else { (Get-Location).Path }
 	if (-not (Test-Path $targetPath)) {
 		_ui_err "Diretório não encontrado: $targetPath"
@@ -396,10 +426,25 @@ function Push-Git {
 
 function Update-Editors {
 	param(
-		[switch]$Status,
-		[switch]$DryRun,
-		[switch]$Extensions
+		[alias("s")][switch]$Status,
+		[alias("n")][switch]$DryRun,
+		[alias("e")][switch]$Extensions,
+		[alias("h")][switch]$Help
 	)
+	if ($Help) {
+		Write-Host @"
+Uso: Update-Editors [-Status] [-DryRun] [-Extensions] [-Help] (alias: uped)
+
+Atualiza os repositórios da Suíte de Editores (Emacs, Helix, NeoVim, Vim).
+
+Parâmetros:
+  -Status, -s        Audita o status Git de cada editor instalado
+  -DryRun, -n        Simula a sincronização sem puxar alterações
+  -Extensions, -e    Sincroniza também as extensões declarativas de IDE
+  -Help, -h          Exibe esta ajuda
+"@
+		return
+	}
 	$action = if ($Status) { "Auditando status da" } elseif ($DryRun) { "Simulando atualização da" } else { "Atualizando a" }
 	_ui_step "$action Suíte de Editores no Windows..."
 	$found = 0
@@ -498,10 +543,26 @@ function Update-Editors {
 function Sync-Extensions {
 	param(
 		[string]$Target = "auto",
-		[switch]$Status,
-		[switch]$DryRun,
-		[switch]$Export
+		[alias("s")][switch]$Status,
+		[alias("n")][switch]$DryRun,
+		[switch]$Export,
+		[alias("h")][switch]$Help
 	)
+	if ($Help) {
+		Write-Host @"
+Uso: Sync-Extensions [[-Target] <editor>] [-Status] [-DryRun] [-Export] [-Help] (alias: upext)
+
+Sincroniza extensões declarativas de IDE (VS Code, VSCodium, Antigravity).
+
+Parâmetros:
+  -Target <editor>   Editor alvo: auto (padrão), vscode, vscodium, antigravity
+  -Status, -s        Audita e lista extensões declaradas
+  -DryRun, -n        Simula a instalação sem modificar o ambiente
+  -Export            Exporta extensões instaladas para o manifesto
+  -Help, -h          Exibe esta ajuda
+"@
+		return
+	}
 	_ui_step "Sincronizando extensões de IDE declarativas..."
 	$candidates = @(
 		$env:PROFILE_DIR,
@@ -575,12 +636,29 @@ function Sync-Extensions {
 
 function Update-Profile {
 	param(
-		[switch]$Status,
+		[alias("s")][switch]$Status,
 		[switch]$Pull,
-		[switch]$DryRun,
-		[switch]$Backup,
-		[switch]$Extensions
+		[alias("n")][switch]$DryRun,
+		[alias("b")][switch]$Backup,
+		[alias("e")][switch]$Extensions,
+		[alias("h")][switch]$Help
 	)
+	if ($Help) {
+		Write-Host @"
+Uso: Update-Profile [-Status] [-DryRun] [-Backup] [-Extensions] [-Pull] [-Help] (alias: uprc)
+
+Atualiza o repositório Universal Profile e sincroniza dotfiles via profile.sh.
+
+Parâmetros:
+  -Status, -s        Audita o status do Profile e compara divergências
+  -DryRun, -n        Simula a sincronização sem alterar arquivos
+  -Backup, -b        Cria backup (.bak) antes de substituir arquivos
+  -Extensions, -e    Sincroniza extensões declarativas de IDE
+  -Pull              Reconcilia alterações do sistema de volta ao Git
+  -Help, -h          Exibe esta ajuda
+"@
+		return
+	}
 	$candidates = @(
 		$env:PROFILE_DIR,
 		(Join-Path $HOME ".local\share\profile"),
@@ -646,10 +724,25 @@ function Update-Profile {
 
 function Update-Vault {
 	param(
-		[switch]$Status,
-		[switch]$Keys,
-		[switch]$DryRun
+		[alias("s")][switch]$Status,
+		[alias("k")][switch]$Keys,
+		[alias("n")][switch]$DryRun,
+		[alias("h")][switch]$Help
 	)
+	if ($Help) {
+		Write-Host @"
+Uso: Update-Vault [-Status] [-Keys] [-DryRun] [-Help] (alias: upvt)
+
+Atualiza o repositório Universal Vault e recarrega variáveis e chaves de segurança.
+
+Parâmetros:
+  -Status, -s        Audita o status do repositório do cofre
+  -Keys, -k          Recarrega variáveis e chaves do cofre
+  -DryRun, -n        Simula o pull sem aplicar alterações
+  -Help, -h          Exibe esta ajuda
+"@
+		return
+	}
 	$candidates = @(
 		$env:VAULT_DIR,
 		(Join-Path $HOME ".local\share\vault"),
@@ -691,9 +784,23 @@ function Update-Vault {
 
 function Update-Shell {
 	param(
-		[switch]$Status,
-		[switch]$DryRun
+		[alias("s")][switch]$Status,
+		[alias("n")][switch]$DryRun,
+		[alias("h")][switch]$Help
 	)
+	if ($Help) {
+		Write-Host @"
+Uso: Update-Shell [-Status] [-DryRun] [-Help] (alias: upsh)
+
+Atualiza o repositório Universal Shell via git pull.
+
+Parâmetros:
+  -Status, -s        Audita o status do repositório Git local sem puxar
+  -DryRun, -n        Simula a sincronização sem efetuar pull
+  -Help, -h          Exibe esta ajuda
+"@
+		return
+	}
 	$candidates = @(
 		$env:SHELL_REPO_DIR,
 		(Join-Path $HOME ".local\share\shell"),
@@ -739,9 +846,23 @@ function Update-System {
 
 function Update-All {
 	param(
-		[switch]$Status,
-		[switch]$DryRun
+		[alias("s")][switch]$Status,
+		[alias("n")][switch]$DryRun,
+		[alias("h")][switch]$Help
 	)
+	if ($Help) {
+		Write-Host @"
+Uso: Update-All [-Status] [-DryRun] [-Help] (alias: upall)
+
+Atualização geral e coordenada do ecossistema e gerenciadores de pacotes do sistema.
+
+Parâmetros:
+  -Status, -s        Executa auditoria e diagnóstico geral sem atualizar
+  -DryRun, -n        Simula a atualização de todos os componentes
+  -Help, -h          Exibe esta ajuda
+"@
+		return
+	}
 	if ($Status) {
 		_ui_banner "Status Global do Ecossistema"
 		Update-Profile -Status

@@ -799,6 +799,17 @@ end
 
 local function cmd_upgit(args)
 	local flags = args and trim(args) or ""
+	if flags:find("%-%-help") or flags:find("%-h") then
+		print("Uso: upgit [diretório] [opções] (alias: plgit, pull-git)")
+		print("")
+		print("Localiza e atualiza repositórios Git recursivamente com proteção resiliente.")
+		print("")
+		print("Opções:")
+		print("  -s, --status    Audita status de branches, commits divergentes e alterações")
+		print("  -n, --dry-run   Simula a sincronização sem efetuar git pull")
+		print("  -h, --help      Exibe esta ajuda")
+		return
+	end
 	local is_status = flags:find("%-%-status") or flags:find("%-s")
 	local is_dry = flags:find("%-%-dry%-run") or flags:find("%-n")
 	local root = "."
@@ -884,6 +895,17 @@ end
 
 local function cmd_psgit(args)
 	local flags = args and trim(args) or ""
+	if flags:find("%-%-help") or flags:find("%-h") then
+		print("Uso: psgit [diretório] [opções] (alias: push-git)")
+		print("")
+		print("Localiza repositórios Git recursivamente e envia commits pendentes upstream.")
+		print("")
+		print("Opções:")
+		print("  -s, --status    Audita commits locais pendentes de envio (cherry -v)")
+		print("  -n, --dry-run   Simula o push sem enviar commits")
+		print("  -h, --help      Exibe esta ajuda")
+		return
+	end
 	local is_status = flags:find("%-%-status") or flags:find("%-s")
 	local is_dry = flags:find("%-%-dry%-run") or flags:find("%-n")
 	local root = "."
@@ -965,6 +987,18 @@ local function cmd_psgit(args)
 end
 
 local function cmd_sync_extensions(args)
+	local flags = args and trim(args) or ""
+	if flags:find("%-%-help") or flags:find("%-h") then
+		print("Uso: sync-extensions [opções] (alias: upext, update-extensions)")
+		print("")
+		print("Sincroniza extensões declarativas de IDE (VS Code, VSCodium, Antigravity).")
+		print("")
+		print("Opções:")
+		print("  -s, --status    Audita extensões declaradas no manifesto")
+		print("  -n, --dry-run   Simula a sincronização sem modificar o ambiente")
+		print("  -h, --help      Exibe esta ajuda")
+		return
+	end
 	_ui_step("Sincronizando extensões de IDE declarativas...")
 	local home = os.getenv("USERPROFILE") or os.getenv("HOME") or ""
 	local candidates = {}
@@ -1009,6 +1043,18 @@ end
 
 local function cmd_uped(args)
 	local flags = args and trim(args) or ""
+	if flags:find("%-%-help") or flags:find("%-h") then
+		print("Uso: uped [opções] (alias: update-editors)")
+		print("")
+		print("Atualiza os repositórios da Suíte de Editores (Emacs, Helix, NeoVim, Vim).")
+		print("")
+		print("Opções:")
+		print("  -s, --status        Audita o status Git de cada editor instalado")
+		print("  -n, --dry-run       Simula a sincronização sem puxar alterações")
+		print("  -e, --extensions    Sincroniza também as extensões declarativas de IDE")
+		print("  -h, --help          Exibe esta ajuda")
+		return
+	end
 	local is_status = flags:find("%-%-status") or flags:find("%-s")
 	local is_dry = flags:find("%-%-dry%-run") or flags:find("%-n")
 	local is_ext = flags:find("%-%-extensions") or flags:find("%-e")
@@ -1072,6 +1118,21 @@ local function cmd_uped(args)
 end
 
 local function cmd_uprc(args)
+	local flags = args and trim(args) or ""
+	if flags:find("%-%-help") or flags:find("%-h") then
+		print("Uso: uprc [opções] (alias: upprofile, update-profile, sync-profile)")
+		print("")
+		print("Atualiza o repositório Universal Profile e sincroniza dotfiles via profile.sh.")
+		print("")
+		print("Opções:")
+		print("  -s, --status        Audita o status do Profile e compara divergências")
+		print("  -n, --dry-run       Simula a sincronização sem alterar arquivos")
+		print("  -b, --backup        Cria backup (.bak) antes de substituir arquivos")
+		print("  -e, --extensions    Sincroniza extensões declarativas de IDE")
+		print("  --pull              Reconcilia alterações do sistema de volta ao Git")
+		print("  -h, --help          Exibe esta ajuda")
+		return
+	end
 	local home = os.getenv("USERPROFILE") or os.getenv("HOME") or ""
 	local candidates = {}
 	local function add(p)
@@ -1133,6 +1194,18 @@ local function cmd_uprc(args)
 end
 
 local function cmd_upvt(args)
+	local flags = args and trim(args) or ""
+	if flags:find("%-%-help") or flags:find("%-h") then
+		print("Uso: upvt [opções] (alias: update-vault)")
+		print("")
+		print("Atualiza o repositório Universal Vault e aplica permissões de segurança.")
+		print("")
+		print("Opções:")
+		print("  -s, --status    Audita o status do repositório do cofre")
+		print("  -n, --dry-run   Simula o pull sem aplicar alterações")
+		print("  -h, --help      Exibe esta ajuda")
+		return
+	end
 	local home = os.getenv("USERPROFILE") or os.getenv("HOME") or ""
 	local candidates = {}
 	local function add(p)
@@ -1224,6 +1297,18 @@ local function cmd_vault_perms(args)
 end
 
 local function cmd_upsh(args)
+	local flags = args and trim(args) or ""
+	if flags:find("%-%-help") or flags:find("%-h") then
+		print("Uso: upsh [opções] (alias: update-shell)")
+		print("")
+		print("Atualiza o repositório Universal Shell via git pull.")
+		print("")
+		print("Opções:")
+		print("  -s, --status    Audita o status do repositório Git local sem puxar")
+		print("  -n, --dry-run   Simula a sincronização sem efetuar pull")
+		print("  -h, --help      Exibe esta ajuda")
+		return
+	end
 	local home = os.getenv("USERPROFILE") or os.getenv("HOME") or ""
 	local candidates = {}
 	local function add(p)
@@ -1274,6 +1359,17 @@ end
 
 local function cmd_upall(args)
 	local flags = args and trim(args) or ""
+	if flags:find("%-%-help") or flags:find("%-h") then
+		print("Uso: upall [opções] (alias: update-all)")
+		print("")
+		print("Atualização geral e coordenada do ecossistema e gerenciadores de pacotes do sistema.")
+		print("")
+		print("Opções:")
+		print("  -s, --status    Executa auditoria e diagnóstico geral sem atualizar")
+		print("  -n, --dry-run   Simula a atualização de todos os componentes")
+		print("  -h, --help      Exibe esta ajuda")
+		return
+	end
 	local is_status = flags:find("%-%-status") or flags:find("%-s")
 	local is_dry = flags:find("%-%-dry%-run") or flags:find("%-n")
 

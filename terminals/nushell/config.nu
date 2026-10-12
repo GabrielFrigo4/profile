@@ -263,6 +263,17 @@ def upsys [] {
 
 def upgit [...args: string] {
 	let sub_args = ($args | str join " ")
+	if ($sub_args | str contains "--help") or ($sub_args | str contains "-h") {
+		print "Uso: upgit [diretório] [opções] (alias: plgit, pull-git)"
+		print ""
+		print "Localiza e atualiza repositórios Git recursivamente com proteção resiliente."
+		print ""
+		print "Opções:"
+		print "  -s, --status    Audita status de branches, commits divergentes e alterações"
+		print "  -n, --dry-run   Simula a sincronização sem efetuar git pull"
+		print "  -h, --help      Exibe esta ajuda"
+		return
+	}
 	let is_status = ($sub_args | str contains "--status") or ($sub_args | str contains "-s")
 	let is_dry = ($sub_args | str contains "--dry-run") or ($sub_args | str contains "-n")
 	let non_flags = ($args | where { |a| not ($a | str starts-with "-") })
@@ -313,6 +324,17 @@ def upgit [...args: string] {
 
 def psgit [...args: string] {
 	let sub_args = ($args | str join " ")
+	if ($sub_args | str contains "--help") or ($sub_args | str contains "-h") {
+		print "Uso: psgit [diretório] [opções] (alias: push-git)"
+		print ""
+		print "Localiza repositórios Git recursivamente e envia commits pendentes upstream."
+		print ""
+		print "Opções:"
+		print "  -s, --status    Audita commits locais pendentes de envio (cherry -v)"
+		print "  -n, --dry-run   Simula o push sem enviar commits"
+		print "  -h, --help      Exibe esta ajuda"
+		return
+	}
 	let is_status = ($sub_args | str contains "--status") or ($sub_args | str contains "-s")
 	let is_dry = ($sub_args | str contains "--dry-run") or ($sub_args | str contains "-n")
 	let non_flags = ($args | where { |a| not ($a | str starts-with "-") })
@@ -366,6 +388,18 @@ def psgit [...args: string] {
 }
 
 def sync-extensions [...args: string] {
+	let sub_args = ($args | str join " ")
+	if ($sub_args | str contains "--help") or ($sub_args | str contains "-h") {
+		print "Uso: sync-extensions [opções] (alias: upext, update-extensions)"
+		print ""
+		print "Sincroniza extensões declarativas de IDE (VS Code, VSCodium, Antigravity)."
+		print ""
+		print "Opções:"
+		print "  -s, --status    Audita extensões declaradas no manifesto"
+		print "  -n, --dry-run   Simula a sincronização sem modificar o ambiente"
+		print "  -h, --help      Exibe esta ajuda"
+		return
+	}
 	_ui_step "Sincronizando extensões de IDE declarativas..."
 	let candidates = [
 		($env.PROFILE_DIR? | default ""),
@@ -401,6 +435,18 @@ def sync-extensions [...args: string] {
 
 def uped [...args: string] {
 	let sub_args = ($args | str join " ")
+	if ($sub_args | str contains "--help") or ($sub_args | str contains "-h") {
+		print "Uso: uped [opções] (alias: update-editors)"
+		print ""
+		print "Atualiza os repositórios da Suíte de Editores (Emacs, Helix, NeoVim, Vim)."
+		print ""
+		print "Opções:"
+		print "  -s, --status        Audita o status Git de cada editor instalado"
+		print "  -n, --dry-run       Simula a sincronização sem puxar alterações"
+		print "  -e, --extensions    Sincroniza também as extensões declarativas de IDE"
+		print "  -h, --help          Exibe esta ajuda"
+		return
+	}
 	let is_status = ($sub_args | str contains "--status") or ($sub_args | str contains "-s")
 	let is_dry = ($sub_args | str contains "--dry-run") or ($sub_args | str contains "-n")
 	let is_ext = ($sub_args | str contains "--extensions") or ($sub_args | str contains "-e")
@@ -508,6 +554,21 @@ def uped [...args: string] {
 }
 
 def uprc [...args: string] {
+	let sub_args = ($args | str join " ")
+	if ($sub_args | str contains "--help") or ($sub_args | str contains "-h") {
+		print "Uso: uprc [opções] (alias: upprofile, update-profile, sync-profile)"
+		print ""
+		print "Atualiza o repositório Universal Profile e sincroniza dotfiles via profile.sh."
+		print ""
+		print "Opções:"
+		print "  -s, --status        Audita o status do Profile e compara divergências"
+		print "  -n, --dry-run       Simula a sincronização sem alterar arquivos"
+		print "  -b, --backup        Cria backup (.bak) antes de substituir arquivos"
+		print "  -e, --extensions    Sincroniza extensões declarativas de IDE"
+		print "  --pull              Reconcilia alterações do sistema de volta ao Git"
+		print "  -h, --help          Exibe esta ajuda"
+		return
+	}
 	let candidates = [
 		($env.PROFILE_DIR? | default ""),
 		([$env.USERPROFILE, ".local", "share", "profile"] | path join),
@@ -587,6 +648,18 @@ def vault-perms [path?: string] {
 }
 
 def upvt [...args: string] {
+	let sub_args = ($args | str join " ")
+	if ($sub_args | str contains "--help") or ($sub_args | str contains "-h") {
+		print "Uso: upvt [opções] (alias: update-vault)"
+		print ""
+		print "Atualiza o repositório Universal Vault e aplica permissões de segurança."
+		print ""
+		print "Opções:"
+		print "  -s, --status    Audita o status do repositório do cofre"
+		print "  -n, --dry-run   Simula o pull sem aplicar alterações"
+		print "  -h, --help      Exibe esta ajuda"
+		return
+	}
 	let candidates = [
 		($env.VAULT_DIR? | default ""),
 		([$env.USERPROFILE, ".local", "share", "vault"] | path join),
@@ -622,6 +695,18 @@ def upvt [...args: string] {
 }
 
 def upsh [...args: string] {
+	let sub_args = ($args | str join " ")
+	if ($sub_args | str contains "--help") or ($sub_args | str contains "-h") {
+		print "Uso: upsh [opções] (alias: update-shell)"
+		print ""
+		print "Atualiza o repositório Universal Shell via git pull."
+		print ""
+		print "Opções:"
+		print "  -s, --status    Audita o status do repositório Git local sem puxar"
+		print "  -n, --dry-run   Simula a sincronização sem efetuar pull"
+		print "  -h, --help      Exibe esta ajuda"
+		return
+	}
 	let candidates = [
 		($env.SHELL_REPO_DIR? | default ""),
 		([$env.USERPROFILE, ".local", "share", "shell"] | path join),
@@ -658,6 +743,17 @@ def upsh [...args: string] {
 
 def upall [...args: string] {
 	let sub_args = ($args | str join " ")
+	if ($sub_args | str contains "--help") or ($sub_args | str contains "-h") {
+		print "Uso: upall [opções] (alias: update-all)"
+		print ""
+		print "Atualização geral e coordenada do ecossistema e gerenciadores de pacotes do sistema."
+		print ""
+		print "Opções:"
+		print "  -s, --status    Executa auditoria e diagnóstico geral sem atualizar"
+		print "  -n, --dry-run   Simula a atualização de todos os componentes"
+		print "  -h, --help      Exibe esta ajuda"
+		return
+	}
 	let is_status = ($sub_args | str contains "--status") or ($sub_args | str contains "-s")
 	let is_dry = ($sub_args | str contains "--dry-run") or ($sub_args | str contains "-n")
 

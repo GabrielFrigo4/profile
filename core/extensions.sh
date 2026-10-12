@@ -43,6 +43,24 @@ _profile_extensions() {
 	_ext_act="install" _ext_target="auto" _ext_dry=0
 	for _arg in "$@"; do
 		case "${_arg}" in
+			--help|-h)
+				cat <<- 'EOF'
+				Uso: profile.sh extensions [ação] [editor] [opções]
+
+				Ações:
+				  install (padrão)    Instala extensões listadas no manifesto declarativo
+				  export, dump        Exporta extensões instaladas para o manifesto
+				  status              Audita e compara extensões instaladas com o manifesto
+
+				Editores:
+				  auto (padrão), vscode, vscodium, antigravity
+
+				Opções:
+				  -n, --dry-run       Simula a ação sem modificar nada
+				  -h, --help          Exibe esta ajuda
+				EOF
+				return 0
+				;;
 			install|export|dump|status) _ext_act="${_arg}" ;;
 			antigravity|vscode|vscodium) _ext_target="${_arg}" ;;
 			--dry-run|-n) _ext_dry=1 ;;

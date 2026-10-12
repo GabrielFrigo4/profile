@@ -157,6 +157,10 @@ _profile_sync() {
 	_with_ext=0
 	for _arg in "$@"; do
 		case "${_arg}" in
+			--help|-h)
+				_profile_help
+				return 0
+				;;
 			--dry-run|-n)    _dry_run=1 ;;
 			--backup|-b)     _backup=1 ;;
 			--status|-s)     _mode="status" ;;
