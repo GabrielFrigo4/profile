@@ -140,15 +140,8 @@ _profile_sync() {
 			fi
 
 			_win_docs=""
-			for _cand in \
-				"${_win_onedrive}/Documents" \
-				"${_win_onedrive}/Documentos" \
-				"${_win_home}/Documents" \
-				"${_win_home}/Documentos"; do
-				if [ -d "${_cand}" ]; then
-					_win_docs="${_cand}"
-					break
-				fi
+			for _cand in "${_win_onedrive}/Documents" "${_win_onedrive}/Documentos" "${_win_home}/Documents" "${_win_home}/Documentos"; do
+				[ -d "${_cand}" ] && _win_docs="${_cand}" && break
 			done
 			[ -z "${_win_docs}" ] && _win_docs="${_win_home}/Documents"
 			;;
@@ -210,7 +203,9 @@ _profile_sync() {
 		_sync "editors/antigravity/settings.json" "${_cfg}/Antigravity IDE/User/settings.json"
 	fi
 
-	_ui_step "Emuladores de terminal e shells alternativos..."
+	_ui_step "Emuladores de terminal, multiplexadores e shells..."
+	_sync "terminals/tmux/tmux.conf" "${_cfg}/tmux/tmux.conf"
+	_sync "terminals/tmux/tmux.conf" "${HOME}/.tmux.conf"
 	if [ "${_is_win}" -eq 1 ]; then
 		_sync "terminals/windows-terminal/settings.json" "${_win_local}/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json"
 		_sync "terminals/cmd/profile.lua" "${_win_local}/clink/profile.lua"
@@ -220,14 +215,14 @@ _profile_sync() {
 		_sync "terminals/powershell/Microsoft.PowerShell_profile.ps1" "${_win_docs}/PowerShell/Microsoft.PowerShell_profile.ps1"
 		_sync "terminals/nushell/config.nu" "${_win_app}/nushell/config.nu"
 		_sync "terminals/nushell/env.nu" "${_win_app}/nushell/env.nu"
+		_sync "terminals/zellij/config.kdl" "${_win_app}/zellij/config.kdl"
 	else
 		_sync "terminals/nushell/config.nu" "${_cfg}/nushell/config.nu"
 		_sync "terminals/nushell/env.nu" "${_cfg}/nushell/env.nu"
 		_sync "terminals/powershell/profile.ps1" "${_cfg}/powershell/profile.ps1"
 		_sync "terminals/powershell/Microsoft.PowerShell_profile.ps1" "${_cfg}/powershell/Microsoft.PowerShell_profile.ps1"
-		_sync "terminals/konsole/Bash.profile" "${_data}/konsole/Bash.profile"
-		_sync "terminals/konsole/Shell.profile" "${_data}/konsole/Shell.profile"
-		_sync "terminals/konsole/Zsh.profile" "${_data}/konsole/Zsh.profile"
+		_sync "terminals/zellij/config.kdl" "${_cfg}/zellij/config.kdl"
+		for _kp in Bash Shell Zsh; do _sync "terminals/konsole/${_kp}.profile" "${_data}/konsole/${_kp}.profile"; done
 	fi
 
 	_ui_step "Agentes de IA (Skills & Rules para Antigravity & Gemini)..."
