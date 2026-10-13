@@ -6,26 +6,33 @@ set -eu
 
 _profile_find_ide_cli() {
 	_p_target="${1:-auto}"
+	_is_freebsd="$( [ "$(uname -s 2> "/dev/null")" = "FreeBSD" ] && echo 1 || echo 0 )"
 	case "${_p_target}" in
 		antigravity)
 			command -v antigravity > "/dev/null" 2>&1 && echo "antigravity" && return 0
 			;;
 		vscodium)
 			if command -v codium > "/dev/null" 2>&1; then echo "codium"; return 0;
-			elif command -v vscodium > "/dev/null" 2>&1; then echo "vscodium"; return 0; fi
+			elif command -v vscodium > "/dev/null" 2>&1; then echo "vscodium"; return 0;
+			elif command -v code-oss > "/dev/null" 2>&1; then echo "code-oss"; return 0;
+			elif [ "${_is_freebsd}" -eq 1 ]; then
+				if command -v code > "/dev/null" 2>&1; then echo "code"; return 0;
+				elif command -v vscode > "/dev/null" 2>&1; then echo "vscode"; return 0; fi
+			fi
 			;;
 		vscode)
-			if command -v code > "/dev/null" 2>&1; then echo "code"; return 0;
-			elif command -v vscode > "/dev/null" 2>&1; then echo "vscode"; return 0;
-			elif command -v code-oss > "/dev/null" 2>&1; then echo "code-oss"; return 0; fi
+			if [ "${_is_freebsd}" -eq 0 ]; then
+				if command -v code > "/dev/null" 2>&1; then echo "code"; return 0;
+				elif command -v vscode > "/dev/null" 2>&1; then echo "vscode"; return 0; fi
+			fi
 			;;
 		auto|*)
 			if command -v antigravity > "/dev/null" 2>&1; then echo "antigravity"; return 0;
-			elif command -v code > "/dev/null" 2>&1; then echo "code"; return 0;
-			elif command -v vscode > "/dev/null" 2>&1; then echo "vscode"; return 0;
-			elif command -v code-oss > "/dev/null" 2>&1; then echo "code-oss"; return 0;
 			elif command -v codium > "/dev/null" 2>&1; then echo "codium"; return 0;
-			elif command -v vscodium > "/dev/null" 2>&1; then echo "vscodium"; return 0; fi
+			elif command -v vscodium > "/dev/null" 2>&1; then echo "vscodium"; return 0;
+			elif command -v code-oss > "/dev/null" 2>&1; then echo "code-oss"; return 0;
+			elif command -v code > "/dev/null" 2>&1; then echo "code"; return 0;
+			elif command -v vscode > "/dev/null" 2>&1; then echo "vscode"; return 0; fi
 			;;
 	esac
 	return 1
@@ -34,8 +41,15 @@ _profile_find_ide_cli() {
 _profile_target_from_cli() {
 	case "$1" in
 		antigravity) echo "antigravity" ;;
-		codium|vscodium) echo "vscodium" ;;
-		code|vscode|code-oss|*) echo "vscode" ;;
+		codium|vscodium|code-oss) echo "vscodium" ;;
+		code|vscode)
+			if [ "$(uname -s 2> "/dev/null")" = "FreeBSD" ]; then
+				echo "vscodium"
+			else
+				echo "vscode"
+			fi
+			;;
+		*) echo "vscode" ;;
 	esac
 }
 

@@ -207,6 +207,24 @@ source ~/.vault/vault.nu
 
 **Consequência:** `nu::shell::file_not_found` impede a inicialização de qualquer sessão interativa.
 
+### ❌ Anti-Pattern 4: Suposição Rígida de Diretório em Pontes Host/Guest (NFS/Virtualização)
+
+```sh
+# FRÁGIL: Se o comando for executado fora do escopo de montagem (/home/gabrielf), quebra no guest
+ssh guest "cd \"$PWD\" && agy $*"
+```
+
+**Consequência:** `cd: /usr/ports: No such file or directory` aborta a execução do agente.
+
+**Correção Antifrágil (Canônica):**
+```sh
+_target_dir="/home/gabrielf"
+case "${PWD}" in
+    /home/gabrielf|/home/gabrielf/*) _target_dir="${PWD}" ;;
+esac
+ssh guest "cd \"${_target_dir}\" 2> /dev/null || cd /home/gabrielf; env HOME=/home/gabrielf agy $*"
+```
+
 ---
 
 ## 🔗 Obras de Referência & Fontes Canônicas

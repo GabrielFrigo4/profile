@@ -36,7 +36,10 @@
 ### 3. 🌐 Governança XDG e Multiplataforma
 
 - [x] Auditar e garantir paridade total entre Linux, FreeBSD, macOS e Windows com resolução XDG (`$XDG_CONFIG_HOME`, `$XDG_DATA_HOME`).
-- [x] Manter sincronizados os READMEs de cada módulo de terminal, ferramentas e editores.
+### 4. 📝 Alinhamento de Extensões IDE (Open VSX / FreeBSD Code OSS)
+
+- [x] Motor declarativo `core/extensions.sh` mapeando Code OSS no FreeBSD diretamente para o catálogo VSCodium.
+- [x] Expurgada extensão proprietária `ms-python.vscode-pylance` do manifesto do VSCodium em favor da engine aberta `ms-pyright.pyright`.
 
 ---
 
