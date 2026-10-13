@@ -6,7 +6,10 @@ set -eu
 
 _profile_find_ide_cli() {
 	_p_target="${1:-auto}"
-	_is_freebsd="$( [ "$(uname -s 2> "/dev/null")" = "FreeBSD" ] && echo 1 || echo 0 )"
+	_is_freebsd=0
+	if [ "$(uname -s 2> "/dev/null")" = "FreeBSD" ]; then
+		_is_freebsd=1
+	fi
 	case "${_p_target}" in
 		antigravity)
 			command -v antigravity > "/dev/null" 2>&1 && echo "antigravity" && return 0
