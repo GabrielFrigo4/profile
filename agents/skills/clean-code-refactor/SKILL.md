@@ -40,10 +40,18 @@ Ao refatorar ou auditar qualquer arquivo no ecossistema:
     - Comandos e utilitários públicos: `kebab-case` (`vault-keys`, `update-all`).
     - Helpers internos e variáveis locais: `_snake_case` (`_as_root`, `_repo_root`).
     - Variáveis globais de ambiente e constantes: `SNAKE_CASE` (`PATH`, `SHELL_REPO_DIR`, `VAULT_DIR`).
-7. **Elevação Canônica de Privilégios (POSIX):**
+7. **Elevação Canônica de Privilégios (POSIX) & Shift Seguro:**
     ```sh
-    ELEVATE="$( [ "$(id -u)" -ne 0 ] && { command -v doas > "/dev/null" 2>&1 && echo "doas" || { command -v sudo > "/dev/null" 2>&1 && echo "sudo"; }; } )"
+    ELEVATE=""
+    if [ "$(id -u)" -ne 0 ]; then
+        if command -v doas > "/dev/null" 2>&1; then
+            ELEVATE="doas"
+        elif command -v sudo > "/dev/null" 2>&1; then
+            ELEVATE="sudo"
+        fi
+    fi
     ```
+    - O comando `shift` em POSIX deve sempre ser precedido de validação de parâmetros (`[ "$#" -ge N ] && shift N`), evitando quebra fatal sob `set -e` quando executado com menos argumentos.
 8. **Permissões em 4 Dígitos Octais:**
     - Scripts públicos (`Setup`, `Profile`, `Shell`): `chmod 0755`
     - Configurações e documentações públicas: `chmod 0644`

@@ -93,7 +93,7 @@ if _profile_is_sourced; then
 fi
 
 _cmd="${1:-help}"
-shift 2> "/dev/null" || true
+[ "$#" -ge 1 ] && shift
 
 case "${_cmd}" in
 	sync)       _profile_sync "$@" ;;
