@@ -36,6 +36,7 @@
 ### 3. 🌐 Governança XDG e Multiplataforma
 
 - [x] Auditar e garantir paridade total entre Linux, FreeBSD, macOS e Windows com resolução XDG (`$XDG_CONFIG_HOME`, `$XDG_DATA_HOME`).
+
 ### 4. 📝 Alinhamento de Extensões IDE (Open VSX / FreeBSD Code OSS)
 
 - [x] Motor declarativo `core/extensions.sh` mapeando Code OSS no FreeBSD diretamente para o catálogo VSCodium.

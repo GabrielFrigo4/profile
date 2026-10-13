@@ -217,6 +217,7 @@ ssh guest "cd \"$PWD\" && agy $*"
 **Consequência:** `cd: /usr/ports: No such file or directory` aborta a execução do agente.
 
 **Correção Antifrágil (Canônica):**
+
 ```sh
 _target_dir="/home/gabrielf"
 case "${PWD}" in
