@@ -33,6 +33,7 @@
 	// ==========================================
 	"explorer.confirmDelete": false,
 	"explorer.confirmDragAndDrop": false,
+	"explorer.confirmPasteNative": false,
 
 	// ==========================================
 	// GIT
@@ -53,37 +54,37 @@
 	// ==========================================
 	"terminal.integrated.profiles.windows": {
 		"PowerShell": {
-			"path": "powershell.exe",
+			"path": "powershell.exe"
 		},
 		"Nushell": {
-			"path": "nu.exe",
+			"path": "nu.exe"
 		},
 		"pwsh": {
-			"path": "pwsh.exe",
+			"path": "pwsh.exe"
 		},
 		"cmd": {
-			"path": "cmd.exe",
+			"path": "cmd.exe"
 		},
 		"MSYS2 UCRT64": {
 			"path": "C:\\msys64\\msys2_shell.cmd",
-			"args": ["-defterm", "-here", "-no-start", "-ucrt64", "-shell", "zsh"],
+			"args": ["-defterm", "-here", "-no-start", "-ucrt64", "-shell", "zsh"]
 		},
 		"MSYS2 CLANG64": {
 			"path": "C:\\msys64\\msys2_shell.cmd",
-			"args": ["-defterm", "-here", "-no-start", "-clang64", "-shell", "zsh"],
+			"args": ["-defterm", "-here", "-no-start", "-clang64", "-shell", "zsh"]
 		},
 		"MSYS2 CLANGARM64": {
 			"path": "C:\\msys64\\msys2_shell.cmd",
-			"args": ["-defterm", "-here", "-no-start", "-clangarm64", "-shell", "zsh"],
+			"args": ["-defterm", "-here", "-no-start", "-clangarm64", "-shell", "zsh"]
 		},
 		"MSYS2 MINGW64": {
 			"path": "C:\\msys64\\msys2_shell.cmd",
-			"args": ["-defterm", "-here", "-no-start", "-mingw64", "-shell", "zsh"],
+			"args": ["-defterm", "-here", "-no-start", "-mingw64", "-shell", "zsh"]
 		},
 		"MSYS2 MSYS": {
 			"path": "C:\\msys64\\msys2_shell.cmd",
-			"args": ["-defterm", "-here", "-no-start", "-msys", "-shell", "zsh"],
-		},
+			"args": ["-defterm", "-here", "-no-start", "-msys", "-shell", "zsh"]
+		}
 	},
 
 	// ==========================================
@@ -92,16 +93,16 @@
 	"terminal.integrated.profiles.linux": {
 		"zsh": {
 			"path": "zsh",
-			"args": ["-l"],
+			"args": ["-l"]
 		},
 		"bash": {
 			"path": "bash",
-			"args": ["-l"],
+			"args": ["-l"]
 		},
 		"sh": {
 			"path": "sh",
-			"args": ["-l"],
-		},
+			"args": ["-l"]
+		}
 	},
 
 	// ==========================================
@@ -111,7 +112,7 @@
 		"*.shader": "hlsl",
 		"*.arm": "arm",
 		"*.asm": "nasm",
-		"*.wlua": "lua",
+		"*.wlua": "lua"
 	},
 
 	// ==========================================
@@ -123,8 +124,8 @@
 	// ==========================================
 	// LINGUAGENS
 	// ==========================================
-	"[c]": { "editor.defaultFormatter": "xaver.clang-format" },
-	"[cpp]": { "editor.defaultFormatter": "xaver.clang-format" },
+	"[c]": { "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd" },
+	"[cpp]": { "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd" },
 	"[go]": { "editor.defaultFormatter": "golang.go" },
 	"[python]": {
 		"editor.defaultFormatter": "charliermarsh.ruff",
@@ -145,14 +146,15 @@
 	"[dockerfile]": { "editor.defaultFormatter": "ms-azuretools.vscode-containers" },
 
 	// ==========================================
-    // PYTHON
-    // ==========================================
-    "python.terminal.activateEnvironment": false,
+	// PYTHON
+	// ==========================================
+	"python.terminal.activateEnvironment": false,
 
 	// ==========================================
 	// LSP (LANGUAGE SERVERS)
 	// ==========================================
 	"python.languageServer": "Pylance",
+	"python.analysis.typeCheckingMode": "basic",
 	"ruff.enable": true,
 
 	// ==========================================
@@ -178,7 +180,7 @@
 		"contributors": true,
 		"repositories": true,
 		"searchAndCompare": false,
-		"launchpad": false,
+		"launchpad": false
 	},
 	"gitlens.ai.enabled": false,
 
@@ -186,6 +188,5 @@
 	// IA
 	// ==========================================
 	"github.copilot.enable": { "*": false },
-	"editor.inlineSuggest.enabled": false,
-	"explorer.confirmPasteNative": false,
+	"editor.inlineSuggest.enabled": false
 }

@@ -2,7 +2,10 @@
 	// ==========================================
 	// INTERFACE
 	// ==========================================
+	"workbench.colorTheme": "One Dark Pro Darker",
+	"workbench.iconTheme": "material-icon-theme",
 	"window.autoDetectColorScheme": true,
+	"workbench.preferredDarkColorTheme": "One Dark Pro Darker",
 
 	// ==========================================
 	// APARÊNCIA
@@ -19,10 +22,8 @@
 	// CORE
 	// ==========================================
 	"editor.formatOnSave": true,
-	"editor.formatOnType": true,
 	"editor.tabCompletion": "on",
 	"editor.insertSpaces": false,
-	"editor.inlineSuggest.enabled": false,
 	"files.autoGuessEncoding": true,
 	"security.workspace.trust.untrustedFiles": "open",
 
@@ -36,8 +37,10 @@
 	// GIT
 	// ==========================================
 	"git.openRepositoryInParentFolders": "never",
+	"git.replaceTagsWhenPull": true,
 	"git.enableSmartCommit": true,
 	"git.confirmSync": false,
+	"git.autofetch": true,
 
 	// ==========================================
 	// DEFAULTS
@@ -51,37 +54,37 @@
 	// ==========================================
 	"terminal.integrated.profiles.windows": {
 		"PowerShell": {
-			"path": "powershell.exe",
+			"path": "powershell.exe"
 		},
 		"Nushell": {
-			"path": "nu.exe",
+			"path": "nu.exe"
 		},
 		"pwsh": {
-			"path": "pwsh.exe",
+			"path": "pwsh.exe"
 		},
 		"cmd": {
-			"path": "cmd.exe",
+			"path": "cmd.exe"
 		},
 		"MSYS2 UCRT64": {
 			"path": "C:\\msys64\\msys2_shell.cmd",
-			"args": ["-defterm", "-here", "-no-start", "-ucrt64", "-shell", "zsh"],
+			"args": ["-defterm", "-here", "-no-start", "-ucrt64", "-shell", "zsh"]
 		},
 		"MSYS2 CLANG64": {
 			"path": "C:\\msys64\\msys2_shell.cmd",
-			"args": ["-defterm", "-here", "-no-start", "-clang64", "-shell", "zsh"],
+			"args": ["-defterm", "-here", "-no-start", "-clang64", "-shell", "zsh"]
 		},
 		"MSYS2 CLANGARM64": {
 			"path": "C:\\msys64\\msys2_shell.cmd",
-			"args": ["-defterm", "-here", "-no-start", "-clangarm64", "-shell", "zsh"],
+			"args": ["-defterm", "-here", "-no-start", "-clangarm64", "-shell", "zsh"]
 		},
 		"MSYS2 MINGW64": {
 			"path": "C:\\msys64\\msys2_shell.cmd",
-			"args": ["-defterm", "-here", "-no-start", "-mingw64", "-shell", "zsh"],
+			"args": ["-defterm", "-here", "-no-start", "-mingw64", "-shell", "zsh"]
 		},
 		"MSYS2 MSYS": {
 			"path": "C:\\msys64\\msys2_shell.cmd",
-			"args": ["-defterm", "-here", "-no-start", "-msys", "-shell", "zsh"],
-		},
+			"args": ["-defterm", "-here", "-no-start", "-msys", "-shell", "zsh"]
+		}
 	},
 
 	// ==========================================
@@ -90,16 +93,16 @@
 	"terminal.integrated.profiles.linux": {
 		"zsh": {
 			"path": "zsh",
-			"args": ["-l"],
+			"args": ["-l"]
 		},
 		"bash": {
 			"path": "bash",
-			"args": ["-l"],
+			"args": ["-l"]
 		},
 		"sh": {
 			"path": "sh",
-			"args": ["-l"],
-		},
+			"args": ["-l"]
+		}
 	},
 
 	// ==========================================
@@ -109,11 +112,61 @@
 		"*.shader": "hlsl",
 		"*.arm": "arm",
 		"*.asm": "nasm",
-		"*.wlua": "lua",
+		"*.wlua": "lua"
 	},
 
 	// ==========================================
-    // PYTHON
-    // ==========================================
-    "python.terminal.activateEnvironment": false,
+	// FORMATACAO
+	// ==========================================
+	"editor.formatOnType": true,
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+
+	// ==========================================
+	// LINGUAGENS
+	// ==========================================
+	"[c]": { "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd" },
+	"[cpp]": { "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd" },
+	"[go]": { "editor.defaultFormatter": "golang.go" },
+	"[python]": {
+		"editor.defaultFormatter": "charliermarsh.ruff",
+		"editor.insertSpaces": true,
+		"editor.tabSize": 4,
+		"editor.codeActionsOnSave": {
+			"source.organizeImports": "explicit",
+			"source.fixAll": "explicit"
+		}
+	},
+	"[lua]": { "editor.defaultFormatter": "sumneko.lua" },
+	"[xml]": { "editor.defaultFormatter": "redhat.vscode-xml" },
+	"[jsonc]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+	"[json]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+	"[html]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+	"[javascript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+	"[css]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+	"[dockerfile]": { "editor.defaultFormatter": "ms-azuretools.vscode-containers" },
+
+	// ==========================================
+	// PYTHON
+	// ==========================================
+	"python.terminal.activateEnvironment": false,
+
+	// ==========================================
+	// LSP (LANGUAGE SERVERS)
+	// ==========================================
+	"python.languageServer": "None",
+	"basedpyright.analysis.typeCheckingMode": "basic",
+	"basedpyright.analysis.diagnosticMode": "openFilesOnly",
+	"ruff.enable": true,
+
+	// ==========================================
+	// FERRAMENTAS
+	// ==========================================
+	"makefile.configureOnOpen": false,
+	"redhat.telemetry.enabled": false,
+
+	// ==========================================
+	// IA
+	// ==========================================
+	"github.copilot.enable": { "*": false },
+	"editor.inlineSuggest.enabled": false
 }
