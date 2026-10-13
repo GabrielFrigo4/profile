@@ -1,179 +1,179 @@
 {
-    // ==========================================
-    // INTERFACE
-    // ==========================================
-    "workbench.colorTheme": "One Dark Pro Darker",
-    "workbench.iconTheme": "material-icon-theme",
-    "window.autoDetectColorScheme": true,
-    "workbench.preferredDarkColorTheme": "One Dark Pro Darker",
+	// ==========================================
+	// INTERFACE
+	// ==========================================
+	"workbench.colorTheme": "One Dark Pro Darker",
+	"workbench.iconTheme": "material-icon-theme",
+	"window.autoDetectColorScheme": true,
+	"workbench.preferredDarkColorTheme": "One Dark Pro Darker",
 
-    // ==========================================
-    // APARÊNCIA
-    // ==========================================
-    "editor.fontFamily": "'JetBrainsMono Nerd Font Mono'",
-    "editor.fontLigatures": true,
-    "editor.fontSize": 16,
-    "editor.wordWrap": "off",
-    "diffEditor.wordWrap": "off",
-    "notebook.output.wordWrap": true,
-    "diffEditor.ignoreTrimWhitespace": false,
+	// ==========================================
+	// APARÊNCIA
+	// ==========================================
+	"editor.fontFamily": "'JetBrainsMono Nerd Font Mono'",
+	"editor.fontLigatures": true,
+	"editor.fontSize": 16,
+	"editor.wordWrap": "off",
+	"diffEditor.wordWrap": "off",
+	"notebook.output.wordWrap": true,
+	"diffEditor.ignoreTrimWhitespace": false,
 
-    // ==========================================
-    // CORE
-    // ==========================================
-    "editor.formatOnSave": true,
-    "editor.tabCompletion": "on",
-    "editor.insertSpaces": false,
-    "files.autoGuessEncoding": true,
-    "security.workspace.trust.untrustedFiles": "open",
+	// ==========================================
+	// CORE
+	// ==========================================
+	"editor.formatOnSave": true,
+	"editor.tabCompletion": "on",
+	"editor.insertSpaces": false,
+	"files.autoGuessEncoding": true,
+	"security.workspace.trust.untrustedFiles": "open",
 
-    // ==========================================
-    // EXPLORER
-    // ==========================================
-    "explorer.confirmDelete": false,
-    "explorer.confirmDragAndDrop": false,
-    "explorer.confirmPasteNative": false,
+	// ==========================================
+	// EXPLORER
+	// ==========================================
+	"explorer.confirmDelete": false,
+	"explorer.confirmDragAndDrop": false,
+	"explorer.confirmPasteNative": false,
 
-    // ==========================================
-    // GIT
-    // ==========================================
-    "git.openRepositoryInParentFolders": "never",
-    "git.replaceTagsWhenPull": true,
-    "git.enableSmartCommit": true,
-    "git.confirmSync": false,
-    "git.autofetch": true,
+	// ==========================================
+	// GIT
+	// ==========================================
+	"git.openRepositoryInParentFolders": "never",
+	"git.replaceTagsWhenPull": true,
+	"git.enableSmartCommit": true,
+	"git.confirmSync": false,
+	"git.autofetch": true,
 
-    // ==========================================
-    // DEFAULTS
-    // ==========================================
-    "terminal.integrated.defaultProfile.windows": "pwsh",
-    "terminal.integrated.defaultProfile.linux": "zsh",
-    "terminal.integrated.defaultProfile.osx": "zsh",
+	// ==========================================
+	// DEFAULTS
+	// ==========================================
+	"terminal.integrated.defaultProfile.windows": "pwsh",
+	"terminal.integrated.defaultProfile.linux": "zsh",
+	"terminal.integrated.defaultProfile.osx": "zsh",
 
-    // ==========================================
-    // WINDOWS
-    // ==========================================
-    "terminal.integrated.profiles.windows": {
-        "PowerShell": {
-            "path": "powershell.exe"
-        },
-        "Nushell": {
-            "path": "nu.exe"
-        },
-        "pwsh": {
-            "path": "pwsh.exe"
-        },
-        "cmd": {
-            "path": "cmd.exe"
-        },
-        "MSYS2 UCRT64": {
-            "path": "C:\\msys64\\msys2_shell.cmd",
-            "args": ["-defterm", "-here", "-no-start", "-ucrt64", "-shell", "zsh"]
-        },
-        "MSYS2 CLANG64": {
-            "path": "C:\\msys64\\msys2_shell.cmd",
-            "args": ["-defterm", "-here", "-no-start", "-clang64", "-shell", "zsh"]
-        },
-        "MSYS2 CLANGARM64": {
-            "path": "C:\\msys64\\msys2_shell.cmd",
-            "args": ["-defterm", "-here", "-no-start", "-clangarm64", "-shell", "zsh"]
-        },
-        "MSYS2 MINGW64": {
-            "path": "C:\\msys64\\msys2_shell.cmd",
-            "args": ["-defterm", "-here", "-no-start", "-mingw64", "-shell", "zsh"]
-        },
-        "MSYS2 MSYS": {
-            "path": "C:\\msys64\\msys2_shell.cmd",
-            "args": ["-defterm", "-here", "-no-start", "-msys", "-shell", "zsh"]
-        }
-    },
+	// ==========================================
+	// WINDOWS
+	// ==========================================
+	"terminal.integrated.profiles.windows": {
+		"PowerShell": {
+			"path": "powershell.exe"
+		},
+		"Nushell": {
+			"path": "nu.exe"
+		},
+		"pwsh": {
+			"path": "pwsh.exe"
+		},
+		"cmd": {
+			"path": "cmd.exe"
+		},
+		"MSYS2 UCRT64": {
+			"path": "C:\\msys64\\msys2_shell.cmd",
+			"args": ["-defterm", "-here", "-no-start", "-ucrt64", "-shell", "zsh"]
+		},
+		"MSYS2 CLANG64": {
+			"path": "C:\\msys64\\msys2_shell.cmd",
+			"args": ["-defterm", "-here", "-no-start", "-clang64", "-shell", "zsh"]
+		},
+		"MSYS2 CLANGARM64": {
+			"path": "C:\\msys64\\msys2_shell.cmd",
+			"args": ["-defterm", "-here", "-no-start", "-clangarm64", "-shell", "zsh"]
+		},
+		"MSYS2 MINGW64": {
+			"path": "C:\\msys64\\msys2_shell.cmd",
+			"args": ["-defterm", "-here", "-no-start", "-mingw64", "-shell", "zsh"]
+		},
+		"MSYS2 MSYS": {
+			"path": "C:\\msys64\\msys2_shell.cmd",
+			"args": ["-defterm", "-here", "-no-start", "-msys", "-shell", "zsh"]
+		}
+	},
 
-    // ==========================================
-    // LINUX & BSD
-    // ==========================================
-    "terminal.integrated.profiles.linux": {
-        "zsh": {
-            "path": "zsh",
-            "args": ["-l"]
-        },
-        "bash": {
-            "path": "bash",
-            "args": ["-l"]
-        },
-        "sh": {
-            "path": "sh",
-            "args": ["-l"]
-        }
-    },
+	// ==========================================
+	// LINUX & BSD
+	// ==========================================
+	"terminal.integrated.profiles.linux": {
+		"zsh": {
+			"path": "zsh",
+			"args": ["-l"]
+		},
+		"bash": {
+			"path": "bash",
+			"args": ["-l"]
+		},
+		"sh": {
+			"path": "sh",
+			"args": ["-l"]
+		}
+	},
 
-    // ==========================================
-    // SINTAXE
-    // ==========================================
-    "files.associations": {
-        "*.shader": "hlsl",
-        "*.arm": "arm",
-        "*.asm": "nasm",
-        "*.wlua": "lua"
-    },
+	// ==========================================
+	// SINTAXE
+	// ==========================================
+	"files.associations": {
+		"*.shader": "hlsl",
+		"*.arm": "arm",
+		"*.asm": "nasm",
+		"*.wlua": "lua"
+	},
 
-    // ==========================================
-    // FORMATACAO
-    // ==========================================
-    "editor.formatOnType": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+	// ==========================================
+	// FORMATACAO
+	// ==========================================
+	"editor.formatOnType": true,
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
 
-    // ==========================================
-    // LINGUAGENS
-    // ==========================================
-    "[c]": { "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd" },
-    "[cpp]": { "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd" },
-    "[go]": { "editor.defaultFormatter": "golang.go" },
-    "[python]": {
-        "editor.defaultFormatter": "charliermarsh.ruff",
-        "editor.insertSpaces": true,
-        "editor.tabSize": 4,
-        "editor.codeActionsOnSave": {
-            "source.organizeImports": "explicit",
-            "source.fixAll": "explicit"
-        }
-    },
-    "[lua]": { "editor.defaultFormatter": "sumneko.lua" },
-    "[xml]": { "editor.defaultFormatter": "redhat.vscode-xml" },
-    "[jsonc]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
-    "[json]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
-    "[html]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
-    "[javascript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
-    "[css]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
-    "[dockerfile]": { "editor.defaultFormatter": "ms-azuretools.vscode-containers" },
+	// ==========================================
+	// LINGUAGENS
+	// ==========================================
+	"[c]": { "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd" },
+	"[cpp]": { "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd" },
+	"[go]": { "editor.defaultFormatter": "golang.go" },
+	"[python]": {
+		"editor.defaultFormatter": "charliermarsh.ruff",
+		"editor.insertSpaces": true,
+		"editor.tabSize": 4,
+		"editor.codeActionsOnSave": {
+			"source.organizeImports": "explicit",
+			"source.fixAll": "explicit"
+		}
+	},
+	"[lua]": { "editor.defaultFormatter": "sumneko.lua" },
+	"[xml]": { "editor.defaultFormatter": "redhat.vscode-xml" },
+	"[jsonc]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+	"[json]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+	"[html]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+	"[javascript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+	"[css]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+	"[dockerfile]": { "editor.defaultFormatter": "ms-azuretools.vscode-containers" },
 
-    // ==========================================
-    // PYTHON
-    // ==========================================
-    "python.terminal.activateEnvironment": false,
+	// ==========================================
+	// PYTHON
+	// ==========================================
+	"python.terminal.activateEnvironment": false,
 
-    // ==========================================
-    // LSP (LANGUAGE SERVERS)
-    // ==========================================
-    "python.languageServer": "None",
-    "basedpyright.analysis.typeCheckingMode": "basic",
-    "basedpyright.analysis.diagnosticMode": "openFilesOnly",
-    "ruff.enable": true,
+	// ==========================================
+	// LSP (LANGUAGE SERVERS)
+	// ==========================================
+	"python.languageServer": "None",
+	"basedpyright.analysis.typeCheckingMode": "basic",
+	"basedpyright.analysis.diagnosticMode": "openFilesOnly",
+	"ruff.enable": true,
 
-    // ==========================================
-    // FERRAMENTAS
-    // ==========================================
-    "makefile.configureOnOpen": false,
-    "redhat.telemetry.enabled": false,
+	// ==========================================
+	// FERRAMENTAS
+	// ==========================================
+	"makefile.configureOnOpen": false,
+	"redhat.telemetry.enabled": false,
 
-    // ==========================================
-    // IA
-    // ==========================================
-    "github.copilot.enable": { "*": false },
-    "editor.inlineSuggest.enabled": false,
+	// ==========================================
+	// IA
+	// ==========================================
+	"github.copilot.enable": { "*": false },
+	"editor.inlineSuggest.enabled": false,
 
-    // ==========================================
-    // ANTIGRAVITY
-    // ==========================================
-    "antigravity.marketplaceGalleryItemURL": "https://marketplace.visualstudio.com/items",
-    "antigravity.marketplaceExtensionGalleryServiceURL": "https://marketplace.visualstudio.com/_apis/public/gallery"
+	// ==========================================
+	// ANTIGRAVITY
+	// ==========================================
+	"antigravity.marketplaceGalleryItemURL": "https://marketplace.visualstudio.com/items",
+	"antigravity.marketplaceExtensionGalleryServiceURL": "https://marketplace.visualstudio.com/_apis/public/gallery"
 }
