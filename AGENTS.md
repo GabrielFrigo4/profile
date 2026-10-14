@@ -9,10 +9,9 @@
 O **Profile** é a **identidade de trabalho** do desenvolvedor. Opera estritamente no espaço do usuário (`$HOME`) sem privilégios administrativos. Fornece:
 
 - **Editores:** Antigravity, VS Code, Zed, Emacs (`lite.el`), Vim (`lite.vim`)
-- **Terminais:** Konsole, Windows Terminal, PowerShell, NuShell, CMD (com Clink)
+- **Terminais & Multiplexadores:** Konsole, Windows Terminal, Tmux, Zellij
 - **Linters & Formatadores:** `.clang-format`, `.prettierrc`, `.stylua.toml`
 - **Skills de IA:** Catálogo de habilidades portáteis para agentes autônomos
-- **Comandos de Atualização Windows:** Família `up*` (`upgit`, `uped`, `uprc`, `upvt`, `upsh`, `upall`, `upwin`, `upsys`, `upget`, `upscp`, `upcho`)
 
 ---
 
@@ -27,7 +26,7 @@ O **Profile** é a **identidade de trabalho** do desenvolvedor. Opera estritamen
 7. **Hermetismo de Produção & Invariante `rm -rf .agents`:** Repositório 100% autônomo. Zero acoplamento de código de produção, dotfiles ou loaders a `.agents/` ou `skills/` (o Profile funciona plenamente se `.agents/` for deletado).
 8. **Bancada de Desenvolvimento vs. Runtimes de Produção:** Em produção, o Universal Profile reside e opera soberanamente em `~/.config/profile`. NUNCA aponte symlinks de dotfiles para o diretório de desenvolvimento (`~/Documents/Environment/Profile`). A sincronização de dotfiles para os destinos XDG deve ser executada exclusivamente a partir do clone soberano via `~/.config/profile/profile.sh sync` (ou via `make install` no Environment).
 9. **Invariante de Clonagem "Out-of-the-Box" (Zero-Tweaks Git Invariant):** O Profile deve funcionar imediatamente após um simples `git clone`. Modos octais no Git Index DEVEM ser rigorosamente `0755` para scripts executáveis (`profile.sh`, hooks, scripts de automação) e `0644` para dotfiles e documentações. Scripts devem conter rotinas defensivas de self-healing para re-aplicar permissões se clonados sob NTFS ou montagens WSL.
-10. **Emissão Semântica de UI (`_ui_*`):** Todos os perfis de terminais Windows (PowerShell `profile.ps1`, NuShell `config.nu`, CMD/Clink `profile.lua`) e rotinas de sincronização consomem a taxonomia `_ui_*` (`_ui_step`, `_ui_sub`, `_ui_ok`, `_ui_warn`, `_ui_err`, `_ui_info`, `_ui_banner`), sendo proibido `echo` ou `Write-Host` com emojis soltos.
+10. **Emissão Semântica de UI (`_ui_*`):** Rotinas de sincronização e automação consomem a taxonomia `_ui_*` (`_ui_step`, `_ui_sub`, `_ui_ok`, `_ui_warn`, `_ui_err`, `_ui_info`, `_ui_banner`), sendo proibido `echo` com emojis soltos.
 11. **Governança de Roadmap (Opção C):** O repositório mantém seu [TODO.md](TODO.md) atualizado com a Matriz de Status e Backlog de Grandes Épicos, sincronizado com o badge no `README.md`.
 12. **A Regra Áurea da Fonte Canônica para Edição (Bancada vs. Clones de Runtime):** Toda modificação em dotfiles, scripts de perfil, terminais ou skills globais DEVE ser realizada prioritariamente na bancada de desenvolvimento do **Environment** (`~/Documents/Environment/Profile` ou `~/Documentos/Environment/Profile`).
     **Condição Estrita para Editar em Clones de Runtime:** Apenas se o repositório canônico no Environment **NÃO existir** E o agente **NÃO estiver nele** (ambas as condições estritamente negadas simultaneamente) é que se admite editar diretamente no clone de runtime (`~/.local/share/profile` ou links simbólicos de `~/.gemini/config/skills/`). Isso previne sujar árvores de trabalho de runtime (`unstaged changes`), preserva os atualizadores automáticos (`uprc`, `git pull --ff-only`) e garante versionamento canônico dos commits.

@@ -76,7 +76,7 @@ Diferente do **Setup** (que exige `sudo`/`root` para instalar pacotes no sistema
 
 - **[`profile.sh`](profile.sh)** — **Interface Unificada de Componente:** Entrypoint CLI para `sync`, `update`, `test`, `audit` e exportação de ambiente.
 - **[`editors/`](editors/README.md)** — **Configurações de Editores & IDEs Modernos:** Antigravity, VS Code, VSCodium e Zed (os editores modais Emacs, NeoVim, Vim e Helix operam como repositórios autônomos independentes).
-- **[`terminals/`](terminals/README.md)** — **Perfis de Terminal:** Konsole (KDE), Windows Terminal, CMD (Clink), PowerShell e NuShell.
+- **[`terminals/`](terminals/README.md)** — **Emuladores & Multiplexadores:** Konsole (KDE), Windows Terminal, Tmux e Zellij (os runtimes de shells alternativos pertencem ao Universal Shell).
 - **[`tools/`](tools/README.md)** — **Formatadores & Linters Globais:** `.clang-format`, `.prettierrc`, `.stylua.toml`, `clangd.yaml`.
 - **[`browsers/`](browsers/README.md)** — **Navegadores:** Ajustes e perfis de navegadores (Firefox).
 - **[`agents/`](agents/README.md)** — **Artefatos de IA (Skills & Rules):** Catálogo de skills cognitivas e regras canônicas transversais para Google Antigravity/Gemini com sincronização automatizada.

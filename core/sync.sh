@@ -203,24 +203,13 @@ _profile_sync() {
 		_sync "editors/antigravity/settings.json" "${_cfg}/Antigravity IDE/User/settings.json"
 	fi
 
-	_ui_step "Emuladores de terminal, multiplexadores e shells..."
+	_ui_step "Emuladores de terminal e multiplexadores..."
 	_sync "terminals/tmux/tmux.conf" "${_cfg}/tmux/tmux.conf"
 	_sync "terminals/tmux/tmux.conf" "${HOME}/.tmux.conf"
 	if [ "${_is_win}" -eq 1 ]; then
 		_sync "terminals/windows-terminal/settings.json" "${_win_local}/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json"
-		_sync "terminals/cmd/profile.lua" "${_win_local}/clink/profile.lua"
-		_sync "terminals/cmd/profile.cmd" "${_win_local}/clink/profile.cmd"
-		_sync "terminals/cmd/profile.cmd" "${_win_home}/profile.cmd"
-		_sync "terminals/powershell/profile.ps1" "${_win_docs}/PowerShell/profile.ps1"
-		_sync "terminals/powershell/Microsoft.PowerShell_profile.ps1" "${_win_docs}/PowerShell/Microsoft.PowerShell_profile.ps1"
-		_sync "terminals/nushell/config.nu" "${_win_app}/nushell/config.nu"
-		_sync "terminals/nushell/env.nu" "${_win_app}/nushell/env.nu"
 		_sync "terminals/zellij/config.kdl" "${_win_app}/zellij/config.kdl"
 	else
-		_sync "terminals/nushell/config.nu" "${_cfg}/nushell/config.nu"
-		_sync "terminals/nushell/env.nu" "${_cfg}/nushell/env.nu"
-		_sync "terminals/powershell/profile.ps1" "${_cfg}/powershell/profile.ps1"
-		_sync "terminals/powershell/Microsoft.PowerShell_profile.ps1" "${_cfg}/powershell/Microsoft.PowerShell_profile.ps1"
 		_sync "terminals/zellij/config.kdl" "${_cfg}/zellij/config.kdl"
 		for _kp in Bash Shell Zsh; do _sync "terminals/konsole/${_kp}.profile" "${_data}/konsole/${_kp}.profile"; done
 	fi

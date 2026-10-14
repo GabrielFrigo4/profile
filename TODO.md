@@ -6,15 +6,14 @@
 
 ## 📊 Status do Projeto
 
-| Área                             |   Status   | Cobertura / Estado                                                                |
-| :------------------------------- | :--------: | :-------------------------------------------------------------------------------- |
-| **🪟 Terminais Windows**         | 🟢 Estável | PowerShell, NuShell e CMD/Clink padronizados com `_ui_*` e família `up*`          |
-| **🐧 Terminais UNIX**            | 🟢 Estável | Konsole, Windows Terminal e integrações de terminal XDG                           |
-| **📝 Configurações de Editores** | 🟢 Estável | VS Code, Antigravity e Zed sincronizados via links declarativos                   |
-| **🛠️ Linters & Formatadores**    | 🟢 Estável | `.clang-format`, `.prettierrc`, `.stylua.toml`, `.editorconfig`                   |
-| **🤖 Portable AI Skills**        | 🟢 Estável | Catálogo de skills portáteis orientadas a ação e compatíveis com agentes          |
-| **🔄 Sincronização & Links**     | 🟢 Estável | Motor unificado `profile.sh` (UNIX & MSYS2 Soberano) com auto-cura e idempotência |
-| **🧪 Suite de Auditoria**        |  🟢 100%   | 100% de conformidade com linters de monólitos, nanos, banners e formatos          |
+| Área                                |   Status   | Cobertura / Estado                                                                |
+| :---------------------------------- | :--------: | :-------------------------------------------------------------------------------- |
+| **🖥️ Emuladores & Multiplexadores** | 🟢 Estável | Konsole, Windows Terminal, Tmux e Zellij sincronizados via links declarativos     |
+| **📝 Configurações de Editores**    | 🟢 Estável | VS Code, Antigravity e Zed sincronizados via links declarativos                   |
+| **🛠️ Linters & Formatadores**       | 🟢 Estável | `.clang-format`, `.prettierrc`, `.stylua.toml`, `.editorconfig`                   |
+| **🤖 Portable AI Skills**           | 🟢 Estável | Catálogo de skills portáteis orientadas a ação e compatíveis com agentes          |
+| **🔄 Sincronização & Links**        | 🟢 Estável | Motor unificado `profile.sh` (UNIX & MSYS2 Soberano) com auto-cura e idempotência |
+| **🧪 Suite de Auditoria**           |  🟢 100%   | 100% de conformidade com linters de monólitos, nanos, banners e formatos          |
 
 ---
 
@@ -22,9 +21,8 @@
 
 ### 1. 🎨 Lapidação e Organização dos Dotfiles
 
-- [x] Padronização dos comandos de atualização `up*` nos terminais Windows (PowerShell, NuShell, CMD/Clink).
-- [x] Integração da biblioteca semântica `_ui_*` nos perfis de terminal do Windows.
-- [x] Revisão geral e expurgo de configurações legadas ou redundantes em dotfiles (expurgo de `nushell.nu`, alinhamento de linters e VSCodium).
+- [x] Padronização dos comandos de atualização `up*` e biblioteca semântica `_ui_*`.
+- [x] Revisão geral e expurgo de configurações legadas ou redundantes em dotfiles.
 - [x] Otimização dos esquemas de temas para consistência visual entre terminais e editores.
 
 ### 2. 🛡️ Resiliência e Auto-Cura de Symlinks
@@ -41,6 +39,12 @@
 
 - [x] Motor declarativo `core/extensions.sh` mapeando Code OSS no FreeBSD diretamente para o catálogo VSCodium.
 - [x] Expurgada extensão proprietária `ms-python.vscode-pylance` do manifesto do VSCodium em favor da engine aberta `ms-pyright.pyright`.
+
+### 5. 🐚 Desacoplamento Profile ➔ Shell (Épico 10)
+
+- [x] Migração dos runtimes de shells alternativos (PowerShell, NuShell, CMD com Clink) para o repositório canônico `Shell/`.
+- [x] Expurgo limpo de `terminals/powershell/`, `terminals/nushell/`, `terminals/cmd/` e atualização de `core/sync.sh` (233 linhas, <= 256).
+- [x] Redefinição de fronteira: Profile foca exclusivamente em emuladores gráficos de terminal e multiplexadores.
 
 ---
 

@@ -1,20 +1,17 @@
-# 🖥️ Terminals (Perfis Gráficos & Configurações de Shell)
+# 🖥️ Terminals (Emuladores Gráficos & Multiplexadores)
 
-> Perfis de terminal e dotfiles de ambiente para Konsole, Windows Terminal, PowerShell, Nushell e CMD.
+> Perfis visuais e dotfiles para emuladores de janela gráfica (Konsole, Windows Terminal) e multiplexadores de sessão (Tmux, Zellij). O gerenciamento de runtimes e prompts interativos de shells pertence canonicamente ao Universal Shell.
 
 ---
 
 ## 📂 Catálogo de Configurações
 
-| Terminal / Shell     | Plataforma      | Arquivos Declarativos                                                                                                      | Destino                                                           |
-| :------------------- | :-------------- | :------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------- |
-| **Konsole (KDE)**    | Linux & FreeBSD | [`Bash.profile`](konsole/Bash.profile), [`Zsh.profile`](konsole/Zsh.profile), [`Shell.profile`](konsole/Shell.profile)     | `~/.local/share/konsole/`                                         |
-| **Windows Terminal** | Windows         | [`settings.json`](windows-terminal/settings.json)                                                                          | `%LOCALAPPDATA%\Packages\Microsoft.WindowsTerminal_*\LocalState\` |
-| **Nushell**          | Multiplataforma | [`config.nu`](nushell/config.nu), [`env.nu`](nushell/env.nu)                                                               | `~/.config/nushell/` ou `%APPDATA%\nushell\`                      |
-| **PowerShell**       | Windows / Multi | [`profile.ps1`](powershell/profile.ps1), [`Microsoft.PowerShell_profile.ps1`](powershell/Microsoft.PowerShell_profile.ps1) | `$HOME\Documents\PowerShell\`                                     |
-| **Tmux**             | Multiplataforma | [`tmux.conf`](tmux/tmux.conf)                                                                                              | `~/.config/tmux/` e `~/.tmux.conf`                                |
-| **Zellij**           | Multiplataforma | [`config.kdl`](zellij/config.kdl)                                                                                          | `~/.config/zellij/` ou `%APPDATA%\zellij\`                        |
-| **CMD (Clink)**      | Windows         | [`profile.cmd`](cmd/profile.cmd), [`profile.lua`](cmd/profile.lua), [`setup-profile.reg`](cmd/setup-profile.reg)           | `%USERPROFILE%\` e `%PROGRAMFILES(x86)%\clink\`                   |
+| Emulador / Multiplexador | Plataforma      | Arquivos Declarativos                                                                                                  | Destino                                                           |
+| :----------------------- | :-------------- | :--------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------- |
+| **Konsole (KDE)**        | Linux & FreeBSD | [`Bash.profile`](konsole/Bash.profile), [`Zsh.profile`](konsole/Zsh.profile), [`Shell.profile`](konsole/Shell.profile) | `~/.local/share/konsole/`                                         |
+| **Windows Terminal**     | Windows         | [`settings.json`](windows-terminal/settings.json)                                                                      | `%LOCALAPPDATA%\Packages\Microsoft.WindowsTerminal_*\LocalState\` |
+| **Tmux**                 | Multiplataforma | [`tmux.conf`](tmux/tmux.conf)                                                                                          | `~/.config/tmux/` e `~/.tmux.conf`                                |
+| **Zellij**               | Multiplataforma | [`config.kdl`](zellij/config.kdl)                                                                                      | `~/.config/zellij/` ou `%APPDATA%\zellij\`                        |
 
 ---
 
@@ -34,16 +31,13 @@ Isso elimina a necessidade de perfis separados para Linux (`/bin/`) e FreeBSD (`
 
 Configura esquema de cores e inicialização integrada com PowerShell 7, MSYS2 UCRT64 e distros WSL2.
 
-### 3. CMD com Clink & Lua
+### 3. Multiplexadores de Terminal (Tmux & Zellij)
 
-Injeta suporte a atalhos de readline Unix, histórico persistente e script Lua de completação inteligente no prompt tradicional do Windows.
+Sessões persistentes e divisão de janelas multiplataforma com keybindings padronizados em ambientes locais e remotos.
 
-### 4. Windows: Arquitetura Tripartite (MSYS2 Soberano & Terminais Nativos)
+### 4. Desacoplamento Arquitetural (Profile ➔ Shell)
 
-Os terminais nativos do Windows (PowerShell, NuShell, CMD) são **consumidores de camada fina (Classe 3 / Bronze)**:
+Em conformidade com a arquitetura do **Quarteto de Produtividade**:
 
-- Provêm prompts ultra-rápidos e atalhos familiares (`doskey`, `alias`, cmdlets).
-- Carregam o cofre privado (`vault.ps1`, `vault.nu`, `vault.cmd`, `vault.lua`).
-- Delegam comandos de manutenção e sincronização de dotfiles (`uprc`, `sync-profile`) diretamente ao motor POSIX canônico `profile.sh` via MSYS2 bash (**Classe 2 / Prata**).
-- Implementam resolução defensiva de binários que filtra terminantemente stubs do WSL (`System32\bash.exe`), garantindo a execução autêntica no runtime do MSYS2.
-- Suportam `vault-perms` multiplataforma com endurecimento de segurança nativo via `icacls`.
+- O **Universal Profile** gerencia exclusivamente emuladores gráficos de janela e multiplexadores visuais.
+- Todos os runtimes, prompts, aliases e inicializadores de shells alternativos (**PowerShell**, **NuShell**, **Fish** e **CMD com Clink**) pertencem canonicamente ao repositório **Universal Shell** (`Shell/target/windows/` e `Shell/target/common/fish/`).

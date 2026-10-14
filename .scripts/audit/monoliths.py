@@ -12,10 +12,7 @@ import sys
 import argparse
 
 # Whitelist com justificativa técnica explícita:
-DEFAULT_WHITELIST = {
-    # Perfil extensivo do PowerShell contendo inicialização de módulos e keybindings
-    "terminals/powershell/profile.ps1",
-}
+DEFAULT_WHITELIST = set()
 
 
 def scan_repository(root_dir, soft_limit=128, hard_limit=256, whitelist=None):
