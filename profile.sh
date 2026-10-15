@@ -4,7 +4,24 @@
 # ----------------------------------------------------------------
 set -eu
 
-_PROFILE_ROOT="$(cd "$(dirname "$0")" && pwd)"
+if [ -n "${PROFILE_DIR:-}" ] && [ -d "${PROFILE_DIR}" ]; then
+	_PROFILE_ROOT="${PROFILE_DIR}"
+elif [ -d "${HOME}/.local/share/profile" ]; then
+	_PROFILE_ROOT="${HOME}/.local/share/profile"
+elif [ -d "${HOME}/.config/profile" ]; then
+	_PROFILE_ROOT="${HOME}/.config/profile"
+else
+	case "${0}" in
+		-*|"") _script_dir="" ;;
+		*/*)  _script_dir="${0%/*}" ;;
+		*)    _script_dir="." ;;
+	esac
+	if [ -n "${_script_dir}" ] && [ -d "${_script_dir}" ]; then
+		_PROFILE_ROOT="$(cd "${_script_dir}" && pwd)"
+	else
+		_PROFILE_ROOT="${PWD}"
+	fi
+fi
 export PROFILE_DIR="${_PROFILE_ROOT}"
 
 . "${_PROFILE_ROOT}/core/perms.sh"

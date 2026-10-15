@@ -6,19 +6,19 @@
 	"theme": {
 		"mode": "system",
 		"light": "One Light",
-		"dark": "One Dark",
+		"dark": "One Dark"
 	},
 	"outline_panel": {
-		"dock": "left",
+		"dock": "left"
 	},
 	"collaboration_panel": {
-		"dock": "left",
+		"dock": "left"
 	},
 	"project_panel": {
-		"dock": "left",
+		"dock": "left"
 	},
 	"git_panel": {
-		"dock": "left",
+		"dock": "left"
 	},
 
 	// ==========================================
@@ -29,7 +29,7 @@
 	"ui_font_size": 16,
 	"buffer_font_size": 16,
 	"scrollbar": {
-		"show": "always",
+		"show": "always"
 	},
 
 	// ==========================================
@@ -44,7 +44,7 @@
 	// TELEMETRIA
 	// ==========================================
 	"telemetry": {
-		"metrics": false,
+		"metrics": false
 	},
 
 	// ==========================================
@@ -53,7 +53,7 @@
 	"terminal": {
 		"font_family": "JetBrainsMono Nerd Font Mono",
 		"line_height": "standard",
-		"blinking": "terminal_controlled",
+		"blinking": "terminal_controlled"
 	},
 
 	// ==========================================
@@ -62,12 +62,12 @@
 	"languages": {
 		"Go": {
 			"hard_tabs": true,
-			"tab_size": 4,
+			"tab_size": 4
 		},
 		"Make": {
 			"hard_tabs": true,
-			"tab_size": 4,
-		},
+			"tab_size": 4
+		}
 	},
 
 	// ==========================================
@@ -81,17 +81,17 @@
 					"--background-index",
 					"--compile-commands-dir=build",
 					"--clang-tidy",
-					"--header-insertion=never",
-				],
-			},
+					"--header-insertion=never"
+				]
+			}
 		},
 		"rust-analyzer": {
 			"initialization_options": {
 				"checkOnSave": {
-					"command": "check",
-				},
-			},
-		},
+					"command": "check"
+				}
+			}
+		}
 	},
 
 	// ==========================================
@@ -100,6 +100,6 @@
 	"agent": {
 		"dock": "right",
 		"favorite_models": [],
-		"model_parameters": [],
-	},
+		"model_parameters": []
+	}
 }
