@@ -6,7 +6,6 @@
 	"workbench.iconTheme": "material-icon-theme",
 	"window.autoDetectColorScheme": true,
 	"workbench.preferredDarkColorTheme": "One Dark Pro Darker",
-	"cmake.options.statusBarVisibility": "compact",
 
 	// ==========================================
 	// APARÊNCIA
@@ -162,10 +161,7 @@
 	// FERRAMENTAS
 	// ==========================================
 	"C_Cpp.intelliSenseEngine": "disabled",
-	"nasm.extraFlags": ["-f win64", "-O0"],
 	"makefile.configureOnOpen": false,
-	"zig.zls.enabled": "on",
-	"idf.hasWalkthroughBeenShown": true,
 	"redhat.telemetry.enabled": false,
 	"shader-validator.glsl.targetClient": "None",
 

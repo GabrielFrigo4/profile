@@ -41,7 +41,6 @@
 	"git.replaceTagsWhenPull": true,
 	"git.enableSmartCommit": true,
 	"git.confirmSync": false,
-	"git.autofetch": true,
 
 	// ==========================================
 	// DEFAULTS
@@ -173,8 +172,8 @@
 	"editor.inlineSuggest.enabled": false,
 
 	// ==========================================
-	// ANTIGRAVITY
+	// ANTIGRAVITY (OPEN VSX MARKETPLACE)
 	// ==========================================
-	"antigravity.marketplaceGalleryItemURL": "https://marketplace.visualstudio.com/items",
-	"antigravity.marketplaceExtensionGalleryServiceURL": "https://marketplace.visualstudio.com/_apis/public/gallery"
+	"antigravity.marketplaceGalleryItemURL": "https://open-vsx.org/extension",
+	"antigravity.marketplaceExtensionGalleryServiceURL": "https://open-vsx.org/vscode/gallery"
 }
