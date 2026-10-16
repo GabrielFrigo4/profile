@@ -13,6 +13,7 @@
 | **`.editorconfig`**          | EditorConfig                      | `~/.editorconfig`                  | `%USERPROFILE%\.editorconfig`                  |
 | **`.prettierrc`**            | Prettier (JS/TS/HTML/CSS/MD/JSON) | `~/.prettierrc`                    | `%USERPROFILE%\.prettierrc`                    |
 | **`.stylua.toml`**           | StyLua (Lua)                      | `~/.stylua.toml`                   | `%USERPROFILE%\.stylua.toml`                   |
+| **`ruff.toml`**              | Ruff (Linter & Formatter Python)  | `~/.config/ruff/ruff.toml`         | `%APPDATA%\ruff\ruff.toml`                     |
 | **`mermaid-puppeteer.json`** | Mermaid CLI (Puppeteer)           | `~/.mermaid-puppeteer-config.json` | `%USERPROFILE%\.mermaid-puppeteer-config.json` |
 | **`mermaid-theme.json`**     | Mermaid CLI (Tema)                | `~/.mermaid-theme-config.json`     | `%USERPROFILE%\.mermaid-theme-config.json`     |
 
@@ -40,6 +41,15 @@ Se você precisa rodar os formatadores diretamente no terminal fora da IDE:
 
 - **FreeBSD:** `doas pkg install stylua`
 - **Linux:** `cargo install stylua` ou via releases oficiais no GitHub.
+
+### 4. Ruff
+
+- **Receita Automática:** `curl -fsSL https://raw.githubusercontent.com/GabrielFrigo4/setup/main/common/linters/ruff.sh | sh`
+- **FreeBSD:** `doas pkg install py311-ruff` (ou `devel/py-ruff`)
+- **Fedora:** `sudo dnf install --assumeyes ruff`
+- **Arch Linux:** `sudo pacman -S ruff`
+- **Debian:** `sudo apt install --yes ruff` (ou `pipx install ruff`)
+- **Windows:** `winget install AstralSoftware.Ruff`
 
 ---
 

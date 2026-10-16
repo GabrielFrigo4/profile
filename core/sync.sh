@@ -179,8 +179,10 @@ _profile_sync() {
 	_sync "tools/mermaid-theme.json" "${HOME}/.mermaid-theme-config.json"
 	if [ "${_is_win}" -eq 1 ]; then
 		_sync "tools/clangd.yaml" "${_win_local}/clangd/config.yaml"
+		_sync "tools/ruff.toml" "${_win_app}/ruff/ruff.toml"
 	else
 		_sync "tools/clangd.yaml" "${_cfg}/clangd/config.yaml"
+		_sync "tools/ruff.toml" "${_cfg}/ruff/ruff.toml"
 	fi
 
 	_ui_step "Editores modernos (Zed, VSCode, VSCodium, Antigravity IDE)..."

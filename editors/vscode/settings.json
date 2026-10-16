@@ -156,6 +156,7 @@
 	"python.languageServer": "Pylance",
 	"python.analysis.typeCheckingMode": "basic",
 	"ruff.enable": true,
+	"ruff.args": ["--cache-dir", "/tmp/ruff-cache"],
 
 	// ==========================================
 	// FERRAMENTAS

@@ -1,0 +1,14 @@
+# ----------------------------------------------------------------
+# Config: Ruff Python Linter & Formatter Global Configuration
+# ----------------------------------------------------------------
+
+cache-dir = "/tmp/ruff-cache"
+line-length = 96
+indent-width = 4
+
+[lint]
+select = ["E", "F", "I"]
+
+[format]
+indent-style = "space"
+quote-style = "double"

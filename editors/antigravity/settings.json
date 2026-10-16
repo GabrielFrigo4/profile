@@ -157,6 +157,7 @@
 	"basedpyright.analysis.typeCheckingMode": "basic",
 	"basedpyright.analysis.diagnosticMode": "openFilesOnly",
 	"ruff.enable": true,
+	"ruff.args": ["--cache-dir", "/tmp/ruff-cache"],
 
 	// ==========================================
 	// FERRAMENTAS
