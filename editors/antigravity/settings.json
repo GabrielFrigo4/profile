@@ -164,6 +164,7 @@
 	// ==========================================
 	"makefile.configureOnOpen": false,
 	"redhat.telemetry.enabled": false,
+	"shader-validator.glsl.targetClient": "None",
 
 	// ==========================================
 	// IA
