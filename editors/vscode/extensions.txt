@@ -34,6 +34,3 @@ ms-python.vscode-python-envs
 # --- Syntax Highlighting & Assembly ---
 dan-c-underwood.arm
 thegreyghost.nasm
-
-# --- Version Control & Git ---
-eamodio.gitlens

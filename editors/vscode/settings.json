@@ -160,27 +160,9 @@
 	// ==========================================
 	// FERRAMENTAS
 	// ==========================================
-	"C_Cpp.intelliSenseEngine": "disabled",
 	"makefile.configureOnOpen": false,
 	"redhat.telemetry.enabled": false,
 	"shader-validator.glsl.targetClient": "None",
-
-	// ==========================================
-	// GITLENS
-	// ==========================================
-	"gitlens.views.scm.grouped.views": {
-		"commits": true,
-		"branches": true,
-		"remotes": true,
-		"stashes": true,
-		"tags": true,
-		"worktrees": true,
-		"contributors": true,
-		"repositories": true,
-		"searchAndCompare": false,
-		"launchpad": false
-	},
-	"gitlens.ai.enabled": false,
 
 	// ==========================================
 	// IA

@@ -32,6 +32,7 @@
 	// ==========================================
 	"explorer.confirmDelete": false,
 	"explorer.confirmDragAndDrop": false,
+	"explorer.confirmPasteNative": false,
 
 	// ==========================================
 	// GIT
