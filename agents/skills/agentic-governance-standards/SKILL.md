@@ -30,6 +30,9 @@ Todo repositório no ecossistema estrutura sua inteligência em camadas compleme
     - Comunicação técnica direta, sóbria e assertiva (estilo RFC 2119).
     - Eliminar superlativos dramáticos (hipérboles enfáticas, termos punitivos ou ameaças artificiais de erro), que inflacionam o prompt e contaminam a linguagem da IA sem melhorar o seguimento de regras.
     - Estruturar diretrizes no padrão contrastivo: `Regra: <Ação>. Evite: <Anti-padrão>. Use: <Padrão>`.
+5. **Simetria de Escopo & Não-Assimetria de Subgrupo:**
+    - Invariantes ou protocolos pertencentes a todo um grupo de componentes são documentados estritamente na camada do grupo.
+    - É proibido registrar uma propriedade universal na descrição de um arquivo ou sub-membro específico como se fosse exclusivo dele, evitando gerar falsas assimetrias na base de conhecimento.
 
 ---
 

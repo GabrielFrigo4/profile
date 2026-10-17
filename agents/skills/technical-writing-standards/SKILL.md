@@ -27,6 +27,7 @@ A documentação técnica do ecossistema deve proporcionar uma experiência impe
 - **Blocos de Terminal Universal:** Sempre use o identificador `sh` (```sh) para comandos de CLI, compilação e pacotes. Proibido usar `shell`, `console` ou `terminal`. Identificadores específicos (`zsh`, `bash`, `fish`, `pwsh`) são restritos a código que exige recursos exclusivos daquele interpretador.
 - **Formatação Mandatória Prettier:** Todo documento Markdown deve ser formatado com `npx prettier --write <arquivo>`.
 - **Zero Linhas em Branco no EOF:** Arquivos devem terminar com exatamente um `\n` final, sem linhas em branco extras (`git diff --check`).
+- **Simetria de Escopo & Não-Assimetria de Subgrupo:** Propriedades ou invariantes compartilhadas por todo um grupo devem ser documentadas na camada do grupo. Nunca documente um atributo universal em tabelas ou descrições de um sub-membro específico como se fosse exclusivo dele, sob pena de gerar falsas assimetrias. Sub-membros só detalham comportamentos se implementarem especializações ou otimizações técnicas relevantes.
 
 ---
 
