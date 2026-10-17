@@ -22,7 +22,7 @@ Esta referência estabelece a tabela oficial de correspondência entre sistemas 
 | **Solaris/SunOS**   | `󰖨 `  | `nf-md-weather_sunny`     | `U+F05A8` | Material Design  | `[SOLARIS]`     |
 | **macOS / Darwin**  | ` `  | `nf-linux-apple`          | `U+F302`  | Font Logos       | `[MAC]`         |
 | **Windows / MSYS2** | ` `  | `nf-custom-windows`       | `U+E62A`  | Custom PUA       | `[WIN]`         |
-| **UNIX Genérico**   | ` `  | `nf-oct-terminal`         | `U+F489`  | Octicons         | `[UNIX]`        |
+| **UNIX Genérico**   | ` `  | `nf-md-server_network`    | `U+E8CC`  | Material Design  | `[UNIX]`        |
 
 ---
 
