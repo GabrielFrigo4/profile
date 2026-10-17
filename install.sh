@@ -9,24 +9,40 @@ _repo_root="$(cd "$(dirname "$0")" && pwd)"
 ### ================================
 ### ANSI & SEMANTIC UI EMISSION
 ### ================================
-if [ -n "${BASH_VERSION:-}" ] || [ -n "${ZSH_VERSION:-}" ]; then
-	_ui_escape=$'\e'
-else
-	_ui_escape="$(printf '\x1b')"
-fi
-_ui_reset="${_ui_escape}[0m"
-_ui_cyan="${_ui_escape}[1;36m"
-_ui_green="${_ui_escape}[1;32m"
-_ui_blue="${_ui_escape}[1;34m"
-
 _ui_has_color() {
 	[ -t 1 ] || return 1
-	case "${TERM:-}" in dumb|"") return 1 ;; *) return 0 ;; esac
+	case "${TERM:-}" in
+		dumb|"") return 1 ;;
+		*) return 0 ;;
+	esac
 }
 
-_ui_step() { _ui_has_color && printf "%s==>%s %s\n" "${_ui_cyan}" "${_ui_reset}" "$*" || printf "==> %s\n" "$*"; }
-_ui_sub()  { _ui_has_color && printf "%s  ↳%s %s\n" "${_ui_blue}" "${_ui_reset}" "$*" || printf "  -> %s\n" "$*"; }
-_ui_ok()   { _ui_has_color && printf "%s  ✅%s %s\n" "${_ui_green}" "${_ui_reset}" "$*" || printf "  OK %s\n" "$*"; }
+_ui_step() {
+	if _ui_has_color; then
+		echo -n $'\e[1;36m==>\e[0m '
+	else
+		echo -n "==> "
+	fi
+	echo "$*"
+}
+
+_ui_sub() {
+	if _ui_has_color; then
+		echo -n $'\e[1;34m  ↳\e[0m '
+	else
+		echo -n "  -> "
+	fi
+	echo "$*"
+}
+
+_ui_ok() {
+	if _ui_has_color; then
+		echo -n $'\e[1;32m  ✅\e[0m '
+	else
+		echo -n "  OK "
+	fi
+	echo "$*"
+}
 
 _ui_step "Instalando e sincronizando ecossistema declarativo..."
 _ui_sub "Origem: ${_repo_root}"

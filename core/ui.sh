@@ -7,27 +7,64 @@ set -eu
 ### ================================
 ### SEMANTIC UI EMISSION
 ### ================================
-if [ -n "${BASH_VERSION:-}" ] || [ -n "${ZSH_VERSION:-}" ]; then
-	_ui_escape=$'\e'
-else
-	_ui_escape="$(printf '\x1b')"
-fi
-_ui_reset="${_ui_escape}[0m"
-_ui_cyan="${_ui_escape}[1;36m"
-_ui_green="${_ui_escape}[1;32m"
-_ui_yellow="${_ui_escape}[1;33m"
-_ui_red="${_ui_escape}[1;31m"
-_ui_blue="${_ui_escape}[1;34m"
-_ui_magenta="${_ui_escape}[1;35m"
-
 _ui_has_color() {
 	[ -t 1 ] || return 1
-	case "${TERM:-}" in dumb|"") return 1 ;; *) return 0 ;; esac
+	case "${TERM:-}" in
+		dumb|"") return 1 ;;
+		*) return 0 ;;
+	esac
 }
 
-_ui_step() { _ui_has_color && printf "%s==>%s %s\n" "${_ui_cyan}" "${_ui_reset}" "$*" || printf "==> %s\n" "$*"; }
-_ui_sub()  { _ui_has_color && printf "%s  ↳%s %s\n" "${_ui_blue}" "${_ui_reset}" "$*" || printf "  -> %s\n" "$*"; }
-_ui_ok()   { _ui_has_color && printf "%s  ✅%s %s\n" "${_ui_green}" "${_ui_reset}" "$*" || printf "  OK %s\n" "$*"; }
-_ui_warn() { _ui_has_color && printf "%s  ⚠️ %s %s\n" "${_ui_yellow}" "${_ui_reset}" "$*" || printf "  WARN %s\n" "$*"; }
-_ui_err()  { [ -t 2 ] && printf "%s  ❌%s %s\n" "${_ui_red}" "${_ui_reset}" "$*" >&2 || printf "  FAIL %s\n" "$*" >&2; }
-_ui_info() { _ui_has_color && printf "%s  ℹ️ %s %s\n" "${_ui_magenta}" "${_ui_reset}" "$*" || printf "  INFO %s\n" "$*"; }
+_ui_step() {
+	if _ui_has_color; then
+		echo -n $'\e[1;36m==>\e[0m '
+	else
+		echo -n "==> "
+	fi
+	echo "$*"
+}
+
+_ui_sub() {
+	if _ui_has_color; then
+		echo -n $'\e[1;34m  ↳\e[0m '
+	else
+		echo -n "  -> "
+	fi
+	echo "$*"
+}
+
+_ui_ok() {
+	if _ui_has_color; then
+		echo -n $'\e[1;32m  ✅\e[0m '
+	else
+		echo -n "  OK "
+	fi
+	echo "$*"
+}
+
+_ui_warn() {
+	if _ui_has_color; then
+		echo -n $'\e[1;33m  ⚠️ \e[0m '
+	else
+		echo -n "  WARN "
+	fi
+	echo "$*"
+}
+
+_ui_err() {
+	if [ -t 2 ]; then
+		echo -n $'\e[1;31m  ❌\e[0m ' >&2
+	else
+		echo -n "  FAIL " >&2
+	fi
+	echo "$*" >&2
+}
+
+_ui_info() {
+	if _ui_has_color; then
+		echo -n $'\e[1;35m  ℹ️ \e[0m '
+	else
+		echo -n "  INFO "
+	fi
+	echo "$*"
+}

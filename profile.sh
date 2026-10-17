@@ -4,6 +4,19 @@
 # ----------------------------------------------------------------
 set -eu
 
+### --------------------------------
+### Active Shell Elevation Guard
+### --------------------------------
+if [ -z "${ZSH_VERSION:-}" ]; then
+	if ! (eval 'f-f() { :; }') 2> "/dev/null"; then
+		if command -v zsh > "/dev/null" 2>&1; then
+			exec zsh "$0" "$@"
+		elif command -v bash > "/dev/null" 2>&1; then
+			exec bash "$0" "$@"
+		fi
+	fi
+fi
+
 if [ -n "${PROFILE_DIR:-}" ] && [ -d "${PROFILE_DIR}" ]; then
 	_PROFILE_ROOT="${PROFILE_DIR}"
 elif [ -d "${HOME}/.local/share/profile" ]; then
