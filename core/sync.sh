@@ -82,7 +82,7 @@ _profile_item() {
 			_ui_sub "[OK] ${_dst}"
 			return 0
 		fi
-		rm -f "${_dst}"
+		rm -rf "${_dst}" 2> "/dev/null" || unlink "${_dst}" 2> "/dev/null" || true
 	elif [ -e "${_dst}" ]; then
 		if [ -d "${_src}" ] && [ -d "${_dst}" ]; then
 			if diff -rq "${_src}" "${_dst}" > "/dev/null" 2>&1; then
