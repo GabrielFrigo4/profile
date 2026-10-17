@@ -87,7 +87,9 @@ def main():
     args = parser.parse_args()
 
     repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
-    skills_dir = os.path.join(repo_root, "skills")
+    skills_dir = os.path.join(repo_root, "agents", "skills")
+    if not os.path.isdir(skills_dir):
+        skills_dir = os.path.join(repo_root, "skills")
 
     errors, warnings, clean_skills = scan_skills(
         skills_dir,
