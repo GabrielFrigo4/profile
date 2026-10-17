@@ -48,6 +48,9 @@ O Vault provê carregadores nativos para todos os ambientes do ecossistema:
 | **`vault.nu`**            | NuShell                                   |
 | **`vault.ps1 -Register`** | Injeção permanente no Registro do Windows |
 
+> [!NOTE]
+> **Filtro de Exclusão de Templates:** Todos os loaders do Vault implementam exclusão estrita de arquivos que contenham `template` ou `example` no nome (ex: `template.env`, `example.env`). Isso garante que tokens e placeholders fictícios de exemplo nunca sejam injetados no ambiente de terminal, protegendo ferramentas como `git` e `gh`.
+
 ---
 
 ## 🔗 Integração com o Universal Shell
