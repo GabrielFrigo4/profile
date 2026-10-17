@@ -102,7 +102,8 @@ Em runners headless de CI/CD (GitHub Actions, SSH sem PTY), shells interativos (
     ```sh
     script -q /dev/null bash -i -c 'echo "Prompt OK: ${PS1}"'
     ```
-- Para a análise técnica aprofundada de drivers TTY, consulte [`references/tty-ci-traps.md`](./references/tty-ci-traps.md).
+- Para a análise técnica aprofundada de drivers TTY e CI traps, consulte [`references/tty-ci-traps.md`](./references/tty-ci-traps.md).
+- Para a especificação comparativa de consoles virtuais, limites de kernel (Linux 63 vs FreeBSD 16), anomalias de escape F1-F4 e visualizadores de PDF em framebuffer, consulte [`references/virtual-consoles-tty.md`](./references/virtual-consoles-tty.md).
 
 ---
 

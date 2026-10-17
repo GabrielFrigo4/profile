@@ -13,6 +13,7 @@
 | **Configurações de Editores**    | 🟢 Estável  | VS Code, Antigravity e Zed com paridade multiplataforma                 |
 | **Linters & Formatadores**       | 🟢 Estável  | `.clang-format`, `.prettierrc`, `.stylua.toml`, `.editorconfig`         |
 | **Portable AI Skills**           | 🟢 Estável  | Catálogo de skills portáteis orientadas à ação e autocontidas           |
+| **Skills de Sistema & TTY**      | 🟢 Estável  | Runbooks de consoles virtuais, keymaps, KMS e leitores headless (PDF)   |
 | **Sincronização & Links**        | 🟢 Estável  | Motor unificado `profile.sh` com auto-cura, idempotência e paridade XDG |
 | **Quality Gates**                | 🟢 Aprovado | Linters de monólitos, nanos, banners, skills e tone 100% aprovados      |
 
