@@ -9,7 +9,11 @@ _repo_root="$(cd "$(dirname "$0")" && pwd)"
 ### ================================
 ### ANSI & SEMANTIC UI EMISSION
 ### ================================
-_ui_escape=$'\e'
+if [ -n "${BASH_VERSION:-}" ] || [ -n "${ZSH_VERSION:-}" ]; then
+	_ui_escape=$'\e'
+else
+	_ui_escape="$(printf '\x1b')"
+fi
 _ui_reset="${_ui_escape}[0m"
 _ui_cyan="${_ui_escape}[1;36m"
 _ui_green="${_ui_escape}[1;32m"
