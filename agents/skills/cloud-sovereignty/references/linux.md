@@ -39,6 +39,7 @@ Para ambientes que exigem um sistema operacional completo sem a sobrecarga de vi
     incus launch images:debian/12 node-worker
     incus exec node-worker -- apt-get update
     ```
+- **Orquestração Universal via Shell:** O comando `lx` (alias: `linux`) no Universal Shell gerencia automaticamente o ciclo de vida (`lx start`, `lx stop`, `lx restart`, `lx status`, `lx console`) do container Incus LXC no Linux Host.
 
 ---
 

@@ -16,6 +16,7 @@ As **Jails** operam com overhead virtualmente nulo, compartilhando o kernel do h
     bastille start app-server
     bastille cmd app-server pkg install -y go git
     ```
+    - **Orquestração Universal via Shell:** O comando `fb` (alias: `freebsd`) no Universal Shell gerencia automaticamente o ciclo de vida (`fb start`, `fb stop`, `fb restart`, `fb status`, `fb console`) da Jail Bastille no FreeBSD Host.
 3. **Sylve (<https://sylve.io/>):** Painel web de infraestrutura moderna (Go + SvelteKit) para FreeBSD 15.0+ que unifica o ciclo de vida de VMs Bhyve, Jails, OpenZFS e firewall `pf`.
 
 ---
