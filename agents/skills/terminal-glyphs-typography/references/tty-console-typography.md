@@ -222,6 +222,17 @@ A Suíte de Editores do ecossistema aproveita essa arquitetura para entregar erg
 | **Visual / Seleção**       | Two Thirds (2/3)          | `\e[?5c`              | `*:[vV\x16sS\x13]*`    | `*:[vV\22sS\19]*`       | `evil-visual-state`                       | `select = "underline"` (PTY) |
 | **Saída / Suspensão**      | Bloco Softcursor Estático | `\e%G\e[?16;238;0c`   | `VimLeave, VimSuspend` | `VimLeave, VimSuspend`  | `kill-emacs-hook`                         | Wrapper `hx()` no Shell      |
 
+### Matriz Universal de Cursores em PTY Gráfico & FreeBSD `vt(4)`
+
+| Modo Operacional           | Geometria DECSCUSR       | Sequência | NeoVim (`guicursor`) | Vim (`vimrc` / `PTYCursor`) | Emacs (`editor.el`) | Helix (`config.toml`)  |
+| :------------------------- | :----------------------- | :-------- | :------------------- | :-------------------------- | :------------------ | :--------------------- |
+| **Normal / Navegação**     | Blinking Block           | `\e[1 q`  | `n-v-sm:block`       | `t_EI = \e[1 q`             | `evil-normal-state` | `normal = "block"`     |
+| **Inserção (Insert)**      | Blinking Bar (I-Beam)    | `\e[5 q`  | `i-ci:ver25`         | `t_SI = \e[5 q`             | `evil-insert-state` | `insert = "bar"`       |
+| **Comando / Minibuffer**   | Blinking Underline       | `\e[3 q`  | `c:hor20`            | `CmdlineEnter`              | `minibuffer-setup`  | Modo comando `:`       |
+| **Substituição (Replace)** | Blinking Underline       | `\e[3 q`  | `r-cr:hor50`         | `t_SR = \e[3 q`             | `evil-replace`      | Modo replace           |
+| **Visual / Seleção**       | Blinking Block           | `\e[1 q`  | `n-v-sm:block`       | `*:v*, *:V*`                | `evil-visual-state` | `select = "underline"` |
+| **Saída / Encerramento**   | Reset Padrão do Terminal | `\e[0 q`  | `guicursor=`         | `t_te = \e[0 q`             | `kill-emacs-hook`   | Reset do terminal      |
+
 ### Resumo dos Comportamentos por Editor:
 
 1. **Vim (`vimrc`):** No Linux VT (`$TERM == 'linux'`), ativa `augroup LinuxTTYCursor` com `autocmd ModeChanged` disparando `echoraw()` para alternar entre os 5 formatos. Adota o tema nativo `habamax` em raw TTY (`s:is_raw_tty`), mantendo paridade cromática idêntica com o NeoVim na seleção visual em bloco sólido. Sanitiza `t_ve`, `t_vi` e `t_VS` e restaura `\e%G\e[?16;238;0c` no `t_te` e `VimLeave`.
