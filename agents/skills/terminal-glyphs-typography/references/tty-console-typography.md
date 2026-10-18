@@ -149,18 +149,33 @@ Se um comando acidental despejar caracteres binários no terminal, o decodificad
 
 ---
 
-### 2. 😈 FreeBSD (Driver `vt(4)`)
+### 2. 😈 FreeBSD (Driver `vt(4)` & Emulador `teken`)
 
-No FreeBSD, o subsistema `vt(4)` não sofre da anomalia de cor do Linux e expõe controles limpos via utilitários da base:
+No FreeBSD moderno (14 e 15.1-RELEASE), o antigo driver `syscons(4)` (`sc`, que operava em modo texto VGA restrito com `cons25`) foi totalmente substituído pelo **`vt(4)`** (Newcons), cujo núcleo de emulação terminal reside na biblioteca kernel **`teken`** (`sys/teken/`):
 
-#### A. Configuração Persistente (`/etc/rc.conf`)
+#### A. Suporte Nativo a DECSCUSR (`\e[... q`) no FreeBSD TTY
+
+Contrariando o mito arcaico de que o console do FreeBSD não suporta alternância dinâmica de formato de cursor, a revisão de código **Phabricator D12193** (commit SVN `r334302`) implementou o suporte pleno à sequência padrão DEC **DECSCUSR** (`CSI Ps SP q`):
+
+- **`\e[0 q` / `\e[1 q`:** Bloco piscante (_Blinking Block_)
+- **`\e[2 q`:** Bloco estático sólido (_Steady Block_)
+- **`\e[3 q`:** Sublinhado piscante (_Blinking Underline_)
+- **`\e[4 q`:** Sublinhado estático (_Steady Underline_)
+- **`\e[5 q`:** Barra vertical I-beam piscante (_Blinking Bar_)
+- **`\e[6 q`:** Barra vertical I-beam estática (_Steady Bar_)
+
+Como o `/etc/ttys` do FreeBSD configura os terminais virtuais `ttyv*` com `TERM=xterm`, qualquer aplicação moderna (Vim, NeoVim, Emacs, Helix) que envie sequências canônicas `DECSCUSR` opera **diretamente no console nativo do FreeBSD sem necessidade de sequências privativas**.
+
+#### B. Configuração Persistente da Base (`/etc/rc.conf`)
+
+Para a inicialização global do hardware de console antes de qualquer aplicativo:
 
 ```sh
 font12x24="spleen-12x24"
 allscreens_flags="-c normal,noblink"
 ```
 
-#### B. Aplicação Imediata em Runtime
+#### C. Aplicação Imediata em Runtime
 
 ```sh
 vidcontrol -c normal,noblink
@@ -209,9 +224,10 @@ A Suíte de Editores do ecossistema aproveita essa arquitetura para entregar erg
 
 ### Resumo dos Comportamentos por Editor:
 
-1. **Vim (`vimrc`):** No Linux VT (`$TERM == 'linux'`), ativa `augroup LinuxTTYCursor` com `autocmd ModeChanged` disparando `echoraw()` para alternar entre os 5 formatos, sanitiza `t_ve=\e[?25h`, `t_vi=\e[?25l` e `t_VS=\e[?25h` (prevenindo que o `cnorm` do terminfo `linux` com `\e[?0c` reset o cursor a cada redraw), define `ttimeoutlen=50` e restaura `\e%G\e[?16;238;0c` no `t_te` e `VimLeave`.
+1. **Vim (`vimrc`):** No Linux VT (`$TERM == 'linux'`), ativa `augroup LinuxTTYCursor` com `autocmd ModeChanged` disparando `echoraw()` para alternar entre os 5 formatos. Para eliminar a distorção ótica de inversão XOR no modo visual (`\e[?5c`), anula o vídeo reverso forçando `highlight Visual cterm=NONE ctermbg=238 ctermfg=15`; assim, a seleção mantém fundo escuro e a inversão de hardware ilumina os 2/3 inferiores como bloco sólido branco limpo na base. Sanitiza `t_ve`, `t_vi` e `t_VS` e restaura `\e%G\e[?16;238;0c` no `t_te` e `VimLeave`.
 
-2. **NeoVim (`lua/etc/autocmds.lua`):** Emprega `autocmd ModeChanged`, `CmdlineEnter` e `CmdlineLeave` gravando diretamente no `io.stdout` (com `io.stdout:flush()`). No `$TERM == 'linux'`, desativa `vim.opt.guicursor = ''` para impedir que o driver embutido de `linuxvt` do NeoVim (`src/nvim/tui/tui.c`) colida com as sequências e resete o comando para bloco em redraws da linha 24. No modo visual (`\e[?5c` — Two Thirds), o `fbcon` aplica `ROP_XOR` nos 16 pixels inferiores; sobre a célula já invertida pelo highlight do editor, os 2/3 inferiores retornam ao fundo escuro e o 1/3 superior permanece destacado, criando a percepção ótica de um bloco de 1/3 no topo da célula.
+2. **NeoVim (`lua/etc/autocmds.lua`):** Emprega `autocmd ModeChanged`, `CmdlineEnter` e `CmdlineLeave` gravando diretamente no `io.stdout` (com `io.stdout:flush()`). No `$TERM == 'linux'`, desativa `vim.opt.guicursor = ''` para impedir que o driver embutido de `linuxvt` colida com os redraws de tela. Aplica a mesma sanitização cromática `highlight Visual cterm=NONE ctermbg=238 ctermfg=15` para paridade perfeita com o Vim no modo visual (`\e[?5c`). Gerencia a tecla pontual de substituição `r` via listener não-intrusivo em `vim.on_key`.
 
-3. **GNU Emacs (`etc/editor/editor.el`):** Quando `(string-equal (getenv "TERM") "linux")`, registra hooks nas transições de estado do Evil-mode e no `minibuffer-setup-hook`/`minibuffer-exit-hook` via `send-string-to-terminal`, restaurando `\e%G\e[?16;238;0c` no `kill-emacs-hook`.
+3. **GNU Emacs (`etc/editor/editor.el` & `etc/init/interface.el`):** Emprega arquitetura dinâmica ciente de frames (`emacs/set-terminal-cursor` via `(unless (display-graphic-p (selected-frame)))`), permitindo transições fluidas entre GUI e TTY/PTY no mesmo daemon. Em terminais Linux, emite as sequências nativas `\e[?2c` a `\e[?6c`; em PTYs e no FreeBSD `vt(4)`, emite `DECSCUSR` (`\e[1 q` a `\e[6 q`). Em `after-make-frame-functions`, remove dinamicamente barras de ferramentas e menus de texto em frames de terminal (`set-frame-parameter frame 'menu-bar-lines 0`).
+
 4. **Helix (`config.toml`):** Configurado declarativamente via `[editor.cursor-shape]` (`normal = "block"`, `insert = "bar"`, `select = "underline"`). Opera com bloco sólido no Linux TTY e é auto-curado na saída pelo wrapper `hx()` do Shell.
