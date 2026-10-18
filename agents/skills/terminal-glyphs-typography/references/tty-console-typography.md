@@ -228,7 +228,7 @@ A Suíte de Editores do ecossistema aproveita essa arquitetura para entregar erg
 | :------------------------- | :----------------------- | :-------- | :------------------- | :-------------------------- | :------------------ | :--------------------- |
 | **Normal / Navegação**     | Blinking Block           | `\e[1 q`  | `n-v-sm:block`       | `t_EI = \e[1 q`             | `evil-normal-state` | `normal = "block"`     |
 | **Inserção (Insert)**      | Blinking Bar (I-Beam)    | `\e[5 q`  | `i-ci:ver25`         | `t_SI = \e[5 q`             | `evil-insert-state` | `insert = "bar"`       |
-| **Comando / Minibuffer**   | Blinking Underline       | `\e[3 q`  | `c:hor20`            | `CmdlineEnter`              | `minibuffer-setup`  | Modo comando `:`       |
+| **Comando / Minibuffer**   | Blinking Bar (I-Beam)    | `\e[5 q`  | `c:ver25`            | `CmdlineEnter (\e[5 q)`     | `minibuffer-setup`  | Modo comando `:` (Bar) |
 | **Substituição (Replace)** | Blinking Underline       | `\e[3 q`  | `r-cr:hor50`         | `t_SR = \e[3 q`             | `evil-replace`      | Modo replace           |
 | **Visual / Seleção**       | Blinking Block           | `\e[1 q`  | `n-v-sm:block`       | `*:v*, *:V*`                | `evil-visual-state` | `select = "underline"` |
 | **Saída / Encerramento**   | Reset Padrão do Terminal | `\e[0 q`  | `guicursor=`         | `t_te = \e[0 q`             | `kill-emacs-hook`   | Reset do terminal      |
