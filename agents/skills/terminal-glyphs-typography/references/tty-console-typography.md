@@ -219,7 +219,7 @@ A Suíte de Editores do ecossistema aproveita essa arquitetura para entregar erg
 | **Inserção (Insert)**      | Underline (base)          | `\e[?2c`              | `*:i*`                 | `*:i*`                  | `evil-insert-state`                       | `insert = "bar"` (PTY)       |
 | **Comando / Minibuffer**   | Lower Third (1/3)         | `\e[?3c`              | `*:c*`                 | `*:c*`                  | `minibuffer-setup-hook` / `evil-operator` | Modo comando `:`             |
 | **Substituição (Replace)** | Lower Half (1/2)          | `\e[?4c`              | `*:[rR]*`              | `*:[rR]*`               | `evil-replace-state`                      | Modo replace                 |
-| **Visual / Seleção**       | Two Thirds (2/3)          | `\e[?5c`              | `*:[vV\x16sS\x13]*`    | `*:[vV\22sS\19]*`       | `evil-visual-state`                       | `select = "underline"` (PTY) |
+| **Visual / Seleção**       | Two Thirds (2/3)          | `\e[?5c`              | `*:v*,*:V*,*:\<C-V\>*` | `*:[vV\22sS\19]*`       | `evil-visual-state`                       | `select = "underline"` (PTY) |
 | **Saída / Suspensão**      | Bloco Softcursor Estático | `\e%G\e[?16;238;0c`   | `VimLeave, VimSuspend` | `VimLeave, VimSuspend`  | `kill-emacs-hook`                         | Wrapper `hx()` no Shell      |
 
 ### Matriz Universal de Cursores em PTY Gráfico & FreeBSD `vt(4)`
