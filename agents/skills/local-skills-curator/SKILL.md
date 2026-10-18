@@ -53,8 +53,9 @@ Toda skill local deve obedecer rigorosamente ao princípio do hermetismo:
 ## 🏛️ Regra da Fonte da Verdade: Grandes Repositórios vs. Clones de Runtime
 
 - **Prioridade Canônica:** Toda alteração de engenharia em componentes do ecossistema (`Setup`, `Shell`, `Profile`, `Vault`, `Emacs`, `Helix`, `NeoVim`, `Vim`) ou skills globais deve ser realizada prioritariamente no grande repositório canônico (`~/Documents/Environment/` ou `~/Documentos/Environment/`), e **NUNCA** diretamente no clone de runtime (`~/.local/share/profile` ou links simbólicos).
+- **Atenção aos Links de IA (`~/.gemini/config/`):** Os diretórios `~/.gemini/config/skills` e `~/.gemini/config/rules` são **links simbólicos para o clone de runtime do Profile (`~/.local/share/profile/agents/`)**. NUNCA edite nesses caminhos. Alterações em skills globais ocorrem fisicamente sob `Environment/Profile/agents/skills/`.
 - **Condição Estrita para Editar no Clone de Runtime:** Somente é admitido editar diretamente nos clones de runtime se o repositório canônico no Environment **NÃO existir** E você **NÃO estiver nele** (ambas as condições estritamente negadas simultaneamente).
-- **Justificativa:** Modificações nos clones de runtime deixam a árvore de trabalho suja (`unstaged changes`), bloqueando comandos de atualização rápida (`uped`, `uprc`, `upall`, `git pull --ff-only`, `make update`).
+- **Justificativa:** Modificações nos clones de runtime deixam a árvore de trabalho suja (`unstaged changes`), quebrando a Zero-Dirty Invariant e impedindo deploys via `git pull`.
 
 ---
 

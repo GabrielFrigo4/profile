@@ -38,6 +38,7 @@ Para especificações detalhadas, consulte os manuais canônicos sob `references
 - **[Taxonomia de Famílias Nerd Fonts](references/nerd-fonts-taxonomy.md):** Diferenças métricas entre Font Logos, Devicons, Material Design Icons, Octicons e histórico dos prefixos de upstream.
 - **[Geometria de Prompt & Delimitadores](references/prompt-geometry-delimiters.md):** Mecânica interna do Bash `readline`, Zsh `ZLE`, escapes `\x01`/`\x02`, cálculo de colunas e prevenção de bugs de _line wrap_.
 - **[Matriz Canônica de Glifos de SO](references/canonical-os-glyphs.md):** Tabela de codepoints Unicode, glifos canônicos por sistema operacional/distro, nomes Nerd Fonts e contratos de fallback.
+- **[Consoles Virtuais TTY & Cursor Estático](references/tty-console-typography.md):** Arquitetura de 256/512 glifos (Spleen 12x24), bug de cor do kernel Linux VT, máscara XOR `0xee` e auto-cura no Shell.
 
 ---
 

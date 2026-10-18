@@ -97,5 +97,5 @@ Tanto `SKILL.md`, `AGENTS.md` quanto arquivos em `.agents/rules/` compartilham o
 | **$> 256$ linhas**              | **Teto Máximo (Monólito)** | Excede o orçamento; requer modularização imediata.         |
 
 - **Hermetismo de Produção (`rm -rf .agents` — Regra 20):** O repositório é 100% soberano. Se `.agents/` for deletado, todo o código executável, Makefiles e pipelines continuam operando com perfeição.
-- **Bancada vs. Runtime (Regra 21):** Alterações de engenharia são realizadas prioritariamente na bancada (`~/Documents/Environment/Profile`), nunca em clones de runtime.
+- **Bancada vs. Runtime (Regra 21):** Alterações de engenharia são realizadas exclusivamente na bancada (`~/Documents/Environment/Profile`), nunca em clones de runtime. Diretórios `~/.gemini/config/skills` e `~/.gemini/config/rules` são symlinks de runtime de produção e NUNCA devem ser editados diretamente.
 - **Auditoria Contínua:** Validado pelo quality gate estático [`Profile/.scripts/audit/skills.py`](../../../.scripts/audit/skills.py).
