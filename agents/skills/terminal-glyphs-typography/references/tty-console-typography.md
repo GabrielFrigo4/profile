@@ -168,18 +168,20 @@ Como o `/etc/ttys` do FreeBSD configura os terminais virtuais `ttyv*` com `TERM=
 
 #### B. Configuração Persistente da Base (`/etc/rc.conf`)
 
-Para a inicialização global do hardware de console antes de qualquer aplicativo:
+Para a inicialização global da tipografia de console nos terminais virtuais:
 
 ```sh
-font12x24="spleen-12x24"
-allscreens_flags="-c normal,noblink"
+allscreens_flags="-f spleen-12x24"
 ```
 
-#### C. Aplicação Imediata em Runtime
+A recarga imediata em runtime sem reiniciar a máquina é realizada via serviço canônico:
 
 ```sh
-vidcontrol -c normal,noblink
+service syscons restart
 ```
+
+> [!NOTE]
+> No FreeBSD moderno com driver `vt(4)`, o cursor é **estático por arquitetura de kernel** (`sys/dev/vt/vt_core.c`). O utilitário legado `vidcontrol -c normal,noblink` pertencia ao antigo driver `sc(4)` dos anos 90 e é obsoleto no `vt(4)` (gerando erro de ioctl). O driver `vt(4)` desenha um bloco invertido diretamente no framebuffer sem temporizador de pisque no kernel.
 
 ---
 

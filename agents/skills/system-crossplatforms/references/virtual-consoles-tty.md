@@ -6,16 +6,17 @@
 
 ## 🧭 1. Comparativo Arquitetural de Consoles Virtuais
 
-| Atributo                      | Linux (`fbcon` / `vt`)                           | FreeBSD (`vt(4)`)                                 | OpenBSD (`wscons(4)`)               |
-| :---------------------------- | :----------------------------------------------- | :------------------------------------------------ | :---------------------------------- |
-| **Driver de Kernel**          | `fbcon` / KMS Console (`drivers/video/console/`) | `vt(4)` (substituto do legado `syscons`)          | `wscons(4)` (`/sys/dev/wscons/`)    |
-| **Device Nodes**              | `/dev/tty1` até `/dev/tty63`                     | `/dev/ttyv0` até `/dev/ttyvf`                     | `/dev/ttyC0` até `/dev/ttyC7`       |
-| **Limite Máximo de Consoles** | **63 consoles** (`MAX_NR_CONSOLES = 63`)         | **16 consoles** (`VT_MAXWINDOWS = 16`)            | **8 consoles** configurados padrão  |
-| **Emulador de Terminal**      | Linux console (`TERM=linux`)                     | `teken` VT220 (`TERM=xterm` ou `vt220`)           | `wscons` (`TERM=vt220` ou `wsvt25`) |
-| **Gestão de Fontes**          | `setfont` (`/usr/share/consolefonts/`)           | `vidcontrol -f` (`/usr/share/vt/fonts/`)          | `wsconsctl -w font=...`             |
-| **Formato de Fontes**         | `.psf`, `.psfu` (PC Screen Font)                 | `.fnt` (FreeBSD VT font format)                   | `.wsf` / raw bitmaps                |
-| **Gestão de Teclado**         | `loadkeys` / `kbd_mode -u`                       | `kbdcontrol -l`                                   | `wsconsctl keyboard.encoding=...`   |
-| **Suporte a Mouse no Kernel** | Daemon `gpm` (`/dev/input/mice`)                 | Daemon nativo `moused` (`/dev/ums0`, `/dev/psm0`) | Daemon `wsmoused` (`/dev/wsmouse`)  |
+| Atributo                      | Linux (`fbcon` / `vt`)                           | FreeBSD (`vt(4)`)                                  | OpenBSD (`wscons(4)`)               |
+| :---------------------------- | :----------------------------------------------- | :------------------------------------------------- | :---------------------------------- |
+| **Driver de Kernel**          | `fbcon` / KMS Console (`drivers/video/console/`) | `vt(4)` (substituto do legado `syscons`)           | `wscons(4)` (`/sys/dev/wscons/`)    |
+| **Device Nodes**              | `/dev/tty1` até `/dev/tty63`                     | `/dev/ttyv0` até `/dev/ttyvf`                      | `/dev/ttyC0` até `/dev/ttyC7`       |
+| **Limite Máximo de Consoles** | **63 consoles** (`MAX_NR_CONSOLES = 63`)         | **16 consoles** (`VT_MAXWINDOWS = 16`)             | **8 consoles** configurados padrão  |
+| **Emulador de Terminal**      | Linux console (`TERM=linux`)                     | `teken` VT220 (`TERM=xterm` ou `vt220`)            | `wscons` (`TERM=vt220` ou `wsvt25`) |
+| **Gestão de Fontes**          | `setfont` (`/usr/share/consolefonts/`)           | `vidcontrol -f` (`/usr/share/vt/fonts/`)           | `wsconsctl -w font=...`             |
+| **Formato de Fontes**         | `.psf`, `.psfu` (PC Screen Font)                 | `.fnt` (FreeBSD VT font format)                    | `.wsf` / raw bitmaps                |
+| **Gestão de Teclado**         | `loadkeys` / `kbd_mode -u`                       | `kbdcontrol -l`                                    | `wsconsctl keyboard.encoding=...`   |
+| **Suporte a Mouse no Kernel** | Daemon `gpm` (`/dev/input/mice`)                 | Daemon nativo `moused` (`/dev/ums0`, `/dev/psm0`)  | Daemon `wsmoused` (`/dev/wsmouse`)  |
+| **Comportamento do Cursor**   | `sysfs` / softcursor (`cursor_blink=0`)          | Estático por padrão (`vt(4)` sem pisque no kernel) | `wsconsctl display.cursor=...`      |
 
 ---
 
