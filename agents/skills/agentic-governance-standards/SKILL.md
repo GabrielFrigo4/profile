@@ -2,7 +2,7 @@
 name: agentic-governance-standards
 description: >-
     Runbook cognitivo definitivo para governança agentic no ecossistema soberano, definindo
-    normas para a tríade AGENTS.md, .agents/rules/, ciclo de contexto em 2 estágios,
+    normas para a tríade AGENTS.md, .agents/rules/, .agents/skills/, ciclo de contexto em 2 estágios,
     arquitetura de skills em 2 tiers (Lean vs Extended) e simetria técnica.
 ---
 
