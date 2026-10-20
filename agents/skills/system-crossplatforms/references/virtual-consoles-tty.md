@@ -17,6 +17,7 @@
 | **Gestão de Teclado**         | `loadkeys` / `kbd_mode -u`                       | `kbdcontrol -l`                                    | `wsconsctl keyboard.encoding=...`   |
 | **Suporte a Mouse no Kernel** | Daemon `gpm` (`/dev/input/mice`)                 | Daemon nativo `moused` (`/dev/ums0`, `/dev/psm0`)  | Daemon `wsmoused` (`/dev/wsmouse`)  |
 | **Comportamento do Cursor**   | `sysfs` / softcursor (`cursor_blink=0`)          | Estático por padrão (`vt(4)` sem pisque no kernel) | `wsconsctl display.cursor=...`      |
+| **Silenciamento de Bell**     | `bind 'set bell-style none'` / `\e[10;0]`        | `kern.vt.enable_bell=0` + `settc bl "$<0>"`        | `wsconsctl keyboard.bell.volume=0`  |
 
 ---
 
