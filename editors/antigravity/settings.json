@@ -2,30 +2,30 @@
 	// ==========================================
 	// INTERFACE
 	// ==========================================
+	"workbench.preferredDarkColorTheme": "One Dark Pro Darker",
 	"workbench.colorTheme": "One Dark Pro Darker",
 	"workbench.iconTheme": "material-icon-theme",
 	"window.autoDetectColorScheme": true,
-	"workbench.preferredDarkColorTheme": "One Dark Pro Darker",
 
 	// ==========================================
-	// APARÊNCIA
+	// APPEARANCE
 	// ==========================================
 	"editor.fontFamily": "'JetBrainsMono Nerd Font'",
 	"editor.fontLigatures": true,
-	"editor.fontSize": 16,
 	"editor.wordWrap": "off",
+	"editor.fontSize": 16,
+	"diffEditor.ignoreTrimWhitespace": false,
 	"diffEditor.wordWrap": "off",
 	"notebook.output.wordWrap": true,
-	"diffEditor.ignoreTrimWhitespace": false,
 
 	// ==========================================
-	// CORE
+	// EDITOR
 	// ==========================================
+	"security.workspace.trust.untrustedFiles": "open",
+	"files.autoGuessEncoding": true,
 	"editor.formatOnSave": true,
 	"editor.tabCompletion": "on",
 	"editor.insertSpaces": false,
-	"files.autoGuessEncoding": true,
-	"security.workspace.trust.untrustedFiles": "open",
 
 	// ==========================================
 	// EXPLORER
@@ -43,7 +43,7 @@
 	"git.confirmSync": false,
 
 	// ==========================================
-	// DEFAULTS
+	// TERMINAL
 	// ==========================================
 	"terminal.integrated.defaultProfile.windows": "pwsh",
 	"terminal.integrated.defaultProfile.linux": "zsh",
@@ -88,7 +88,7 @@
 	},
 
 	// ==========================================
-	// LINUX & BSD
+	// LINUX AND BSD
 	// ==========================================
 	"terminal.integrated.profiles.linux": {
 		"zsh": {
@@ -106,23 +106,84 @@
 	},
 
 	// ==========================================
-	// SINTAXE
+	// ASSOCIATIONS
 	// ==========================================
 	"files.associations": {
-		"*.shader": "hlsl",
+		// ------------------------------------------
+		// LANGUAGES
+		// ------------------------------------------
+		"*.wlua": "lua",
+
+		// ------------------------------------------
+		// ASSEMBLY
+		// ------------------------------------------
 		"*.arm": "arm",
 		"*.asm": "nasm",
-		"*.wlua": "lua"
+
+		// ------------------------------------------
+		// GLSL - VERTEX
+		// ------------------------------------------
+		"*.vert": "glsl",
+		"*.vs": "glsl",
+		"*.vsh": "glsl",
+
+		// ------------------------------------------
+		// GLSL - FRAGMENT
+		// ------------------------------------------
+		"*.frag": "glsl",
+		"*.fs": "glsl",
+		"*.fsh": "glsl",
+
+		// ------------------------------------------
+		// GLSL - GEOMETRY
+		// ------------------------------------------
+		"*.geom": "glsl",
+		"*.gs": "glsl",
+		"*.gsh": "glsl",
+
+		// ------------------------------------------
+		// GLSL - COMPUTE
+		// ------------------------------------------
+		"*.comp": "glsl",
+		"*.compute": "glsl",
+
+		// ------------------------------------------
+		// GLSL - TESSELLATION
+		// ------------------------------------------
+		"*.tesc": "glsl",
+		"*.tcs": "glsl",
+		"*.tese": "glsl",
+		"*.tes": "glsl",
+
+		// ------------------------------------------
+		// GLSL - SHADER
+		// ------------------------------------------
+		"*.glsl": "glsl",
+		"*.glslh": "glsl",
+
+		// ------------------------------------------
+		// HLSL - SHADER
+		// ------------------------------------------
+		"*.hlsl": "hlsl",
+		"*.hlsli": "hlsl",
+		"*.fx": "hlsl",
+		"*.shader": "hlsl",
+
+		// ------------------------------------------
+		// SLANG - SHADER
+		// ------------------------------------------
+		"*.slang": "slang",
+		"*.slangh": "slang"
 	},
 
 	// ==========================================
-	// FORMATACAO
+	// DEFAULT FORMATTER
 	// ==========================================
 	"editor.formatOnType": true,
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
 
 	// ==========================================
-	// LINGUAGENS
+	// LANGUAGE FORMATTER
 	// ==========================================
 	"[c]": { "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd" },
 	"[cpp]": { "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd" },
@@ -144,32 +205,41 @@
 	"[javascript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
 	"[css]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
 	"[dockerfile]": { "editor.defaultFormatter": "ms-azuretools.vscode-containers" },
+	"[glsl]": { "editor.defaultFormatter": "xaver.clang-format" },
+	"[hlsl]": { "editor.defaultFormatter": "xaver.clang-format" },
+	"[slang]": { "editor.defaultFormatter": "xaver.clang-format" },
 
 	// ==========================================
-	// PYTHON
+	// PYTHON ENVIRONMENT
 	// ==========================================
 	"python.terminal.activateEnvironment": false,
-
-	// ==========================================
-	// LSP (LANGUAGE SERVERS)
-	// ==========================================
+	"python.analysis.typeCheckingMode": "basic",
 	"python.languageServer": "None",
-	"basedpyright.analysis.typeCheckingMode": "basic",
-	"basedpyright.analysis.diagnosticMode": "openFilesOnly",
-	"ruff.enable": true,
-	"ruff.args": ["--cache-dir", "/tmp/ruff-cache"],
 
 	// ==========================================
-	// FERRAMENTAS
+	// LANGUAGE SERVER
 	// ==========================================
-	"makefile.configureOnOpen": false,
+	"ruff.lint.enable": true,
+	"ruff.enable": true,
+
+	// ==========================================
+	// VALIDATOR
+	// ==========================================
+	"shader-validator.glsl.enabled": true,
+	"shader-validator.hlsl.enabled": true,
+	"shader-validator.symbolDiagnostics": false,
+	"shader-studio.languageServers.slang.enabled": false,
+	"shader-studio.languageServers.wgsl.enabled": false,
+	"shader-studio.languageServers.glsl.enabled": false,
+
+	// ==========================================
+	// TOOLS
+	// ==========================================
 	"redhat.telemetry.enabled": false,
-	"shader-validator.glsl.targetClient": "None",
 
 	// ==========================================
 	// IA
 	// ==========================================
-	"github.copilot.enable": { "*": false },
 	"editor.inlineSuggest.enabled": false,
 
 	// ==========================================
