@@ -1,70 +1,100 @@
+;;; init.el --- Configuração Leve e Portável -*- lexical-binding: t; -*-
+
 ;; ----------------------------------------------------------------
-;; Config: Lightweight Portable Emacs Configuration
+;; 1. Higiene e Ambiente
 ;; ----------------------------------------------------------------
 
-(require 'treesit)
-(require 'eglot)
-(require 'project)
+(setq custom-file (locate-user-emacs-file "custom.el"))
+(load custom-file 'noerror 'nomessage)
 
-(dolist (mode '(js-ts-mode-hook typescript-ts-mode-hook html-mode-hook lua-mode-hook json-ts-mode-hook))
-  (add-hook mode (lambda () (setq-local tab-width 2 indent-tabs-mode nil))))
+(set-language-environment "UTF-8")
 
-(dolist (mode '(go-ts-mode-hook makefile-mode-hook))
-  (add-hook mode (lambda () (setq-local tab-width 4 indent-tabs-mode t))))
+(setopt
+ ring-bell-function #'ignore
+ use-short-answers t
+ vc-follow-symlinks t
+ make-backup-files nil
+ create-lockfiles nil)
 
-(custom-set-variables
- '(current-language-environment "UTF-8")
- '(inhibit-startup-screen t)
- '(initial-scratch-message nil)
- '(ring-bell-function 'ignore)
- '(vc-follow-symlinks t)
- '(menu-bar-mode nil)
- '(tool-bar-mode nil)
- '(scroll-bar-mode nil)
- '(use-short-answers t)
- '(global-display-line-numbers-mode t)
- '(display-line-numbers-type 'relative)
- '(make-backup-files nil)
- '(create-lockfiles nil)
- '(custom-enabled-themes '(wombat))
- '(default-frame-alist '((width . 87) (height . 29)))
- '(font-lock-maximum-decoration t)
- '(column-number-mode t)
- '(c-default-style "user")
- '(indent-tabs-mode nil)
- '(tab-width 4)
- '(fido-vertical-mode t)
- '(which-key-mode t)
- '(pixel-scroll-precision-mode t)
- '(touch-screen-mode t)
- '(context-menu-mode t)
- '(winner-mode t)
- '(electric-pair-mode t)
- '(xterm-mouse-mode t)
- '(editorconfig-mode t)
- '(savehist-mode t)
- '(recentf-mode t)
- '(save-place-mode t)
- '(dired-listing-switches "-agho --group-directories-first")
- '(dired-dwim-target t)
- '(dired-kill-when-opening-new-dired-buffer t)
- '(eglot-autoshutdown t)
- '(eglot-stay-out-of '(font-lock))
- '(treesit-font-lock-level 4)
- '(tab-always-indent 'complete)
- '(major-mode-remap-alist
-   '((c-mode . c-ts-mode)
-     (python-mode . python-ts-mode)
-     (js-mode . js-ts-mode)
-     (typescript-mode . typescript-ts-mode)
-     (json-mode . json-ts-mode)
-     (go-mode . go-ts-mode)
-     (rust-mode . rust-ts-mode)
-     (sh-mode . bash-ts-mode)
-     (yaml-mode . yaml-ts-mode))))
+;; ----------------------------------------------------------------
+;; 2. Visual, Tipografia e Navegação
+;; ----------------------------------------------------------------
 
-(custom-set-faces
- '(default ((t (:family "JetBrainsMono NF" :foundry "outline" :slant normal :weight regular :height 120 :width normal))))
- '(variable-pitch ((t (:family "Sans Serif" :height 120)))))
+(setopt
+ display-line-numbers-type 'relative
+ column-number-mode t
+ pixel-scroll-precision-mode t
+ touch-screen-mode t
+ context-menu-mode t
+ winner-mode t
+ xterm-mouse-mode t)
 
+(global-display-line-numbers-mode 1)
 (windmove-default-keybindings)
+
+(when (display-graphic-p)
+  (set-face-attribute 'default nil :family "JetBrainsMono NF" :height 120 :weight 'regular)
+  (set-face-attribute 'variable-pitch nil :family "Sans Serif" :height 120))
+
+(load-theme 'wombat t)
+
+;; ----------------------------------------------------------------
+;; 3. Minibuffer, Histórico e Usabilidade
+;; ----------------------------------------------------------------
+
+(setopt
+ fido-vertical-mode t
+ which-key-mode t
+ savehist-mode t
+ recentf-mode t
+ save-place-mode t
+ electric-pair-mode t
+ editorconfig-mode t)
+
+(setopt
+ dired-listing-switches "-agho --group-directories-first"
+ dired-dwim-target t
+ dired-kill-when-opening-new-dired-buffer t)
+
+;; ----------------------------------------------------------------
+;; 4. Edição, Indentação e Estilos
+;; ----------------------------------------------------------------
+
+(setopt
+ indent-tabs-mode nil
+ tab-width 4
+ tab-always-indent 'complete
+ c-default-style "user")
+
+(dolist (hook '(js-ts-mode-hook
+                typescript-ts-mode-hook
+                html-mode-hook
+                lua-mode-hook
+                json-ts-mode-hook))
+  (add-hook hook (lambda ()
+                   (setq-local tab-width 2
+                               indent-tabs-mode nil))))
+
+(dolist (hook '(go-ts-mode-hook makefile-mode-hook))
+  (add-hook hook (lambda ()
+                   (setq-local tab-width 4
+                               indent-tabs-mode t))))
+
+;; ----------------------------------------------------------------
+;; 5. Tree-sitter & LSP (Eglot)
+;; ----------------------------------------------------------------
+
+(setopt
+ treesit-font-lock-level 4
+ eglot-autoshutdown t
+ eglot-stay-out-of '(font-lock)
+ major-mode-remap-alist
+ '((c-mode          . c-ts-mode)
+   (python-mode     . python-ts-mode)
+   (js-mode         . js-ts-mode)
+   (typescript-mode . typescript-ts-mode)
+   (json-mode       . json-ts-mode)
+   (go-mode         . go-ts-mode)
+   (rust-mode       . rust-ts-mode)
+   (sh-mode         . bash-ts-mode)
+   (yaml-mode       . yaml-ts-mode)))
