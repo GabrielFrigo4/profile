@@ -8,6 +8,7 @@
 
 | Emulador / Multiplexador | Plataforma      | Arquivos Declarativos                                                                                                  | Destino                                                           |
 | :----------------------- | :-------------- | :--------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------- |
+| **Foot (Wayland)**       | Linux & FreeBSD | [`foot.ini`](foot/foot.ini)                                                                                            | `~/.config/foot/foot.ini`                                         |
 | **Konsole (KDE)**        | Linux & FreeBSD | [`Bash.profile`](konsole/Bash.profile), [`Zsh.profile`](konsole/Zsh.profile), [`Shell.profile`](konsole/Shell.profile) | `~/.local/share/konsole/`                                         |
 | **Windows Terminal**     | Windows         | [`settings.json`](windows-terminal/settings.json)                                                                      | `%LOCALAPPDATA%\Packages\Microsoft.WindowsTerminal_*\LocalState\` |
 | **Tmux**                 | Multiplataforma | [`tmux.conf`](tmux/tmux.conf)                                                                                          | `~/.config/tmux/` e `~/.tmux.conf`                                |
