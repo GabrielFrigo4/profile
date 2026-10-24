@@ -1,0 +1,5 @@
+linux|linux console with sanitized non-destructive cursor,
+	cnorm=\E[?25h,
+	cvvis=\E[?25h,
+	civis=\E[?25l,
+	use=linux,

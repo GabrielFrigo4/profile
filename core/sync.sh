@@ -215,6 +215,9 @@ _profile_sync() {
 		_sync "terminals/zellij/config.kdl" "${_cfg}/zellij/config.kdl"
 		_sync "terminals/foot/foot.ini" "${_cfg}/foot/foot.ini"
 		for _kp in Bash Shell Zsh; do _sync "terminals/konsole/${_kp}.profile" "${_data}/konsole/${_kp}.profile"; done
+		if command -v tic > "/dev/null" 2>&1 && [ -f "${_PROFILE_ROOT}/terminals/terminfo/linux.terminfo" ]; then
+			tic -o "${HOME}/.terminfo" "${_PROFILE_ROOT}/terminals/terminfo/linux.terminfo" 2> "/dev/null" || true
+		fi
 	fi
 
 	_ui_step "Agentes de IA (Skills & Rules para Antigravity & Gemini)..."
