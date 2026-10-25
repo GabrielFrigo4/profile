@@ -6,7 +6,7 @@
 
 ## 🎯 Finalidade
 
-Este diretório provê a configuração declarativa do **Foot**, emulador de terminal nativo para Wayland com foco em latência mínima e eficiência de recursos. Configura tipografia nítida com **JetBrainsMono Nerd Font 13**, suporte completo a glifos vetoriais, dimensionamento DPI automático (_dpi-aware_), preenchimento interno (_padding_) e paleta escura de alto contraste harmônica com o ecossistema.
+Este diretório provê a configuração declarativa do **Foot**, emulador de terminal nativo para Wayland com foco em latência mínima e eficiência de recursos. Configura tipografia nítida com **JetBrainsMono Nerd Font**, suporte completo a glifos vetoriais, dimensionamento DPI automático (_dpi-aware_), preenchimento interno (_padding_ de 16px) e paleta escura de alto contraste harmônica com o ecossistema e ambientes modernos (GNOME/KDE).
 
 ---
 
