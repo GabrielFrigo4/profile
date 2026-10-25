@@ -41,6 +41,7 @@ Para especificações detalhadas, consulte os manuais canônicos sob `references
 - **[Geometria de Prompt & Delimitadores](references/prompt-geometry-delimiters.md):** Mecânica interna do Bash `readline`, Zsh `ZLE`, escapes `\x01`/`\x02`, cálculo de colunas e prevenção de bugs de _line wrap_.
 - **[Matriz Canônica de Glifos de SO](references/canonical-os-glyphs.md):** Tabela de codepoints Unicode, glifos canônicos por sistema operacional/distro, nomes Nerd Fonts e contratos de fallback.
 - **[Consoles Virtuais TTY & Cursor Estático](references/tty-console-typography.md):** Arquitetura de 256/512 glifos (Spleen 12x24), bug de cor do kernel Linux VT, máscara XOR `0xee` e auto-cura no Shell.
+- **[Subsistemas de Mouse, Cursores & Paletas](references/tty-mouse-and-cursor-subsystems.md):** Arquitetura de mouse FreeBSD vs Linux TTY, PTY Mouse Bridge, GPM socket, formatos de cursor e paleta DAC de 16 cores.
 
 ---
 
