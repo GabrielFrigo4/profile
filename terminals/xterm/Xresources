@@ -29,9 +29,23 @@ xterm*selectToClipboard: true
 xterm*fullscreen: false
 
 ! --- Cursor & Mouse -----------------------------------------------
-xterm*cursorColor: #deddda
+*cursorBlink: true
+XTerm*cursorBlink: true
+XTerm*vt100.cursorBlink: true
+XTerm*cursorBlinkXOR: false
+XTerm*cursorOnTime: 500
+XTerm*cursorOffTime: 400
+XTerm*cursorUnderline: false
+XTerm*cursorColor: #deddda
+XTerm*pointerColor: #deddda
+XTerm*pointerColorBackground: #1e1e1e
 xterm*cursorBlink: true
+xterm*vt100.cursorBlink: true
+xterm*cursorBlinkXOR: false
+xterm*cursorOnTime: 500
+xterm*cursorOffTime: 400
 xterm*cursorUnderline: false
+xterm*cursorColor: #deddda
 xterm*pointerColor: #deddda
 xterm*pointerColorBackground: #1e1e1e
 
