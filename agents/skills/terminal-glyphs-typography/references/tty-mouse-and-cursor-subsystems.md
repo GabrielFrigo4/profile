@@ -68,14 +68,10 @@ No Linux, o driver de terminal virtual do kernel (`drivers/tty/vt/`) **NÃO** im
         (xterm-mouse-mode 1)))
     ```
 
-### 2.3 NeoVim, Helix e Micro: O PTY Mouse Bridge
+### 2.3 NeoVim, Helix e Micro: Diretriz Soberana de I/O Direto
 
 - **Problema:** Nem NeoVim, nem Helix (Rust/crossterm), nem Micro (Go/tcell) possuem clientes GPM.
-- **Solução:** Em `Shell/context/desktop/common.sh`, a rotina `_raw_tty_pty_bridge` encapsula a execução do editor em um PTY gerido por script Python via `ctypes`:
-    1. Conecta-se ao socket `/dev/gpmctl` via `Gpm_Open()`.
-    2. Ao receber eventos no descritor de arquivo do GPM (`Gpm_GetEvent`), converte as coordenadas de célula e botões para o protocolo xterm SGR 1006:
-       $$\text{SGR} = \verb|\x1b[<| \cdot \text{botão} \cdot \verb|;| \cdot X \cdot \verb|;| \cdot Y \cdot \text{flag}$$
-    3. Escreve a sequência diretamente no descritor mestre do PTY (`master`), fazendo a aplicação receber o clique e scroll em seu `stdin`.
+- **Diretriz Arquitetural:** O ecossistema rejeita a criação de wrappers artificiais de PTY (`pty.fork`) em Python na frente dos binários interativos. Tais intermediários geram latência de bufferização, falhas de sincronismo em redimensionamentos (`SIGWINCH`), quebra de suspensão (`Ctrl-Z`) e ruído de eventos de hover. Os editores rodam de forma direta (`direct stdio`), priorizando soberania e estabilidade no TTY.
 
 ---
 
@@ -114,7 +110,7 @@ A sequência `\E[?0c` reseta o hardware VGA para as linhas de varredura padrão 
 #### Mitigação Canônica:
 
 1. **Terminfo Sanitizado Local (`~/.terminfo/l/linux`):** Gerar via `tic` uma definição onde `cnorm=\E[?25h`, `cvvis=\E[?25h`, `civis=\E[?25l`.
-2. **Despacho Assíncrono com `schedule`:** No NeoVim, disparar `set_cur()` imediatamente e agendar nova emissão via `vim.schedule()` para sobrescrever qualquer emissão de `cnorm` gerada pelo redraw de transição de modo.
+2. **Despacho Assíncrono com `schedule` e `defer_fn`:** No NeoVim, disparar `set_cur()` imediatamente e agendar nova emissão via `vim.schedule()` e `vim.defer_fn(emit, 15)` para sobrescrever qualquer emissão de `cnorm` gerada pelo redraw de transição de modo.
 
 ---
 
@@ -122,22 +118,26 @@ A sequência `\E[?0c` reseta o hardware VGA para as linhas de varredura padrão 
 
 Ao pressionar `r` em modo normal ou `<C-o>r` em modo insert, o Vim e o Emacs Evil não entram em um modo formal contínuo; eles bloqueiam esperando o caractere de substituição sem disparar `ModeChanged`.
 
-- **No Vim:** Mapeamento expression (`nnoremap <expr> r`) invocando `getcharstr()`, emitindo a sequência de replace (`\e[?4c` / `\e[3 q`) antes da leitura e restaurando para normal logo após.
-- **No Emacs:** Interceptação da função `evil-replace` via `:around` com `unwind-protect`, garantindo que o cursor de replace seja exibido durante a espera da tecla e restaurado em seguida.
-- **No NeoVim:** Interceptação por `vim.on_key`, identificando a transição de tecla `r` em modo `n` e `i`.
+- **No Vim:** Mapeamento expression (`nnoremap <expr> r` e `inoremap <expr> <C-o>r`) invocando `s:replace_single_char()`, chamando `redraw` explícito antes e depois de `getcharstr()`.
+- **No Emacs:** Interceptação via advice em `evil-refresh-cursor` capturando `evil-force-cursor == 'replace'` da especificação `interactive` de `evil-replace`.
+- **No NeoVim:** Interceptação por `vim.on_key`, identificando a transição de tecla `r` em modo `n` e `<C-o>r` em `niI`.
 
 ---
 
-## 🎨 5. Calibração Tonal Dinâmica de Tema vs Cores Fixas
+## 🎨 5. Alpha Blending Real & Simetria de Plataformas
 
-Para garantir paridade com as diretrizes de design de temas:
+Para garantir paridade com as diretrizes de design de temas e imunidade à inversão Dark/Light:
 
-1. **Proibição de Cores Arbitrárias:** Nunca fixe valores literais como `#ffffff` ou `#a8a8a8` para modos de edição. Temas claros ou temas escuros com tons quentes/frios são corrompidos quando um cursor estático é imposto.
-2. **Escala Relativa de Luminância:** O cursor deve amostrar a cor base do tema ativo (`cursor` face no Emacs, grupo `Cursor`/`Normal` no NeoVim e Vim) e aplicar fatores de luminância:
-    - **Normal:** 100% (tom base)
-    - **Insert:** 85% (atenuado + formato barra)
-    - **Replace:** 70% (moderado + formato sublinhado)
-    - **Visual:** 55% (escurecido, dando prioridade ao highlight da seleção)
+1. **Proibição de Cores Fixas:** Nunca fixe valores literais como `#ffffff` ou `#a8a8a8` para modos de edição.
+2. **Alpha Blending Matemático:** Interpolação linear da cor do cursor ($C_{\text{cur}}$) em direção à cor de fundo do tema ($C_{\text{bg}}$) pelo fator $\alpha \in [0.0, 1.0]$:
+   $$C_{\text{final}} = \text{round}(C_{\text{cur}} \times \alpha + C_{\text{bg}} \times (1 - \alpha))$$
+    - **Normal:** 100% ($\alpha = 1.0$)
+    - **Insert:** 85% ($\alpha = 0.85$, levemente translúcido)
+    - **Replace:** 70% ($\alpha = 0.70$, moderado)
+    - **Visual:** 55% ($\alpha = 0.55$, translúcido atenuado)
+3. **Simetria Técnica (FreeBSD vs Linux):**
+    - **FreeBSD `vt(4)`:** Suporta **OSC 12** (`\e]12;#hex\7`) para redefinir a cor do cursor em tempo de execução, mas não possui scanlines VGA. Alpha Blending via OSC 12 é o mecanismo primário.
+    - **Linux VT:** Não suporta OSC 12, mas possui **scanlines de hardware (`\e[?c`)**, tornando a indicação por forma física o padrão canônico no Linux.
 
 ---
 
