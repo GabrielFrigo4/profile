@@ -117,11 +117,12 @@ Quando executados em console puro (`RAW_TTY=1` ou `[ -z "$DISPLAY$WAYLAND_DISPLA
 
 ### A Tabela Universal de Resoluções Spleen
 
-| Resolução Vertical Detectada  | Categoria do Painel | Fonte Spleen Proporcional         | Geometria no Console                                                         |
-| :---------------------------- | :------------------ | :-------------------------------- | :--------------------------------------------------------------------------- |
-| **$\le 1080$** (1080p / 720p) | Full HD / Standard  | **`spleen-12x24`**                | $160 \times 45$ caracteres                                                   |
-| **$1081$ a $2159$** (1440p)   | 2K / QHD            | **`spleen-16x32`**                | $160 \times 45$ caracteres _(mesma proporção exata!)_                        |
-| **$\ge 2160$** (2160p)        | 4K UHD              | **`spleen-32x64`** _(ou `16x32`)_ | $120 \times 33$ _(grande)_ ou $240 \times 67$ _(denso com `SPLEEN_DENSE=1`)_ |
+| Resolução Vertical Detectada | Categoria do Painel | Fonte Spleen Proporcional         | Geometria no Console                                                         |
+| :--------------------------- | :------------------ | :-------------------------------- | :--------------------------------------------------------------------------- |
+| **$< 1080$** (720p / 768p)   | HD / WXGA           | **`spleen-8x16`**                 | $160 \times 45$ caracteres em 720p                                           |
+| **$1080$ a $1439$** (1080p)  | Full HD / FHD       | **`spleen-12x24`**                | $160 \times 45$ caracteres _(mesma proporção exata!)_                        |
+| **$1440$ a $2159$** (1440p)  | 2K / QHD            | **`spleen-16x32`**                | $160 \times 45$ caracteres _(mesma proporção exata!)_                        |
+| **$\ge 2160$** (2160p)       | 4K UHD              | **`spleen-32x64`** _(ou `16x32`)_ | $120 \times 33$ _(grande)_ ou $240 \times 67$ _(denso com `SPLEEN_DENSE=1`)_ |
 
 ### Algoritmo Multi-Monitor Defensivo
 
