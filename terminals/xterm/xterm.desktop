@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=XTerm
+GenericName=Terminal
+Comment=Universal XTerm Terminal Emulator
+Exec=xterm -bc -bcf 400 -bcn 500
+Terminal=false
+Type=Application
+Encoding=UTF-8
+Icon=xterm-color
+Categories=System;TerminalEmulator;
+Keywords=shell;prompt;command;commandline;cmd;
+StartupWMClass=XTerm
