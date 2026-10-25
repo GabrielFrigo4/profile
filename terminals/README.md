@@ -9,6 +9,7 @@
 | Emulador / Multiplexador | Plataforma      | Arquivos Declarativos                                                                                                  | Destino                                                           |
 | :----------------------- | :-------------- | :--------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------- |
 | **Foot (Wayland)**       | Linux & FreeBSD | [`foot.ini`](foot/foot.ini)                                                                                            | `~/.config/foot/foot.ini`                                         |
+| **XTerm (X11)**          | Linux & FreeBSD | [`Xresources`](xterm/Xresources)                                                                                       | `~/.Xresources`                                                   |
 | **Konsole (KDE)**        | Linux & FreeBSD | [`Bash.profile`](konsole/Bash.profile), [`Zsh.profile`](konsole/Zsh.profile), [`Shell.profile`](konsole/Shell.profile) | `~/.local/share/konsole/`                                         |
 | **Windows Terminal**     | Windows         | [`settings.json`](windows-terminal/settings.json)                                                                      | `%LOCALAPPDATA%\Packages\Microsoft.WindowsTerminal_*\LocalState\` |
 | **Tmux**                 | Multiplataforma | [`tmux.conf`](tmux/tmux.conf)                                                                                          | `~/.config/tmux/` e `~/.tmux.conf`                                |
@@ -18,7 +19,15 @@
 
 ## 🎯 Destaques de Arquitetura
 
-### 1. Konsole Unificado (Linux & FreeBSD via `/usr/bin/env`)
+### 1. Paridade Visual & Ergonômica: Foot (Wayland) e XTerm (X11)
+
+Para garantir uma experiência de terminal de alto nível nos lançadores gráficos efêmeros (`wgui` e `xgui`), o **Foot** e o **XTerm** compartilham a mesma identidade visual:
+
+- **Paleta Cromática:** Adwaita Dark (fundo `#1e1e1e`, texto `#deddda`, destaque `#3584e4`, 16 cores ANSI calibradas).
+- **Tipografia:** Hierarquia universal com `JetBrainsMono Nerd Font` prioritária e fallbacks defensivos (`Hack`, `Noto Sans Mono`, `Adwaita Mono`, `DejaVu Sans Mono`).
+- **Geometria:** Margem interna (_padding_) de 16px, cursor bloco piscante e eliminação de barras de rolagem arcaicas.
+
+### 2. Konsole Unificado (Linux & FreeBSD via `/usr/bin/env`)
 
 Os perfis do Konsole utilizam `/usr/bin/env` para resolução dinâmica do caminho dos shells:
 
@@ -28,15 +37,15 @@ Os perfis do Konsole utilizam `/usr/bin/env` para resolução dinâmica do camin
 
 Isso elimina a necessidade de perfis separados para Linux (`/bin/`) e FreeBSD (`/usr/local/bin/`), garantindo **100% de reuso e portabilidade**. Todos os perfis utilizam a fonte **JetBrainsMono Nerd Font 12**, tema **Breeze** e cursor piscante.
 
-### 2. Windows Terminal
+### 3. Windows Terminal
 
 Configura esquema de cores e inicialização integrada com PowerShell 7, MSYS2 UCRT64 e distros WSL2.
 
-### 3. Multiplexadores de Terminal (Tmux & Zellij)
+### 4. Multiplexadores de Terminal (Tmux & Zellij)
 
 Sessões persistentes e divisão de janelas multiplataforma com keybindings padronizados em ambientes locais e remotos.
 
-### 4. Desacoplamento Arquitetural (Profile ➔ Shell)
+### 5. Desacoplamento Arquitetural (Profile ➔ Shell)
 
 Em conformidade com a arquitetura do **Quarteto de Produtividade**:
 

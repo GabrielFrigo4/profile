@@ -1,0 +1,78 @@
+! ================================================================
+! XTerm - Universal Profile Adwaita Dark Theme
+! ================================================================
+! Paridade cromática e tipográfica estrita com o foot (Wayland).
+! Paleta: Adwaita Dark (GNOME)
+! Tipografia: JetBrainsMono Nerd Font com cascata Xft universal
+! ================================================================
+
+! --- Tipografia (Xft com resolução em cascata) -------------------
+xterm*faceName: JetBrainsMono Nerd Font,Hack Nerd Font,Hack,Noto Sans Mono,Adwaita Mono,Liberation Mono,Ubuntu Mono,DejaVu Sans Mono,Cascadia Code,Terminus,monospace
+xterm*faceSize: 12
+xterm*faceNameDoublesize: JetBrainsMono Nerd Font,Hack Nerd Font,Noto Sans Mono,monospace
+xterm*faceNameBold: JetBrainsMono Nerd Font,Hack Nerd Font,Noto Sans Mono,monospace:weight=bold
+xterm*faceNameItalic: JetBrainsMono Nerd Font,Hack Nerd Font,Noto Sans Mono,monospace:slant=italic
+xterm*faceNameBoldItalic: JetBrainsMono Nerd Font,Hack Nerd Font,Noto Sans Mono,monospace:weight=bold:slant=italic
+xterm*renderFont: true
+xterm*antialias: true
+
+! --- Geometria, Padding & Ergonomia -------------------------------
+xterm*internalBorder: 16
+xterm*scrollBar: false
+xterm*loginShell: true
+xterm*saveLines: 10000
+xterm*termName: xterm-256color
+xterm*metaSendsEscape: true
+xterm*utf8: 1
+xterm*locale: true
+xterm*selectToClipboard: true
+xterm*fullscreen: false
+
+! --- Cursor & Mouse -----------------------------------------------
+xterm*cursorColor: #deddda
+xterm*cursorBlink: true
+xterm*cursorUnderline: false
+xterm*pointerColor: #deddda
+xterm*pointerColorBackground: #1e1e1e
+
+! --- Paleta Adwaita Dark: Cores Principais ------------------------
+xterm*background: #1e1e1e
+xterm*foreground: #deddda
+xterm*highlightColor: #3584e4
+xterm*highlightTextColor: #ffffff
+
+! --- Regular Colors (0-7) -----------------------------------------
+! Black (Fundo Adwaita)
+xterm*color0: #1e1e1e
+! Red
+xterm*color1: #ed333b
+! Green
+xterm*color2: #57e389
+! Yellow
+xterm*color3: #f8e45c
+! Blue
+xterm*color4: #3584e4
+! Magenta
+xterm*color5: #9141ac
+! Cyan
+xterm*color6: #2a7b82
+! White (Texto Adwaita)
+xterm*color7: #deddda
+
+! --- Bright Colors (8-15) -----------------------------------------
+! Bright Black (Cinza Suave)
+xterm*color8: #5e5c64
+! Bright Red
+xterm*color9: #f66151
+! Bright Green
+xterm*color10: #8ff0a4
+! Bright Yellow
+xterm*color11: #f9f06b
+! Bright Blue
+xterm*color12: #62a0ea
+! Bright Magenta
+xterm*color13: #c061cb
+! Bright Cyan
+xterm*color14: #33c7de
+! Bright White (Branco Puro)
+xterm*color15: #ffffff
