@@ -2,7 +2,7 @@
 Name=XTerm
 GenericName=Terminal
 Comment=Universal XTerm Terminal Emulator
-Exec=xterm -bc -bcf 400 -bcn 500
+Exec=xterm -bc -bcf 600 -bcn 600
 Terminal=false
 Type=Application
 Encoding=UTF-8

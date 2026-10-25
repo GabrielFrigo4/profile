@@ -33,8 +33,8 @@ xterm*fullscreen: false
 XTerm*cursorBlink: always
 XTerm*vt100.cursorBlink: always
 XTerm*cursorBlinkXOR: false
-XTerm*cursorOnTime: 500
-XTerm*cursorOffTime: 400
+XTerm*cursorOnTime: 600
+XTerm*cursorOffTime: 600
 XTerm*cursorUnderline: false
 XTerm*cursorColor: #deddda
 XTerm*pointerColor: #deddda
@@ -42,8 +42,8 @@ XTerm*pointerColorBackground: #1e1e1e
 xterm*cursorBlink: always
 xterm*vt100.cursorBlink: always
 xterm*cursorBlinkXOR: false
-xterm*cursorOnTime: 500
-xterm*cursorOffTime: 400
+xterm*cursorOnTime: 600
+xterm*cursorOffTime: 600
 xterm*cursorUnderline: false
 xterm*cursorColor: #deddda
 xterm*pointerColor: #deddda
