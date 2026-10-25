@@ -16,6 +16,7 @@ Esta habilidade orienta a concepção, escrita, refatoração e manutenção de 
 3. **Lexical Binding Universal:** Todo arquivo `.el` deve conter `;;; -*- lexical-binding: t -*-` obrigatoriamente na linha 1.
 4. **Isolamento de Estado (FHS):** Separação estrita entre código imutável (`etc/`, `lib/`), extensões locais (`usr/local/`) e estado volátil (`var/cache/`, `var/run/`).
 5. **Autonomia em Batch Mode:** Validação sintática e integridade de carregamento via `emacs -Q --batch` em CI e testes locais.
+6. **Simetria Universal Shell $\leftrightarrow$ Aweshell:** O Aweshell (`usr/local/aweshell`) é a ponte oficial do Universal Shell no Emacs. Temas de prompt, navegação (`up`) e aliases do Quarteto (`docs/ALIASES.md`) devem ser sincronizados 1:1 no Eshell.
 
 ---
 
@@ -23,6 +24,7 @@ Esta habilidade orienta a concepção, escrita, refatoração e manutenção de 
 
 Consulte as especificações aprofundadas nos arquivos dedicados:
 
+- **[aweshell-parity.md](references/aweshell-parity.md):** Governança de paridade 1:1 entre o Universal Shell e o Aweshell (aliases do Quarteto, temas multi/pill/micro, navegação e integração de buffers).
 - **[elpaca-async.md](references/elpaca-async.md):** Gestão assíncrona de pacotes com Elpaca, receitas declarativas, lockfiles, ordenação de filas e eliminação do `package.el` legado.
 - **[treesitter-native.md](references/treesitter-native.md):** Integração nativa de Tree-sitter (ABI ≥ 14), gramáticas C nativas, fontes de linguagens e remapeamento universal com `major-mode-remap-alist`.
 - **[eglot-lsp.md](references/eglot-lsp.md):** Configuração cirúrgica do cliente LSP Eglot nativo, hooks sob demanda, integração com `project.el`, `flymake` e servidores externos (`clangd`, `rust-analyzer`, `gopls`).
