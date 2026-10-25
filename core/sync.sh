@@ -199,8 +199,7 @@ _profile_sync() {
 		_sync "editors/antigravity/settings.json" "${_win_app}/Antigravity IDE/User/settings.json"
 	else
 		_sync "editors/zed/settings.json" "${_cfg}/zed/settings.json"
-		_sync "editors/vscode/settings.json" "${_cfg}/Code/User/settings.json"
-		_sync "editors/vscode/settings.json" "${_cfg}/Code - OSS/User/settings.json"
+		for _d in Code "Code - OSS"; do _sync "editors/vscode/settings.json" "${_cfg}/${_d}/User/settings.json"; done
 		_sync "editors/vscodium/settings.json" "${_cfg}/VSCodium/User/settings.json"
 		_sync "editors/antigravity/settings.json" "${_cfg}/Antigravity IDE/User/settings.json"
 	fi
@@ -230,6 +229,8 @@ _profile_sync() {
 		_ui_step "Temas de desktop e toolkits gráficos (GTK 3/4)..."
 		_sync "desktop/gtk-3.0/settings.ini" "${_cfg}/gtk-3.0/settings.ini"
 		_sync "desktop/gtk-4.0/settings.ini" "${_cfg}/gtk-4.0/settings.ini"
+		mkdir -p "${_data}/themes"
+		[ -d "/usr/share/themes/adw-gtk3-dark" ] && [ ! -e "${_data}/themes/Adwaita-dark" ] && ln -sf /usr/share/themes/adw-gtk3-dark "${_data}/themes/Adwaita-dark" 2> "/dev/null" || true
 	fi
 
 	_ui_step "Agentes de IA (Skills & Rules para Antigravity & Gemini)..."
