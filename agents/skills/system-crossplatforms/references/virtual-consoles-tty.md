@@ -110,3 +110,29 @@ Quando executados em console puro (`RAW_TTY=1` ou `[ -z "$DISPLAY$WAYLAND_DISPLA
 - **Vim / NeoVim:** Desative `termguicolors` (`set notermguicolors` / `vim.o.termguicolors = false`) e aplique esquema compatível com ANSI 16 cores (`colorscheme default`).
 - **GNU Emacs:** No modo `-nw` (no-window), utilize `(xterm-mouse-mode 1)` para suporte a mouse via `gpm`/`moused` e temas de alto contraste baseados em 16 cores.
 - **Helix:** A biblioteca `crossterm` degrada automaticamente para paletas ANSI suportadas pelo console virtual ativo.
+
+---
+
+## 🔍 6. Tipografia Dinâmica & Escalonamento Multi-Monitor (Spleen Bitmap)
+
+### A Tabela Universal de Resoluções Spleen
+
+| Resolução Vertical Detectada  | Categoria do Painel | Fonte Spleen Proporcional         | Geometria no Console                                                         |
+| :---------------------------- | :------------------ | :-------------------------------- | :--------------------------------------------------------------------------- |
+| **$\le 1080$** (1080p / 720p) | Full HD / Standard  | **`spleen-12x24`**                | $160 \times 45$ caracteres                                                   |
+| **$1081$ a $2159$** (1440p)   | 2K / QHD            | **`spleen-16x32`**                | $160 \times 45$ caracteres _(mesma proporção exata!)_                        |
+| **$\ge 2160$** (2160p)        | 4K UHD              | **`spleen-32x64`** _(ou `16x32`)_ | $120 \times 33$ _(grande)_ ou $240 \times 67$ _(denso com `SPLEEN_DENSE=1`)_ |
+
+### Algoritmo Multi-Monitor Defensivo
+
+Em arranjos com mais de um monitor conectado (onde o `fbcon` do kernel clona o terminal virtual entre os displays), o escalonador itera por todas as saídas conectadas em `/sys/class/drm/card*-*/status` e adota a **maior altura vertical ativa**. Isso assegura que telas HiDPI/4K nunca sofram com texto ilegível, mantendo conforto visual na tela secundária.
+
+### Implementação na Matriz Quádrupla de Inits
+
+1. **Linux Systemd (Debian, Fedora, Arch):** Invocado como `ExecStartPre` no `systemd-vconsole-setup.service` via drop-in `autofont.conf`, atualizando `/etc/vconsole.conf`.
+2. **Linux Não-Systemd (Devuan com SysVinit, Alpine/Gentoo com OpenRC):**
+    - **Gatilho de Hardware:** Regra universal `udev`/`eudev` em `/etc/udev/rules.d/90-vconsole-autofont.rules` executando `/usr/local/libexec/vconsole-autofont`.
+    - **Inicialização em Boot:** Script `/etc/init.d/vconsole-autofont` integrado ao runlevel (SysVinit LSB via `update-rc.d` e OpenRC via `rc-update`).
+    - **Console-Setup:** Sincronização automática de `FONTSIZE` em `/etc/default/console-setup` e recarga via `setupcon`.
+3. **FreeBSD (`vt(4)`):** Serviço rc.d canônico `/usr/local/etc/rc.d/vt_autofont`, ativado via `sysrc vt_autofont_enable="YES"`, despachando `vidcontrol -f` e atualizando `allscreens_flags`.
+4. **OpenBSD (`wscons(4)`):** Automação nativa **in-kernel** no subsistema raster `rasops(9)`, implementada pelo criador da fonte Spleen (Frédéric Cambus, `fcambus@`), selecionando automaticamente `16x32` ($\ge 1920$px) ou `32x64` ($\ge 3840$px). Trocas manuais são executadas com `wsfontload(8)` e `wsconsctl display.font=...`.

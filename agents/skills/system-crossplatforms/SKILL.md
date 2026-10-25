@@ -65,9 +65,13 @@ Assistentes de IA frequentemente sofrem de _Linux-centric bias_, presumindo cami
 
 ## 🌍 Panorama Estratégico por Sistema Operacional
 
-### 🐧 1. Linux (Distribuições e Abstração Limpa)
+### 🐧 1. Linux (Distribuições, Neutralidade de Init e Abstração Limpa)
 
 - Privilegie interfaces padronizadas: POSIX `#!/usr/bin/env sh`, compiladores padrão (`cc`/`gcc`), Makefiles neutros.
+- **Neutralidade de Init (Systemd vs Não-Systemd):** Nunca presuma exclusividade do `systemd`. Toda automação de sistema deve ser desenhada para operar harmonicamente tanto no ecossistema **Debian com Systemd** quanto em distribuições **Não-Systemd (Devuan com SysVinit, Alpine/Gentoo com OpenRC e Void com runit)**:
+    - Utilize regras `udev` / `eudev` universais em `/etc/udev/rules.d/` para gatilhos de hardware (DRM, consoles virtuais, áudio), pois operam de forma idêntica sob qualquer gerenciador de processos (PID 1).
+    - Forneça scripts de serviço para Systemd (`systemd-vconsole-setup.service.d/`), OpenRC (`/etc/init.d/` com `depend()`) e SysVinit/Devuan (`/etc/init.d/` com cabeçalho LSB e `update-rc.d`).
+    - Em subsistemas Debian/Devuan de console, sincronize `/etc/default/console-setup` em conjunto com `/etc/vconsole.conf` e execute `setupcon`.
 - Cuidado com _usrmerge_ (`/bin -> /usr/bin`) que não ocorre nos BSDs; evite extensões proprietárias GNU quando funções POSIX padrão bastam.
 
 ### 🍎 2. macOS (Darwin / Mach / BSD Userland)
@@ -114,6 +118,11 @@ Em runners headless de CI/CD (GitHub Actions, SSH sem PTY), shells interativos (
 3. **Programação Defensiva:** Checagem via `command -v`, redirecionamentos cotados `> "/dev/null" 2>&1`, taxonomia `echo` / `[ -t 1 ] && echo -n $'\e...'` / `printf`.
 4. **Permissões em 4 Dígitos:** `chmod 0755` para executáveis, `chmod 0644` para arquivos regulares, `chmod 0700`/`0600` para segredos.
 5. **Arquitetura de Provisionamento (Despachante Multi-OS Universal):** Em repositórios de provisionamento (`Setup`), scripts em `common/` atuam como despachantes dinâmicos de pacotes (`pkg` → `dnf` → `apt` → `pacman` [MSYS2/Arch] → `winget.exe`). Todo pacote suportado em múltiplos sistemas operacionais DEVE residir em `common/`, reservando pastas de SO (`linux/`, `freebsd/`, `windows/`) estritamente para recursos exclusivos daquela plataforma (dconf, Jails, udev, registro).
+6. **A Matriz Quádrupla de Runtimes e Inits:** Ao projetar integrações de infraestrutura, daemons, consoles ou hooks, contemple sempre a matriz completa:
+    - **FreeBSD** (`rc.d`, `vt(4)`, `allscreens_flags`, `sysrc`)
+    - **Debian / Fedora / Arch** (Linux com `systemd`, `systemctl`, drop-ins)
+    - **Devuan / Alpine / Gentoo** (Linux Não-Systemd: `SysVinit`, `OpenRC`, `eudev`, `console-setup`/`setupcon`)
+    - **OpenBSD** (`wscons(4)`, escalonamento in-kernel `rasops(9)`, `wsfontload`, `doas`)
 
 ---
 
