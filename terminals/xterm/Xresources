@@ -90,3 +90,29 @@ xterm*color13: #c061cb
 xterm*color14: #33c7de
 ! Bright White (Branco Puro)
 xterm*color15: #ffffff
+
+! ==============================================================================
+! 3. Xft Font Rendering & Xcursor Defaults
+! ==============================================================================
+Xft.antialias: 1
+Xft.hinting: 1
+Xft.hintstyle: hintslight
+Xft.rgba: rgb
+Xft.lcdfilter: lcddefault
+Xcursor.size: 24
+
+! ==============================================================================
+! 4. GNU Emacs X11 / Lucid Dark Theme Fallback
+! ==============================================================================
+Emacs.pane.menubar.background: #1e1e1e
+Emacs.pane.menubar.foreground: #d4d4d4
+Emacs.pane.menubar.shadowThickness: 0
+Emacs.pane.menubar.borderWidth: 0
+Emacs*menu*background: #252526
+Emacs*menu*foreground: #d4d4d4
+Emacs*menu*borderWidth: 0
+Emacs*menu*shadowThickness: 1
+Emacs*Scrollbar.background: #1e1e1e
+Emacs*Scrollbar.foreground: #3c3c3c
+Emacs.background: #1e1e1e
+Emacs.foreground: #d4d4d4
