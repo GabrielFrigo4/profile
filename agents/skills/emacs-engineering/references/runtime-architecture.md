@@ -79,3 +79,19 @@ emacs -Q --batch -l early-init.el -l init.el --eval '(message "Emacs 31+ Batch O
 ```
 
 Se qualquer função estiver indefinida ou a sintaxe incorreta, o processo sai com código diferente de 0.
+
+---
+
+## 📖 Filosofia de Autodocumentação Introspectiva (`C-h f` / `C-h v` / `which-key`)
+
+O GNU Emacs é um ambiente Lisp vivo e autodocumentado. Enquanto comentários inline `;;` narrativos são proibidos pelo padrão Clean Code do ecossistema, **docstrings Elisp** são metadados executáveis consultados em tempo real por `describe-function` (`C-h f`), `describe-variable` (`C-h v`), `describe-key` (`C-h k`), `apropos`, ElDoc e `which-key`:
+
+1. **Primeira Linha Autônoma ($\le 80$ colunas):** Deve resumir o propósito da função, macro, variável ou face em uma frase completa sem depender das linhas seguintes.
+2. **Parâmetros em `MAIÚSCULAS` e Links `` `simbolo' ``:** Referencie argumentos formais em caixa alta (`FRAME`, `BUFFER`, `ARGS`) e símbolos Elisp entre acento grave e apóstrofo (`` `default-directory' ``) para criar hiperlinks clicáveis nos buffers `*Help*`.
+
+```elisp
+(defun emacs/open-file-manager (&optional dir)
+  "Abre o gerenciador de arquivos gráfico no diretório DIR (ou `default-directory')."
+  (interactive "DDirectory: ")
+  ...)
+```

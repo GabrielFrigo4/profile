@@ -17,6 +17,7 @@ Esta habilidade orienta a concepção, escrita, refatoração e manutenção de 
 4. **Isolamento de Estado (FHS):** Separação estrita entre código imutável (`etc/`, `lib/`), extensões locais (`usr/local/`) e estado volátil (`var/cache/`, `var/run/`).
 5. **Autonomia em Batch Mode:** Validação sintática e integridade de carregamento via `emacs -Q --batch` em CI e testes locais.
 6. **Simetria Universal Shell $\leftrightarrow$ Aweshell:** O Aweshell (`usr/local/aweshell`) é a ponte oficial do Universal Shell no Emacs. Temas de prompt, navegação (`up`) e aliases do Quarteto (`docs/ALIASES.md`) devem ser sincronizados 1:1 no Eshell.
+7. **Filosofia de Autodocumentação Introspectiva (`Self-Documenting Emacs`):** Diferente de comentários narrativos `;;` (proibidos), docstrings Elisp em `defun`, `defmacro`, `defvar`, `defcustom` e `defface` são cidadãs de primeira classe do runtime introspectivo (`C-h f`, `C-h v`, `C-h k`, `M-x apropos`, ElDoc e `which-key`), devendo ter 1ª linha concisa ($\le 80$ colunas), parâmetros em `MAIÚSCULAS` e links `` `simbolo' ``.
 
 ---
 
