@@ -216,6 +216,10 @@ _profile_sync() {
 		_sync "terminals/xterm/Xresources" "${HOME}/.Xresources"
 		_sync "terminals/xterm/Xresources" "${HOME}/.Xdefaults"
 		_sync "terminals/xterm/xterm.desktop" "${_data}/applications/xterm.desktop"
+		_sync "editors/emacs/emacs.desktop" "${_data}/applications/emacs.desktop"
+		if command -v update-desktop-database > "/dev/null" 2>&1; then
+			update-desktop-database "${_data}/applications" 2> "/dev/null" || true
+		fi
 		for _kp in Bash Shell Zsh; do _sync "terminals/konsole/${_kp}.profile" "${_data}/konsole/${_kp}.profile"; done
 		if command -v tic > "/dev/null" 2>&1 && [ -f "${_PROFILE_ROOT}/terminals/terminfo/linux.terminfo" ]; then
 			tic -o "${HOME}/.terminfo" "${_PROFILE_ROOT}/terminals/terminfo/linux.terminfo" 2> "/dev/null" || true
