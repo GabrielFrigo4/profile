@@ -1,4 +1,36 @@
-# Temporary and editor files
+# ----------------------------------------------------------------
+# Git Ignore: Declarative Profile Dotfiles
+# ----------------------------------------------------------------
+
+### --------------------------------
+### Temporary Files & Logs
+### --------------------------------
+*.log
+*.tmp
+*.bak
+*.orig
+*.rej
+.cache/
+
+### --------------------------------
+### Editor Backups & Swap Files
+### --------------------------------
 *~
 *.swp
+*.swo
+*.kate-swp
+\#*\#
+.#*
+
+### --------------------------------
+### Operating System Cruft
+### --------------------------------
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+.directory
+Thumbs.db
+ehthumbs.db
+Desktop.ini
