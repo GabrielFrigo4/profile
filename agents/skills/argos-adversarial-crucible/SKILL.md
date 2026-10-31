@@ -12,9 +12,9 @@ Diretrizes operacionais para o **Master Orchestrator** (seja o **GM Argos** ou u
 
 ---
 
-## 🏛️ 1. Topologia da Célula Assimétrica (Pool <= 5)
+## 🏛️ 1. Topologia da Célula Assimétrica (Pool 2 a 8 Workers)
 
-A célula adversarial opera dividindo o pool de workers efêmeros em três papéis isolados por diretório:
+A célula adversarial opera dividindo o pool de workers efêmeros (entre 2 e 8 agentes simultâneos, média 4) em três papéis isolados por diretório:
 
 1. **Workers 1 e 2 — Blue Team (Builders):**
     - **Escopo Exclusivo:** `src/` (ou caminho equivalente de código de produção).

@@ -3,7 +3,7 @@ name: argos-multi-agent-orchestrator
 description: >-
     Runbook cognitivo para orquestração multi-agente Master-Worker polimórfica (GM Argos
     ou Flash Master), gerenciando frotas efêmeras com gradiente de capacidade relativa,
-    pool de concorrência máxima de 5 agentes, isolamento de escopo e qualidade assíncrona.
+    pool dinâmico de 2 a 8 agentes (média 4), isolamento de escopo e qualidade assíncrona.
 ---
 
 # 🏛️ Orquestração Multi-Agente Master-Worker
@@ -54,17 +54,20 @@ Via de regra, o Worker deve ser computacionalmente mais leve ou, no máximo, tã
 
 ---
 
-## 🚦 3. Limite de Concorrência & Fila em Lotes (Pool <= 5)
+## 🚦 3. Limite de Concorrência & Fila em Lotes (Pool 2/4/8)
 
-Para evitar sobrecarga de contexto, contenção de I/O e limites de taxa de API, o Master gerencia um pool estrito:
+Para evitar sobrecarga de contexto, contenção de I/O e limites de taxa de API, o Master gerencia um pool elástico de Workers:
 
-- **Teto Concorrente:** No máximo **5 Workers simultâneos** ativos (`MAX_ACTIVE_SLAVES = 5`).
+- **Dimensionamento Dinâmico do Pool:**
+    - `MIN_ACTIVE_SLAVES = 2`: Piso de paralelismo concorrente para tarefas decomponíveis.
+    - `AVERAGE_ACTIVE_SLAVES = 4`: Faixa de operação padrão (sweet spot) para a maioria das orquestrações.
+    - `MAX_ACTIVE_SLAVES = 8`: Teto rígido de concorrência simultânea.
 - **Fila em Lotes (Batch Queueing):**
-    - Quando um plano demandar mais de 5 subtarefas (ex.: 12 arquivos a refatorar):
-        1. O Master particiona o plano em lotes (_batches_) de no máximo 5 subtarefas.
-        2. Dispara o _Batch 1_ (Workers 1 a 5) e aguarda suas conclusões assíncronas.
+    - Quando um plano demandar mais de 8 subtarefas (ex.: 16 arquivos a refatorar):
+        1. O Master particiona o plano em lotes (_batches_) de 2 a 8 subtarefas (média de 4).
+        2. Dispara o _Batch 1_ (Workers 1 a 4 ou até 8) e aguarda suas conclusões assíncronas.
         3. Executa a auditoria de qualidade (QA) do lote e encerra as instâncias ativas (`manage_subagents` kill).
-        4. Somente após a liberação do pool, instancia o _Batch 2_ (Workers 6 a 10).
+        4. Somente após a liberação do pool, instancia o _Batch 2_ (Workers subsequentes).
         5. Repete o ciclo até a finalização do último lote.
 
 ---
@@ -87,7 +90,7 @@ A eficiência dos Workers depende da pureza de contexto e da prevenção de cond
 O fluxo de orquestração do Master é composto por 5 etapas sequenciais:
 
 1. **Decomposição:** O Master decompõe a solicitação em subtarefas atômicas com identificadores unívocos (`TASK-01`, `TASK-02`, etc.) e escopos de arquivos restritos.
-2. **Spawn:** Instanciação dos Workers (1 a 5 por lote) via `invoke_subagent` com o tier de modelo adequado e contrato estruturado.
+2. **Spawn:** Instanciação dos Workers (2 a 8 por lote, média 4) via `invoke_subagent` com o tier de modelo adequado e contrato estruturado.
 3. **Coleta e Auditoria:** Recebimento assíncrono dos relatórios de entrega. O Master valida os critérios de aceite e a conformidade do código.
 4. **Retry / Correção (Máx. 2 tentativas):** Se um Worker entregar código divergente, o Master aponta o erro exato. Persistindo a falha após 2 retries, o Master encerra o Worker e assume o reparo diretamente.
 5. **Consolidação e Teardown:** O Master encerra todos os Workers ativos (`manage_subagents` kill), sintetiza as entregas e responde ao usuário com métricas e links.
@@ -96,18 +99,18 @@ O fluxo de orquestração do Master é composto por 5 etapas sequenciais:
 
 ## ⚖️ 6. Diretrizes Imperativas (DOs & DON'Ts)
 
-| Prática   | Diretiva Operacional                                                                              |
-| :-------- | :------------------------------------------------------------------------------------------------ |
-| **DO**    | Permita que tanto o GM Argos quanto modelos Flash atuem soberanamente como Master Orchestrator.   |
-| **DO**    | Aplique como regra geral $\text{Capacidade}(\text{Worker}) \le \text{Capacidade}(\text{Master})$. |
-| **DO**    | Mantenha concorrência ativa $\le 5$ Workers simultâneos; use lotes para planos maiores.           |
-| **DO**    | Particione caminhos de arquivos para eliminar qualquer risco de escrita simultânea.               |
-| **DO**    | Encerre formalmente os Workers (`manage_subagents` kill) após validar cada lote.                  |
-| **DON'T** | Não utilize nem faça fallback para o modelo 3.1 Pro legado.                                       |
-| **DON'T** | Não permita que Workers criem sub-agentes (`depth > 1` é incompatível).                           |
-| **DON'T** | Não transmita históricos de chat desnecessários ou contexto global nos briefings.                 |
-| **DON'T** | Não autorize dois Workers concorrentes a modificar o mesmo arquivo no mesmo lote.                 |
-| **DON'T** | Não utilize Workers Pro sem justificativa explícita de complexidade matemática/simbólica.         |
+| Prática   | Diretiva Operacional                                                                                  |
+| :-------- | :---------------------------------------------------------------------------------------------------- |
+| **DO**    | Permita que tanto o GM Argos quanto modelos Flash atuem soberanamente como Master Orchestrator.       |
+| **DO**    | Aplique como regra geral $\text{Capacidade}(\text{Worker}) \le \text{Capacidade}(\text{Master})$.     |
+| **DO**    | Mantenha concorrência ativa entre 2 e 8 Workers simultâneos (média 4); use lotes para planos maiores. |
+| **DO**    | Particione caminhos de arquivos para eliminar qualquer risco de escrita simultânea.                   |
+| **DO**    | Encerre formalmente os Workers (`manage_subagents` kill) após validar cada lote.                      |
+| **DON'T** | Não utilize nem faça fallback para o modelo 3.1 Pro legado.                                           |
+| **DON'T** | Não permita que Workers criem sub-agentes (`depth > 1` é incompatível).                               |
+| **DON'T** | Não transmita históricos de chat desnecessários ou contexto global nos briefings.                     |
+| **DON'T** | Não autorize dois Workers concorrentes a modificar o mesmo arquivo no mesmo lote.                     |
+| **DON'T** | Não utilize Workers Pro sem justificativa explícita de complexidade matemática/simbólica.             |
 
 ---
 

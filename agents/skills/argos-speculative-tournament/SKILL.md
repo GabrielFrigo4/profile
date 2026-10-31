@@ -16,7 +16,7 @@ Diretrizes operacionais para o **Master Orchestrator** (seja o **GM Argos** ou u
 
 Quando uma tarefa envolve alta incerteza heurística (ex.: otimização de solver, redução de frame-time gráfico ou layout de grafos), tentar uma única linha de raciocínio é subótimo.
 
-O Master despacha até **5 Workers concorrentes** (geralmente sob paridade de modelo Flash), cada um restrito a uma hipótese algorítmica independente e disjunta:
+O Master despacha de **2 a 8 Workers concorrentes** (geralmente sob paridade de modelo Flash, média 4), cada um restrito a uma hipótese algorítmica independente e disjunta:
 
 1. **Worker 1 (Candidato A):** Abordagem Gulosa Otimizada ou Heurística Construtiva rápida (ex.: Greedy + 2-opt).
 2. **Worker 2 (Candidato B):** Metaheurística Estocástica (ex.: Simulated Annealing / Tabu Search com seed fixa).

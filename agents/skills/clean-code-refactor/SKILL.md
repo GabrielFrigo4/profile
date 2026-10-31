@@ -24,18 +24,18 @@ Ao refatorar ou auditar qualquer arquivo no ecossistema:
 3. **Orçamento de Linhas (Regra 8 - 128):**
     - **Piso:** 8 linhas úteis. Scripts menores DEVEM ser justificados ou consolidados.
     - **Teto:** 128 linhas úteis. Scripts maiores DEVEM ser modularizados em submódulos temáticos.
-4. **Arquitetura de Comentários em Três Camadas (Regra do Não-Vazamento):**
-    - **Camada 1 (Header Banner - 64 `-`):** Linhas 2 a 4 de scripts utilitários e receitas DEVEM conter:
-        ```sh
-        # ----------------------------------------------------------------
-        # Recipe: [Nome do Software / Funcionalidade]
-        # ----------------------------------------------------------------
-        ```
-    - **Camada 2 (Delimitadores Estruturais de Corpo - 32 Caracteres):**
-        - Seções Principais (32 `=`): `### ================================`
-        - Subseções Internas (32 `-`): `### --------------------------------`
-        - _Regra do Não-Vazamento:_ O título DEVE ter no máximo 32 caracteres (36 colunas com `### `) e NÃO DEVE vazar a régua. Títulos semânticos, sem parênteses e sem números avulsos.
-    - **Camada 3 (Zero Comentários Narrativos):** É VEDADO o uso de comentários redundantes que apenas narram o código executável. O código DEVE ser autoexplicativo, utilizando separação lógica por linhas em branco.
+4. **Taxonomia Tripartite de Comentários (Regra do Não-Vazamento):**
+    - **1. Comentários de Sistema (PERMITIDOS):** Instruções indispensáveis para interpretadores, compiladores e linters (`#!/usr/bin/env sh`, `;;; -*- lexical-binding: t -*-`, pragmas `# shellcheck disable=...`, frontmatter YAML).
+    - **2. Comentários Estruturais de 64/32 Colunas (PERMITIDOS):**
+        - _Header Banner (64 `-`):_ Linhas 2 a 4 de scripts utilitários e receitas DEVEM conter:
+            ```sh
+            # ----------------------------------------------------------------
+            # Recipe: [Nome do Software / Funcionalidade]
+            # ----------------------------------------------------------------
+            ```
+        - _Seções de Corpo (32 Caracteres):_ Seções principais com `### ================================` e subseções com `### --------------------------------`. Em arquivos `.gitignore`, seções estruturais adotam réguas de 64 sinais de igualdade (`# ================================================================`).
+        - _Regra do Não-Vazamento:_ O título DEVE estar contido no limite da régua (32 cols no corpo / 64 cols em `.gitignore`), sem parênteses e sem números avulsos.
+    - **3. Comentários Explicativos/Narrativos (ESTRITAMENTE PROIBIDOS):** É VEDADO o uso de comentários que apenas narram ou explicam lógica. Esta proibição aplica-se a código executável, configs e **blocos de código dentro de Markdowns**! O código expressa sua intenção por construção.
 5. **Aspas em Variáveis & Quoting Defensivo:**
     - Toda expansão de variável DEVE ser encapsulada em aspas duplas: `"${VAR}"`, `"${HOME}"`.
     - Redirecionamentos DEVEM ser protegidos por aspas duplas: `> "/dev/null" 2>&1`.

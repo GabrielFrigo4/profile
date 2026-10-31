@@ -97,9 +97,16 @@ MANDIR ?= $(PREFIX)/share/man
 
 ---
 
-## 🏗️ Estrutura de Banners em Makefiles
+## 🏗️ Taxonomia Tripartite de Comentários em Makefiles
 
-Makefiles complexos devem seguir o padrão estrutural de comentários em 2 camadas:
+Makefiles seguem rigorosamente a taxonomia de comentários do ecossistema:
+
+1. **Comentários de Sistema (PERMITIDOS):** Diretivas mandatórias `.POSIX:`, `.SILENT:` e variáveis de runtime de motor (`MAKEFLAGS`).
+2. **Comentários Estruturais de 64/32 Colunas (PERMITIDOS):**
+    - Header banner de topo com exatamente 64 hífens (`# ----------------------------------------------------------------`).
+    - Seções estruturais internas delimitadas por 32 caracteres (`### ================================` ou `### --------------------------------`).
+    - Regra do Não-Vazamento: título estritamente contido no limite de 32 colunas.
+3. **Comentários Explicativos/Narrativos (ESTRITAMENTE PROIBIDOS):** Zero comentários inline narrando o código em receitas, targets ou blocos de código em documentações.
 
 ```makefile
 # ----------------------------------------------------------------
@@ -156,13 +163,10 @@ flowchart TD
 
 ## 🧪 Validação de Portabilidade Obrigatória
 
-Antes de finalizar qualquer alteração em um Makefile, execute a simulação de execução (_dry-run_) em ambos os motores:
+Antes de finalizar qualquer alteração em um Makefile, execute a simulação de execução (_dry-run_) no GNU Make e no BSD Make:
 
 ```sh
-# 1. Testar no GNU Make
 make -n
-
-# 2. Testar no BSD Make (quando bmake estiver instalado)
 bmake -n
 ```
 

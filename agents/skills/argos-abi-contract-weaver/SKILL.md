@@ -24,9 +24,9 @@ Em sistemas híbridos de alta performance, uma alteração em uma entidade de do
 
 ---
 
-## 🧵 2. Particionamento por Camadas Tecnológicas (Pool <= 5)
+## 🧵 2. Particionamento por Camadas Tecnológicas (Pool 2 a 8 Workers)
 
-A partir de um Contrato Canônico Único (SSOT — _Single Source of Truth_), o Master instancia até **5 Workers concorrentes** (geralmente sob tier Flash) em escopos estritamente desacoplados:
+A partir de um Contrato Canônico Único (SSOT — _Single Source of Truth_), o Master instancia uma frota dinâmica de **2 a 8 Workers concorrentes** (operando tipicamente com 4 Workers, sob tier Flash) em escopos estritamente desacoplados:
 
 - **Worker 1 (Sistemas / Low-Level):**
     - _Escopo:_ `include/` e `src/core/`.
