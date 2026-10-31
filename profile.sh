@@ -5,7 +5,7 @@
 set -eu
 
 ### --------------------------------
-### Active Shell Elevation Guard
+### ACTIVE SHELL ELEVATION GUARD
 ### --------------------------------
 if [ -z "${ZSH_VERSION:-}" ]; then
 	_esc_test=$'\e'

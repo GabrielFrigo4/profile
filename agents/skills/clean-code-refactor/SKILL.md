@@ -33,8 +33,8 @@ Ao refatorar ou auditar qualquer arquivo no ecossistema:
             # Recipe: [Nome do Software / Funcionalidade]
             # ----------------------------------------------------------------
             ```
-        - _Seções de Corpo (32 Caracteres):_ Seções principais com `### ================================` e subseções com `### --------------------------------`. Em arquivos `.gitignore`, seções estruturais adotam réguas de 64 sinais de igualdade (`# ================================================================`).
-        - _Regra do Não-Vazamento:_ O título DEVE estar contido no limite da régua (32 cols no corpo / 64 cols em `.gitignore`), sem parênteses e sem números avulsos.
+        - _Seções de Corpo (32 Caracteres):_ Seções principais com `### ================================` e subseções com `### --------------------------------`, ambas com títulos estritamente em MAIÚSCULO. Em arquivos `.gitignore`, seções estruturais adotam réguas de 64 sinais de igualdade (`# ================================================================`) também com títulos em MAIÚSCULO.
+        - _Regra do Não-Vazamento:_ O título DEVE estar em MAIÚSCULO e estritamente contido no limite da régua (máximo 32 cols no corpo / 64 cols em `.gitignore`), sem parênteses, colchetes ou caracteres inválidos.
     - **3. Comentários Explicativos/Narrativos (ESTRITAMENTE PROIBIDOS):** É VEDADO o uso de comentários que apenas narram ou explicam lógica. Esta proibição aplica-se a código executável, configs e **blocos de código dentro de Markdowns**! O código expressa sua intenção por construção.
 5. **Aspas em Variáveis & Quoting Defensivo:**
     - Toda expansão de variável DEVE ser encapsulada em aspas duplas: `"${VAR}"`, `"${HOME}"`.

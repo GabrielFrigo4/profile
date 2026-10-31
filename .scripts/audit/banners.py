@@ -50,6 +50,14 @@ def check_file(full_path, repo_root, fix=False):
                 issues.append(
                     f"L{line_no}: Título da seção contém parênteses/colchetes: '{title}'"
                 )
+            if re.search(r"[a-z]", title):
+                issues.append(
+                    f"L{line_no}: Título da seção contém letras minúsculas (exigido MAIÚSCULO): '{title}'"
+                )
+            if not re.match(r"^[A-Z0-9\s&/\-\._+]+$", title) and not re.search(r"[a-z]", title) and not re.search(r"[\(\)\[\]]", title):
+                issues.append(
+                    f"L{line_no}: Título da seção contém caracteres inválidos: '{title}'"
+                )
             continue
 
         if idx < 6:
