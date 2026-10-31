@@ -1,14 +1,14 @@
 ---
 name: agentic-governance-standards
 description: >-
-    Runbook cognitivo definitivo para governança agentic no ecossistema soberano, definindo
-    normas para a tríade AGENTS.md, .agents/rules/, .agents/skills/, ciclo de contexto em 2 estágios,
-    arquitetura de skills em 2 tiers (Lean vs Extended) e simetria técnica.
+    Runbook cognitivo definitivo para governança agentic no ecossistema soberano, cobrindo a
+    tríade AGENTS.md, rules e skills, ciclo de contexto em 2 estágios, arquitetura em 2 tiers,
+    curadoria proativa de conhecimento tácito e ciclo C.A.R.P.
 ---
 
 # 🧠 Governança Agentic & Padrões Canônicos de IA
 
-Esta habilidade orienta o desenvolvedor e o agente de IA na concepção, estruturação, consolidação e governança de artefatos agentic (`AGENTS.md`, `.agents/rules/` e `skills/`) no ecossistema soberano.
+Esta habilidade orienta o desenvolvedor e o agente de IA na concepção, estruturação, consolidação, curadoria e governança de artefatos agentic (`AGENTS.md`, `.agents/rules/` e `skills/`) no ecossistema soberano.
 
 ---
 
@@ -85,6 +85,35 @@ A `description` no frontmatter YAML é o **único metadado lido pelo modelo em r
 
 ---
 
+## 🧭 Curadoria Proativa & Ciclo de Vida de Skills Locais (C.A.R.P.)
+
+O agente atua proativamente como curador da memória arquitetural do projeto, capturando decisões de design e regras tácitas em skills locais compactas (`<repo>/.agents/skills/`), mantendo-as enxutas e expurgando contexto obsoleto.
+
+### Filtro de Sinal vs. Ruído
+
+Nem toda informação deve virar skill. A proliferação desordenada gera débito cognitivo:
+
+- **🟢 O Que Registrar (Conhecimento Estrutural Perene):**
+    - **Idiossincrasias de Build & Ambiente:** Ordem estrita de compilação, flags obrigatórias, variáveis de ambiente não óbvias.
+    - **Invariantes e Decisões de Arquitetura:** Decisões de design tomadas que orientam implementações futuras.
+    - **Padrões de Teste e Quality Gates:** Como disparar suites parciais, testes de estresse ou profiling local.
+    - **Armadilhas Conhecidas (Gotchas):** Comportamentos inesperados de dependências ou peculiaridades de plataformas.
+- **🔴 O Que NUNCA Registrar (Ruído Efêmero & Volatilidade):**
+    - **Tarefas de Backlog ou Épicos Transitórios (`TODO.md`):** O `TODO.md` é o repositório exclusivo de pendências. Skills capturam exclusivamente métodos, contratos e invariantes perenes.
+    - **O Teste dos 5 Anos:** Antes de registrar uma instrução, avalie: _"Quando o `TODO.md` for zerado, este conhecimento ainda será útil, verdadeiro e acionável daqui a 5 anos?"_ Se depender de tarefas em aberto, descarte da skill.
+    - **Tarefas de Curto Prazo e Debug Pontual:** Logs temporários, anotações de sessão única ou investigações pontuais.
+    - **Conceitos Universais Já Cobertos:** Manuais gerais de linguagens ou regras POSIX cobertas por skills globais.
+    - **Duplicação de Código:** Trechos de código já existentes no repositório ou no `Makefile`.
+
+### Ciclo de Vida C.A.R.P.
+
+1. **Criar (Create):** Ao consolidar uma regra tácita recorrente, padrão ou contrato estrutural, crie um runbook em `.agents/skills/<nome>/SKILL.md`.
+2. **Atualizar (Update):** Quando a arquitetura evoluir (ex: nova flag de build, novo alvo de teste), atualize a skill para refletir a realidade.
+3. **Refatorar (Refactor):** Se uma skill local crescer além do sweet spot de 128 linhas, sintetize os pontos centrais e mova dados densos para `references/`.
+4. **Purgar (Prune / Delete):** Quando ferramentas forem removidas ou restarem resquícios de tarefas já superadas do `TODO.md`, expurgue o ruído imediatamente.
+
+---
+
 ## 📐 Orçamento Unificado de Linhas & Invariantes
 
 Tanto `SKILL.md`, `AGENTS.md` quanto arquivos em `.agents/rules/` compartilham o mesmo orçamento:
@@ -96,6 +125,6 @@ Tanto `SKILL.md`, `AGENTS.md` quanto arquivos em `.agents/rules/` compartilham o
 | **$129 \text{ a } 256$ linhas** | Faixa de Densidade         | Permitido para matrizes multi-OS, tabelas e regras densas. |
 | **$> 256$ linhas**              | **Teto Máximo (Monólito)** | Excede o orçamento; requer modularização imediata.         |
 
-- **Hermetismo de Produção (`rm -rf .agents` — Regra 20):** O repositório é 100% soberano. Se `.agents/` for deletado, todo o código executável, Makefiles e pipelines continuam operando com perfeição.
-- **Bancada vs. Runtime (Regra 21):** Alterações de engenharia são realizadas exclusivamente na bancada (`~/Documents/Environment/Profile`), nunca em clones de runtime. Diretórios `~/.gemini/config/skills` e `~/.gemini/config/rules` são symlinks de runtime de produção e NUNCA devem ser editados diretamente.
+- **Hermetismo de Produção (`rm -rf .agents` — Regra 20):** O repositório é 100% soberano. A dependência é estritamente unidirecional: a IA consome `.agents/`, mas o código de produção (Makefiles, scripts, CI/CD, hooks) **NUNCA** referencia `.agents/`. Se `.agents/` for deletado com `rm -rf .agents`, o projeto continua compilando, testando e operando com 100% de integridade.
+- **Bancada vs. Runtime (Regra 21):** Alterações de engenharia são realizadas exclusivamente na bancada canônica (`~/Documents/Environment/Profile`), nunca em clones de runtime. Diretórios `~/.gemini/config/skills` e `~/.gemini/config/rules` são symlinks de runtime de produção e NUNCA devem ser editados diretamente.
 - **Auditoria Contínua:** Validado pelo quality gate estático [`Profile/.scripts/audit/skills.py`](../../../.scripts/audit/skills.py).
