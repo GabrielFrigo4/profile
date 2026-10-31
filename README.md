@@ -51,7 +51,7 @@ flowchart TD
         ED["💻 Editores (VSCode, Zed, Antigravity)"]
         TR["📟 Terminais (Konsole, Windows Terminal, NuShell)"]
         TL["🛠️ Linters (.clang-format, prettier, stylua)"]
-        SK["🧠 Portable AI Skills (32 Runbooks)"]
+        SK["🧠 Portable AI Skills (33 Runbooks)"]
     end
 
     PR_REPO --> SYNC
