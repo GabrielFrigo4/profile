@@ -1,14 +1,14 @@
 ---
 name: argos-abi-contract-weaver
 description: >-
-    Runbook cognitivo para o GM Argos orquestrar a propagação atômica e paralela de
-    esquemas e contratos ABI através de stacks poliglotas, sincronizando structs C23,
-    migrações Go SQLite, stores Svelte e shaders GLSL.
+    Runbook cognitivo para o Master Orchestrator (GM Argos ou Flash Master) orquestrar
+    a propagação atômica e paralela de esquemas e contratos ABI através de stacks poliglotas,
+    sincronizando structs C23, migrações Go SQLite, stores Svelte e shaders GLSL.
 ---
 
-# 🧬 Tecelão de Contratos Poliglotas & ABI (GM Argos)
+# 🧬 Tecelão de Contratos Poliglotas & ABI
 
-Diretrizes operacionais para o **GM Argos** propagar alterações de esquemas estruturais de dados de forma atômica e sincronizada por todas as camadas de uma arquitetura poliglota.
+Diretrizes operacionais para o **Master Orchestrator** (seja o **GM Argos** ou um **Flash Master**) propagar alterações de esquemas estruturais de dados de forma atômica e sincronizada por todas as camadas de uma arquitetura poliglota.
 
 ---
 
@@ -26,21 +26,21 @@ Em sistemas híbridos de alta performance, uma alteração em uma entidade de do
 
 ## 🧵 2. Particionamento por Camadas Tecnológicas (Pool <= 5)
 
-A partir de um Contrato Canônico Único (SSOT — _Single Source of Truth_), o GM Argos instancia até **5 Slaves Flash concorrentes** em escopos estritamente desacoplados:
+A partir de um Contrato Canônico Único (SSOT — _Single Source of Truth_), o Master instancia até **5 Workers concorrentes** (geralmente sob tier Flash) em escopos estritamente desacoplados:
 
-- **Slave 1 (Sistemas / Low-Level):**
+- **Worker 1 (Sistemas / Low-Level):**
     - _Escopo:_ `include/` e `src/core/`.
     - _Entrega:_ Definições de struct em C23 (`#pragma pack` ou alinhamento natural), serializers e deserializers binários.
-- **Slave 2 (Backend / Persistência):**
+- **Worker 2 (Backend / Persistência):**
     - _Escopo:_ `backend/migrations/` e `backend/models/`.
     - _Entrega:_ Migrações declarativas SQL e bindings correspondentes em Go.
-- **Slave 3 (Frontend / UI):**
+- **Worker 3 (Frontend / UI):**
     - _Escopo:_ `frontend/src/lib/types/` e `frontend/src/lib/stores/`.
     - _Entrega:_ Interfaces TypeScript, parsers de validação e stores Svelte 5 (`$state`).
-- **Slave 4 (Shaders / Gráficos):**
+- **Worker 4 (Shaders / Gráficos):**
     - _Escopo:_ `shaders/include/` e buffers gráficos.
     - _Entrega:_ Uniform Buffers com cálculo rigoroso de alinhamento `std140` (vec4 padding).
-- **Slave 5 (Documentação / Auditoria):**
+- **Worker 5 (Documentação / Auditoria):**
     - _Escopo:_ `docs/` e `README.md`.
     - _Entrega:_ Diagramas Mermaid `erDiagram` atualizados e documentação das alterações de ABI.
 
@@ -48,7 +48,7 @@ A partir de um Contrato Canônico Único (SSOT — _Single Source of Truth_), o 
 
 ## 🔒 3. Invariante de Paridade & Validação Cruzada
 
-O GM Argos só considera a tecelagem concluída quando todas as camadas compilam e passam nos testes de integração:
+O Master só considera a tecelagem concluída quando todas as camadas compilam e passam nos testes de integração:
 
 1. **Validação de Tamanhos de Struct:** Verificação via `static_assert(sizeof(...) == X)` para garantir alinhamento idêntico entre C23 e buffers GLSL.
 2. **Serialização Round-Trip:** Teste de ida e volta (C23 $\rightarrow$ Go $\rightarrow$ TypeScript) para verificar se nenhum byte é corrompido na fronteira.
@@ -60,7 +60,7 @@ O GM Argos só considera a tecelagem concluída quando todas as camadas compilam
 
 | Prática   | Diretiva Operacional                                                                |
 | :-------- | :---------------------------------------------------------------------------------- |
-| **DO**    | Particione cada linguagem ou camada para um worker Flash diferente.                 |
+| **DO**    | Particione cada linguagem ou camada para um worker diferente.                       |
 | **DO**    | Use uma Fonte Canônica da Verdade (SSOT) para derivar todas as alterações.          |
 | **DO**    | Adicione `static_assert` para verificar tamanhos e alinhamentos de memória binária. |
 | **DO**    | Execute testes de serialização cruzada antes de finalizar a orquestração.           |
@@ -78,8 +78,8 @@ O GM Argos só considera a tecelagem concluída quando todas as camadas compilam
 - **Fonte da Verdade (SSOT):** `contracts/entidade.spec.md`
 - **Alteração Solicitada:** [Ex.: Adição de campo `timestamp_ns` de 64 bits]
 - **Worker 1 (C23):** `include/types.h`
-- **Worker 2 (Go/SQL):** `backend/migrations/` e `backend/models/`
-- **Worker 3 (Svelte):** `frontend/src/types/`
-- **Worker 4 (GLSL):** `shaders/common.glsl`
-- **Worker 5 (Docs):** `docs/architecture.md`
+- **Worker 2 (Go):** `backend/models/types.go`
+- **Worker 3 (TypeScript):** `frontend/src/lib/types/index.ts`
+- **Worker 4 (GLSL):** `shaders/include/ubo_layout.glsl`
+- **Worker 5 (Docs):** `docs/architecture/contracts.md`
 ```
