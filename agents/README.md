@@ -38,9 +38,9 @@ No ecossistema do **Quarteto de Produtividade**, o diretório **`agents/`** cent
 
 ---
 
-## 📚 Catálogo Canônico de Skills Portáteis (26 Runbooks em `skills/`)
+## 📚 Catálogo Canônico de Skills Portáteis (29 Runbooks em `skills/`)
 
-O ecossistema disponibiliza 26 habilidades cognitivas universais organizadas por domínio de especialidade:
+O ecossistema disponibiliza 29 habilidades cognitivas universais organizadas por domínio de especialidade:
 
 | Categoria                     | Skill                                                                                | Descrição e Escopo de Ativação                                                                                                              | Gatilhos de Ativação / Cenários de Uso                                                                                               |
 | :---------------------------- | :----------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------ | :----------------------------------------------------------------------------------------------------------------------------------- |
@@ -70,6 +70,9 @@ O ecossistema disponibiliza 26 habilidades cognitivas universais organizadas por
 | **Diagnóstico de Sistema**    | [`system-diagnostics`](./skills/system-diagnostics/SKILL.md)                         | Diagnóstico completo de saúde de estações Linux e FreeBSD (Wayland, VA-API, PipeWire, logs e conectividade).                                | Investigação de falhas de hardware, aceleração gráfica, servidores de áudio e rede.                                                  |
 | **Tipografia de Terminal**    | [`terminal-glyphs-typography`](./skills/terminal-glyphs-typography/SKILL.md)         | Tipografia de terminal, Nerd Fonts, glifos vetoriais, delimitadores de largura zero, geometria de prompts e cálculo de display width.       | Configuração de fontes, alinhamento de barras de status, correção de mojibake e geometria de prompts.                                |
 | **Orquestração Multi-Agente** | [`argos-multi-agent-orchestrator`](./skills/argos-multi-agent-orchestrator/SKILL.md) | Orquestração Master-Slave pelo GM Argos, distribuição de tarefas atômicas para Slaves efêmeros, política Flash-Only e pool <= 5.            | Planos complexos decomponíveis, paralelização de refatorações ou testes, coordenação de sub-agentes efêmeros.                        |
+| **Verificação Adversarial**   | [`argos-adversarial-crucible`](./skills/argos-adversarial-crucible/SKILL.md)         | Célula de verificação Red-Team vs Blue-Team pelo GM Argos, casos de borda extremos e compilação com sanitizers.                             | Validação de parsers, protocolos de baixo nível, hardening de segurança e testes de estresse.                                        |
+| **Torneio Algorítmico**       | [`argos-speculative-tournament`](./skills/argos-speculative-tournament/SKILL.md)     | Torneio especulativo N-versões pelo GM Argos em Git worktrees isoladas, benchmarks determinísticos e seleção empírica.                      | Otimização de solvers, algoritmos heurísticos, redução de frame-time e layouts de grafos.                                            |
+| **Sincronização Poliglota**   | [`argos-abi-contract-weaver`](./skills/argos-abi-contract-weaver/SKILL.md)           | Propagação atômica de contratos e ABI pelo GM Argos: structs C23, migrações Go SQLite, stores Svelte 5 e shaders GLSL.                      | Alterações de entidades centrais, sincronização full-stack de dados binários e paridade de structs.                                  |
 
 ---
 
