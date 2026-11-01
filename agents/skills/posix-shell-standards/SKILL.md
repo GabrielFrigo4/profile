@@ -15,7 +15,8 @@ Esta habilidade orienta a escrita, revisão e refatoração de scripts de shell 
 2. **Taxonomia Estrita de Emissão:** `echo "$msg"` para texto simples; `echo -n` para fluxos sem quebra e sequências de escape ANSI; `printf` reservado estritamente para formatação de tabelas e padding posicional.
 3. **Escapes ANSI & Banimento de Octal:** Não use notação octal (`\033`, `\001`) para escapes ou bytes de controle. Use escapes hexadecimais (`\x1b`, `\x01`) ou `$'\e...'`. Octais são admitidos exclusivamente em permissões POSIX (`chmod 0755`, `0644`, `0700`, `0600`).
 4. **Quoting Defensivo & Zero Chaves Supérfluas:** Empregar `"$var"` sem chaves desnecessárias. Reservar `"${var}"` unicamente para concatenações contíguas (`"${prefix}_suffix"`) ou expansões de parâmetros POSIX (`"${var:-default}"`).
-5. **Comentários Estruturais em 3 Camadas:** Headers com 64 hífens, seções internas com réguas de 32 colunas (`### ================================`), e zero comentários narrativos inline.
+5. **Comentários Estruturais em 3 Camadas:** Headers com 64 hífens nas linhas 2-4 (`# ----------------------------------------------------------------`), seções principais (`### ================================`) e subseções (`### --------------------------------`) com réguas de 32 colunas e títulos estritamente em MAIÚSCULO (sem parênteses ou colchetes), e zero comentários narrativos inline.
+6. **Resolução Antifrágil de Aplicativos:** Descoberta em cascata resiliente de binários e ferramentas de sistema: `Binário Nativo` $\rightarrow$ `Flatpak` $\rightarrow$ `Snap` $\rightarrow$ `AppImage` $\rightarrow$ `/opt` $\rightarrow$ `Compat Layer (Linuxulator/Bhyve/macOS/MSYS2)`.
 
 ---
 

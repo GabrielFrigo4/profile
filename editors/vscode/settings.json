@@ -22,10 +22,13 @@
 	// EDITOR
 	// ==========================================
 	"security.workspace.trust.untrustedFiles": "open",
-	"files.autoGuessEncoding": true,
 	"editor.formatOnSave": true,
 	"editor.tabCompletion": "on",
 	"editor.insertSpaces": false,
+	"files.autoGuessEncoding": true,
+	"files.watcherExclude": {
+		"**/*": true
+	},
 
 	// ==========================================
 	// EXPLORER

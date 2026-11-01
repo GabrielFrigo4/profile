@@ -18,3 +18,8 @@ always_on: true
 3. **Escapes ANSI & Bytes:**
     - Cores e escapes de terminal: use sempre `$'\e'` (em Makefiles: `_e=$$'\e';`) ou hexadecimal (`\x1b`).
     - Notação octal (`\033`): permitida unicamente onde a natureza da informação é octal por definição de sistema de arquivos POSIX (`chmod 0755`, `0644`, `umask 022`).
+
+4. **Comentários Estruturais & Banners:**
+    - Cabeçalhos de topo: exatamente 64 hífens nas linhas 2-4 (`# ----------------------------------------------------------------`).
+    - Seções e subseções internas: réguas de 32 colunas (`### ================================` e `### --------------------------------`) com títulos estritamente em MAIÚSCULO (máximo 32 caracteres, sem parênteses ou colchetes).
+    - Seções em `.gitignore`: réguas de 64 sinais de igualdade (`# ================================================================`) com títulos em MAIÚSCULO.

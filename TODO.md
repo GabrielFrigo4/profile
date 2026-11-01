@@ -23,3 +23,12 @@
 
 - **Zero Pendências:** Repositório de dotfiles, editores gráficos e skills totalmente estável.
 - **Sincronização:** Total alinhamento com os 22 Princípios de Engenharia UNIX do Universal Environment.
+
+---
+
+## 📌 Backlog & Próximos Passos
+
+---
+
+> [!TIP]
+> Para detalhes sobre a arquitetura e convenções de engenharia, consulte o [PRINCIPLES.md](PRINCIPLES.md) e o [ENVIRONMENT.md](ENVIRONMENT.md).
