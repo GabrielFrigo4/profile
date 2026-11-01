@@ -21,6 +21,7 @@ redhat.vscode-xml
 golang.go
 ziglang.vscode-zig
 vadimcn.vscode-lldb
+ms-vscode.makefile-tools
 ms-vscode.cmake-tools
 twxs.cmake
 ms-azuretools.vscode-containers
