@@ -7,7 +7,7 @@ MAKEFLAGS += --no-print-directory -s
 # Makefile: Profile Dotfiles
 # ----------------------------------------------------------------
 
-.PHONY: help hooks audit sync test format prettier fix-banners ci
+.PHONY: help hooks audit sync test format prettier fix-banners ci clean
 
 ### ================================
 ### HELP & DOCUMENTATION
@@ -28,6 +28,7 @@ help:
 	cmd "audit"          "Executa auditoria estática completa (JSON/YAML/TOML/links)"; \
 	cmd "format"         "Formata documentações Markdown com Prettier"; \
 	cmd "prettier"       "Formata documentações Markdown com Prettier"; \
+	cmd "clean"          "Remove artefatos temporários, caches e ambientes virtuais (.venv)"; \
 	cmd "ci"             "Executa suite completa de CI local"; \
 	echo ""
 
@@ -73,3 +74,12 @@ fix-banners:
 
 ci: test audit
 	echo "🚀 Profile 100% aprovado no CI local!"
+
+### ================================
+### CLEANUP
+### ================================
+clean:
+	echo "🧹 Limpando artefatos temporários, caches e ambientes virtuais..."
+	rm -rf .venv bin/ build/ dist/ .tmp/ *.log
+	find . -type d -name "__pycache__" -exec rm -rf {} + 2> "/dev/null" || true
+	echo "✅ Workspace limpo!"
