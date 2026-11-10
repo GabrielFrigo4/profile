@@ -78,5 +78,5 @@ vfs.zfs.txg.timeout="10"
 O módulo gráfico deve ser carregado tardiamente em `/etc/rc.conf`:
 
 ```sh
-sysrc kld_list+="/boot/modules/i915kms.ko"
+sysrc kld_list+="i915kms"
 ```
