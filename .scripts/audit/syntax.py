@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""
-Audit Syntax & POSIX: Valida sintaxe, shebang, modo defensivo e regras de shell.
-"""
+# ----------------------------------------------------------------
+# Recipe: Shell Script POSIX Syntax & Defensive Rules Auditor
+# ----------------------------------------------------------------
 
 import os
 import re
@@ -52,7 +52,17 @@ def check_script(full_path, repo_root):
             git_mode = res_git.stdout.split()[0]
             has_sb = bool(lines and lines[0].startswith("#!"))
             if has_sb and git_mode != "100755":
-                issues.append(f"Modo Git Index não-executável: {git_mode} (esperado: 100755)")
+                try:
+                    subprocess.run(["git", "update-index", "--chmod=+x", rel_path],
+                                   cwd=repo_root, capture_output=True)
+                    res_git2 = subprocess.run(["git", "ls-files", "-s", "--", rel_path],
+                                             cwd=repo_root, capture_output=True, text=True)
+                    if res_git2.returncode == 0 and res_git2.stdout.strip():
+                        git_mode = res_git2.stdout.split()[0]
+                except Exception:
+                    pass
+                if git_mode != "100755":
+                    issues.append(f"Modo Git Index não-executável: {git_mode} (esperado: 100755)")
     except Exception:
         pass
 

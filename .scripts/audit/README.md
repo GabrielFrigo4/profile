@@ -1,53 +1,50 @@
-# 🔍 Codebase Quality & Architecture Auditors
+# 🔍 Suíte Canônica de Auditoria Estática & Quality Gates
 
-> Ferramentas de análise estática e auditoria arquitetural para garantir o equilíbrio do repositório.
-
----
-
-## 🎯 Finalidade
-
-Esta pasta centraliza os scripts de inspeção de código para manter o repositório em conformidade estrita com o [`PRINCIPLES.md`](../../PRINCIPLES.md):
-
-- **Equilíbrio Arquitetural:** Regra de Linhas (Piso < 8 fatal, Aviso <= 16, Sweet Spot 17-128, Aviso 129-255, Teto > 256 fatal).
-- **Legibilidade no GitHub:** Facilitar a consulta direta das receitas no navegador.
+> Catálogo e documentação técnica dos módulos de auditoria estática do ecossistema.
 
 ---
 
-## 📂 Catálogo de Ferramentas
+## 📖 Visão Geral
 
-| Ferramenta                     | Linguagem | Descrição                                                                     |
-| :----------------------------- | :-------- | :---------------------------------------------------------------------------- |
-| [`all.py`](all.py)             | Python 3  | **Runner mestre:** executa a suite completa e gera o dashboard consolidado    |
-| [`monoliths.py`](monoliths.py) | Python 3  | Detecta scripts acima de 256 linhas (fatal) e entre 129-256 linhas (aviso)    |
-| [`nanos.py`](nanos.py)         | Python 3  | Detecta scripts abaixo de 8 linhas (fatal) e entre 8-16 linhas (aviso)        |
-| [`syntax.py`](syntax.py)       | Python 3  | Valida sintaxe POSIX (`sh -n`), shebangs, modo defensivo `set -eu` e `chmod`  |
-| [`banners.py`](banners.py)     | Python 3  | Valida geometria de réguas (32/64 cols), não-vazamento e suporte a `--fix`    |
-| [`links.py`](links.py)         | Python 3  | Valida integridade de 100% dos links relativos em arquivos Markdown (`.md`)   |
-| [`formats.py`](formats.py)     | Python 3  | Valida sintaxe de JSON, JSONC, YAML (multi-doc), PowerShell (`.ps1`) e `.reg` |
-| [`skills.py`](skills.py)       | Python 3  | Valida integridade e orçamento de linhas de Skills (17 - 128 - 256)           |
-| [`tone.py`](tone.py)           | Python 3  | Valida tom técnico sóbrio, densidade de sinal e banimento de octais ANSI      |
+A suíte em `.scripts/audit/` provê verificação determinística e semântica de conformidade com os princípios canônicos de arquitetura, portabilidade POSIX e higiene de código.
 
 ---
 
-## 🚀 Como Executar
+## 🛠️ Catálogo dos Módulos de Auditoria
 
-Execute a partir da raiz do repositório:
+| Módulo             | Escopo & Verificação                                                                     | Referência de Domínio      |
+| :----------------- | :--------------------------------------------------------------------------------------- | :------------------------- |
+| **`all.py`**       | Orquestrador e executor central da suíte completa de testes                              | Quality Gate Integrado     |
+| **`banners.py`**   | Geometria estrutural de banners (64 hífens) e réguas de seções (32 colunas)              | Princípio de Não-Vazamento |
+| **`comments.py`**  | Auditoria da Taxonomia Tripartite de Comentários em scripts e blocos Markdown            | Clean Code & Não-Vazamento |
+| **`formats.py`**   | Validação sintática e integridade de arquivos declarativos (JSON, YAML, PS1, REG)        | Integridade de Formatos    |
+| **`links.py`**     | Validação de consistência e não-quebra de links relativos entre documentos Markdown      | Hiperlinks Canônicos       |
+| **`monoliths.py`** | Controle de teto máximo de complexidade e tamanho de scripts (Regra <= 256 linhas)       | Orçamento de Linhas        |
+| **`nanos.py`**     | Detecção de micro-scripts hiperfragmentados (Regra >= 8 linhas)                          | Consolidação Temática      |
+| **`skills.py`**    | Orçamento de densidade e integridade estrutural de Portable AI Skills (Regra 17-128-256) | Arquitetura de Skills      |
+| **`syntax.py`**    | Portabilidade POSIX `/bin/sh`, shebangs, modo defensivo `set -eu` e modos de arquivo     | Portabilidade UNIX         |
+| **`tone.py`**      | Densidade de sinal, economia de tokens e conformidade de escapes ANSI                    | Tom Técnico Estilo RFC     |
 
-### Suíte Completa (Recomendado)
+---
+
+## 🚀 Execução Operacional
+
+A suíte pode ser invocada via Makefile ou diretamente pelo interpretador Python 3:
+
+```sh
+make audit
+```
+
+Ou executando o orquestrador diretamente:
 
 ```sh
 python3 .scripts/audit/all.py
 ```
 
-### Execuções Individuais
+Para executar um módulo individual:
 
 ```sh
-python3 .scripts/audit/monoliths.py
-python3 .scripts/audit/nanos.py
-python3 .scripts/audit/syntax.py
+python3 .scripts/audit/comments.py
 python3 .scripts/audit/banners.py
-python3 .scripts/audit/links.py
-python3 .scripts/audit/formats.py
-python3 .scripts/audit/skills.py
-python3 .scripts/audit/tone.py
+python3 .scripts/audit/syntax.py
 ```

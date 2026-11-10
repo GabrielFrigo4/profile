@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""
-Audit Suite Runner: Executa a suite completa de auditoria de qualidade e arquitetura.
-"""
+# ----------------------------------------------------------------
+# Recipe: Repository Quality & Architecture Static Audit Runner
+# ----------------------------------------------------------------
 
 import os
 import subprocess
@@ -12,11 +12,13 @@ SCRIPTS = [
     ("nanos.py", ".scripts/audit/nanos.py", "Controle de Micro-scripts (>= 8 linhas)"),
     ("syntax.py", ".scripts/audit/syntax.py", "Sintaxe POSIX, Shebangs & Diretrizes Shell"),
     ("banners.py", ".scripts/audit/banners.py", "Geometria de Banners & Réguas (32/64 cols)"),
+    ("comments.py", ".scripts/audit/comments.py", "Arquitetura de Comentários & Taxonomia"),
     ("links.py", ".scripts/audit/links.py", "Integridade de Links Relativos (.md)"),
     ("formats.py", ".scripts/audit/formats.py", "Validação de Formatos (JSON, YAML, PS1, REG)"),
     ("skills.py", ".scripts/audit/skills.py", "Orçamento e Integridade de Skills (17-128-256)"),
     ("tone.py", ".scripts/audit/tone.py", "Tom Técnico, Economia de Tokens & Escapes ANSI"),
 ]
+
 
 def main():
     repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
@@ -57,6 +59,7 @@ def main():
         print("⚠️  ATENÇÃO: Foram encontradas inconformidades nos testes acima.")
         print("=" * 80 + "\n")
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

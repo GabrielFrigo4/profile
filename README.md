@@ -75,6 +75,7 @@ Diferente do **Setup** (que exige `sudo`/`root` para instalar pacotes no sistema
 ## 📂 Estrutura do Repositório
 
 - **[`profile.sh`](profile.sh)** — **Interface Unificada de Componente:** Entrypoint CLI para `sync`, `update`, `test`, `audit` e exportação de ambiente.
+- **[`desktop/`](desktop/)** — **Temas & Toolkits Gráficos:** Templates base GTK 3/4 e CSS de salvaguarda com materialização dinâmica por ambiente desktop.
 - **[`editors/`](editors/README.md)** — **Configurações de Editores & IDEs Modernos:** Antigravity, VS Code, VSCodium e Zed (os editores modais Emacs, NeoVim, Vim e Helix operam como repositórios autônomos independentes).
 - **[`terminals/`](terminals/README.md)** — **Emuladores & Multiplexadores:** Konsole (KDE), Windows Terminal, Tmux e Zellij (os runtimes de shells alternativos pertencem ao Universal Shell).
 - **[`tools/`](tools/README.md)** — **Formatadores & Linters Globais:** `.clang-format`, `.prettierrc`, `.stylua.toml`, `clangd.yaml`.

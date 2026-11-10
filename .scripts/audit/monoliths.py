@@ -1,17 +1,12 @@
 #!/usr/bin/env python3
-"""
-Audit Monoliths: Varredura de integridade contra scripts monolíticos (> 256 linhas).
-Filosofia: Orçamento de Linhas (Regra 8 - 16 - 128 - 256).
-- Sweet spot: <= 128 linhas
-- Averiguação (Aviso): 129 a 256 linhas
-- Erro Fatal: > 256 linhas (salvo Whitelist)
-"""
+# ----------------------------------------------------------------
+# Recipe: Monolith Control & Line Budget Integrity Auditor
+# ----------------------------------------------------------------
 
+import argparse
 import os
 import sys
-import argparse
 
-# Whitelist com justificativa técnica explícita:
 DEFAULT_WHITELIST = set()
 
 
@@ -51,11 +46,9 @@ def main():
     parser = argparse.ArgumentParser(
         description="Auditor de Scripts Monolíticos")
     parser.add_argument("--soft-limit", type=int, default=128,
-                        help="Limite de averiguação por script (padrão: 128)")
+                        help="Teto do sweet spot (padrão: 128)")
     parser.add_argument("--hard-limit", type=int, default=256,
-                        help="Limite máximo rígido por script (padrão: 256)")
-    parser.add_argument("--all", action="store_true",
-                        help="Exibe todos os scripts auditados")
+                        help="Teto rígido fatal (padrão: 256)")
     args = parser.parse_args()
 
     root_dir = os.path.abspath(os.path.join(
@@ -69,27 +62,27 @@ def main():
     print(f"Total de scripts escaneados: {total_scanned}")
     print("=" * 80)
 
-    unapproved_fatal = [m for m in fatal_monoliths if not m[2]]
-    approved_fatal = [m for m in fatal_monoliths if m[2]]
-
-    if approved_fatal:
-        print("\nExceções Permitidas em Whitelist (> 256 linhas):")
-        for count, path, _ in approved_fatal:
-            print(f"   [WHITELIST] {count:4d} linhas -> {path}")
-
     if warning_scripts:
-        print(f"\n⚠️  {len(warning_scripts)} SCRIPTS EM ZONA DE AVERIGUAÇÃO ({args.soft_limit + 1} a {args.hard_limit} linhas):")
+        print(f"\n⚠️  {len(warning_scripts)} SCRIPT(S) NA FAIXA DE AVERIGUAÇÃO ({args.soft_limit + 1} a {args.hard_limit} linhas):")
         for count, path, is_wl in warning_scripts:
             wl_tag = " [WHITELIST]" if is_wl else ""
             print(f"   {count:4d} linhas -> {path}{wl_tag}")
 
-    if unapproved_fatal:
-        print(f"\n❌ ERRO FATAL: {len(unapproved_fatal)} SCRIPTS MONOLÍTICOS ENCONTRADOS (> {args.hard_limit} linhas):")
-        for count, path, _ in unapproved_fatal:
+    real_fatal = [m for m in fatal_monoliths if not m[2]]
+    whitelisted_fatal = [m for m in fatal_monoliths if m[2]]
+
+    if whitelisted_fatal:
+        print(f"\nℹ️  {len(whitelisted_fatal)} MONÓLITO(S) HOMOLOGADO(S) POR WHITELIST:")
+        for count, path, _ in whitelisted_fatal:
+            print(f"   {count:4d} linhas -> {path} (Isento formalmente)")
+
+    if real_fatal:
+        print(f"\n❌ ERRO FATAL: {len(real_fatal)} MONÓLITO(S) NÃO AUTORIZADO(S) (> {args.hard_limit} linhas):")
+        for count, path, _ in real_fatal:
             print(f"   {count:4d} linhas -> {path}")
         sys.exit(1)
     else:
-        print(f"\nSUCESSO: Nenhum monólito fatal encontrado! 100% dos scripts respeitam o teto rígido (<= {args.hard_limit} linhas).")
+        print(f"\nSUCESSO: 100% dos {total_scanned} scripts estão dentro do orçamento canônico de linhas!")
         sys.exit(0)
 
 

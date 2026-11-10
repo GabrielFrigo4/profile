@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# ----------------------------------------------------------------
+# Recipe: Nano Script Fragility & Budget Integrity Auditor
+# ----------------------------------------------------------------
 """
 Audit Nano Scripts: Varredura de integridade contra micro-scripts excessivamente fragmentados.
 Filosofia: Orçamento de Linhas (Regra 8 - 16 - 128 - 256).

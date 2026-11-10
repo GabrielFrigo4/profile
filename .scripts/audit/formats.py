@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# ----------------------------------------------------------------
+# Recipe: Declarative Data & Config Formats Syntax Auditor
+# ----------------------------------------------------------------
 """
 Audit Formats: Valida integridade e sintaxe de formatos declarativos e scripts.
 """

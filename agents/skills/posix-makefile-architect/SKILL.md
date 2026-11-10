@@ -1,17 +1,17 @@
 ---
 name: posix-makefile-architect
-description: Arquiteto cognitivo para Makefiles universais, minimalistas e portáteis entre BSD Make (bmake) e GNU Make (gmake), com conformidade estrita ao cabeçalho .POSIX: .SILENT: e práticas de código limpo.
+description: Arquiteto cognitivo para Makefiles universais, minimalistas e portáteis entre BSD Make (bmake), GNU Make (gmake) e BusyBox make, com conformidade estrita ao cabeçalho .POSIX: .SILENT: e práticas de código limpo.
 ---
 
 # 🛠️ POSIX Makefile Architect Skill
 
-Esta habilidade orienta o agente de IA na construção, auditoria e modernização de Makefiles em todo o ecossistema. O objetivo é garantir **portabilidade universal** entre **BSD Make (`bmake`)** (padrão no FreeBSD, OpenBSD e NetBSD) e **GNU Make (`gmake`)** (padrão em distribuições Linux), sem ruído visual no terminal e com estrutura rigorosamente padronizada.
+Esta habilidade orienta o agente de IA na construção, auditoria e modernização de Makefiles em todo o ecossistema. O objetivo é garantir **portabilidade universal** entre **BSD Make (`bmake`)**, **GNU Make (`gmake`)** e **BusyBox/pdpmake**, sem ruído visual no terminal e com estrutura rigorosamente padronizada.
 
 ---
 
 ## 🎯 O Cabeçalho Universal Mandatório
 
-Todo Makefile no ecossistema DEVE iniciar rigorosamente com o seguinte cabeçalho canônico:
+Todo Makefile no ecossistema DEVE iniciar rigorosamente com o cabeçalho canônico:
 
 ```makefile
 .POSIX:
@@ -20,44 +20,30 @@ Todo Makefile no ecossistema DEVE iniciar rigorosamente com o seguinte cabeçalh
 MAKEFLAGS += --no-print-directory -s
 ```
 
-### Justificativas Técnicas:
-
-1. **`.POSIX:`**: Força o Make a operar em conformidade com as especificações POSIX, desativando comportamentos proprietários arriscados e padronizando a execução de comandos via `/bin/sh`.
-2. **`.SILENT:`**: Suprime a exibição padrão de linhas de comando antes da execução. Permite que o Makefile opere sob a **Regra do Silêncio** do UNIX, emitindo saída apenas quando houver erro ou quando explicitamente solicitado.
-3. **`MAKEFLAGS += --no-print-directory -s`**: Garante que o GNU Make não polua o terminal com avisos de troca de diretório (`Entering/Leaving directory`) e força a execução silenciosa em subprocessos aninhados.
+1. **`.POSIX:`**: Força conformidade com as especificações POSIX, desativando comportamentos proprietários e padronizando execução via `/bin/sh`.
+2. **`.SILENT:`**: Suprime a exibição de comandos antes da execução (Regra do Silêncio UNIX).
+3. **`MAKEFLAGS += --no-print-directory -s`**: Suprime avisos de troca de diretório no GNU Make e força silêncio em subprocessos.
 
 ---
 
-## ⚡ A Exceção Pragmática: `$(MAKE) -C subdir target`
+## 🌐 Invocação Recursiva Universal: `(cd subdir && $(MAKE) target)`
+
+Ao invocar targets em submódulos ou subdiretórios, use invariavelmente:
+
+```makefile
+(cd subdir && $(MAKE) target)
+```
 
 > [!IMPORTANT]
-> **Exceção Deliberada ao POSIX Estrito:**
-> Embora a flag `-C` não esteja formalmente no padrão POSIX IEEE 1003.1 para o comando `make`, ela é **nativamente suportada por ambos os motores principais: `bmake` (BSD) e `gmake` (GNU)**.
->
-> Portanto, o ecossistema **EXIGE** o uso de:
->
-> ```makefile
-> $(MAKE) -C subdir target
-> ```
->
-> em vez da forma burocrática em subshell `(cd subdir && $(MAKE) target)`. IAs e ferramentas automatizadas **NÃO DEVEM** "refatorar" chamadas `-C` para `cd && make`.
+> **Substituição da Flag `-C` pelo Padrão POSIX Estrito:**
+> Motores minimalistas e conformes como `pdpmake` e `busybox make` desativam ou rejeitam a flag `-C` quando `.POSIX:` está ativo.
+> A invocação em subshell `(cd subdir && $(MAKE) target)` combinada com `.POSIX:`, `.SILENT:` e `MAKEFLAGS += --no-print-directory -s` opera com 100% de integridade e portabilidade em todos os motores: `gmake`, `bmake`, `pdpmake` e `busybox make`.
 
 ---
 
 ## 🚫 Eliminação de `@` Redundante
 
-Com a diretiva `.SILENT:` declarada no topo do arquivo, **TODAS as receitas de comandos já são executadas silenciosamente por padrão**.
-
-- **Anti-padrão (Redundância Visual):**
-
-```makefile
-build:
-	@rm -rf bin
-	@mkdir -p bin
-	@$(CC) $(CFLAGS) -o bin/app src/main.c
-```
-
-- **Padrão Canônico Limpo:**
+Com a diretiva `.SILENT:` declarada no topo, **todas as receitas são executadas silenciosamente por padrão**. O prefixo `@` é estritamente redundante e proibido.
 
 ```makefile
 build:
@@ -68,102 +54,39 @@ build:
 
 ---
 
-## ⚙️ Execução de Comandos de Shell em Variáveis (`!=` vs `$(shell)`)
+## ⚙️ Comandos Shell em Variáveis (`!=` vs `$(shell)`)
 
-No GNU Make, comandos dinâmicos frequentemente usam `$(shell cmd)`. No entanto, **o `bmake` do FreeBSD NÃO reconhece a função `$(shell ...)` por padrão**, resultando em falha crítica de sintaxe.
+O operador padrão POSIX e universal para captura de saída de shell em variáveis é **`!=`**. A função `$(shell ...)` do GNU Make é incompatível com o `bmake` do FreeBSD.
 
-Ambos os motores modernos (`bmake` e `gmake 4.0+`) suportam o operador padrão POSIX de atribuição de shell: **`!=`**.
-
-- **Incorreto (Incompatível com `bmake`):** `SOURCES = $(shell find src -name '*.c')`
-- **Correto (Universal e Portátil):** `SOURCES != find src -name '*.c'`
+- **Incorreto:** `SOURCES = $(shell find src -name '*.c')`
+- **Correto:** `SOURCES != find src -name '*.c'`
 
 ---
 
 ## 🛡️ Compiladores e Flags Defensivas
 
-Sempre utilize atribuições condicionais (`?=`) para permitir sobrescrita por variáveis de ambiente ou pelo empacotamento de distribuições:
+Utilize atribuições condicionais (`?=`) para permitir sobrescrita por empacotamento ou variáveis de ambiente:
 
 ```makefile
 CC ?= cc
-CXX ?= c++
-CFLAGS ?= -O2 -Wall -Wextra -pedantic -std=c23
-CXXFLAGS ?= -O2 -Wall -Wextra -pedantic -std=c++23
+CFLAGS ?= -O2 -Wall -Wextra -pedantic
 PREFIX ?= /usr/local
 BINDIR ?= $(PREFIX)/bin
-MANDIR ?= $(PREFIX)/share/man
-```
-
-- NUNCA force `gcc` ou `g++` diretamente, pois no FreeBSD, macOS e OpenBSD o compilador padrão do sistema é o Clang (`cc` e `c++`).
-
----
-
-## 🏗️ Taxonomia Tripartite de Comentários em Makefiles
-
-Makefiles seguem rigorosamente a taxonomia de comentários do ecossistema:
-
-1. **Comentários de Sistema (PERMITIDOS):** Diretivas mandatórias `.POSIX:`, `.SILENT:` e variáveis de runtime de motor (`MAKEFLAGS`).
-2. **Comentários Estruturais de 64/32 Colunas (PERMITIDOS):**
-    - Header banner de topo com exatamente 64 hífens (`# ----------------------------------------------------------------`).
-    - Seções estruturais internas delimitadas por 32 caracteres (`### ================================` ou `### --------------------------------`).
-    - Regra do Não-Vazamento: título estritamente contido no limite de 32 colunas.
-3. **Comentários Explicativos/Narrativos (ESTRITAMENTE PROIBIDOS):** Zero comentários inline narrando o código em receitas, targets ou blocos de código em documentações.
-
-```makefile
-# ----------------------------------------------------------------
-# COMPILER CONFIGURATION & FLAGS
-# ----------------------------------------------------------------
-
-CC ?= cc
-CFLAGS ?= -O2 -Wall
-
-### ================================
-### BUILD TARGETS
-### ================================
-
-all: build
-
-build:
-	mkdir -p bin
-	$(CC) $(CFLAGS) -o bin/app src/main.c
-
-### ================================
-### CLEANUP
-### ================================
-
-clean:
-	rm -rf bin
 ```
 
 ---
 
-## 🏛️ A Estrutura Canônica Enterprise / "Hype" (O Padrão OptiLaser)
+## 🏗️ Taxonomia de Comentários em Makefiles
 
-Para projetos e repositórios de alta complexidade, o Makefile atua como a **Interface de Linha de Comando (CLI) Principal do Projeto**. A implementação de referência completa está disponível em [`examples/optilaser-enterprise-makefile.mk`](./examples/optilaser-enterprise-makefile.mk).
-
-```mermaid
-flowchart TD
-    M["Makefile Enterprise (Padrão OptiLaser)"]
-    M --> B1["1. Header POSIX Silencioso (.POSIX: .SILENT:)"]
-    M --> B2["2. Metadados, Alinhamento de Colunas & != Portátil"]
-    M --> B3["3. Declaração Centralizada de .PHONY"]
-    M --> B4["4. Atalhos Ergonômicos (Developer UX)"]
-    M --> B5["5. Segregação Modular por Domínio (Host, OCI, Cloud)"]
-    M --> B6["6. TUI Rica de Ajuda (make help com Cores ANSI Hexadecimais)"]
-```
-
-### Pilares da Arquitetura:
-
-1. **Alinhamento Rigoroso de Colunas:** Atribuições `=`, `!=` e `?=` alinhadas na mesma coluna visual.
-2. **Atalhos Ergonômicos (UX):** Fachadas curtas (`make dev`, `make run`, `make test`, `make logs`, `make clean`).
-3. **Segregação Modular por Domínio:** Banners delimitando OCI/Containers, Host Nativo e Quality Gates.
-4. **Ajuda Interativa Rica (`make help`):** Mini-funções inline (`cmd()`, `sec()`, `sub()`, `var()`) com escapes ANSI canônicos hexadecimais (`\x1b`), sem dependências externas.
-5. **Escape de Parâmetros Shell:** No corpo de receitas, parâmetros de shell são escapados como `$$1`, `$$2`.
+1. **Sistema (Permitidos):** Diretivas `.POSIX:`, `.SILENT:` e `MAKEFLAGS`.
+2. **Estruturais (Permitidos):** Banners de topo com 64 hífens (`# ---...---`) e seções de 32 colunas (`### ================================` ou `### --------------------------------`).
+3. **Narrativos (Proibidos):** Zero comentários explicativos em código, configs ou blocos Markdown.
 
 ---
 
-## 🧪 Validação de Portabilidade Obrigatória
+## 🧪 Validação de Portabilidade
 
-Antes de finalizar qualquer alteração em um Makefile, execute a simulação de execução (_dry-run_) no GNU Make e no BSD Make:
+Execute a simulação de execução (_dry-run_) em ambos os motores:
 
 ```sh
 make -n
@@ -171,12 +94,3 @@ bmake -n
 ```
 
 Nenhum aviso, erro de sintaxe ou ruído de diretório pode ser emitido.
-
----
-
-## 📚 Literatura de Referência & Especificações Oficiais
-
-- **The Open Group Base Specifications (POSIX IEEE 1003.1):** <https://pubs.opengroup.org/onlinepubs/9699919799/> | Make (`make`): <https://pubs.opengroup.org/onlinepubs/9699919799/utilities/make.html>
-- **The FreeBSD Project:** <https://www.freebsd.org/> | Manual Pages: <https://man.freebsd.org/> | `bmake`: <https://man.freebsd.org/bmake>
-- **Linux man-pages (Michael Kerrisk):** <https://man7.org/> | GNU Make (`make`): <https://man7.org/linux/man-pages/man1/make.1.html>
-- **Obra de Referência:** _Managing Projects with GNU Make_ (Robert Mecklenburg, 3ª edição, O'Reilly Media).

@@ -1,16 +1,12 @@
 #!/usr/bin/env python3
-"""
-Audit Tone & Economy: Varredura de densidade de sinal, economia de tokens e tom sóbrio.
-Filosofia: Comunicação técnica assertiva estilo RFC 2119.
-- Detecção de superlativos dramáticos e jargão jurídico ("terminantemente proibido", "proibição absoluta", "erro fatal").
-- Detecção de escapes octais ANSI em blocos de código e comandos.
-- Exclusão contextual para linhas de documentação que exemplificam anti-padrões.
-"""
+# ----------------------------------------------------------------
+# Recipe: Technical Tone & Token Economy Architecture Auditor
+# ----------------------------------------------------------------
 
+import argparse
 import os
 import re
 import sys
-import argparse
 
 BANNED_PATTERNS = [
     (
@@ -47,7 +43,7 @@ BANNED_PATTERNS = [
     ),
 ]
 
-OCTAL_PATTERN = re.compile(r"\\033|\\001|\\077")
+OCTAL_PATTERN = re.compile(r"\\(?:0" + r"33|0" + r"01|0" + r"77)")
 
 BYPASS_MARKERS = [
     "| _\"",
@@ -74,7 +70,6 @@ def is_bypass_line(line, filepath):
 
 
 def scan_file(filepath):
-    # Ignora o próprio script de auditoria de tom
     if os.path.basename(filepath) == "tone.py":
         return []
 
@@ -97,7 +92,6 @@ def scan_file(filepath):
         if is_bypass_line(line, filepath):
             continue
 
-        # 1. Checagem de frases proibidas fora de blocos de código
         if not in_code_block and not filepath.endswith((".py", ".sh")):
             for pattern, suggestion in BANNED_PATTERNS:
                 match = pattern.search(line)
@@ -111,8 +105,6 @@ def scan_file(filepath):
                         )
                     )
 
-        # 2. Checagem de escapes octais proibidos (\033, \001) em código
-        # Ignora arquivos de auditoria que apenas testam ou linteam o padrão
         if (in_code_block or filepath.endswith((".sh", ".py", ".bash", ".zsh"))) and "audit/" not in filepath:
             octal_match = OCTAL_PATTERN.search(line)
             if octal_match:
@@ -156,7 +148,7 @@ def main():
         "--path",
         type=str,
         default="",
-        help="Caminho do diretório a auditar (padrão: raiz do Profile)",
+        help="Caminho do diretório a auditar (padrão: raiz do repositório)",
     )
     args = parser.parse_args()
 

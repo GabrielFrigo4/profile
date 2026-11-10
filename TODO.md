@@ -11,6 +11,7 @@
 | :------------------------------- | :---------: | :---------------------------------------------------------------------- |
 | **Emuladores & Multiplexadores** | 🟢 Estável  | Konsole, Windows Terminal, Tmux e Zellij sincronizados declarativamente |
 | **Configurações de Editores**    | 🟢 Estável  | VS Code, Antigravity e Zed com paridade multiplataforma                 |
+| **Desktop & Toolkits (GTK 3/4)** | 🟢 Estável  | Base limpa, materialização por DE via symlink e salvaguarda CSS         |
 | **Linters & Formatadores**       | 🟢 Estável  | `.clang-format`, `.prettierrc`, `.stylua.toml`, `.editorconfig`         |
 | **Portable AI Skills**           | 🟢 Estável  | Catálogo de skills portáteis orientadas à ação e autocontidas           |
 | **Skills de Sistema & TTY**      | 🟢 Estável  | Runbooks de consoles virtuais, keymaps, KMS e leitores headless (PDF)   |

@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# ----------------------------------------------------------------
+# Recipe: Markdown Relative Documentation Links Integrity Auditor
+# ----------------------------------------------------------------
 """
 Audit Links: Valida integridade de links relativos em arquivos Markdown (.md).
 """

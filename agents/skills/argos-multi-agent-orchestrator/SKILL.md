@@ -82,6 +82,8 @@ A eficiência dos Workers depende da pureza de contexto e da prevenção de cond
 - **Prevenção Ativa de Race Conditions:**
     - **Particionamento por Arquivo/Diretório:** Dois Workers ativos nunca recebem permissão para editar o mesmo arquivo simultaneamente.
     - Componentes com acoplamento forte devem ser atribuídos ao mesmo Worker ou executados em lotes sequenciais.
+- **Canal Bidirecional de Esclarecimento:**
+    - Workers que identificarem divergências de escopo ou ambiguidades devem acionar o Master via `send_message` antes de alterar arquivos.
 
 ---
 
@@ -106,10 +108,12 @@ O fluxo de orquestração do Master é composto por 5 etapas sequenciais:
 | **DO**    | Mantenha concorrência ativa entre 2 e 8 Workers simultâneos (média 4); use lotes para planos maiores. |
 | **DO**    | Particione caminhos de arquivos para eliminar qualquer risco de escrita simultânea.                   |
 | **DO**    | Encerre formalmente os Workers (`manage_subagents` kill) após validar cada lote.                      |
+| **DO**    | Instrua Workers a enviar dúvidas via `send_message` ao Master antes de alterar arquivos em conflito.  |
 | **DON'T** | Não utilize nem faça fallback para o modelo 3.1 Pro legado.                                           |
 | **DON'T** | Não permita que Workers criem sub-agentes (`depth > 1` é incompatível).                               |
 | **DON'T** | Não transmita históricos de chat desnecessários ou contexto global nos briefings.                     |
 | **DON'T** | Não autorize dois Workers concorrentes a modificar o mesmo arquivo no mesmo lote.                     |
+| **DON'T** | Não autorize alterações ou aplicação de templates internos em repositórios sob `**/OSS/**`.           |
 | **DON'T** | Não utilize Workers Pro sem justificativa explícita de complexidade matemática/simbólica.             |
 
 ---
@@ -127,7 +131,8 @@ O fluxo de orquestração do Master é composto por 5 etapas sequenciais:
 - **Regras & Padrões:**
     - Estrita conformidade com os padrões do repositório (Clean Code, POSIX, sem números mágicos).
     - Preservar assinaturas existentes e comentários não relacionados.
-    - Proibido editar arquivos fora da lista autorizada.
+    - Proibido editar arquivos fora da lista autorizada e estritamente vedado alterar código sob `**/OSS/**`.
+    - Protocolo de Esclarecimento: Em caso de ambiguidade ou divergência de escopo, pause e envie `send_message` ao Parent Conversation ID com `### [CLARIFICATION REQUEST]` antes de editar.
 - **Critérios de Aceite:**
     - [Critério 1: testes passam sem erros]
     - [Critério 2: linter aprovado com zero warnings]

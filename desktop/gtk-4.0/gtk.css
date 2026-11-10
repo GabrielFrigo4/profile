@@ -1,0 +1,12 @@
+menu,
+.menu,
+menubar > menuitem > window.background.popup,
+popover,
+popover.background,
+tooltip,
+tooltip.background,
+window.popup,
+decoration {
+	border-radius: 0px;
+	box-shadow: none;
+}
