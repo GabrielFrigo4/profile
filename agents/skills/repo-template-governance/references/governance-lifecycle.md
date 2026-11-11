@@ -6,7 +6,7 @@
 
 ## 1. Padrão de Self-Healing Hooks
 
-Os hooks em `.githooks/` devem ser 100% autônomos em POSIX `/bin/sh` (`chmod 0755`) e implementar auto-cura:
+Os hooks em `.githooks/` devem ser 100% autônomos em POSIX `sh` (`chmod 0755`) e implementar auto-cura:
 
 - **`pre-commit`:**
     - Auto-cura de permissões octais: executáveis (`.sh`, scripts com `#!`) recebem `chmod 0755` e `git update-index --chmod=+x`; arquivos regulares recebem `0644` e `--chmod=-x`.

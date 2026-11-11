@@ -1,17 +1,17 @@
 ---
 name: posix-shell-standards
-description: Manual cognitivo e validador de padrões de shell POSIX, baseline FreeBSD /bin/sh, taxonomia de emissão (echo vs echo -n $'\e...' vs printf), quoting rigoroso e programação defensiva.
+description: Manual cognitivo e validador de padrões de shell POSIX, baseline FreeBSD sh, taxonomia de emissão (echo vs echo -n $'\e...' vs printf), quoting rigoroso e programação defensiva.
 ---
 
 # 🐚 Padrões de Shell POSIX & Portabilidade Rigorosa
 
-Esta habilidade orienta a escrita, revisão e refatoração de scripts de shell no ecossistema soberano, garantindo código portátil, limpo, defensivo e aderente ao **Tier 2 (Extended)** sob a matriz canônica: **FreeBSD `/bin/sh`**, **`zsh`**, **`bash`** e **OpenBSD `ksh`** (interpretadores ultra-restritos como Debian `dash` e NetBSD `sh` estão fora de escopo).
+Esta habilidade orienta a escrita, revisão e refatoração de scripts de shell no ecossistema soberano, garantindo código portátil, limpo, defensivo e aderente ao **Tier 2 (Extended)** sob a matriz canônica: **FreeBSD `sh`**, **`zsh`**, **`bash`** e **OpenBSD `ksh`** (interpretadores ultra-restritos como Debian `dash` e NetBSD `sh` estão fora de escopo).
 
 ---
 
 ## 🧭 Pilares de Portabilidade & Engenharia UNIX
 
-1. **Baseline FreeBSD `/bin/sh`:** O shell nativo do FreeBSD é o piso universal de compatibilidade. Shebang obrigatório: `#!/usr/bin/env sh`.
+1. **Baseline FreeBSD `sh`:** O shell nativo do FreeBSD é o piso universal de compatibilidade. Shebang obrigatório: `#!/usr/bin/env sh`.
 2. **Taxonomia Estrita de Emissão:** `echo "$msg"` para texto simples; `echo -n` para fluxos sem quebra e sequências de escape ANSI; `printf` reservado estritamente para formatação de tabelas e padding posicional.
 3. **Escapes ANSI & Banimento de Octal:** Não use notação octal (`\033`, `\001`) para escapes ou bytes de controle. Use escapes hexadecimais (`\x1b`, `\x01`) ou `$'\e...'`. Octais são admitidos exclusivamente em permissões POSIX (`chmod 0755`, `0644`, `0700`, `0600`).
 4. **Quoting Defensivo & Zero Chaves Supérfluas:** Empregar `"$var"` sem chaves desnecessárias. Reservar `"${var}"` unicamente para concatenações contíguas (`"${prefix}_suffix"`) ou expansões de parâmetros POSIX (`"${var:-default}"`).
@@ -37,7 +37,7 @@ Em documentações, benchmarks, Makefiles e testes interativos, respeite sempre 
 
 1. **`zsh`** (ergonomia máxima de terminal e autocompletion interativo)
 2. **`bash`** (padrão de compatibilidade e ecossistemas corporativos)
-3. **`sh`** (FreeBSD `/bin/sh` base) ou **`ksh`** (OpenBSD `/bin/ksh` base)
+3. **`sh`** (FreeBSD `sh` base) ou **`ksh`** (OpenBSD `/bin/ksh` base)
 
 ---
 

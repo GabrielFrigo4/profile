@@ -10,7 +10,7 @@ WordModeAttr=true
 
 [General]
 Command=/usr/bin/env sh
-Environment=SHELL=/bin/sh,SHELL_INIT=1,SHELL_TARGET=/bin/sh
+Environment=SHELL=sh,SHELL_INIT=1,SHELL_TARGET=sh
 Name=Shell
 Parent=FALLBACK/
 

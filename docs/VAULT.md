@@ -42,7 +42,7 @@ O Vault provê carregadores nativos para todos os ambientes do ecossistema:
 
 | Arquivo                   | Interpretador / Ambiente                  |
 | :------------------------ | :---------------------------------------- |
-| **`vault.sh`**            | POSIX `/bin/sh`, Bash, Zsh                |
+| **`vault.sh`**            | POSIX `sh`, Bash, Zsh                     |
 | **`vault.ps1`**           | PowerShell Core e Windows PowerShell      |
 | **`vault.cmd`**           | Prompt de Comando (CMD Batch)             |
 | **`vault.nu`**            | NuShell                                   |

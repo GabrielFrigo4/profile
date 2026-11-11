@@ -18,7 +18,7 @@ Ao refatorar ou auditar qualquer arquivo no ecossistema:
 
 1. **Shebang Universal:**
     - O script DEVE utilizar sempre `#!/usr/bin/env sh` para scripts de shell e `#!/usr/bin/env python3` para Python.
-    - É VEDADO o uso de `#!/bin/sh` ou `#!/bin/bash` rígidos para assegurar portabilidade entre FreeBSD, Linux e macOS.
+    - É VEDADO o uso de `#!/usr/bin/env sh` ou `#!/bin/bash` rígidos para assegurar portabilidade entre FreeBSD, Linux e macOS.
 2. **Modo Defensivo:**
     - Todo script executável de shell DEVE iniciar com `set -eu` (ou `set -euo pipefail` quando compatível com o interpretador).
 3. **Orçamento de Linhas (Regra 8 - 128):**

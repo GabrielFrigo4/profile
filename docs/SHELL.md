@@ -43,7 +43,7 @@ Para garantir consistência e performance sem adicionar complexidade desnecessá
 
 ### Ambientes UNIX (Linux, FreeBSD, macOS, WSL2)
 
-- **`sh`**: Shell POSIX puro (`/bin/sh` do FreeBSD, `dash` do Debian). Utilizado em scripts de infraestrutura ultra-leves e rápidos.
+- **`sh`**: Shell POSIX puro (`sh` do FreeBSD, `dash` do Debian). Utilizado em scripts de infraestrutura ultra-leves e rápidos.
 - **`bash`**: Presente nativamente na maioria das distribuições Linux e servidores.
 - **`zsh`**: Shell interativo padrão diário, altamente configurado com autocompletion e navegação eficiente.
 

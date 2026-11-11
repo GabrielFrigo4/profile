@@ -100,7 +100,7 @@ Sistemas antifrágeis não exigem que o operador execute intervenções manuais 
 
 ## 🛠️ Padrões Canônicos por Interpretador
 
-### 1. Padrão Universal POSIX `/bin/sh`
+### 1. Padrão Universal POSIX `sh`
 
 ```sh
 _resolve_vault_key() {

@@ -6,7 +6,7 @@
 
 ## 🎯 Finalidade
 
-Este diretório provê perfis declarativos para o **Konsole** do KDE Plasma, configurando fontes monospace com Nerd Fonts, esquema de cores suave e comandos padrão para Bash, Zsh e FreeBSD `/bin/sh`.
+Este diretório provê perfis declarativos para o **Konsole** do KDE Plasma, configurando fontes monospace com Nerd Fonts, esquema de cores suave e comandos padrão para Bash, Zsh e FreeBSD `sh`.
 
 ---
 

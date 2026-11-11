@@ -22,7 +22,7 @@ A suíte em `.scripts/audit/` provê verificação determinística e semântica 
 | **`monoliths.py`** | Controle de teto máximo de complexidade e tamanho de scripts (Regra <= 256 linhas)       | Orçamento de Linhas        |
 | **`nanos.py`**     | Detecção de micro-scripts hiperfragmentados (Regra >= 8 linhas)                          | Consolidação Temática      |
 | **`skills.py`**    | Orçamento de densidade e integridade estrutural de Portable AI Skills (Regra 17-128-256) | Arquitetura de Skills      |
-| **`syntax.py`**    | Portabilidade POSIX `/bin/sh`, shebangs, modo defensivo `set -eu` e modos de arquivo     | Portabilidade UNIX         |
+| **`syntax.py`**    | Portabilidade POSIX `sh`, shebangs, modo defensivo `set -eu` e modos de arquivo          | Portabilidade UNIX         |
 | **`tone.py`**      | Densidade de sinal, economia de tokens e conformidade de escapes ANSI                    | Tom Técnico Estilo RFC     |
 
 ---

@@ -15,7 +15,7 @@ Esta habilidade orienta o agente de IA no scaffold integral de novos repositóri
 > **A Regra de Ouro do Agente:** Ao entrar em qualquer repositório, o agente DEVE ler `AGENTS.md`, `PRINCIPLES.md` e a pasta `.agents/` antes de realizar qualquer alteração estrutural ou de código.
 
 1. **Makefile POSIX Silencioso:** Cabeçalho `.POSIX:` e `.SILENT:`, com `MAKEFLAGS += --no-print-directory -s`, invocação universal `(cd dir && $(MAKE) target)` e compatibilidade dual (`gmake`/`bmake`).
-2. **Self-Healing Git Hooks:** Hooks em `.githooks/` (`pre-commit`, `commit-msg`) 100% autônomos em `/bin/sh` (`chmod 0755`), com auto-cura de modos octais (`0755`/`0644`), whitespace, prettier e banners com `git add` automático.
+2. **Self-Healing Git Hooks:** Hooks em `.githooks/` (`pre-commit`, `commit-msg`) 100% autônomos em `sh` (`chmod 0755`), com auto-cura de modos octais (`0755`/`0644`), whitespace, prettier e banners com `git add` automático.
 3. **Padrão de Comentários em Três Camadas:** Header de 64 hífens, réguas de 32 colunas para seções e zero comentários narrativos.
 4. **Permissões Canônicas Octais:** 4 dígitos expressos (`chmod 0755` para executáveis, `chmod 0644` para dotfiles e documentos).
 5. **Invariante Dev-to-Prod:** Bancada exclusiva de edição no `Environment`, propagação via `git push` e pull em produção.
@@ -37,7 +37,7 @@ Esta habilidade orienta o agente de IA no scaffold integral de novos repositóri
 | Perfil        | Stack Principal | Foco & Ferramentas                                             |
 | :------------ | :-------------- | :------------------------------------------------------------- |
 | `c-posix`     | C Moderno (C23) | `-std=c23`, sanitizers, `clang-format`, manpages POSIX         |
-| `shell-posix` | POSIX `/bin/sh` | Baseline FreeBSD `/bin/sh`, shellcheck, testes e portabilidade |
+| `shell-posix` | POSIX `sh`      | Baseline FreeBSD `sh`, shellcheck, testes e portabilidade      |
 | `cpp-modern`  | C++23 Moderno   | Concepts, ranges, monádico `std::expected`, Google Test/Catch2 |
 | `go-binary`   | Go Moderno      | Binário único estático, PocketBase, CGo, CLI ergonômico        |
 | `python-pure` | Python 3.12+    | Stdlib pura ou minimalista, `pyproject.toml`, type hints       |

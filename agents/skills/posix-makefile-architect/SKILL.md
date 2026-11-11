@@ -20,7 +20,7 @@ Todo Makefile no ecossistema DEVE iniciar rigorosamente com o cabeçalho canôni
 MAKEFLAGS += --no-print-directory -s
 ```
 
-1. **`.POSIX:`**: Força conformidade com as especificações POSIX, desativando comportamentos proprietários e padronizando execução via `/bin/sh`.
+1. **`.POSIX:`**: Força conformidade com as especificações POSIX, desativando comportamentos proprietários e padronizando execução via `sh`.
 2. **`.SILENT:`**: Suprime a exibição de comandos antes da execução (Regra do Silêncio UNIX).
 3. **`MAKEFLAGS += --no-print-directory -s`**: Suprime avisos de troca de diretório no GNU Make e força silêncio em subprocessos.
 

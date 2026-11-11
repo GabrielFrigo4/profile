@@ -1,6 +1,6 @@
 # 🪤 Armadilhas de Bashismos & Portabilidade Estrita
 
-Extensões exclusivas do GNU Bash falham sob shells POSIX como FreeBSD `/bin/sh` ou OpenBSD `/bin/ksh`. A matriz de shells suportada no ecossistema abrange: `zsh`, `bash`, FreeBSD `sh` e OpenBSD `ksh`. Shells ultra-restritos de recuperação (Debian `dash`, NetBSD `sh`) estão fora de escopo. Abaixo estão as incompatibilidades comuns e seus equivalentes POSIX portáteis:
+Extensões exclusivas do GNU Bash falham sob shells POSIX como FreeBSD `sh` ou OpenBSD `/bin/ksh`. A matriz de shells suportada no ecossistema abrange: `zsh`, `bash`, FreeBSD `sh` e OpenBSD `ksh`. Shells ultra-restritos de recuperação (Debian `dash`, NetBSD `sh`) estão fora de escopo. Abaixo estão as incompatibilidades comuns e seus equivalentes POSIX portáteis:
 
 ---
 

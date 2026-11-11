@@ -55,9 +55,9 @@ O Zsh oferece duas abordagens:
 PROMPT="%{\x1b[1;34m%}[   Linux ]%{\x1b[0m%}─[ %~ ] %# "
 ```
 
-### 3. POSIX `/bin/sh` e Shells Leves (FreeBSD `sh`, OpenBSD `ksh`, Dash)
+### 3. POSIX `sh` e Shells Leves (FreeBSD `sh`, OpenBSD `ksh`, Dash)
 
-- O interpretador padrão `/bin/sh` POSIX não implementa biblioteca complexa de edição de linha multilinha como `readline`.
+- O interpretador padrão `sh` POSIX não implementa biblioteca complexa de edição de linha multilinha como `readline`.
 - Em scripts utilitários e shells básicos de recuperação, mantenha o prompt minimalista, estático e com escape direto sem sobrecarregar com lógicas dependentes de buffer.
 
 ---

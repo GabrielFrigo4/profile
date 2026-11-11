@@ -32,7 +32,7 @@ Quando uma tecnologia não possuir slug direto no Simple Icons, aplique associa�
 | :--------------------- | :---------------: | :------------------------------------------------------------- |
 | **Windows / MSYS2**    |  `gitforwindows`  | Logotipo do Git for Windows sobre a plataforma Windows         |
 | **illumos / Solaris**  |     `openzfs`     | OpenZFS é a espinha dorsal nativa da linhagem illumos          |
-| **FreeBSD `/bin/sh`**  |     `freebsd`     | Identifica que o alvo `sh` é o interpretador nativo do FreeBSD |
+| **FreeBSD `sh`**       |     `freebsd`     | Identifica que o alvo `sh` é o interpretador nativo do FreeBSD |
 | **OpenBSD `/bin/ksh`** |     `openbsd`     | Identifica que o alvo `ksh` é o interpretador do OpenBSD       |
 | **Fish Shell**         |    `fishshell`    | Peixe estilizado oficial do interpretador                      |
 

@@ -56,7 +56,7 @@ Quando o agente for implementar código, sugerir dependências ou refatorar comp
 
 - Nunca utilize sintaxe antiga de uma ferramenta quando houver um substituto moderno e canônico aprovado pelos mantenedores.
 - Exemplo 1: No Svelte 5, a reatividade mudou para _Runes_ (`$state`, `$derived`, `$props`). O agente não deve gerar sintaxe legada do Svelte 4 a menos que explicitamente solicitado.
-- Exemplo 2: No FreeBSD 14+, o suporte a NVMe foi reformulado com o novo driver `nda` em vez de `nvd`, e o `/bin/sh` suporta novos recursos POSIX.
+- Exemplo 2: No FreeBSD 14+, o suporte a NVMe foi reformulado com o novo driver `nda` em vez de `nvd`, e o `sh` suporta novos recursos POSIX.
 
 ### 3. Verificação de Portabilidade e Suporte nos Sistemas Alvo
 

@@ -26,7 +26,7 @@ Esta habilidade orienta o desenvolvedor e o agente de IA na operação, padroniz
 
 ## 🪝 1. Regras Mandatórias de Hooks Locais (`.githooks/`)
 
-1. **Hermeticidade e Autonomia Estrita:** Hooks locais nunca dependem de scripts de IA externos (`~/.gemini/` ou `.agents/`). Lógica expressa em shell POSIX (`/bin/sh`) ou utilitários internos do repositório.
+1. **Hermeticidade e Autonomia Estrita:** Hooks locais nunca dependem de scripts de IA externos (`~/.gemini/` ou `.agents/`). Lógica expressa em shell POSIX (`sh`) ou utilitários internos do repositório.
 2. **Portabilidade Dual:** Shebang `#!/usr/bin/env sh`, sem bashismos ou flags GNU-específicas no FreeBSD.
 3. **Permissões e Ativação:** `chmod 0755 .githooks/*` e registro local `git config core.hooksPath .githooks`.
 

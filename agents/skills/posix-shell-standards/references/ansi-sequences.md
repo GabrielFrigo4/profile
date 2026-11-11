@@ -15,8 +15,8 @@ Não utilize notação octal (`\033`, `\001`, `\077`) para caracteres de escape 
     ```
 
     > [!IMPORTANT]
-    > **Limitação do `printf` no `/bin/sh` do FreeBSD:**
-    > O utilitário `printf` builtin do `/bin/sh` do FreeBSD segue estritamente a especificação POSIX e **não** suporta a sequência de escape hexadecimal `\xHH` (ele imprime literalmente `x1b` no terminal). Portanto, nunca utilize `printf '\x1b'` para capturar o caractere de escape em `/bin/sh`; utilize `_esc=$'\e'`.
+    > **Limitação do `printf` no `sh` do FreeBSD:**
+    > O utilitário `printf` builtin do `sh` do FreeBSD segue estritamente a especificação POSIX e **não** suporta a sequência de escape hexadecimal `\xHH` (ele imprime literalmente `x1b` no terminal). Portanto, nunca utilize `printf '\x1b'` para capturar o caractere de escape em `sh`; utilize `_esc=$'\e'`.
 
 2. **Bytes de Controle:** Para delimitadores de prompt ou bytes arbitrários, use notação hexadecimal (`\x01`) apenas onde suportado pelo interpretador.
 3. **Exceção Única para Octal:** Octais são aceitos e exigidos **exclusivamente** em utilitários POSIX de arquivos baseados em base 8 (`chmod 0755`, `chmod 0644`, `chmod 0700`, `chmod 0600`, `umask 022`).

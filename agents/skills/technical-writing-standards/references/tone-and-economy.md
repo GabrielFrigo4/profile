@@ -21,7 +21,7 @@ A excelência em documentação técnica fundamenta-se na precisão, na serenida
     - Elimine advérbios intensificadores vazios (_"rigorosamente"_, _"estritamente"_, _"expressamente"_).
     - Elimine maiúsculas emotivas (_"NUNCA"_, _"JAMAIS"_, _"NADA"_).
 - **Matriz de Shells e Escapes:**
-    - Shells suportados: `zsh`, `bash`, FreeBSD `/bin/sh`, OpenBSD `/bin/ksh`. Não adapte para Debian `dash` ou NetBSD `sh`.
+    - Shells suportados: `zsh`, `bash`, FreeBSD `sh`, OpenBSD `/bin/ksh`. Não adapte para Debian `dash` ou NetBSD `sh`.
     - Escapes ANSI: utilize sempre `$'\e'` (em Makefiles: `_e=$$'\e';`) ou `\x1b`. Octal (`\033`) é exclusivo para permissões POSIX (`chmod 0755`).
 
 ### 2. Documentação Humana (`README.md`, `PRINCIPLES.md`, Manuais Técnicos)
