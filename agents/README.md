@@ -37,6 +37,7 @@ No ecossistema do **Quarteto de Produtividade**, o diretório **`agents/`** cent
 | [`tone-and-economy.md`](./rules/tone-and-economy.md)             | Tom técnico sóbrio, densidade de sinal por token, matriz real de shells (`zsh`, `bash`, FreeBSD `sh`, OpenBSD `ksh`) e escapes `$'\e'`.                      | Universal em todas as sessões e projetos na máquina (`always_on`). |
 | [`clarification-protocol.md`](./rules/clarification-protocol.md) | Protocolo bidirecional de alinhamento proativo e resolução de ambiguidades (`Master <-> User` via `ask_question`, `Worker <-> Master` via `send_message`).   | Universal em todas as sessões e projetos na máquina (`always_on`). |
 | [`oss-sovereignty.md`](./rules/oss-sovereignty.md)               | Invariante de isolamento soberano para forks e repositórios de terceiros em `**/OSS/**`, vetando aplicação de templates internos ou refatorações intrusivas. | Universal em todas as sessões e projetos na máquina (`always_on`). |
+| [`agentic-orchestration.md`](./rules/agentic-orchestration.md)   | Governança de orquestração multi-agente Argos, gatilho semântico e invariante mandatória de argumento de modelo explícito (`Model: 'flash'`).                | Universal em todas as sessões e projetos na máquina (`always_on`). |
 
 ---
 

@@ -48,9 +48,12 @@ Via de regra, o Worker deve ser computacionalmente mais leve ou, no máximo, tã
 
 ### Guardrails de Alocação de Modelos
 
-- **Primazia do Flash:** Para 95% das tarefas de execução paralela, utilize modelos da família **Flash** (`Model: 'flash'` ou `Model: 'flash_lite'`).
+- **Primazia do Flash:** Para 95%+ das tarefas de execução paralela, utilize modelos da família **Flash** (`Model: 'flash'` ou `Model: 'flash_lite'`).
+- **Invariante do Argumento Explícito:** Em toda chamada de tool de delegação, o parâmetro de modelo deve ser preenchido explicitamente (`Model: 'flash'`). Jamais omita o campo de modelo, pois a omissão aciona o fallback silencioso `inherit`, propagando modelos pesados para toda a frota.
+- **Protocolo de Escalação Invertida (Exceção Cirúrgica):** A instanciação de Worker em modelo avançado (`Model: 'pro'`) é permitida exclusivamente quando uma subtarefa exigir raciocínio simbólico denso, prova matemática formal ou análise crítica de caso de borda onde um modelo Flash falharia.
+    - _Teto Unitário Estrito:_ No máximo **1 (um)** Worker pesado ativo por lote. É vedado fan-out paralelo de múltiplos workers Pro.
+    - _Justificativa e Teardown:_ O Master registra 1 linha de justificativa técnica antes do spawn e encerra a instância imediatamente após a entrega (`manage_subagents` kill).
 - **Bloqueio do Modelo 3.1 Pro Legado:** É expressamente vetado instanciar Workers ou acionar fallbacks com o modelo **3.1 Pro** ou variantes Pro legadas, devido à latência excessiva e comportamento degradado.
-- **Protocolo de Escalação Invertida (Exceção Fundamentada):** Quando um Flash Master necessitar de raciocínio simbólico profundo ou prova matemática de altíssima complexidade em uma subtarefa isolada, é permitido instanciar excepcionalmente 1 Worker Pro moderno (`Model: 'pro'`). A instância deve ser encerrada imediatamente após a entrega, mantendo o custo global sob controle.
 
 ---
 
@@ -63,7 +66,7 @@ Para evitar sobrecarga de contexto, contenção de I/O e limites de taxa de API,
     - `AVERAGE_ACTIVE_SLAVES = 4`: Faixa de operação padrão (sweet spot) para a maioria das orquestrações.
     - `MAX_ACTIVE_SLAVES = 8`: Teto rígido de concorrência simultânea.
 - **Fila em Lotes (Batch Queueing):**
-    - Quando um plano demandar mais de 8 subtarefas (ex.: 16 arquivos a refatorar):
+    - Quando um plano demandar mais de 8 subtarefas:
         1. O Master particiona o plano em lotes (_batches_) de 2 a 8 subtarefas (média de 4).
         2. Dispara o _Batch 1_ (Workers 1 a 4 ou até 8) e aguarda suas conclusões assíncronas.
         3. Executa a auditoria de qualidade (QA) do lote e encerra as instâncias ativas (`manage_subagents` kill).
@@ -92,7 +95,40 @@ A eficiência dos Workers depende da pureza de contexto e da prevenção de cond
 O fluxo de orquestração do Master é composto por 5 etapas sequenciais:
 
 1. **Decomposição:** O Master decompõe a solicitação em subtarefas atômicas com identificadores unívocos (`TASK-01`, `TASK-02`, etc.) e escopos de arquivos restritos.
-2. **Spawn:** Instanciação dos Workers (2 a 8 por lote, média 4) via `invoke_subagent` com o tier de modelo adequado e contrato estruturado.
+2. **Spawn (Sequência Canônica de Tools):**
+    - Inspecione o schema da tool de delegação disponível (`invoke_subagent` ou equivalente no runtime CLI/IDE) e preencha explicitamente o parâmetro de modelo. Escrever `Modelo Alocado: flash` no texto do prompt não configura a engine; o modelo deve ser passado no argumento JSON da tool.
+    - Não invoque a tool `swarm` (arquitetura mesh desnecessária) e não use `schedule` (cron) para monitorar agentes. A governança é baseada em eventos reativos.
+
+### Passo A — Definição do Subagente (se necessária edição de arquivos)
+
+```json
+{
+	"name": "define_subagent",
+	"args": {
+		"Name": "worker-task",
+		"Description": "Especialista em refatoração no escopo restrito",
+		"SystemPrompt": "Atue estritamente nos arquivos autorizados. Siga AGENTS.md e PRINCIPLES.md.",
+		"EnableWriteTools": true,
+		"EnableSubagentTools": false,
+		"EnableMCPTools": false
+	}
+}
+```
+
+### Passo B — Invocação Explícita com Flash
+
+```json
+{
+	"name": "invoke_subagent",
+	"args": {
+		"TypeName": "worker-task",
+		"Role": "Scoped Refactorer",
+		"Model": "flash",
+		"Prompt": "### CONTRATO DE TAREFA [TASK-01]\n..."
+	}
+}
+```
+
 3. **Coleta e Auditoria:** Recebimento assíncrono dos relatórios de entrega. O Master valida os critérios de aceite e a conformidade do código.
 4. **Retry / Correção (Máx. 2 tentativas):** Se um Worker entregar código divergente, o Master aponta o erro exato. Persistindo a falha após 2 retries, o Master encerra o Worker e assume o reparo diretamente.
 5. **Consolidação e Teardown:** O Master encerra todos os Workers ativos (`manage_subagents` kill), sintetiza as entregas e responde ao usuário com métricas e links.
@@ -104,27 +140,32 @@ O fluxo de orquestração do Master é composto por 5 etapas sequenciais:
 | Prática   | Diretiva Operacional                                                                                  |
 | :-------- | :---------------------------------------------------------------------------------------------------- |
 | **DO**    | Permita que tanto o GM Argos quanto modelos Flash atuem soberanamente como Master Orchestrator.       |
-| **DO**    | Aplique como regra geral $\text{Capacidade}(\text{Worker}) \le \text{Capacidade}(\text{Master})$.     |
+| **DO**    | Declare explicitamente `"Model": "flash"` ou `"flash_lite"` no payload JSON de `invoke_subagent`.     |
+| **DO**    | Restrinja Workers Pro a no máximo 1 instância cirúrgica simultânea, com justificativa e teardown.     |
 | **DO**    | Mantenha concorrência ativa entre 2 e 8 Workers simultâneos (média 4); use lotes para planos maiores. |
 | **DO**    | Particione caminhos de arquivos para eliminar qualquer risco de escrita simultânea.                   |
 | **DO**    | Encerre formalmente os Workers (`manage_subagents` kill) após validar cada lote.                      |
 | **DO**    | Instrua Workers a enviar dúvidas via `send_message` ao Master antes de alterar arquivos em conflito.  |
+| **DON'T** | Não omita o argumento de modelo na chamada da tool (evitando fallback acidental para `inherit`).      |
+| **DON'T** | Não use a ferramenta `swarm` para orquestração Argos (salvo solicitação literal do usuário).          |
+| **DON'T** | Não utilize `schedule` (cron) para monitoramento de subagentes ou polling periódico.                  |
 | **DON'T** | Não utilize nem faça fallback para o modelo 3.1 Pro legado.                                           |
 | **DON'T** | Não permita que Workers criem sub-agentes (`depth > 1` é incompatível).                               |
 | **DON'T** | Não transmita históricos de chat desnecessários ou contexto global nos briefings.                     |
 | **DON'T** | Não autorize dois Workers concorrentes a modificar o mesmo arquivo no mesmo lote.                     |
 | **DON'T** | Não autorize alterações ou aplicação de templates internos em repositórios sob `**/OSS/**`.           |
-| **DON'T** | Não utilize Workers Pro sem justificativa explícita de complexidade matemática/simbólica.             |
 
 ---
 
 ## 📋 7. Template de Payload de Delegação (Master -> Worker)
 
+> ⚠️ **Aviso de Bind:** A linha `Modelo da Tool` abaixo documenta o contrato, mas o modelo deve ser obrigatoriamente passado no argumento `"Model": "flash"` da chamada `invoke_subagent`.
+
 ```markdown
 ### CONTRATO DE TAREFA [TASK_ID]
 
 - **Objetivo:** [Descrição concisa e unívoca da entrega esperada]
-- **Modelo Alocado:** [flash | flash_lite | inherit | pro (com justificativa)]
+- **Modelo da Tool:** [flash (padrão) | flash_lite | pro (exceção cirúrgica com 1 instância)]
 - **Arquivos Autorizados:**
     - `caminho/do/arquivo1.ext`
     - `caminho/do/arquivo2.ext`
@@ -132,7 +173,8 @@ O fluxo de orquestração do Master é composto por 5 etapas sequenciais:
     - Estrita conformidade com os padrões do repositório (Clean Code, POSIX, sem números mágicos).
     - Preservar assinaturas existentes e comentários não relacionados.
     - Proibido editar arquivos fora da lista autorizada e estritamente vedado alterar código sob `**/OSS/**`.
-    - Protocolo de Esclarecimento: Em caso de ambiguidade ou divergência de escopo, pause e envie `send_message` ao Parent Conversation ID com `### [CLARIFICATION REQUEST]` antes de editar.
+    - Protocolo de Esclarecimento: Em caso de ambiguidade, pause e envie `send_message` ao Parent Conversation ID com `### [CLARIFICATION REQUEST]`.
+    - Circuit Breaker: Teto de 20 chamadas de ferramenta. Se encontrar erro de ambiente ou bloqueio fora do escopo, interrompa o loop e retorne relatório parcial com `### [CIRCUIT BREAKER TRIGGERED]`.
 - **Critérios de Aceite:**
     - [Critério 1: testes passam sem erros]
     - [Critério 2: linter aprovado com zero warnings]
@@ -146,7 +188,7 @@ O fluxo de orquestração do Master é composto por 5 etapas sequenciais:
 ```markdown
 ### RELATÓRIO DE ENTREGA [TASK_ID]
 
-- **Status:** [SUCESSO | FALHA | BLOQUEIO]
+- **Status:** [SUCESSO | FALHA | BLOQUEIO | CIRCUIT_BREAKER]
 - **Arquivos Modificados:**
     - `caminho/do/arquivo1.ext` (+X, -Y linhas)
 - **Ações Executadas:**

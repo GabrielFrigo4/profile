@@ -16,7 +16,7 @@ Diretrizes operacionais para o **Master Orchestrator** (seja o **GM Argos** ou u
 
 Quando uma tarefa envolve alta incerteza heurística (ex.: otimização de solver, redução de frame-time gráfico ou layout de grafos), tentar uma única linha de raciocínio é subótimo.
 
-O Master despacha de **2 a 8 Workers concorrentes** (geralmente sob paridade de modelo Flash, média 4), cada um restrito a uma hipótese algorítmica independente e disjunta:
+O Master despacha de **2 a 8 Workers concorrentes** (média 4, com paridade mandatória em `Model: 'flash'`), cada um restrito a uma hipótese algorítmica independente e disjunta:
 
 1. **Worker 1 (Candidato A):** Abordagem Gulosa Otimizada ou Heurística Construtiva rápida (ex.: Greedy + 2-opt).
 2. **Worker 2 (Candidato B):** Metaheurística Estocástica (ex.: Simulated Annealing / Tabu Search com seed fixa).
@@ -41,7 +41,15 @@ Para prevenir qualquer contaminação de workspace entre competidores:
 
 ---
 
-## ⏱️ 3. O Coliseu de Benchmark Determinístico
+## ⚡ 3. Governança de Spawn & Invariante de Modelo
+
+- **Bind Explícito de Modelo:** Em cada invocação `invoke_subagent`, passe obrigatoriamente `"Model": "flash"` (ou `"flash_lite"`). Jamais omita o parâmetro de modelo (evitando fallback para `inherit`).
+- **Interdição de Swarm e Cron:** O torneio utiliza subagentes isolados ponto a ponto. Não use a ferramenta `swarm` nem cron via `schedule`.
+- **Exceção de Modelo Avançado:** É permitido testar no máximo 1 candidato em modelo pesado (`Model: 'pro'`) se a hipótese envolver formulação matemática não-trivial. Múltiplos workers pesados concorrentes são vedados.
+
+---
+
+## ⏱️ 4. O Coliseu de Benchmark Determinístico
 
 Com todas as implementações entregues, o Master executa a suíte de avaliação empírica:
 
@@ -55,21 +63,24 @@ Com todas as implementações entregues, o Master executa a suíte de avaliaçã
 
 ---
 
-## ⚖️ 4. Diretrizes Imperativas (DOs & DON'Ts)
+## ⚖️ 5. Diretrizes Imperativas (DOs & DON'Ts)
 
 | Prática   | Diretiva Operacional                                                                         |
 | :-------- | :------------------------------------------------------------------------------------------- |
 | **DO**    | Isole cada competidor em uma worktree Git própria (`git worktree add`).                      |
+| **DO**    | Declare explicitamente `"Model": "flash"` no payload JSON de cada `invoke_subagent`.         |
 | **DO**    | Exija rigorosa igualdade de assinaturas e formatos de entrada e saída.                       |
 | **DO**    | Julgue os candidatos via baterias objetivas com dados reais e casos extremos.                |
 | **DO**    | Descarte sumariamente branches derrotadas após a consagração do vencedor.                    |
+| **DON'T** | Não omita o argumento de modelo na chamada da tool.                                          |
+| **DON'T** | Não use `swarm` nativo ou monitoramento periódico via `schedule`.                            |
 | **DON'T** | Não permita que um concorrente consulte o código ou algoritmo de outro competidor.           |
 | **DON'T** | Não escolha vencedores baseado em estilo narrativo; decida por dados empíricos de benchmark. |
 | **DON'T** | Não mantenha worktrees órfãs no sistema após a conclusão do torneio.                         |
 
 ---
 
-## 📋 5. Template de Invocação de Torneio Especulativo
+## 📋 6. Template de Invocação de Torneio Especulativo
 
 ```markdown
 ### CONTRATO DE TORNEIO ESPECULATIVO [TOURNAMENT-ID]
@@ -77,6 +88,8 @@ Com todas as implementações entregues, o Master executa a suíte de avaliaçã
 - **Problema Algorítmico:** [Descrição da função ou gargalo a ser superado]
 - **Interface Requerida:** `include/solver_interface.h`
 - **Candidato Alocado:** [Nome da Heurística / Abordagem atribuída ao Worker]
+- **Modelo da Tool:** flash (parâmetro obrigatório na tool invoke_subagent)
 - **Workspace Autorizado:** `.worktrees/cand-[ID]/`
+- **Circuit Breaker:** Teto de 20 chamadas de ferramenta; interrompa em caso de falha de ambiente.
 - **Métricas Alvo:** [Latência < 5ms, heap zero alocações dinâmicas]
 ```

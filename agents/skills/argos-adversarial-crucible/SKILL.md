@@ -28,10 +28,11 @@ A célula adversarial opera dividindo o pool de workers efêmeros (entre 2 e 8 a
     - **Escopo Exclusivo:** `Makefile` e rotinas de orquestração de testes.
     - **Missão:** Compilar a implementação com sanitizers ativos (`-fsanitize=address,undefined`) e rodar os testes hostis, coletando logs brutos de erro e métricas.
 
-### Gradiente de Modelos na Célula
+### Gradiente de Modelos & Invariante de Spawn
 
-- **Padrão:** Todos os workers operam com modelo Flash (`Model: 'flash'`).
-- **Escalação Cirúrgica:** Em módulos de alta criticidade (criptografia, arenas de memória), o Master pode alocar opcionalmente 1 Worker de maior capacidade (`Model: 'pro'`) no papel de Red Team ou Inquisitor para formular vetores de ataque matemáticos avançados.
+- **Padrão Mandatório:** Todos os workers operam com modelo Flash (`Model: 'flash'`). É proibido omitir o parâmetro na chamada `invoke_subagent` para prevenir herança acidental de `inherit`.
+- **Escalação Cirúrgica (Exceção de Alta Densidade):** Em módulos de alta criticidade (criptografia, arenas de memória), o Master pode alocar no máximo **1 Worker** avançado (`Model: 'pro'`) no papel de Red Team ou Inquisitor para formular vetores de ataque matemáticos. O teardown deve ser imediato pós-entrega.
+- **Interdição de Swarm e Cron:** A célula opera via subagentes privados. É vedado o uso da tool `swarm` e de polling periódico via `schedule`.
 
 ---
 
@@ -39,12 +40,12 @@ A célula adversarial opera dividindo o pool de workers efêmeros (entre 2 e 8 a
 
 O fluxo adversarial opera em quatro tempos rigorosos:
 
-1. **Geração Paralela:** O Master despacha o Blue Team para construir e o Red Team para atacar simultaneamente em seus diretórios disjuntos.
+1. **Geração Paralela:** O Master despacha o Blue Team para construir e o Red Team para atacar simultaneamente em seus diretórios disjuntos com `Model: 'flash'`.
 2. **Execução pelo Inquisitor:** O Inquisitor compila o código do Blue Team contra os testes do Red Team.
 3. **Auditoria de Danos:**
     - **Aprovação:** Todos os testes passam sem segfaults, memory leaks, panics ou violações de sanitizer (exit code `0`).
     - **Fratura:** Ocorreu falha ou crash. O Master extrai o contraexemplo mínimo do log e aciona 1 ciclo de reparo para o Blue Team (máximo de 2 retries).
-4. **Teardown & Merge:** Os testes adversariais são incorporados permanentemente à suíte de regressão do projeto e os workers são finalizados.
+4. **Teardown & Merge:** Os testes adversariais são incorporados permanentemente à suíte de regressão do projeto e os workers são finalizados (`manage_subagents` kill).
 
 ---
 
@@ -61,10 +62,13 @@ O fluxo adversarial opera em quatro tempos rigorosos:
 | Prática   | Diretiva Operacional                                                                   |
 | :-------- | :------------------------------------------------------------------------------------- |
 | **DO**    | Restrinja o Blue Team estritamente ao diretório de produção (`src/`).                  |
-| **DO**    | Exija que o Red Team conceba testes lendo apenas especificações e contratos públicos.  |
+| **DO**    | Declare explicitamente `"Model": "flash"` no payload JSON de cada `invoke_subagent`.   |
+| **DO**    | Restrinja workers `pro` a no máximo 1 instância cirúrgica, com teardown imediato.      |
 | **DO**    | Utilize compiladores e executáveis com sanitizers ativos (`ASan`, `UBSan`) no harness. |
 | **DO**    | Promova os testes adversariais aprovados a testes permanentes de regressão.            |
-| **DON'T** | Não permita que o Red Team edite código de produção para "facilitar" o teste.          |
+| **DON'T** | Não omita o argumento de modelo na chamada da tool (evitando fallback para `inherit`). |
+| **DON'T** | Não use `swarm` nativo ou monitoramento via cron (`schedule`).                         |
+| **DON'T** | Não permita que o Red Team edite código de produção para facilitar o teste.            |
 | **DON'T** | Não permita que o Blue Team veja os testes hostis antes da primeira compilação.        |
 | **DON'T** | Não aceite aprovações baseadas em soft review sem execução real com exit code `0`.     |
 | **DON'T** | Não ultrapasse 2 retries corretivos se uma falha estrutural for detectada.             |
@@ -77,8 +81,10 @@ O fluxo adversarial opera em quatro tempos rigorosos:
 ### PROTOCOLO DE COMBATE ADVERSARIAL [CRUCIBLE-ID]
 
 - **Alvo:** [Módulo / Função sob verificação estrita]
+- **Modelo da Tool:** flash (parâmetro obrigatório na tool invoke_subagent)
 - **Blue Team (Workers 1-2):** `src/caminho/do/modulo.ext`
 - **Red Team (Workers 3-4):** `tests/adversarial/test_modulo.ext`
 - **Inquisitor (Worker 5):** `make test-adversarial SANITIZE=1`
+- **Circuit Breaker:** Teto de 20 chamadas de ferramenta; interrompa em caso de bloqueio.
 - **Condição de Vitória:** Zero vazamentos, zero alertas de sanitizer e 100% de asserções cumpridas.
 ```
