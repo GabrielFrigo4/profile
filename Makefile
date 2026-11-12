@@ -59,6 +59,8 @@ test:
 	grep -q "@import" desktop/themes/Emacs-Doom-Dark/gtk-3.0/gtk.css
 	grep -q "background-image: none" desktop/themes/Emacs-Doom-Dark/gtk-3.0/gtk.css
 	grep -q "#1e1e1e" desktop/themes/Emacs-Doom-Dark/gtk-3.0/gtk.css
+	grep -q ":backdrop" desktop/themes/Emacs-Doom-Dark/gtk-3.0/gtk.css
+	grep -q "theme_unfocused_bg_color" desktop/themes/Emacs-Doom-Dark/gtk-3.0/gtk.css
 	! grep -q "#1e1e1e" desktop/gtk-3.0/gtk.css
 	! grep -q "#1e1e1e" desktop/gtk-4.0/gtk.css
 	echo "🔍 Verificando ausência de __pycache__ e *.pyc no Profile..."
