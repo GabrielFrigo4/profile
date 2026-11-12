@@ -43,11 +43,7 @@ _profile_item() {
 		elif [ -f "${_src}" ] && [ -f "${_dst}" ]; then
 			cmp -s "${_src}" "${_dst}" 2> "/dev/null" && { _ui_sub "[OK] ${_dst}"; return 0; }
 		fi
-		if [ "${_bak}" -eq 1 ]; then
-			mv "${_dst}" "${_dst}.bak.${_ts}" 2> "/dev/null" && _ui_warn "[BACKUP] ${_dst}.bak.${_ts}" || { _ui_err "Falha ao criar backup de ${_dst}"; return 1; }
-		else
-			rm -rf "${_dst}"
-		fi
+		[ "${_bak}" -eq 1 ] && { mv "${_dst}" "${_dst}.bak.${_ts}" 2> "/dev/null" && _ui_warn "[BACKUP] ${_dst}.bak.${_ts}" || { _ui_err "Falha ao criar backup de ${_dst}"; return 1; }; } || rm -rf "${_dst}"
 	fi
 
 	export MSYS="winsymlinks:nativestrict"
@@ -79,17 +75,22 @@ _sync_gtk_de_profile() {
 		*)              _de="" ;;
 	esac
 
-	if [ -z "${_de}" ]; then
+	if [ -z "${_de}" ] && command -v pgrep > "/dev/null" 2>&1; then
 		for _probe in "plasmashell:kde" "kwin_wayland:kde" "gnome-shell:gnome" "cosmic-comp:cosmic" "cosmic-session:cosmic" "xfce4-session:xfce" "mate-session:mate" "cinnamon:cinnamon" "lxqt-session:lxqt" "lxsession:lxde" "budgie-wm:budgie" "budgie-panel:budgie" "gala:pantheon" "wingpanel:pantheon" "dde-desktop:deepin"; do
-			_proc="${_probe%:*}"
-			if command -v pgrep > "/dev/null" 2>&1 && pgrep -x "${_proc}" > "/dev/null" 2>&1; then
-				_de="${_probe#*:}" && break
-			fi
-			if command -v "${_proc}" > "/dev/null" 2>&1; then
-				_de="${_probe#*:}" && break
-			fi
+			pgrep -x "${_probe%:*}" > "/dev/null" 2>&1 && { _de="${_probe#*:}" && break; }
 		done
-		[ -z "${_de}" ] && _de="gnome"
+	fi
+
+	if [ -z "${_de}" ]; then
+		if [ -e "${HOME}/.config/kdeglobals" ] || [ -d "/usr/local/share/plasma" ] || [ -d "/usr/share/plasma" ]; then _de="kde"
+		elif [ -e "${HOME}/.config/dconf" ] || [ -d "/usr/share/gnome-shell" ] || [ -d "/usr/local/share/gnome-shell" ]; then _de="gnome"
+		elif [ -d "${HOME}/.config/mate" ] || [ -d "/usr/share/mate" ] || [ -d "/usr/local/share/mate" ]; then _de="mate"
+		elif [ -d "${HOME}/.config/cinnamon" ] || [ -d "/usr/share/cinnamon" ] || [ -d "/usr/local/share/cinnamon" ]; then _de="cinnamon"
+		elif [ -d "${HOME}/.config/xfce4" ] || [ -d "/usr/share/xfce4" ] || [ -d "/usr/local/share/xfce4" ]; then _de="xfce"
+		elif [ -d "${HOME}/.config/lxqt" ] || [ -d "/usr/share/lxqt" ] || [ -d "/usr/local/share/lxqt" ]; then _de="lxqt"
+		elif [ -d "${HOME}/.config/cosmic" ] || [ -d "/usr/share/cosmic" ] || [ -d "/usr/local/share/cosmic" ]; then _de="cosmic"
+		else _de="gnome"
+		fi
 	fi
 
 	_icon="Adwaita" _cursor="Adwaita" _blink="1200" _mod="" _snd="" _theme="adw-gtk3-dark"
@@ -161,11 +162,10 @@ _profile_sync() {
 			else
 				_win_onedrive="${_win_home}/OneDrive"
 			fi
-			_win_docs=""
-			for _cand in "${_win_onedrive}/Documents" "${_win_onedrive}/Documentos" "${_win_home}/Documents" "${_win_home}/Documentos"; do
+			_win_docs="${_win_home}/Documents"
+			for _cand in "${_win_onedrive}/Documents" "${_win_onedrive}/Documentos" "${_win_home}/Documentos"; do
 				[ -d "${_cand}" ] && _win_docs="${_cand}" && break
 			done
-			[ -z "${_win_docs}" ] && _win_docs="${_win_home}/Documents"
 			;;
 	esac
 
@@ -192,13 +192,10 @@ _profile_sync() {
 	done
 	_sync "tools/mermaid-puppeteer.json" "${HOME}/.mermaid-puppeteer-config.json"
 	_sync "tools/mermaid-theme.json" "${HOME}/.mermaid-theme-config.json"
-	if [ "${_is_win}" -eq 1 ]; then
-		_sync "tools/clangd.yaml" "${_win_local}/clangd/config.yaml"
-		_sync "tools/ruff.toml" "${_win_app}/ruff/ruff.toml"
-	else
-		_sync "tools/clangd.yaml" "${_cfg}/clangd/config.yaml"
-		_sync "tools/ruff.toml" "${_cfg}/ruff/ruff.toml"
-	fi
+	_clangd_dst="${_cfg}/clangd/config.yaml" && _ruff_dst="${_cfg}/ruff/ruff.toml"
+	[ "${_is_win}" -eq 1 ] && _clangd_dst="${_win_local}/clangd/config.yaml" && _ruff_dst="${_win_app}/ruff/ruff.toml"
+	_sync "tools/clangd.yaml" "${_clangd_dst}"
+	_sync "tools/ruff.toml" "${_ruff_dst}"
 
 	_ui_step "Editores modernos (Zed, VSCode, VSCodium, Antigravity IDE)..."
 	_sync "editors/zed/settings.json" "${_cfg}/zed/settings.json"
@@ -221,6 +218,8 @@ _profile_sync() {
 		for _xr in .Xresources .Xdefaults; do _sync "terminals/xterm/Xresources" "${HOME}/${_xr}"; done
 		_sync "terminals/xterm/xterm.desktop" "${_data}/applications/xterm.desktop"
 		_sync "editors/emacs/emacs.desktop" "${_data}/applications/emacs.desktop"
+		_sync "editors/emacs/emacsclient.desktop" "${_data}/applications/emacsclient.desktop"
+		chmod 0644 "${_data}/applications/emacs.desktop" "${_data}/applications/emacsclient.desktop" 2> "/dev/null" || true
 		command -v update-desktop-database > "/dev/null" 2>&1 && update-desktop-database "${_data}/applications" 2> "/dev/null" || true
 		for _kp in Bash Shell Zsh; do _sync "terminals/konsole/${_kp}.profile" "${_data}/konsole/${_kp}.profile"; done
 		[ -f "${_PROFILE_ROOT}/terminals/terminfo/linux.terminfo" ] && command -v tic > "/dev/null" 2>&1 && tic -o "${HOME}/.terminfo" "${_PROFILE_ROOT}/terminals/terminfo/linux.terminfo" 2> "/dev/null" || true
