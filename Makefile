@@ -55,11 +55,12 @@ test:
 	echo "🧪 Validando sintaxe POSIX dos scripts..."
 	find . -name "*.sh" -not -path "*/.git/*" -exec sh -n {} +
 	echo "🎨 Verificando isolamento do tema GTK do Emacs..."
-	test -f desktop/themes/Emacs-Kanagawa-Dark/gtk-3.0/gtk.css
-	grep -q "@import" desktop/themes/Emacs-Kanagawa-Dark/gtk-3.0/gtk.css
-	grep -q "#1f1f28" desktop/themes/Emacs-Kanagawa-Dark/gtk-3.0/gtk.css
-	! grep -q "#1f1f28" desktop/gtk-3.0/gtk.css
-	! grep -q "#1f1f28" desktop/gtk-4.0/gtk.css
+	test -f desktop/themes/Emacs-Doom-Dark/gtk-3.0/gtk.css
+	grep -q "@import" desktop/themes/Emacs-Doom-Dark/gtk-3.0/gtk.css
+	grep -q "background-image: none" desktop/themes/Emacs-Doom-Dark/gtk-3.0/gtk.css
+	grep -q "#1e1e1e" desktop/themes/Emacs-Doom-Dark/gtk-3.0/gtk.css
+	! grep -q "#1e1e1e" desktop/gtk-3.0/gtk.css
+	! grep -q "#1e1e1e" desktop/gtk-4.0/gtk.css
 	echo "🔍 Verificando ausência de __pycache__ e *.pyc no Profile..."
 	if [ -n "$$(find . -type d -name "__pycache__" -not -path "*/.git/*")" ] || [ -n "$$(find . -type f -name "*.pyc" -not -path "*/.git/*")" ]; then \
 		echo "❌ Erro: __pycache__ ou *.pyc encontrados!"; \

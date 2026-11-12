@@ -228,9 +228,11 @@ _profile_sync() {
 
 	if [ "${_is_win}" -eq 0 ]; then
 		_ui_step "Temas de desktop e toolkits gráficos (GTK 3/4)..."
-		_sync "desktop/gtk-3.0/gtk.css" "${_cfg}/gtk-3.0/gtk.css"
-		_sync "desktop/gtk-4.0/gtk.css" "${_cfg}/gtk-4.0/gtk.css"
-		_sync "desktop/themes/Emacs-Kanagawa-Dark" "${_data}/themes/Emacs-Kanagawa-Dark"
+		_sync "desktop/gtk-3.0/gtk.css" "${_cfg}/gtk-3.0/gtk.css" && _sync "desktop/gtk-4.0/gtk.css" "${_cfg}/gtk-4.0/gtk.css"
+		_sync "desktop/themes/Emacs-Doom-Dark" "${_data}/themes/Emacs-Doom-Dark"
+		[ ! -e "${_data}/themes/Emacs-Kanagawa-Dark" ] && ln -sf "${_data}/themes/Emacs-Doom-Dark" "${_data}/themes/Emacs-Kanagawa-Dark" 2> "/dev/null" || true
+		mkdir -p "${HOME}/.themes" 2> "/dev/null" || true
+		[ ! -e "${HOME}/.themes/Emacs-Doom-Dark" ] && ln -sf "${_data}/themes/Emacs-Doom-Dark" "${HOME}/.themes/Emacs-Doom-Dark" 2> "/dev/null" || true
 		_sync_gtk_de_profile
 		mkdir -p "${_data}/themes"
 		[ -d "/usr/share/themes/adw-gtk3-dark" ] && [ ! -e "${_data}/themes/Adwaita-dark" ] && ln -sf /usr/share/themes/adw-gtk3-dark "${_data}/themes/Adwaita-dark" 2> "/dev/null" || true
