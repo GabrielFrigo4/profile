@@ -10,67 +10,63 @@
 @define-color theme_unfocused_text_color #d4d4d4;
 
 window,
+window:backdrop,
 window.background,
-menubar,
-.menubar,
-menubar > menuitem,
-.menubar > menuitem,
-menu,
-.menu,
-context-menu,
-.context-menu,
-menuitem,
-.menuitem,
-popover,
-scrollbar,
-scrollbar trough,
-scrollbar slider,
-window:backdrop,
 window.background:backdrop,
+menubar,
 menubar:backdrop,
+.menubar,
 .menubar:backdrop,
+menubar > menuitem,
 menubar:backdrop > menuitem,
-.menubar:backdrop > menuitem,
 menubar > menuitem:backdrop,
+.menubar > menuitem,
+.menubar:backdrop > menuitem,
+menu,
 menu:backdrop,
+.menu,
 .menu:backdrop,
+context-menu,
+context-menu:backdrop,
+.context-menu,
+.context-menu:backdrop,
+menuitem,
 menuitem:backdrop,
+.menuitem,
 .menuitem:backdrop,
+popover,
+popover:backdrop,
+scrollbar,
 scrollbar:backdrop,
+scrollbar trough,
 scrollbar:backdrop trough,
+scrollbar slider,
 scrollbar:backdrop slider {
-	background-image: none !important;
-	box-shadow: none !important;
+	background-image: none;
+	box-shadow: none;
 }
 
+window,
 window:backdrop,
+window.background,
 window.background:backdrop {
-	background-color: #1e1e1e !important;
-	color: #d4d4d4 !important;
+	background-color: #1e1e1e;
+	color: #d4d4d4;
 }
 
 scrollbar,
-scrollbar trough {
+scrollbar:backdrop,
+scrollbar trough,
+scrollbar:backdrop trough {
 	background-color: #1e1e1e;
 	border: none;
 }
 
-scrollbar:backdrop,
-scrollbar:backdrop trough {
-	background-color: #1e1e1e !important;
-	border: none !important;
-}
-
-scrollbar slider {
+scrollbar slider,
+scrollbar:backdrop slider {
 	background-color: #333333;
 	border-radius: 4px;
 	border: 2px solid #1e1e1e;
-}
-
-scrollbar:backdrop slider {
-	background-color: #333333 !important;
-	border-radius: 4px;
-	border: 2px solid #1e1e1e !important;
 }
 
 scrollbar slider:hover {
@@ -82,25 +78,28 @@ scrollbar slider:active {
 }
 
 menubar,
-.menubar {
+menubar:backdrop,
+.menubar,
+.menubar:backdrop {
 	background-color: #1e1e1e;
 	color: #d4d4d4;
 	border: none;
 }
 
-menubar:backdrop,
-.menubar:backdrop,
+menubar > menuitem,
 menubar:backdrop > menuitem,
-.menubar:backdrop > menuitem,
-menubar > menuitem:backdrop {
-	background-color: #1e1e1e !important;
-	color: #d4d4d4 !important;
-	border: none !important;
+menubar > menuitem:backdrop,
+.menubar > menuitem,
+.menubar:backdrop > menuitem {
+	background-color: #1e1e1e;
+	color: #d4d4d4;
+	border: none;
 }
 
+menubar > menuitem > label,
 menubar:backdrop > menuitem > label,
 menubar > menuitem:backdrop > label {
-	color: #d4d4d4 !important;
+	color: #d4d4d4;
 }
 
 menubar > menuitem:hover,
@@ -110,29 +109,25 @@ menubar > menuitem:hover,
 }
 
 menu,
+menu:backdrop,
 .menu,
+.menu:backdrop,
 context-menu,
-.context-menu {
+context-menu:backdrop,
+.context-menu,
+.context-menu:backdrop,
+popover,
+popover:backdrop {
 	background-color: #252526;
 	color: #d4d4d4;
 	border: 1px solid #37373d;
 }
 
-menu:backdrop,
-.menu:backdrop {
-	background-color: #252526 !important;
-	color: #d4d4d4 !important;
-	border: 1px solid #37373d !important;
-}
-
 menuitem,
-.menuitem {
-	color: #d4d4d4;
-}
-
 menuitem:backdrop,
+.menuitem,
 .menuitem:backdrop {
-	color: #d4d4d4 !important;
+	color: #d4d4d4;
 }
 
 menuitem:hover,
