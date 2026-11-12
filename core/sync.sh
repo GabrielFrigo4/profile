@@ -93,13 +93,18 @@ _sync_gtk_de_profile() {
 		fi
 	fi
 
-	_icon="Adwaita" _cursor="Adwaita" _blink="1200" _mod="" _snd="" _theme="adw-gtk3-dark"
+	_icon="Adwaita" _cursor="Adwaita" _blink="1200" _mod="" _snd="" _theme="Adwaita-dark"
 	case "${_de}" in
-		kde)    _icon="breeze-dark" _cursor="breeze_cursors" _blink="1000" _mod="colorreload-gtk-module" _snd="ocean" _theme="Breeze-Dark" ;;
-		lxqt)   _icon="breeze-dark" _cursor="breeze_cursors" _theme="Breeze-Dark" ;;
-		cosmic) { [ -d "/usr/share/icons/Cosmic" ] || [ -d "/usr/local/share/icons/Cosmic" ]; } && _icon="Cosmic" ;;
-		*)      [ ! -d "/usr/share/icons/Adwaita" ] && [ ! -d "/usr/local/share/icons/Adwaita" ] && [ ! -d "${HOME}/.local/share/icons/Adwaita" ] && [ ! -d "${HOME}/.icons/Adwaita" ] && _icon="breeze-dark" ;;
+		kde)      _icon="breeze-dark" _cursor="breeze_cursors" _blink="1000" _mod="colorreload-gtk-module" _snd="ocean" _theme="Breeze-Dark" ;;
+		lxqt)     _icon="breeze-dark" _cursor="breeze_cursors" _theme="Breeze-Dark" ;;
+		cinnamon) _theme="Mint-Y-Dark" ;;
+		mate)     _theme="Yaru-MATE-dark" ;;
+		xfce)     _theme="Greybird-dark" ;;
+		cosmic)   _theme="cosmic-dark"; { [ -d "/usr/share/icons/Cosmic" ] || [ -d "/usr/local/share/icons/Cosmic" ]; } && _icon="Cosmic" ;;
+		gnome)    _theme="Adwaita-dark" ;;
 	esac
+	[ "${_theme}" = "Adwaita-dark" ] && [ ! -d "/usr/share/themes/Adwaita-dark" ] && [ -d "/usr/share/themes/adw-gtk3-dark" ] && _theme="adw-gtk3-dark"
+	[ "${_icon}" = "Adwaita" ] && [ ! -d "/usr/share/icons/Adwaita" ] && [ ! -d "/usr/local/share/icons/Adwaita" ] && [ ! -d "${HOME}/.local/share/icons/Adwaita" ] && [ ! -d "${HOME}/.icons/Adwaita" ] && _icon="breeze-dark"
 
 	[ "${_mode}" = "pull" ] && return 0
 
@@ -194,8 +199,7 @@ _profile_sync() {
 	_sync "tools/mermaid-theme.json" "${HOME}/.mermaid-theme-config.json"
 	_clangd_dst="${_cfg}/clangd/config.yaml" && _ruff_dst="${_cfg}/ruff/ruff.toml"
 	[ "${_is_win}" -eq 1 ] && _clangd_dst="${_win_local}/clangd/config.yaml" && _ruff_dst="${_win_app}/ruff/ruff.toml"
-	_sync "tools/clangd.yaml" "${_clangd_dst}"
-	_sync "tools/ruff.toml" "${_ruff_dst}"
+	_sync "tools/clangd.yaml" "${_clangd_dst}" && _sync "tools/ruff.toml" "${_ruff_dst}"
 
 	_ui_step "Editores modernos (Zed, VSCode, VSCodium, Antigravity IDE)..."
 	_sync "editors/zed/settings.json" "${_cfg}/zed/settings.json"
@@ -203,22 +207,18 @@ _profile_sync() {
 	[ "${_is_win}" -eq 1 ] && _ed_dir="${_win_app}"
 	_sync "editors/vscode/settings.json" "${_ed_dir}/Code/User/settings.json"
 	[ "${_os_type}" != "Darwin" ] && [ "${_is_win}" -eq 0 ] && _sync "editors/vscode/settings.json" "${_cfg}/Code - OSS/User/settings.json"
-	_sync "editors/vscodium/settings.json" "${_ed_dir}/VSCodium/User/settings.json"
-	_sync "editors/antigravity/settings.json" "${_ed_dir}/Antigravity IDE/User/settings.json"
+	_sync "editors/vscodium/settings.json" "${_ed_dir}/VSCodium/User/settings.json" && _sync "editors/antigravity/settings.json" "${_ed_dir}/Antigravity IDE/User/settings.json"
 
 	_ui_step "Emuladores de terminal e multiplexadores..."
-	_sync "terminals/tmux/tmux.conf" "${_cfg}/tmux/tmux.conf"
-	_sync "terminals/tmux/tmux.conf" "${HOME}/.tmux.conf"
+	_sync "terminals/tmux/tmux.conf" "${_cfg}/tmux/tmux.conf" && _sync "terminals/tmux/tmux.conf" "${HOME}/.tmux.conf"
 	if [ "${_is_win}" -eq 1 ]; then
 		_sync "terminals/windows-terminal/settings.json" "${_win_local}/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json"
 		_sync "terminals/zellij/config.kdl" "${_win_app}/zellij/config.kdl"
 	else
-		_sync "terminals/zellij/config.kdl" "${_cfg}/zellij/config.kdl"
-		_sync "terminals/foot/foot.ini" "${_cfg}/foot/foot.ini"
+		_sync "terminals/zellij/config.kdl" "${_cfg}/zellij/config.kdl" && _sync "terminals/foot/foot.ini" "${_cfg}/foot/foot.ini"
 		for _xr in .Xresources .Xdefaults; do _sync "terminals/xterm/Xresources" "${HOME}/${_xr}"; done
 		_sync "terminals/xterm/xterm.desktop" "${_data}/applications/xterm.desktop"
-		_sync "editors/emacs/emacs.desktop" "${_data}/applications/emacs.desktop"
-		_sync "editors/emacs/emacsclient.desktop" "${_data}/applications/emacsclient.desktop"
+		_sync "editors/emacs/emacs.desktop" "${_data}/applications/emacs.desktop" && _sync "editors/emacs/emacsclient.desktop" "${_data}/applications/emacsclient.desktop"
 		chmod 0644 "${_data}/applications/emacs.desktop" "${_data}/applications/emacsclient.desktop" 2> "/dev/null" || true
 		command -v update-desktop-database > "/dev/null" 2>&1 && update-desktop-database "${_data}/applications" 2> "/dev/null" || true
 		for _kp in Bash Shell Zsh; do _sync "terminals/konsole/${_kp}.profile" "${_data}/konsole/${_kp}.profile"; done
@@ -230,17 +230,16 @@ _profile_sync() {
 		_ui_step "Temas de desktop e toolkits gráficos (GTK 3/4)..."
 		_sync "desktop/gtk-3.0/gtk.css" "${_cfg}/gtk-3.0/gtk.css"
 		_sync "desktop/gtk-4.0/gtk.css" "${_cfg}/gtk-4.0/gtk.css"
+		_sync "desktop/themes/Emacs-Kanagawa-Dark" "${_data}/themes/Emacs-Kanagawa-Dark"
 		_sync_gtk_de_profile
 		mkdir -p "${_data}/themes"
 		[ -d "/usr/share/themes/adw-gtk3-dark" ] && [ ! -e "${_data}/themes/Adwaita-dark" ] && ln -sf /usr/share/themes/adw-gtk3-dark "${_data}/themes/Adwaita-dark" 2> "/dev/null" || true
 	fi
 
 	_ui_step "Agentes de IA (Skills & Rules para Antigravity & Gemini)..."
-	_sync "agents/skills" "${HOME}/.gemini/config/skills"
-	_sync "agents/rules" "${HOME}/.gemini/config/rules"
+	_sync "agents/skills" "${HOME}/.gemini/config/skills" && _sync "agents/rules" "${HOME}/.gemini/config/rules"
 	if [ "${_is_win}" -eq 1 ] && [ "${_win_home}" != "${HOME}" ]; then
-		_sync "agents/skills" "${_win_home}/.gemini/config/skills"
-		_sync "agents/rules" "${_win_home}/.gemini/config/rules"
+		_sync "agents/skills" "${_win_home}/.gemini/config/skills" && _sync "agents/rules" "${_win_home}/.gemini/config/rules"
 	fi
 
 	if [ "${_with_ext}" -eq 1 ] && command -v _profile_extensions > "/dev/null" 2>&1; then

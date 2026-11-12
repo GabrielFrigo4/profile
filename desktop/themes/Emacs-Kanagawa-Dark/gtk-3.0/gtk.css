@@ -1,0 +1,46 @@
+@import url("resource:///org/gtk/libgtk/theme/Adwaita/gtk-contained-dark.css");
+
+scrollbar,
+scrollbar trough {
+	background-color: #1f1f28;
+	border: none;
+}
+
+scrollbar slider {
+	background-color: #363646;
+	border-radius: 4px;
+	border: 2px solid #1f1f28;
+}
+
+scrollbar slider:hover {
+	background-color: #54546d;
+}
+
+scrollbar slider:active {
+	background-color: #7e9cd8;
+}
+
+menubar,
+.menubar {
+	background-color: #1f1f28;
+	color: #dcd7ba;
+	border: none;
+}
+
+menu,
+.menu {
+	background-color: #1f1f28;
+	color: #dcd7ba;
+	border: 1px solid #2a2a37;
+}
+
+menuitem,
+.menuitem {
+	color: #dcd7ba;
+}
+
+menuitem:hover,
+.menuitem:hover {
+	background-color: #2d4f67;
+	color: #c8c093;
+}

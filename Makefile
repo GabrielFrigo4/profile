@@ -46,7 +46,7 @@ hooks:
 ### ================================
 audit:
 	echo "🔍 Executando suíte de auditoria do Profile..."
-	python3 .scripts/audit/all.py
+	PYTHONPYCACHEPREFIX="$${PYTHONPYCACHEPREFIX:-$$HOME/.cache/pycache}" PYTHONDONTWRITEBYTECODE=1 python3 .scripts/audit/all.py
 
 sync:
 	sh profile.sh sync
@@ -54,7 +54,18 @@ sync:
 test:
 	echo "🧪 Validando sintaxe POSIX dos scripts..."
 	find . -name "*.sh" -not -path "*/.git/*" -exec sh -n {} +
-	echo "✅ Todos os scripts do Profile são válidos!"
+	echo "🎨 Verificando isolamento do tema GTK do Emacs..."
+	test -f desktop/themes/Emacs-Kanagawa-Dark/gtk-3.0/gtk.css
+	grep -q "@import" desktop/themes/Emacs-Kanagawa-Dark/gtk-3.0/gtk.css
+	grep -q "#1f1f28" desktop/themes/Emacs-Kanagawa-Dark/gtk-3.0/gtk.css
+	! grep -q "#1f1f28" desktop/gtk-3.0/gtk.css
+	! grep -q "#1f1f28" desktop/gtk-4.0/gtk.css
+	echo "🔍 Verificando ausência de __pycache__ e *.pyc no Profile..."
+	if [ -n "$$(find . -type d -name "__pycache__" -not -path "*/.git/*")" ] || [ -n "$$(find . -type f -name "*.pyc" -not -path "*/.git/*")" ]; then \
+		echo "❌ Erro: __pycache__ ou *.pyc encontrados!"; \
+		exit 1; \
+	fi
+	echo "✅ Todos os testes do Profile foram aprovados!"
 
 format: prettier
 	echo "✅ Formatação concluída!"
@@ -77,7 +88,7 @@ prettier:
 
 fix-banners:
 	echo "📏 Normalizando réguas de banners de cabeçalho e seções..."
-	python3 .scripts/audit/banners.py --fix
+	PYTHONPYCACHEPREFIX="$${PYTHONPYCACHEPREFIX:-$$HOME/.cache/pycache}" PYTHONDONTWRITEBYTECODE=1 python3 .scripts/audit/banners.py --fix
 	echo "✅ Réguas de banners normalizadas com sucesso!"
 
 ci: test audit
