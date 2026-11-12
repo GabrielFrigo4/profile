@@ -1,14 +1,14 @@
 ---
 name: argos-adversarial-crucible
 description: >-
-    Runbook cognitivo para o Master Orchestrator (GM Argos ou Flash Master) orquestrar
+    Runbook cognitivo para o Master Orchestrator (Planner Agent) orquestrar
     verificação adversarial red-team versus blue-team com sub-agentes efêmeros,
     geradores de casos de borda extremos, injeção de falhas e compilação com sanitizers.
 ---
 
 # ⚔️ Crisol Adversarial Red-Team / Blue-Team
 
-Diretrizes operacionais para o **Master Orchestrator** (seja o **GM Argos** ou um **Flash Master**) instanciar células assimétricas de verificação de código, onde a aprovação de uma funcionalidade exige sobrevivência ao fogo cruzado entre construtores e atacantes automatizados.
+Diretrizes operacionais para o **Master Orchestrator** (_Planner Agent_) instanciar células assimétricas de verificação de código com **Specialist Sub-Agents** (_Execution Workers_) e **Adversarial Verifiers** (_QA Agents_), onde a aprovação de uma funcionalidade exige sobrevivência ao fogo cruzado entre construtores e atacantes automatizados.
 
 ---
 
@@ -16,22 +16,22 @@ Diretrizes operacionais para o **Master Orchestrator** (seja o **GM Argos** ou u
 
 A célula adversarial opera dividindo o pool de workers efêmeros (entre 2 e 8 agentes simultâneos, média 4) em três papéis isolados por diretório:
 
-1. **Workers 1 e 2 — Blue Team (Builders):**
+1. **Workers 1 e 2 — Blue Team (Execution Workers / Builders):**
     - **Escopo Exclusivo:** `src/` (ou caminho equivalente de código de produção).
     - **Missão:** Implementar a funcionalidade solicitada conforme a especificação arquitetural, tipos canônicos e contratos de interface.
     - **Restrição:** Não possuem acesso de leitura ou escrita a `tests/adversarial/`.
-2. **Workers 3 e 4 — Red Team (Breakers):**
+2. **Workers 3 e 4 — Red Team (Adversarial Verifiers / Breakers):**
     - **Escopo Exclusivo:** `tests/adversarial/` (ou suíte hostil isolada).
     - **Missão:** Ler exclusivamente especificações e cabeçalhos públicos (`include/`, schemas de API), gerando baterias de testes de estresse, casos patológicos, estouro de inteiros, limites de buffer e entradas malformadas.
     - **Restrição:** Proibido ler a implementação do Blue Team e proibido alterar `src/`.
-3. **Worker 5 — Inquisitor (Harness & Verificador):**
+3. **Worker 5 — Inquisitor (QA Agent / Verificador):**
     - **Escopo Exclusivo:** `Makefile` e rotinas de orquestração de testes.
     - **Missão:** Compilar a implementação com sanitizers ativos (`-fsanitize=address,undefined`) e rodar os testes hostis, coletando logs brutos de erro e métricas.
 
 ### Gradiente de Modelos & Invariante de Spawn
 
-- **Padrão Mandatório:** Todos os workers operam com modelo Flash (`Model: 'flash'`). É proibido omitir o parâmetro na chamada `invoke_subagent` para prevenir herança acidental de `inherit`.
-- **Escalação Cirúrgica (Exceção de Alta Densidade):** Em módulos de alta criticidade (criptografia, arenas de memória), o Master pode alocar no máximo **1 Worker** avançado (`Model: 'pro'`) no papel de Red Team ou Inquisitor para formular vetores de ataque matemáticos. O teardown deve ser imediato pós-entrega.
+- **Herança Dinâmica de Modelo:** Todos os workers operam com `Model: 'inherit'` na chamada `invoke_subagent` para paridade com o modelo ativo da sessão (ou tier rápido nativo do runtime, sem hardcode de versão ou tier).
+- **Escalação Cirúrgica (Exceção de Alta Densidade):** Em módulos de alta criticidade (criptografia, arenas de memória), o Master pode alocar no máximo **1 Adversarial Verifier** com capacidade estendida para formular vetores de ataque matemáticos, mantendo o restante da célula em paridade padrão e com teardown imediato pós-entrega.
 - **Interdição de Swarm e Cron:** A célula opera via subagentes privados. É vedado o uso da tool `swarm` e de polling periódico via `schedule`.
 
 ---
@@ -40,7 +40,7 @@ A célula adversarial opera dividindo o pool de workers efêmeros (entre 2 e 8 a
 
 O fluxo adversarial opera em quatro tempos rigorosos:
 
-1. **Geração Paralela:** O Master despacha o Blue Team para construir e o Red Team para atacar simultaneamente em seus diretórios disjuntos com `Model: 'flash'`.
+1. **Geração Paralela:** O Master despacha o Blue Team (_Execution Workers_) para construir e o Red Team (_Adversarial Verifiers_) para atacar simultaneamente em seus diretórios disjuntos com `Model: 'inherit'`.
 2. **Execução pelo Inquisitor:** O Inquisitor compila o código do Blue Team contra os testes do Red Team.
 3. **Auditoria de Danos:**
     - **Aprovação:** Todos os testes passam sem segfaults, memory leaks, panics ou violações de sanitizer (exit code `0`).
@@ -59,19 +59,19 @@ O fluxo adversarial opera em quatro tempos rigorosos:
 
 ## ⚖️ 4. Diretrizes Imperativas (DOs & DON'Ts)
 
-| Prática   | Diretiva Operacional                                                                   |
-| :-------- | :------------------------------------------------------------------------------------- |
-| **DO**    | Restrinja o Blue Team estritamente ao diretório de produção (`src/`).                  |
-| **DO**    | Declare explicitamente `"Model": "flash"` no payload JSON de cada `invoke_subagent`.   |
-| **DO**    | Restrinja workers `pro` a no máximo 1 instância cirúrgica, com teardown imediato.      |
-| **DO**    | Utilize compiladores e executáveis com sanitizers ativos (`ASan`, `UBSan`) no harness. |
-| **DO**    | Promova os testes adversariais aprovados a testes permanentes de regressão.            |
-| **DON'T** | Não omita o argumento de modelo na chamada da tool (evitando fallback para `inherit`). |
-| **DON'T** | Não use `swarm` nativo ou monitoramento via cron (`schedule`).                         |
-| **DON'T** | Não permita que o Red Team edite código de produção para facilitar o teste.            |
-| **DON'T** | Não permita que o Blue Team veja os testes hostis antes da primeira compilação.        |
-| **DON'T** | Não aceite aprovações baseadas em soft review sem execução real com exit code `0`.     |
-| **DON'T** | Não ultrapasse 2 retries corretivos se uma falha estrutural for detectada.             |
+| Prática   | Diretiva Operacional                                                                                |
+| :-------- | :-------------------------------------------------------------------------------------------------- |
+| **DO**    | Restrinja o Blue Team estritamente ao diretório de produção (`src/`).                               |
+| **DO**    | Declare `Model: 'inherit'` (ou tier rápido nativo do runtime) no payload JSON de `invoke_subagent`. |
+| **DO**    | Restrinja escalações de capacidade a no máximo 1 instância cirúrgica, com teardown imediato.        |
+| **DO**    | Utilize compiladores e executáveis com sanitizers ativos (`ASan`, `UBSan`) no harness.              |
+| **DO**    | Promova os testes adversariais aprovados a testes permanentes de regressão.                         |
+| **DON'T** | Não faça hardcode de nomes, versões ou tiers específicos de modelo na chamada da tool.              |
+| **DON'T** | Não use `swarm` nativo ou monitoramento via cron (`schedule`).                                      |
+| **DON'T** | Não permita que o Red Team edite código de produção para facilitar o teste.                         |
+| **DON'T** | Não permita que o Blue Team veja os testes hostis antes da primeira compilação.                     |
+| **DON'T** | Não aceite aprovações baseadas em soft review sem execução real com exit code `0`.                  |
+| **DON'T** | Não ultrapasse 2 retries corretivos se uma falha estrutural for detectada.                          |
 
 ---
 
@@ -81,7 +81,7 @@ O fluxo adversarial opera em quatro tempos rigorosos:
 ### PROTOCOLO DE COMBATE ADVERSARIAL [CRUCIBLE-ID]
 
 - **Alvo:** [Módulo / Função sob verificação estrita]
-- **Modelo da Tool:** flash (parâmetro obrigatório na tool invoke_subagent)
+- **Alocação de Modelo:** inherit (herança dinâmica do modelo ativo da sessão ou tier rápido nativo)
 - **Blue Team (Workers 1-2):** `src/caminho/do/modulo.ext`
 - **Red Team (Workers 3-4):** `tests/adversarial/test_modulo.ext`
 - **Inquisitor (Worker 5):** `make test-adversarial SANITIZE=1`

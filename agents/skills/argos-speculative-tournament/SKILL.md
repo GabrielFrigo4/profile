@@ -1,14 +1,14 @@
 ---
 name: argos-speculative-tournament
 description: >-
-    Runbook cognitivo para o Master Orchestrator (GM Argos ou Flash Master) orquestrar
+    Runbook cognitivo para o Master Orchestrator (Planner Agent) orquestrar
     torneios especulativos de N-versões algorítmicas concorrentes em worktrees Git isoladas,
     avaliando latência, consumo de memória e convergência via benchmarks automatizados.
 ---
 
 # 🏆 Torneio Especulativo N-Versões
 
-Diretrizes operacionais para o **Master Orchestrator** (seja o **GM Argos** ou um **Flash Master**) disparar competições paralelas de soluções algorítmicas divergentes em worktrees isoladas, selecionando a implementação ótima com base em métricas empíricas determinísticas.
+Diretrizes operacionais para o **Master Orchestrator** (_Planner Agent_) disparar competições paralelas de soluções algorítmicas divergentes em worktrees isoladas com **Specialist Sub-Agents** (_Execution Workers_), selecionando a implementação ótima com base em métricas empíricas determinísticas.
 
 ---
 
@@ -16,7 +16,7 @@ Diretrizes operacionais para o **Master Orchestrator** (seja o **GM Argos** ou u
 
 Quando uma tarefa envolve alta incerteza heurística (ex.: otimização de solver, redução de frame-time gráfico ou layout de grafos), tentar uma única linha de raciocínio é subótimo.
 
-O Master despacha de **2 a 8 Workers concorrentes** (média 4, com paridade mandatória em `Model: 'flash'`), cada um restrito a uma hipótese algorítmica independente e disjunta:
+O Master despacha de **2 a 8 Execution Workers concorrentes** (média 4, com paridade mandatória via Herança Dinâmica `Model: 'inherit'`), cada um restrito a uma hipótese algorítmica independente e disjunta:
 
 1. **Worker 1 (Candidato A):** Abordagem Gulosa Otimizada ou Heurística Construtiva rápida (ex.: Greedy + 2-opt).
 2. **Worker 2 (Candidato B):** Metaheurística Estocástica (ex.: Simulated Annealing / Tabu Search com seed fixa).
@@ -43,9 +43,9 @@ Para prevenir qualquer contaminação de workspace entre competidores:
 
 ## ⚡ 3. Governança de Spawn & Invariante de Modelo
 
-- **Bind Explícito de Modelo:** Em cada invocação `invoke_subagent`, passe obrigatoriamente `"Model": "flash"` (ou `"flash_lite"`). Jamais omita o parâmetro de modelo (evitando fallback para `inherit`).
+- **Herança Dinâmica de Modelo:** Em cada invocação `invoke_subagent`, utilize `Model: 'inherit'` para manter paridade com o modelo ativo da sessão (ou o tier rápido nativo do runtime, sem hardcode de versão ou tier).
 - **Interdição de Swarm e Cron:** O torneio utiliza subagentes isolados ponto a ponto. Não use a ferramenta `swarm` nem cron via `schedule`.
-- **Exceção de Modelo Avançado:** É permitido testar no máximo 1 candidato em modelo pesado (`Model: 'pro'`) se a hipótese envolver formulação matemática não-trivial. Múltiplos workers pesados concorrentes são vedados.
+- **Escalação Seletiva:** Caso uma hipótese envolva formulação matemática não-trivial, restrinja eventual alocação de capacidade superior a no máximo 1 candidato por lote, mantendo os demais em paridade padrão.
 
 ---
 
@@ -68,11 +68,11 @@ Com todas as implementações entregues, o Master executa a suíte de avaliaçã
 | Prática   | Diretiva Operacional                                                                         |
 | :-------- | :------------------------------------------------------------------------------------------- |
 | **DO**    | Isole cada competidor em uma worktree Git própria (`git worktree add`).                      |
-| **DO**    | Declare explicitamente `"Model": "flash"` no payload JSON de cada `invoke_subagent`.         |
+| **DO**    | Declare `Model: 'inherit'` (ou tier rápido nativo do runtime) em cada `invoke_subagent`.     |
 | **DO**    | Exija rigorosa igualdade de assinaturas e formatos de entrada e saída.                       |
 | **DO**    | Julgue os candidatos via baterias objetivas com dados reais e casos extremos.                |
 | **DO**    | Descarte sumariamente branches derrotadas após a consagração do vencedor.                    |
-| **DON'T** | Não omita o argumento de modelo na chamada da tool.                                          |
+| **DON'T** | Não faça hardcode de nomes, versões ou tiers específicos de modelo na chamada da tool.       |
 | **DON'T** | Não use `swarm` nativo ou monitoramento periódico via `schedule`.                            |
 | **DON'T** | Não permita que um concorrente consulte o código ou algoritmo de outro competidor.           |
 | **DON'T** | Não escolha vencedores baseado em estilo narrativo; decida por dados empíricos de benchmark. |
@@ -88,7 +88,7 @@ Com todas as implementações entregues, o Master executa a suíte de avaliaçã
 - **Problema Algorítmico:** [Descrição da função ou gargalo a ser superado]
 - **Interface Requerida:** `include/solver_interface.h`
 - **Candidato Alocado:** [Nome da Heurística / Abordagem atribuída ao Worker]
-- **Modelo da Tool:** flash (parâmetro obrigatório na tool invoke_subagent)
+- **Alocação de Modelo:** inherit (herança dinâmica do modelo ativo da sessão ou tier rápido nativo)
 - **Workspace Autorizado:** `.worktrees/cand-[ID]/`
 - **Circuit Breaker:** Teto de 20 chamadas de ferramenta; interrompa em caso de falha de ambiente.
 - **Métricas Alvo:** [Latência < 5ms, heap zero alocações dinâmicas]
