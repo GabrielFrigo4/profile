@@ -92,10 +92,10 @@ _sync_gtk_de_profile() {
 		[ -z "${_de}" ] && _de="gnome"
 	fi
 
-	_icon="Adwaita" _cursor="Adwaita" _blink="1200" _mod="" _snd=""
+	_icon="Adwaita" _cursor="Adwaita" _blink="1200" _mod="" _snd="" _theme="adw-gtk3-dark"
 	case "${_de}" in
-		kde)    _icon="breeze-dark" _cursor="breeze_cursors" _blink="1000" _mod="colorreload-gtk-module" _snd="ocean" ;;
-		lxqt)   _icon="breeze-dark" _cursor="breeze_cursors" ;;
+		kde)    _icon="breeze-dark" _cursor="breeze_cursors" _blink="1000" _mod="colorreload-gtk-module" _snd="ocean" _theme="Breeze-Dark" ;;
+		lxqt)   _icon="breeze-dark" _cursor="breeze_cursors" _theme="Breeze-Dark" ;;
 		cosmic) { [ -d "/usr/share/icons/Cosmic" ] || [ -d "/usr/local/share/icons/Cosmic" ]; } && _icon="Cosmic" ;;
 		*)      [ ! -d "/usr/share/icons/Adwaita" ] && [ ! -d "/usr/local/share/icons/Adwaita" ] && [ ! -d "${HOME}/.local/share/icons/Adwaita" ] && [ ! -d "${HOME}/.icons/Adwaita" ] && _icon="breeze-dark" ;;
 	esac
@@ -118,10 +118,12 @@ _sync_gtk_de_profile() {
 		fi
 
 		mkdir -p "${_rt_dir}" "$(dirname "${_target_link}")"
-		awk -v icon="${_icon}" -v cursor="${_cursor}" -v blink="${_blink}" -v mod="${_mod}" -v snd="${_snd}" -v v="${_v}" '
+		awk -v icon="${_icon}" -v cursor="${_cursor}" -v blink="${_blink}" -v mod="${_mod}" -v snd="${_snd}" -v theme="${_theme}" -v v="${_v}" '
 			/^gtk-icon-theme-name=/ { print "gtk-icon-theme-name=" icon; next }
 			/^gtk-cursor-theme-name=/ { print "gtk-cursor-theme-name=" cursor; next }
 			/^gtk-cursor-blink-time=/ { print "gtk-cursor-blink-time=" blink; next }
+			/^gtk-theme-name=/ { print "gtk-theme-name=" theme; next }
+			/^gtk-application-prefer-dark-theme=/ { print "gtk-application-prefer-dark-theme=1"; next }
 			/^gtk-modules=/ { next }
 			/^gtk-sound-theme-name=/ { next }
 			/^gtk-menu-images=/ { print $0; if (v == "3.0" && mod != "") print "gtk-modules=" mod; next }
