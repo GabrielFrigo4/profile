@@ -81,6 +81,12 @@
 				"hidden": false,
 				"icon": "C:\\Program Files (x86)\\clink\\clink_gold.ico",
 				"name": "VMWare"
+			},
+			{
+				"guid": "{5fb123f1-af88-5b5c-8953-d14a8def1978}",
+				"hidden": false,
+				"name": "PowerShell 7",
+				"source": "Windows.Terminal.PowershellCore"
 			}
 		]
 	},
