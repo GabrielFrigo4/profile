@@ -1,59 +1,40 @@
-# Universal Profile — Engineering Rules & Constraints
+---
+description: Regra canônica com os 22 princípios soberanos de engenharia e diretrizes operacionais.
+globs: "**/*"
+always_on: true
+---
 
-Essas diretrizes são de aplicação obrigatória para qualquer modificação ou extensão neste repositório (`Profile`).
+# 📜 Princípios Soberanos de Engenharia & Diretrizes Canônicas
 
-> 🏛️ **Hub Orquestrador:** Este repositório faz parte do [Quarteto de Produtividade](https://github.com/GabrielFrigo4/environment), orquestrado pelo repositório **Environment**. Consulte o `ENVIRONMENT.md` e `PRINCIPLES.md` canônicos na raiz do Environment para a arquitetura completa.
+Todo trabalho de engenharia e desenvolvimento neste repositório obedece rigorosamente aos 22 Princípios de Engenharia (17 Princípios UNIX de Eric S. Raymond + 5 Regras de Soberania & Antifragilidade).
 
-## 1. Zero Privilégios Administrativos (Zero-Sudo)
+## 🏛️ Os 22 Princípios de Design
 
-- Todo dotfile, configuração e automação DEVE operar exclusivamente no espaço do usuário comum (`$HOME` / `~/.config/`).
-- NUNCA introduza comandos que exijam `sudo`, `doas` ou privilégios de sistema; tarefas de máquina pertencem exclusivamente ao repositório `Setup`.
+1. **Modularidade:** Partes simples conectadas por interfaces limpas.
+2. **Clareza:** Clareza é melhor que esperteza; legibilidade sobre truques crípticos.
+3. **Composição:** Projete programas para serem conectados a outros programas.
+4. **Separação:** Separe política do mecanismo; separe o motor da interface.
+5. **Simplicidade:** Projete para a simplicidade; adicione complexidade apenas onde estritamente necessário.
+6. **Parcimônia:** Escreva código grande apenas quando demonstrado que nada menor resolverá.
+7. **Transparência:** Projete para visibilidade facilitando inspeção e auditoria.
+8. **Robustez:** Robustez advém da simplicidade e da validação defensiva de invariantes.
+9. **Representação:** Dobre conhecimento em dados/estruturas antes de espalhar lógica condicional.
+10. **Menor Espanto:** Siga sempre as convenções canônicas menos surpreendentes da plataforma.
+11. **Silêncio:** Programas devem executar quietos no sucesso, reportando apenas falhas reais.
+12. **Reparo:** Falhe ruidosamente e o mais rápido possível (fail-fast).
+13. **Economia:** Economize o tempo humano de engenharia em preferência ao tempo de máquina.
+14. **Geração:** Evite código mecânico e repetitivo; automatize scaffolds e templates.
+15. **Otimização:** Meça antes de otimizar; nunca sacrifique clareza por micro-otimizações precoces.
+16. **Diversidade:** Desconfie de visões absolutistas; forneça interoperabilidade e portabilidade.
+17. **Extensibilidade:** Projete para o futuro reconhecendo que os requisitos irão evoluir.
+18. **Soberania do Usuário:** Infraestrutura e dados pertencem ao criador; repatrie dependências de nuvem e serviços proprietários.
+19. **Autonomia Reentrante:** Toda operação deve ser idempotente, auto-recuperável e executável repetidamente sem efeitos colaterais.
+20. **Hermetismo de Produção:** Deleção de `.agents/` e governança de IA não interfere em nenhum artefato de build ou execução de produção (`rm -rf .agents`).
+21. **Desacoplamento Dev-Hub:** O código canônico reside na bancada de desenvolvimento; instalações em produção são atualizadas via pull limpo.
+22. **Antifragilidade & Resiliência Ativa:** O sistema se fortalece sob estresse e perturbação com auto-cura em tempo de voo e fallback dinâmico em cascata.
 
-## 2. Pureza Declarativa & Formatos Abertos
+## 🎯 Invariantes Operacionais
 
-- Todas as configurações de editores e ferramentas devem utilizar formatos declarativos legíveis pela indústria:
-    - JSON / JSONC com 2 espaços de indentação.
-    - TOML estruturado por tabelas.
-    - YAML limpo com 2 espaços.
-    - Elisp e Vimscript enxutos e sem dependências de plugins externos em `lite.*`.
-- Comentários narrativos inline óbvios são estritamente proibidos; use separação por linhas em branco.
-
-## 3. Padrão XDG Base Directory
-
-- Configurações devem respeitar estritamente o padrão XDG:
-    - `~/.config/<ferramenta>/` para arquivos de configuração.
-    - `~/.local/share/<ferramenta>/` para dados persistentes.
-- NUNCA polua a raiz de `$HOME` com diretórios fora do padrão.
-
-## 4. Progressive Disclosure para Skills de IA (`skills/`)
-
-- Toda nova skill portátil para IA DEVE conter:
-    - Cabeçalho `YAML Frontmatter` conciso (`name` e `description` rica para ativação sob demanda).
-    - Documento `SKILL.md` com procedimentos diretos e orientados a ação.
-    - Manuais densos ou tabelas auxiliares segregadas em `references/`.
-
-## 5. Permissões Canônicas em 4 Dígitos
-
-- `chmod 0755` para diretórios e scripts executáveis (`scripts/sync/*.sh`).
-- `chmod 0644` para arquivos de configuração, dotfiles declarativos e Markdown.
-- Redirecionamentos para `/dev/null` sempre com aspas: `> "/dev/null"`.
-
-## 6. Limites de Linhas & Arquitetura de Comentários
-
-- **Orçamento de Linhas (Regra 8 - 128):** Piso de 8 linhas e teto de 128 linhas úteis.
-- **Camada 1 (Header Banner):** Exclusivo para linhas 2 a 4 de scripts utilitários, delimitado por 64 hífens (`# ----------------------------------------------------------------`).
-- **Camada 2 (Delimitadores Estruturais de Corpo):** Réguas simétricas de 32 caracteres (`### ================================` ou `### --------------------------------`). O título DEVE ter no máximo 32 caracteres e JAMAIS vazar além da régua (total de 36 colunas com `### `).
-- **Camada 3 (Zero Comentários Narrativos):** Evite comentários narrativos ou inline em scripts, dotfiles, templates e documentações. Separe blocos lógicos por linhas em branco.
-
-## 7. Padrão Universal de READMEs
-
-- **README Raiz:** Portal institucional com título e emoji, blockquote de missão, badges do Quarteto de Produtividade, sistemas suportados, catálogo de primeiro nível e instruções de auditoria/CI.
-- **README de Subpastas:** Catálogo tabular obrigatório (`| Arquivo / Receita | Descrição | Plataforma |`) e bloco de execução limpo sem comentários inline.
-
-## 8. Checklist de Validação Obrigatório
-
-Antes de concluir qualquer alteração no Profile:
-
-1. `git diff --check` (deve retornar 0 erros).
-2. `./.githooks/pre-commit` (deve passar 100%).
-3. `python3 .scripts/audit/all.py` (deve aprovar 100% dos testes).
+- **Makefile Silencioso:** Todo repositório possui `Makefile` POSIX `.SILENT:` com help colorido interativo (`make help`).
+- **Githooks Autônomos:** Pre-commit e commit-msg em POSIX `sh` sem dependências globais externas.
+- **Permissões Canônicas:** `chmod 0755` para `.githooks/*` e scripts/entrypoints executáveis iniciados com shebang `#!`; `chmod 0644` para bibliotecas `sourced`, arquivos de configuração, código-fonte e documentação.
