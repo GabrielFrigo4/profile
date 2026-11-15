@@ -16,6 +16,8 @@ Este diretório provê uma configuração minimalista, rápida e autocontida par
 | :------------------- | :---------------- | :---------------------------------------------------------- |
 | [`lite.el`](lite.el) | Elisp Declarativo | Configuração enxuta de interface, modos básicos e navegação |
 
+> Os atalhos XDG (`emacs.desktop`, `emacsclient.desktop`, `emacs-mail.desktop`, `emacsclient-mail.desktop`) residem centralizados em [`../../desktop/applications/`](../../desktop/applications/) e são sincronizados para `~/.local/share/applications/` via `sh profile.sh sync`.
+
 ---
 
 ## 🚀 Como Usar / Sincronizar

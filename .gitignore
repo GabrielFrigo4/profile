@@ -84,6 +84,7 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 core
+!/core/
 *.core
 vgcore.*
 

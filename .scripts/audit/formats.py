@@ -6,10 +6,13 @@
 Audit Formats: Valida integridade e sintaxe de formatos declarativos e scripts.
 """
 
+import configparser
 import glob
 import json
 import os
 import re
+import shutil
+import subprocess
 import sys
 
 try:
@@ -123,6 +126,37 @@ def main():
             if content.count("(") != content.count(")"):
                 errors.append(f"[PS1] {rel}: Parênteses não balanceados")
 
+    dfv_bin = shutil.which("desktop-file-validate")
+    for root, dirs, files in os.walk(repo_root):
+        if ".git" in root or "_OLD_" in root:
+            continue
+        for f in sorted(files):
+            if f.endswith(".desktop"):
+                scanned += 1
+                p = os.path.join(root, f)
+                rel = os.path.relpath(p, repo_root)
+                cp = configparser.RawConfigParser(interpolation=None)
+                cp.optionxform = str
+                try:
+                    with open(p, "r", encoding="utf-8") as df:
+                        cp.read_file(df)
+                    if not cp.has_section("Desktop Entry"):
+                        errors.append(f"[DESKTOP] {rel}: Seção [Desktop Entry] ausente")
+                    else:
+                        entry = cp["Desktop Entry"]
+                        for req in ("Type", "Name"):
+                            if not entry.get(req):
+                                errors.append(f"[DESKTOP] {rel}: Chave '{req}' ausente")
+                        if entry.get("Type") == "Application" and entry.get("NoDisplay", "").lower() != "true" and not entry.get("Exec"):
+                            errors.append(f"[DESKTOP] {rel}: Chave 'Exec' ausente")
+                except Exception as e:
+                    errors.append(f"[DESKTOP] {rel}: {e}")
+                if dfv_bin:
+                    res = subprocess.run([dfv_bin, p], capture_output=True, text=True)
+                    if res.returncode != 0:
+                        msg = (res.stdout or res.stderr).strip().splitlines()[0]
+                        errors.append(f"[DESKTOP] {rel}: {msg}")
+
     print("=" * 80)
     print(
         f"AUDITORIA DE FORMATOS DECLARATIVOS ({scanned} arquivos verificados)")
@@ -134,7 +168,7 @@ def main():
             print(f"   • {err}")
         sys.exit(1)
     else:
-        print(f"\nSUCESSO: 100% dos arquivos JSON, YAML, .reg e .ps1 são válidos!")
+        print(f"\nSUCESSO: 100% dos arquivos JSON, YAML, .desktop, .reg e .ps1 são válidos!")
         sys.exit(0)
 
 

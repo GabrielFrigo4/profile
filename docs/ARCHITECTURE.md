@@ -54,8 +54,8 @@ flowchart TD
     - Execução da receita de sistema (`curl | sh` ou via clone efêmero).
     - O sistema ganha utilitários essenciais, drivers, ZFS, interface gráfica e containers.
 2. **Sincronização dos Dotfiles e IA (`Profile`):**
-    - Clonagem do repositório em `~/.config/profile` e execução de `./scripts/sync/sync-dotfiles.sh`.
-    - Editores, formatadores e skills de IA são linkados atômica e instantaneamente.
+    - Clonagem do repositório em `~/.local/share/profile` e execução de `sh profile.sh sync`.
+    - Editores, atalhos `.desktop`, toolkits GTK 3/4, formatadores e skills de IA são linkados atômica e instantaneamente.
 3. **Ativação da Linha de Comando (`Shell`):**
     - O `Shell` é clonado para `/usr/local/share/shell` e instalado via `sh install.sh --context desktop`.
 4. **Cofre Seguro (`Vault`):**

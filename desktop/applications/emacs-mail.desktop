@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Emacs (Mail)
+GenericName=Email Client
+Comment=Compose mail in GNU Emacs
+Icon=emacs
+Exec=emacsclient --create-frame --alternate-editor="" --eval "(compose-mail)"
+Terminal=false
+Categories=Network;Email;
+NoDisplay=true

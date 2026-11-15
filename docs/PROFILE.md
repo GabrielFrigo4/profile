@@ -10,22 +10,21 @@ O repositório **[Profile](https://github.com/GabrielFrigo4/profile)** é o sant
 
 ### Camadas de Responsabilidade:
 
-1. **[`editors/`](../editors/README.md), [`terminals/`](../terminals/README.md), [`tools/`](../tools/README.md):** Arquivos declarativos puros (`settings.json`, `.clang-format`, `.stylua.toml`, `config.nu`).
-2. **[`agents/`](../agents/README.md):** Runbooks de IA (`skills/`) e regras transversais de governança (`rules/`) para assistentes autônomos.
-3. **[`profile.sh`](../profile.sh):** Interface unificada de componente para sincronização atômica (`profile.sh sync`), testes e auditoria.
+1. **[`desktop/`](../desktop/):** Templates adaptativos GTK 3/4 (light/dark por DE), CSS com preservação de cantos arredondados CSD e atalhos `.desktop` em [`desktop/applications/`](../desktop/applications/) sincronizados para `~/.local/share/applications/`.
+2. **[`editors/`](../editors/README.md), [`terminals/`](../terminals/README.md), [`tools/`](../tools/README.md):** Arquivos declarativos puros (`settings.json`, `.clang-format`, `.stylua.toml`, `foot.ini`).
+3. **[`agents/`](../agents/README.md):** Runbooks de IA (`skills/`) e regras transversais de governança (`rules/`) para assistentes autônomos.
+4. **[`profile.sh`](../profile.sh):** Interface unificada de componente para sincronização atômica (`profile.sh sync`), testes e auditoria.
 
 ---
 
 ## 🔄 Modo de Sincronização Dinâmica
 
-Para manter seus editores e formatadores sempre atualizados:
+Para manter seus editores, atalhos XDG e formatadores sempre atualizados:
 
 ```sh
-# Clone no diretório de configuração do usuário
-git clone "https://github.com/GabrielFrigo4/profile" "${HOME}/.config/profile"
-cd "${HOME}/.config/profile"
+git clone "https://github.com/GabrielFrigo4/profile" "${HOME}/.local/share/profile"
+cd "${HOME}/.local/share/profile"
 
-# Execute a sincronização unificada
 sh profile.sh sync
 ```
 

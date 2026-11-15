@@ -54,16 +54,26 @@ sync:
 test:
 	echo "🧪 Validando sintaxe POSIX dos scripts..."
 	find . -name "*.sh" -not -path "*/.git/*" -exec sh -n {} +
-	echo "🎨 Verificando isolamento do tema GTK do Emacs..."
-	test -f desktop/themes/Emacs-Doom-Dark/gtk-3.0/gtk.css
-	grep -q "@import" desktop/themes/Emacs-Doom-Dark/gtk-3.0/gtk.css
-	grep -q "background-image: none" desktop/themes/Emacs-Doom-Dark/gtk-3.0/gtk.css
-	grep -q "#1e1e1e" desktop/themes/Emacs-Doom-Dark/gtk-3.0/gtk.css
-	grep -q ":backdrop" desktop/themes/Emacs-Doom-Dark/gtk-3.0/gtk.css
-	grep -q "theme_unfocused_bg_color" desktop/themes/Emacs-Doom-Dark/gtk-3.0/gtk.css
-	! grep -q "!important" desktop/themes/Emacs-Doom-Dark/gtk-3.0/gtk.css
+	echo "🎨 Verificando conformidade GTK 3/4 e limpeza de temas legados..."
+	test ! -e desktop/themes/Emacs-Doom-Dark
+	test ! -f editors/emacs/emacs.desktop
+	test ! -f editors/emacs/emacsclient.desktop
+	test ! -f terminals/xterm/xterm.desktop
 	! grep -q "#1e1e1e" desktop/gtk-3.0/gtk.css
 	! grep -q "#1e1e1e" desktop/gtk-4.0/gtk.css
+	! grep -Eq "^[[:space:]]*decoration([[:space:],{]|$$)" desktop/gtk-3.0/gtk.css
+	! grep -Eq "^[[:space:]]*decoration([[:space:],{]|$$)" desktop/gtk-4.0/gtk.css
+	grep -q "window.popup > decoration" desktop/gtk-3.0/gtk.css
+	grep -q "window.popup > decoration" desktop/gtk-4.0/gtk.css
+	echo "🖥️  Validando atalhos XDG em desktop/applications/..."
+	for f in emacs emacsclient xterm emacs-mail emacsclient-mail; do \
+		test -f "desktop/applications/$${f}.desktop" || exit 1; \
+	done
+	if command -v desktop-file-validate > "/dev/null" 2>&1; then \
+		for f in desktop/applications/*.desktop; do \
+			desktop-file-validate "$$f" || exit 1; \
+		done; \
+	fi
 	echo "🔍 Verificando ausência de __pycache__ e *.pyc no Profile..."
 	if [ -n "$$(find . -type d -name "__pycache__" -not -path "*/.git/*")" ] || [ -n "$$(find . -type f -name "*.pyc" -not -path "*/.git/*")" ]; then \
 		echo "❌ Erro: __pycache__ ou *.pyc encontrados!"; \

@@ -5,7 +5,6 @@ Comment=Universal XTerm Terminal Emulator
 Exec=xterm -bc -bcf 600 -bcn 600
 Terminal=false
 Type=Application
-Encoding=UTF-8
 Icon=xterm-color
 Categories=System;TerminalEmulator;
 Keywords=shell;prompt;command;commandline;cmd;

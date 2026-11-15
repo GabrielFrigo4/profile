@@ -4,6 +4,8 @@
 # ----------------------------------------------------------------
 set -eu
 
+[ -f "${_PROFILE_ROOT:-.}/core/desktop.sh" ] && . "${_PROFILE_ROOT:-.}/core/desktop.sh"
+
 ### ================================
 ### SUBCOMANDOS DE LINHA
 ### ================================
@@ -53,98 +55,6 @@ _profile_item() {
 		cp -rf "${_src}" "${_dst}"
 		_ui_warn "[COPY] ${_dst} (Modo de Desenvolvedor desativado)"
 	fi
-}
-
-### --------------------------------
-### SINCRONIZACAO GTK POR DE
-### --------------------------------
-_sync_gtk_de_profile() {
-	_raw_de="${XDG_CURRENT_DESKTOP:-${XDG_SESSION_DESKTOP:-${DESKTOP_SESSION:-}}}"
-	case "$(printf '%s\n' "${_raw_de}" | tr '[:upper:]' '[:lower:]')" in
-		*kde*|*plasma*) _de="kde" ;;
-		*gnome*)        _de="gnome" ;;
-		*cosmic*)       _de="cosmic" ;;
-		*xfce*)         _de="xfce" ;;
-		*mate*)         _de="mate" ;;
-		*cinnamon*)     _de="cinnamon" ;;
-		*lxqt*)         _de="lxqt" ;;
-		*lxde*)         _de="lxde" ;;
-		*budgie*)       _de="budgie" ;;
-		*pantheon*)     _de="pantheon" ;;
-		*deepin*|*dde*) _de="deepin" ;;
-		*)              _de="" ;;
-	esac
-
-	if [ -z "${_de}" ] && command -v pgrep > "/dev/null" 2>&1; then
-		for _probe in "plasmashell:kde" "kwin_wayland:kde" "gnome-shell:gnome" "cosmic-comp:cosmic" "cosmic-session:cosmic" "xfce4-session:xfce" "mate-session:mate" "cinnamon:cinnamon" "lxqt-session:lxqt" "lxsession:lxde" "budgie-wm:budgie" "budgie-panel:budgie" "gala:pantheon" "wingpanel:pantheon" "dde-desktop:deepin"; do
-			pgrep -x "${_probe%:*}" > "/dev/null" 2>&1 && { _de="${_probe#*:}" && break; }
-		done
-	fi
-
-	if [ -z "${_de}" ]; then
-		if [ -e "${HOME}/.config/kdeglobals" ] || [ -d "/usr/local/share/plasma" ] || [ -d "/usr/share/plasma" ]; then _de="kde"
-		elif [ -e "${HOME}/.config/dconf" ] || [ -d "/usr/share/gnome-shell" ] || [ -d "/usr/local/share/gnome-shell" ]; then _de="gnome"
-		elif [ -d "${HOME}/.config/mate" ] || [ -d "/usr/share/mate" ] || [ -d "/usr/local/share/mate" ]; then _de="mate"
-		elif [ -d "${HOME}/.config/cinnamon" ] || [ -d "/usr/share/cinnamon" ] || [ -d "/usr/local/share/cinnamon" ]; then _de="cinnamon"
-		elif [ -d "${HOME}/.config/xfce4" ] || [ -d "/usr/share/xfce4" ] || [ -d "/usr/local/share/xfce4" ]; then _de="xfce"
-		elif [ -d "${HOME}/.config/lxqt" ] || [ -d "/usr/share/lxqt" ] || [ -d "/usr/local/share/lxqt" ]; then _de="lxqt"
-		elif [ -d "${HOME}/.config/cosmic" ] || [ -d "/usr/share/cosmic" ] || [ -d "/usr/local/share/cosmic" ]; then _de="cosmic"
-		else _de="gnome"
-		fi
-	fi
-
-	_icon="Adwaita" _cursor="Adwaita" _blink="1200" _mod="" _snd="" _theme="Adwaita-dark"
-	case "${_de}" in
-		kde)      _icon="breeze-dark" _cursor="breeze_cursors" _blink="1000" _mod="colorreload-gtk-module" _snd="ocean" _theme="Breeze-Dark" ;;
-		lxqt)     _icon="breeze-dark" _cursor="breeze_cursors" _theme="Breeze-Dark" ;;
-		cinnamon) _theme="Mint-Y-Dark" ;;
-		mate)     _theme="Yaru-MATE-dark" ;;
-		xfce)     _theme="Greybird-dark" ;;
-		cosmic)   _theme="cosmic-dark"; { [ -d "/usr/share/icons/Cosmic" ] || [ -d "/usr/local/share/icons/Cosmic" ]; } && _icon="Cosmic" ;;
-		gnome)    _theme="Adwaita-dark" ;;
-	esac
-	[ "${_theme}" = "Adwaita-dark" ] && [ ! -d "/usr/share/themes/Adwaita-dark" ] && [ -d "/usr/share/themes/adw-gtk3-dark" ] && _theme="adw-gtk3-dark"
-	[ "${_icon}" = "Adwaita" ] && [ ! -d "/usr/share/icons/Adwaita" ] && [ ! -d "/usr/local/share/icons/Adwaita" ] && [ ! -d "${HOME}/.local/share/icons/Adwaita" ] && [ ! -d "${HOME}/.icons/Adwaita" ] && _icon="breeze-dark"
-
-	[ "${_mode}" = "pull" ] && return 0
-
-	for _v in "3.0" "4.0"; do
-		_rt_dir="${_data}/profile/runtime/gtk-${_v}"
-		_rt_file="${_rt_dir}/settings-${_de}.ini"
-		_target_link="${_cfg}/gtk-${_v}/settings.ini"
-
-		if [ "${_mode}" = "status" ]; then
-			[ -L "${_target_link}" ] && [ "$(readlink "${_target_link}" 2> "/dev/null" || true)" = "${_rt_file}" ] && _ui_ok "[IN-SYNC] ${_target_link} -> settings-${_de}.ini" || _ui_warn "[DRIFT] ${_target_link}"
-			continue
-		fi
-
-		if [ "${_dry_run}" -eq 1 ]; then
-			_ui_sub "[DRY-RUN] ${_rt_file}" && _ui_sub "[DRY-RUN] ${_target_link} -> ${_rt_file}"
-			continue
-		fi
-
-		mkdir -p "${_rt_dir}" "$(dirname "${_target_link}")"
-		awk -v icon="${_icon}" -v cursor="${_cursor}" -v blink="${_blink}" -v mod="${_mod}" -v snd="${_snd}" -v theme="${_theme}" -v v="${_v}" '
-			/^gtk-icon-theme-name=/ { print "gtk-icon-theme-name=" icon; next }
-			/^gtk-cursor-theme-name=/ { print "gtk-cursor-theme-name=" cursor; next }
-			/^gtk-cursor-blink-time=/ { print "gtk-cursor-blink-time=" blink; next }
-			/^gtk-theme-name=/ { print "gtk-theme-name=" theme; next }
-			/^gtk-application-prefer-dark-theme=/ { print "gtk-application-prefer-dark-theme=1"; next }
-			/^gtk-modules=/ { next }
-			/^gtk-sound-theme-name=/ { next }
-			/^gtk-menu-images=/ { print $0; if (v == "3.0" && mod != "") print "gtk-modules=" mod; next }
-			/^gtk-primary-button-warps-slider=/ { print $0; if (snd != "") print "gtk-sound-theme-name=" snd; next }
-			{ print $0 }
-		' "${_PROFILE_ROOT}/desktop/gtk-${_v}/settings.ini" > "${_rt_file}"
-
-		if [ -L "${_target_link}" ]; then
-			[ "$(readlink "${_target_link}" 2> "/dev/null" || true)" = "${_rt_file}" ] && { _ui_sub "[OK] ${_target_link}"; continue; }
-			rm -f "${_target_link}"
-		elif [ -e "${_target_link}" ]; then
-			[ "${_backup}" -eq 1 ] && mv "${_target_link}" "${_target_link}.bak.${_timestamp}" 2> "/dev/null" || rm -rf "${_target_link}"
-		fi
-		ln -sf "${_rt_file}" "${_target_link}" && _ui_ok "[LINK] ${_target_link} -> settings-${_de}.ini"
-	done
 }
 
 ### ================================
@@ -217,25 +127,10 @@ _profile_sync() {
 	else
 		_sync "terminals/zellij/config.kdl" "${_cfg}/zellij/config.kdl" && _sync "terminals/foot/foot.ini" "${_cfg}/foot/foot.ini"
 		for _xr in .Xresources .Xdefaults; do _sync "terminals/xterm/Xresources" "${HOME}/${_xr}"; done
-		_sync "terminals/xterm/xterm.desktop" "${_data}/applications/xterm.desktop"
-		_sync "editors/emacs/emacs.desktop" "${_data}/applications/emacs.desktop" && _sync "editors/emacs/emacsclient.desktop" "${_data}/applications/emacsclient.desktop"
-		chmod 0644 "${_data}/applications/emacs.desktop" "${_data}/applications/emacsclient.desktop" 2> "/dev/null" || true
-		command -v update-desktop-database > "/dev/null" 2>&1 && update-desktop-database "${_data}/applications" 2> "/dev/null" || true
 		for _kp in Bash Shell Zsh; do _sync "terminals/konsole/${_kp}.profile" "${_data}/konsole/${_kp}.profile"; done
 		[ -f "${_PROFILE_ROOT}/terminals/terminfo/linux.terminfo" ] && command -v tic > "/dev/null" 2>&1 && tic -o "${HOME}/.terminfo" "${_PROFILE_ROOT}/terminals/terminfo/linux.terminfo" 2> "/dev/null" || true
 		[ -n "${DISPLAY:-}" ] && [ -f "${HOME}/.Xresources" ] && command -v xrdb > "/dev/null" 2>&1 && xrdb -merge "${HOME}/.Xresources" 2> "/dev/null" || true
-	fi
-
-	if [ "${_is_win}" -eq 0 ]; then
-		_ui_step "Temas de desktop e toolkits gráficos (GTK 3/4)..."
-		_sync "desktop/gtk-3.0/gtk.css" "${_cfg}/gtk-3.0/gtk.css" && _sync "desktop/gtk-4.0/gtk.css" "${_cfg}/gtk-4.0/gtk.css"
-		_sync "desktop/themes/Emacs-Doom-Dark" "${_data}/themes/Emacs-Doom-Dark"
-		[ ! -e "${_data}/themes/Emacs-Kanagawa-Dark" ] && ln -sf "${_data}/themes/Emacs-Doom-Dark" "${_data}/themes/Emacs-Kanagawa-Dark" 2> "/dev/null" || true
-		mkdir -p "${HOME}/.themes" 2> "/dev/null" || true
-		[ ! -e "${HOME}/.themes/Emacs-Doom-Dark" ] && ln -sf "${_data}/themes/Emacs-Doom-Dark" "${HOME}/.themes/Emacs-Doom-Dark" 2> "/dev/null" || true
-		_sync_gtk_de_profile
-		mkdir -p "${_data}/themes"
-		[ -d "/usr/share/themes/adw-gtk3-dark" ] && [ ! -e "${_data}/themes/Adwaita-dark" ] && ln -sf /usr/share/themes/adw-gtk3-dark "${_data}/themes/Adwaita-dark" 2> "/dev/null" || true
+		_desktop_sync_all
 	fi
 
 	_ui_step "Agentes de IA (Skills & Rules para Antigravity & Gemini)..."
