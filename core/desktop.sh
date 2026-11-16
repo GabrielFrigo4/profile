@@ -50,8 +50,8 @@ _desktop_kde_val() {
 		kreadconfig6 --file kdeglobals --group "$1" --key "$2" 2> "/dev/null" || true
 	elif command -v kreadconfig5 > "/dev/null" 2>&1; then
 		kreadconfig5 --file kdeglobals --group "$1" --key "$2" 2> "/dev/null" || true
-	elif [ -f "${_cfg}/kdeglobals" ]; then
-		awk -F= -v g="[$1]" -v k="$2" '/^\[/{s=$0} s==g && $1==k{print $2; exit}' "${_cfg}/kdeglobals" 2> "/dev/null" || true
+	elif [ -f "${_config_dir}/kdeglobals" ]; then
+		awk -F= -v g="[$1]" -v k="$2" '/^\[/{s=$0} s==g && $1==k{print $2; exit}' "${_config_dir}/kdeglobals" 2> "/dev/null" || true
 	fi
 }
 
@@ -99,7 +99,7 @@ _desktop_detect_scheme() {
 			_d_sc="org.cinnamon.desktop.interface"; [ "${_d_de}" = "mate" ] && _d_sc="org.mate.interface"
 			command -v gsettings > "/dev/null" 2>&1 && case "$(gsettings get "${_d_sc}" gtk-theme 2> "/dev/null" || true)" in *[Dd]ark*|*[Bb]lack*) printf '%s\n' "dark"; return 0 ;; ""|"''") ;; *) printf '%s\n' "light"; return 0 ;; esac ;;
 		cosmic)
-			[ -f "${_cfg}/cosmic/com.system76.CosmicTheme.Mode/v1/is_dark" ] && { grep -qi "true" "${_cfg}/cosmic/com.system76.CosmicTheme.Mode/v1/is_dark" 2> "/dev/null" && printf '%s\n' "dark" || printf '%s\n' "light"; return 0; } ;;
+			[ -f "${_config_dir}/cosmic/com.system76.CosmicTheme.Mode/v1/is_dark" ] && { grep -qi "true" "${_config_dir}/cosmic/com.system76.CosmicTheme.Mode/v1/is_dark" 2> "/dev/null" && printf '%s\n' "dark" || printf '%s\n' "light"; return 0; } ;;
 	esac
 
 	_desktop_portal_scheme && return 0
@@ -109,7 +109,7 @@ _desktop_detect_scheme() {
 _desktop_pick_theme() {
 	_d_first="${1:-}"
 	for _d_cand in "$@"; do
-		for _d_dir in "/usr/share/themes" "/usr/local/share/themes" "${_data}/themes" "${HOME}/.themes"; do
+		for _d_dir in "/usr/share/themes" "/usr/local/share/themes" "${_data_dir}/themes" "${HOME}/.themes"; do
 			[ -d "${_d_dir}/${_d_cand}" ] && { printf '%s\n' "${_d_cand}"; return 0; }
 		done
 	done
@@ -120,9 +120,9 @@ _desktop_pick_theme() {
 ### LIMPEZA DE TEMAS LEGADOS
 ### --------------------------------
 _desktop_clean_legacy_themes() {
-	for _d_stale in "${_data}/themes/Emacs-Doom-Dark" "${_data}/themes/Emacs-Kanagawa-Dark" "${HOME}/.themes/Emacs-Doom-Dark" "${HOME}/.themes/Emacs-Kanagawa-Dark" "${_data}/themes/Adwaita-dark"; do
+	for _d_stale in "${_data_dir}/themes/Emacs-Doom-Dark" "${_data_dir}/themes/Emacs-Kanagawa-Dark" "${HOME}/.themes/Emacs-Doom-Dark" "${HOME}/.themes/Emacs-Kanagawa-Dark" "${_data_dir}/themes/Adwaita-dark"; do
 		[ -L "${_d_stale}" ] || continue
-		if [ "${_d_stale}" = "${_data}/themes/Adwaita-dark" ]; then
+		if [ "${_d_stale}" = "${_data_dir}/themes/Adwaita-dark" ]; then
 			case "$(readlink "${_d_stale}" 2> "/dev/null" || true)" in
 				*/adw-gtk3*|*/Emacs-*) ;;
 				*) [ ! -e "${_d_stale}" ] || continue ;;
@@ -169,15 +169,15 @@ _sync_gtk_de_profile() {
 		*)        [ "${_scheme}" = "dark" ] && _theme="$(_desktop_pick_theme "adw-gtk3-dark" "Yaru-dark" "Adwaita-dark")" || _theme="$(_desktop_pick_theme "adw-gtk3" "Yaru" "Adwaita")" ;;
 	esac
 
-	if [ "${_icon}" = "Adwaita" ] && [ ! -d "/usr/share/icons/Adwaita" ] && [ ! -d "/usr/local/share/icons/Adwaita" ] && [ ! -d "${_data}/icons/Adwaita" ] && [ ! -d "${HOME}/.icons/Adwaita" ]; then
+	if [ "${_icon}" = "Adwaita" ] && [ ! -d "/usr/share/icons/Adwaita" ] && [ ! -d "/usr/local/share/icons/Adwaita" ] && [ ! -d "${_data_dir}/icons/Adwaita" ] && [ ! -d "${HOME}/.icons/Adwaita" ]; then
 		[ "${_scheme}" = "dark" ] && _icon="breeze-dark" || _icon="breeze"
 	fi
 	[ "${_mode}" = "pull" ] && return 0
 
 	for _v in "3.0" "4.0"; do
-		_rt_dir="${_data}/profile/runtime/gtk-${_v}"
+		_rt_dir="${_data_dir}/profile/runtime/gtk-${_v}"
 		_rt_file="${_rt_dir}/settings-${_de}.ini"
-		_target_link="${_cfg}/gtk-${_v}/settings.ini"
+		_target_link="${_config_dir}/gtk-${_v}/settings.ini"
 
 		if [ "${_mode}" = "status" ]; then
 			if [ -L "${_target_link}" ] && [ "$(readlink "${_target_link}" 2> "/dev/null" || true)" = "${_rt_file}" ] && grep -qx "gtk-theme-name=${_theme}" "${_rt_file}" 2> "/dev/null" && grep -qx "gtk-application-prefer-dark-theme=${_prefer_dark}" "${_rt_file}" 2> "/dev/null"; then
@@ -226,20 +226,20 @@ _desktop_sync_apps() {
 	[ -d "${_PROFILE_ROOT}/desktop/applications" ] || return 0
 	for _d_app in "${_PROFILE_ROOT}/desktop/applications/"*.desktop; do
 		[ -f "${_d_app}" ] || continue
-		_d_dst="${_data}/applications/${_d_app##*/}"
+		_d_dst="${_data_dir}/applications/${_d_app##*/}"
 		_profile_item "${_d_app}" "${_d_dst}" "${_mode}" "${_dry_run}" "${_backup}" "${_timestamp}"
 		[ "${_mode}" = "sync" ] && [ "${_dry_run}" -eq 0 ] && { chmod 0644 "${_d_app}" 2> "/dev/null" || true; [ -f "${_d_dst}" ] && [ ! -L "${_d_dst}" ] && chmod 0644 "${_d_dst}" 2> "/dev/null" || true; }
 	done
 	if [ "${_mode}" = "sync" ] && command -v update-desktop-database > "/dev/null" 2>&1; then
-		[ "${_dry_run}" -eq 1 ] && _ui_sub "[DRY-RUN] update-desktop-database ${_data}/applications" || { [ -d "${_data}/applications" ] && update-desktop-database "${_data}/applications" 2> "/dev/null" || true; }
+		[ "${_dry_run}" -eq 1 ] && _ui_sub "[DRY-RUN] update-desktop-database ${_data_dir}/applications" || { [ -d "${_data_dir}/applications" ] && update-desktop-database "${_data_dir}/applications" 2> "/dev/null" || true; }
 	fi
 }
 
 _desktop_sync_all() {
 	_ui_step "Atalhos XDG de desktop e toolkits gráficos (GTK 3/4)..."
 	_desktop_sync_apps
-	_profile_item "${_PROFILE_ROOT}/desktop/gtk-3.0/gtk.css" "${_cfg}/gtk-3.0/gtk.css" "${_mode}" "${_dry_run}" "${_backup}" "${_timestamp}"
-	_profile_item "${_PROFILE_ROOT}/desktop/gtk-4.0/gtk.css" "${_cfg}/gtk-4.0/gtk.css" "${_mode}" "${_dry_run}" "${_backup}" "${_timestamp}"
+	_profile_item "${_PROFILE_ROOT}/desktop/gtk-3.0/gtk.css" "${_config_dir}/gtk-3.0/gtk.css" "${_mode}" "${_dry_run}" "${_backup}" "${_timestamp}"
+	_profile_item "${_PROFILE_ROOT}/desktop/gtk-4.0/gtk.css" "${_config_dir}/gtk-4.0/gtk.css" "${_mode}" "${_dry_run}" "${_backup}" "${_timestamp}"
 	_desktop_clean_legacy_themes
 	_sync_gtk_de_profile
 }

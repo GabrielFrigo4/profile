@@ -29,4 +29,7 @@ _self_heal_perms() {
 	if [ -d "${_PROFILE_ROOT}/.scripts/audit" ]; then
 		chmod 0755 "${_PROFILE_ROOT}/.scripts/audit/"*.py 2> "/dev/null" || true
 	fi
+	if [ -f "${_PROFILE_ROOT}/desktop/xorg/xserverrc" ]; then
+		chmod 0755 "${_PROFILE_ROOT}/desktop/xorg/xserverrc" 2> "/dev/null" || true
+	fi
 }
