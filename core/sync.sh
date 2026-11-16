@@ -58,6 +58,68 @@ _profile_item() {
 }
 
 ### ================================
+### WINDOWS VIM JUNCTION
+### ================================
+_profile_win_vim_junction() {
+	_src="$1" _dst="$2" _m="${3:-sync}" _dry="${4:-0}"
+	[ ! -d "${_src}" ] && return 0
+
+	_src_phys="$(CDPATH="" cd -P "${_src}" 2> "/dev/null" && pwd -P || true)"
+	_dst_phys=""
+	if [ -d "${_dst}" ]; then _dst_phys="$(CDPATH="" cd -P "${_dst}" 2> "/dev/null" && pwd -P || true)"; fi
+
+	_in_sync=0
+	if [ -n "${_src_phys}" ] && [ "${_dst_phys}" = "${_src_phys}" ]; then
+		_in_sync=1
+	elif [ -L "${_dst}" ] && [ -d "${_dst}" ]; then
+		_raw_tgt="$(readlink "${_dst}" 2> "/dev/null" || true)"
+		if [ -n "${_raw_tgt}" ] && command -v cygpath > "/dev/null" 2>&1; then _raw_tgt="$(cygpath -u "${_raw_tgt}" 2> "/dev/null" || echo "${_raw_tgt}")"; fi
+		_raw_tgt="${_raw_tgt%/}"
+		if [ -n "${_raw_tgt}" ] && { [ "${_raw_tgt}" = "${_src%/}" ] || [ "${_raw_tgt}" = "${_src_phys}" ]; }; then _in_sync=1; fi
+	fi
+
+	if [ "${_m}" = "status" ]; then
+		if [ ! -e "${_dst}" ] && [ ! -L "${_dst}" ]; then _ui_warn "[MISSING] ${_dst} -> ${_src}"
+		elif [ "${_in_sync}" -eq 1 ]; then _ui_ok "[IN-SYNC-JUNCTION] ${_dst}"
+		else _ui_warn "[DRIFT] ${_dst}"
+		fi
+		return 0
+	fi
+	if [ "${_dry}" -eq 1 ]; then
+		if [ "${_in_sync}" -eq 1 ]; then _ui_sub "[OK] ${_dst}"; else _ui_sub "[DRY-RUN JUNCTION] ${_dst} -> ${_src}"; fi
+		return 0
+	fi
+	if [ "${_in_sync}" -eq 1 ]; then _ui_sub "[OK] ${_dst}"; return 0; fi
+
+	_w_src="${_src}" _w_dst="${_dst}"
+	if command -v cygpath > "/dev/null" 2>&1; then
+		_w_src="$(cygpath -w "${_src}" 2> "/dev/null" || echo "${_src}")"
+		_w_dst="$(cygpath -w "${_dst}" 2> "/dev/null" || echo "${_dst}")"
+	fi
+	if [ -L "${_dst}" ]; then
+		unlink "${_dst}" 2> "/dev/null" || rm -f "${_dst}" 2> "/dev/null" || { command -v cmd.exe > "/dev/null" 2>&1 && MSYS2_ARG_CONV_EXCL="*" cmd.exe /c rmdir "${_w_dst}" > "/dev/null" 2>&1; } || true
+		if [ -L "${_dst}" ] || [ -e "${_dst}" ]; then _ui_warn "[CONFLICT] ${_dst} existe como link protegido (mantido)"; return 0; fi
+	elif [ -d "${_dst}" ]; then
+		rmdir "${_dst}" 2> "/dev/null" || { _ui_warn "[CONFLICT] ${_dst} existe como diretório independente (mantido)"; return 0; }
+	elif [ -e "${_dst}" ]; then
+		_ui_warn "[CONFLICT] ${_dst} existe como arquivo independente (mantido)"; return 0
+	fi
+
+	mkdir -p "$(dirname "${_dst}")"
+	if command -v cmd.exe > "/dev/null" 2>&1; then
+		if MSYS2_ARG_CONV_EXCL="*" cmd.exe /c mklink /J "${_w_dst}" "${_w_src}" > "/dev/null" 2>&1; then
+			_ui_ok "[JUNCTION] ${_dst} -> ${_src}"
+		else
+			_ui_warn "[JUNCTION] Falha ao criar junction ${_dst} -> ${_src}"
+		fi
+	elif ln -s "${_src}" "${_dst}" 2> "/dev/null"; then
+		_ui_ok "[JUNCTION] ${_dst} -> ${_src}"
+	else
+		_ui_warn "[JUNCTION] Falha ao criar link ${_dst} -> ${_src}"
+	fi
+}
+
+### ================================
 ### SINCRONIZACAO DE DOTFILES
 ### ================================
 _profile_sync() {
@@ -118,6 +180,14 @@ _profile_sync() {
 	_sync "editors/vscode/settings.json" "${_ed_dir}/Code/User/settings.json"
 	[ "${_os_type}" != "Darwin" ] && [ "${_is_win}" -eq 0 ] && _sync "editors/vscode/settings.json" "${_cfg}/Code - OSS/User/settings.json"
 	_sync "editors/vscodium/settings.json" "${_ed_dir}/VSCodium/User/settings.json" && _sync "editors/antigravity/settings.json" "${_ed_dir}/Antigravity IDE/User/settings.json"
+	_win_vimfiles=""
+	if [ -d "${_win_home}/vimfiles" ]; then _win_vimfiles="${_win_home}/vimfiles"; elif [ -d "${HOME}/vimfiles" ]; then _win_vimfiles="${HOME}/vimfiles"; fi
+	if [ "${_is_win}" -eq 1 ] && [ "${_mode}" != "pull" ] && [ -n "${_win_vimfiles}" ]; then
+		_profile_win_vim_junction "${_win_vimfiles}" "${_win_home}/.vim" "${_mode}" "${_dry_run}"
+		if [ "${HOME%/}" != "${_win_home%/}" ]; then
+			_profile_win_vim_junction "${_win_vimfiles}" "${HOME}/.vim" "${_mode}" "${_dry_run}"
+		fi
+	fi
 
 	_ui_step "Emuladores de terminal e multiplexadores..."
 	_sync "terminals/tmux/tmux.conf" "${_cfg}/tmux/tmux.conf" && _sync "terminals/tmux/tmux.conf" "${HOME}/.tmux.conf"
