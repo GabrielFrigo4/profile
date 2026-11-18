@@ -166,9 +166,9 @@ Contrariando o mito arcaico de que o console do FreeBSD não suporta alternânci
 
 Como o `/etc/ttys` do FreeBSD configura os terminais virtuais `ttyv*` com `TERM=xterm`, qualquer aplicação moderna (Vim, NeoVim, Emacs, Helix) que envie sequências canônicas `DECSCUSR` opera **diretamente no console nativo do FreeBSD sem necessidade de sequências privativas**.
 
-#### B. Configuração Persistente da Base (`/etc/rc.conf`)
+#### B. Configuração Persistente da Base (`/etc/rc.conf` & `vt-autofont.sh`)
 
-Para a inicialização global da tipografia de console nos terminais virtuais:
+O serviço rc.d `vt_autofont` (`Setup/freebsd/desktop/system/vt-autofont.sh`, ativado com `vt_autofont_enable="YES"`) seleciona dinamicamente a fonte Spleen conforme a resolução ativa (`spleen-8x16`, `spleen-12x24`, `spleen-16x32` ou `spleen-32x64`), atualizando `/etc/rc.conf` e aplicando nos `/dev/ttyv*`:
 
 ```sh
 allscreens_flags="-f spleen-12x24"
@@ -177,6 +177,7 @@ allscreens_flags="-f spleen-12x24"
 A recarga imediata em runtime sem reiniciar a máquina é realizada via serviço canônico:
 
 ```sh
+service vt_autofont start
 service syscons restart
 ```
 
@@ -191,9 +192,9 @@ Emuladores de terminal ou editores de texto modais (Helix, Vim) utilizam a sequ�
 
 O Universal Shell aplica **auto-cura resiliente**:
 
-1. No boot do shell (`core/environment.sh`), emite `\e%G\e[?16;238;0c` quando `_is_raw_tty` for verdadeiro.
+1. No boot do shell (`core/environment.sh`), avalia a linhagem TTY (`_has_raw_tty_ancestor()` e `_is_raw_tty()` em `core/detect.sh`, respeitando fronteiras gráficas e herdando o estado em subshells de `:terminal`, `eat`, `vterm` e `term`) e emite `\e%G\e[?16;238;0c` no Linux Raw TTY.
 2. Em prompts interativos (`theme/bash.sh`, `theme/zsh.sh`), reemite a sequência canônica.
-3. No wrapper de editores (`hx()` em `context/desktop/common.sh`), intercepta o encerramento do processo e restaura o bloco estático:
+3. No wrapper de editores (`hx()` e `_restore_tty_cursor` em `library/desktop/apps.sh`), intercepta o encerramento do processo e restaura o bloco estático:
 
 ```sh
 if [ -t 1 ]; then

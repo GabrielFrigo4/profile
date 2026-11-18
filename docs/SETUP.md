@@ -19,7 +19,7 @@ O repositório **[Setup](https://github.com/GabrielFrigo4/setup)** é o pilar de
 
 1. O **Setup** é executado primeiro no ciclo de vida da máquina (modelo _Zero-Clone_ via GitHub web ou `curl | sh`).
 2. O **Setup** instala os editores gráficos (VS Code, Zed, Antigravity) e dependências básicas de sistema.
-3. Em seguida, o **Profile** entra em ação no espaço do usuário (`$HOME`), aplicando dotfiles estáticos e runbooks cognitivos através de links simbólicos (`ln -sf`).
+3. Em seguida, o **Profile** entra em ação no espaço do usuário (`$HOME`), aplicando symlinks atômicos (`ln -sf`) para dotfiles estáticos e runbooks cognitivos, e materializando por cópia adaptativa (`0644`) os arquivos dependentes de ambiente (`gtk.css`, `settings.ini` e `index.theme`).
 
 ---
 

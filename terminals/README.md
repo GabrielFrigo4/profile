@@ -14,6 +14,7 @@
 | **Windows Terminal**     | Windows         | [`settings.json`](windows-terminal/settings.json)                                                                      | `%LOCALAPPDATA%\Packages\Microsoft.WindowsTerminal_*\LocalState\` |
 | **Tmux**                 | Multiplataforma | [`tmux.conf`](tmux/tmux.conf)                                                                                          | `~/.config/tmux/` e `~/.tmux.conf`                                |
 | **Zellij**               | Multiplataforma | [`config.kdl`](zellij/config.kdl)                                                                                      | `~/.config/zellij/` ou `%APPDATA%\zellij\`                        |
+| **Terminfo (Linux TTY)** | Linux           | [`linux.terminfo`](terminfo/linux.terminfo)                                                                            | `~/.terminfo/l/linux` (`cnorm`/`cvvis` não-destrutivo)            |
 
 ---
 

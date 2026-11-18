@@ -30,7 +30,7 @@
 [![Roadmap](https://img.shields.io/badge/🗺️_Roadmap-TODO.md-teal)](TODO.md)
 [![Contributing](https://img.shields.io/badge/🤝_Contributing-CONTRIBUTING.md-orange)](CONTRIBUTING.md)
 
-O **Universal Profile** opera com paridade multiplataforma absoluta em **FreeBSD**, **Linux**, **macOS**, **OpenBSD**, **NetBSD**, **illumos** e **Windows** (nativo via PowerShell e sob MSYS2 via POSIX). Todas as configurações e links simbólicos são orquestrados de forma declarativa e atômica (`ln -sf`) sem necessidade de privilégios de superusuário (`sudo`).
+O **Universal Profile** opera com paridade multiplataforma absoluta em **FreeBSD**, **Linux**, **macOS**, **OpenBSD**, **NetBSD**, **illumos** e **Windows** (nativo via PowerShell e sob MSYS2 via POSIX). Dotfiles estáticos, linters e skills de IA são vinculados via links simbólicos atômicos (`ln -sf`), enquanto artefatos adaptativos ao ambiente gráfico (`gtk.css`, `settings.ini` e `index.theme` de cursor) são materializados diretamente por cópia gerada no destino, sem necessidade de privilégios de superusuário (`sudo`).
 
 ### 🎨 Editores, Terminais & IA
 
@@ -55,7 +55,7 @@ flowchart TD
     end
 
     PR_REPO --> SYNC
-    SYNC -->|"Symlinks atômicos (ln -sf)"| TARGETS
+    SYNC -->|"Symlinks (dotfiles) + Cópia adaptativa (GTK/Cursor)"| TARGETS
 ```
 
 ---
@@ -66,8 +66,8 @@ Diferente do **Setup** (que exige `sudo`/`root` para instalar pacotes no sistema
 
 1. **Zero Privilégios Administrativos (Zero-Sudo):** Todos os arquivos e scripts operam estritamente no espaço do usuário comum (`$HOME` / `~/.local/share/`).
 2. **Formatos Declarativos Puros:** Configurações escritas em formatos universais e legíveis (`.json`, `.toml`, `.yaml`, `.el`, `.vim`), fáceis de inspecionar, auditar e versionar.
-3. **Dual-Mode de Sincronização:**
-    - **Modo Residente (Recomendado):** Clone o repositório em `~/.local/share/profile` e execute `sh profile.sh sync` para criar links simbólicos atômicos (`ln -sf`). Qualquer `git pull` futuro atualiza seus editores instantaneamente!
+3. **Symlinks Estáticos vs. Materialização Adaptativa (GTK & Cursor):**
+    - **Modo Residente (Recomendado):** Clone o repositório em `~/.local/share/profile` e execute `sh profile.sh sync`. Dotfiles estáticos (editores, terminais, linters, atalhos `.desktop` e skills em `agents/`) recebem symlinks atômicos (`ln -sf`); já `gtk-3.0/gtk.css`, `gtk-4.0/gtk.css`, `gtk-3.0/settings.ini`, `gtk-4.0/settings.ini` (`core/desktop.sh`) e `icons/default/index.theme` (`core/display.sh`) são materializados por cópia gerada diretamente no destino (`0644`) adaptando `@import 'colors.css'`, tema claro/escuro e cursor conforme o DE detectado.
     - **Modo Estático / RAW:** Copie arquivos avulsos diretamente pela interface do GitHub para máquinas temporárias.
 
 ---
