@@ -235,8 +235,11 @@ _desktop_sync_apps() {
 }
 
 _desktop_sync_all() {
-	_ui_step "Atalhos XDG de desktop e toolkits gráficos (GTK 3/4)..."
+	_ui_step "Atalhos XDG de desktop, WMs e toolkits gráficos (GTK 3/4)..."
 	_desktop_sync_apps
+	if [ "${_os_type:-}" != "Darwin" ]; then
+		_profile_item "${_PROFILE_ROOT}/desktop/openbox/rc.xml" "${_config_dir}/openbox/rc.xml" "${_mode}" "${_dry_run}" "${_backup}" "${_timestamp}"
+	fi
 	_desktop_sync_gtk_css
 	_desktop_clean_legacy_themes
 	_sync_gtk_de_profile

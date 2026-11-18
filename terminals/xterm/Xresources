@@ -91,8 +91,8 @@ Xft.hinting: 1
 Xft.hintstyle: hintslight
 Xft.rgba: rgb
 Xft.lcdfilter: lcddefault
-Xcursor.theme: Adwaita
 Xcursor.size: 24
+Xcursor.theme_core: true
 
 ! ================================
 ! EMACS FALLBACK

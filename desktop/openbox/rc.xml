@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openbox_config xmlns="http://openbox.org/3.4/rc" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <resistance>
+    <strength>10</strength>
+    <screen_edge_strength>20</screen_edge_strength>
+  </resistance>
+  <focus>
+    <focusNew>yes</focusNew>
+    <followMouse>no</followMouse>
+    <focusLast>yes</focusLast>
+    <underMouse>no</underMouse>
+    <focusDelay>200</focusDelay>
+    <raiseOnFocus>no</raiseOnFocus>
+  </focus>
+  <placement>
+    <policy>Smart</policy>
+    <center>yes</center>
+    <monitor>Primary</monitor>
+    <primaryMonitor>1</primaryMonitor>
+  </placement>
+  <theme>
+    <name>xwm-kiosk</name>
+    <titleLayout>NLIMC</titleLayout>
+    <keepBorder>no</keepBorder>
+    <animateIconify>no</animateIconify>
+    <font place="ActiveWindow"><name>sans</name><size>10</size><weight>Bold</weight><slant>Normal</slant></font>
+    <font place="InactiveWindow"><name>sans</name><size>10</size><weight>Normal</weight><slant>Normal</slant></font>
+    <font place="MenuHeader"><name>sans</name><size>10</size><weight>Bold</weight><slant>Normal</slant></font>
+    <font place="MenuItem"><name>sans</name><size>10</size><weight>Normal</weight><slant>Normal</slant></font>
+    <font place="ActiveOnScreenDisplay"><name>sans</name><size>10</size><weight>Bold</weight><slant>Normal</slant></font>
+    <font place="InactiveOnScreenDisplay"><name>sans</name><size>10</size><weight>Normal</weight><slant>Normal</slant></font>
+  </theme>
+  <desktops>
+    <number>4</number>
+    <firstdesk>1</firstdesk>
+    <names>
+      <name>1</name>
+      <name>2</name>
+      <name>3</name>
+      <name>4</name>
+    </names>
+    <popupTime>0</popupTime>
+  </desktops>
+  <resize>
+    <drawContents>yes</drawContents>
+    <popupShow>Nonpixel</popupShow>
+    <popupPosition>Center</popupPosition>
+    <popupFixedPosition>
+      <x>10</x>
+      <y>10</y>
+    </popupFixedPosition>
+  </resize>
+  <margins>
+    <top>32</top>
+    <bottom>0</bottom>
+    <left>0</left>
+    <right>0</right>
+  </margins>
+  <dock>
+    <position>TopLeft</position>
+    <floatingX>0</floatingX>
+    <floatingY>0</floatingY>
+    <noStrut>no</noStrut>
+    <stacking>Above</stacking>
+    <direction>Vertical</direction>
+    <autoHide>no</autoHide>
+    <hideDelay>300</hideDelay>
+    <showDelay>300</showDelay>
+    <moveButton>Middle</moveButton>
+  </dock>
+  <keyboard>
+    <keybind key="W-Return"><action name="Execute"><command>xterm</command></action></keybind>
+    <keybind key="C-A-t"><action name="Execute"><command>xterm</command></action></keybind>
+    <keybind key="W-m"><action name="ToggleMaximize"/></keybind>
+    <keybind key="A-F10"><action name="ToggleMaximize"/></keybind>
+    <keybind key="A-F4"><action name="Close"/></keybind>
+    <keybind key="W-q"><action name="Close"/></keybind>
+    <keybind key="A-Tab"><action name="NextWindow"/></keybind>
+    <keybind key="A-S-Tab"><action name="PreviousWindow"/></keybind>
+    <keybind key="W-Tab"><action name="NextWindow"/></keybind>
+    <keybind key="C-A-Left"><action name="GoToDesktop"><to>previous</to></action></keybind>
+    <keybind key="C-A-Right"><action name="GoToDesktop"><to>next</to></action></keybind>
+    <keybind key="W-1"><action name="GoToDesktop"><to>1</to></action></keybind>
+    <keybind key="W-2"><action name="GoToDesktop"><to>2</to></action></keybind>
+    <keybind key="W-3"><action name="GoToDesktop"><to>3</to></action></keybind>
+    <keybind key="W-4"><action name="GoToDesktop"><to>4</to></action></keybind>
+    <keybind key="W-S-1"><action name="SendToDesktop"><to>1</to></action></keybind>
+    <keybind key="W-S-2"><action name="SendToDesktop"><to>2</to></action></keybind>
+    <keybind key="W-S-3"><action name="SendToDesktop"><to>3</to></action></keybind>
+    <keybind key="W-S-4"><action name="SendToDesktop"><to>4</to></action></keybind>
+    <keybind key="W-S-r"><action name="Reconfigure"/></keybind>
+    <keybind key="W-S-q"><action name="Exit"/></keybind>
+  </keyboard>
+  <mouse>
+    <dragThreshold>1</dragThreshold>
+    <doubleClickTime>500</doubleClickTime>
+    <screenEdgeWarpTime>0</screenEdgeWarpTime>
+    <screenEdgeWarpMouse>false</screenEdgeWarpMouse>
+    <context name="Frame">
+      <mousebind button="A-Left" action="Press"><action name="Focus"/><action name="Raise"/></mousebind>
+      <mousebind button="A-Left" action="Drag"><action name="Move"/></mousebind>
+      <mousebind button="A-Right" action="Press"><action name="Focus"/><action name="Raise"/></mousebind>
+      <mousebind button="A-Right" action="Drag"><action name="Resize"/></mousebind>
+    </context>
+    <context name="Titlebar">
+      <mousebind button="Left" action="Press"><action name="Focus"/><action name="Raise"/></mousebind>
+      <mousebind button="Left" action="Drag"><action name="Move"/></mousebind>
+      <mousebind button="Left" action="DoubleClick"><action name="ToggleMaximize"/></mousebind>
+      <mousebind button="Right" action="Press"><action name="Focus"/><action name="Raise"/><action name="ShowMenu"><menu>client-menu</menu></action></mousebind>
+    </context>
+    <context name="Top">
+      <mousebind button="Left" action="Press"><action name="Focus"/><action name="Raise"/></mousebind>
+      <mousebind button="Left" action="Drag"><action name="Resize"><edge>top</edge></action></mousebind>
+    </context>
+    <context name="Bottom">
+      <mousebind button="Left" action="Press"><action name="Focus"/><action name="Raise"/></mousebind>
+      <mousebind button="Left" action="Drag"><action name="Resize"><edge>bottom</edge></action></mousebind>
+    </context>
+    <context name="Left">
+      <mousebind button="Left" action="Press"><action name="Focus"/><action name="Raise"/></mousebind>
+      <mousebind button="Left" action="Drag"><action name="Resize"><edge>left</edge></action></mousebind>
+    </context>
+    <context name="Right">
+      <mousebind button="Left" action="Press"><action name="Focus"/><action name="Raise"/></mousebind>
+      <mousebind button="Left" action="Drag"><action name="Resize"><edge>right</edge></action></mousebind>
+    </context>
+    <context name="TLCorner">
+      <mousebind button="Left" action="Press"><action name="Focus"/><action name="Raise"/></mousebind>
+      <mousebind button="Left" action="Drag"><action name="Resize"/></mousebind>
+    </context>
+    <context name="TRCorner">
+      <mousebind button="Left" action="Press"><action name="Focus"/><action name="Raise"/></mousebind>
+      <mousebind button="Left" action="Drag"><action name="Resize"/></mousebind>
+    </context>
+    <context name="BLCorner">
+      <mousebind button="Left" action="Press"><action name="Focus"/><action name="Raise"/></mousebind>
+      <mousebind button="Left" action="Drag"><action name="Resize"/></mousebind>
+    </context>
+    <context name="BRCorner">
+      <mousebind button="Left" action="Press"><action name="Focus"/><action name="Raise"/></mousebind>
+      <mousebind button="Left" action="Drag"><action name="Resize"/></mousebind>
+    </context>
+    <context name="Handle">
+      <mousebind button="Left" action="Press"><action name="Focus"/><action name="Raise"/></mousebind>
+      <mousebind button="Left" action="Drag"><action name="Resize"><edge>bottom</edge></action></mousebind>
+    </context>
+    <context name="BLGrip">
+      <mousebind button="Left" action="Press"><action name="Focus"/><action name="Raise"/></mousebind>
+      <mousebind button="Left" action="Drag"><action name="Resize"/></mousebind>
+    </context>
+    <context name="BRGrip">
+      <mousebind button="Left" action="Press"><action name="Focus"/><action name="Raise"/></mousebind>
+      <mousebind button="Left" action="Drag"><action name="Resize"/></mousebind>
+    </context>
+    <context name="Iconify">
+      <mousebind button="Left" action="Press"><action name="Focus"/><action name="Raise"/></mousebind>
+      <mousebind button="Left" action="Click"><action name="Iconify"/></mousebind>
+    </context>
+    <context name="Maximize">
+      <mousebind button="Left" action="Press"><action name="Focus"/><action name="Raise"/></mousebind>
+      <mousebind button="Left" action="Click"><action name="ToggleMaximize"/></mousebind>
+    </context>
+    <context name="Close">
+      <mousebind button="Left" action="Press"><action name="Focus"/><action name="Raise"/></mousebind>
+      <mousebind button="Left" action="Click"><action name="Close"/></mousebind>
+    </context>
+    <context name="Client">
+      <mousebind button="Left" action="Press"><action name="Focus"/><action name="Raise"/></mousebind>
+      <mousebind button="Middle" action="Press"><action name="Focus"/><action name="Raise"/></mousebind>
+      <mousebind button="Right" action="Press"><action name="Focus"/><action name="Raise"/></mousebind>
+    </context>
+    <context name="Root">
+      <mousebind button="Middle" action="Press"><action name="ShowMenu"><menu>client-list-combined-menu</menu></action></mousebind>
+      <mousebind button="Right" action="Press"><action name="ShowMenu"><menu>root-menu</menu></action></mousebind>
+    </context>
+  </mouse>
+  <menu>
+    <file>menu.xml</file>
+    <hideDelay>200</hideDelay>
+    <middle>no</middle>
+    <submenuShowDelay>100</submenuShowDelay>
+    <submenuHideDelay>400</submenuHideDelay>
+    <showIcons>yes</showIcons>
+    <manageDesktops>yes</manageDesktops>
+  </menu>
+  <applications>
+    <application name="wwm-bar">
+      <decor>no</decor>
+      <position><x>0</x><y>0</y></position>
+      <desktop>all</desktop>
+      <layer>above</layer>
+      <skip_taskbar>yes</skip_taskbar>
+      <skip_pager>yes</skip_pager>
+      <focus>no</focus>
+    </application>
+    <application class="wwm-bar">
+      <decor>no</decor>
+      <position><x>0</x><y>0</y></position>
+      <desktop>all</desktop>
+      <layer>above</layer>
+      <skip_taskbar>yes</skip_taskbar>
+      <skip_pager>yes</skip_pager>
+      <focus>no</focus>
+    </application>
+    <application class="Wwm-bar">
+      <decor>no</decor>
+      <position><x>0</x><y>0</y></position>
+      <desktop>all</desktop>
+      <layer>above</layer>
+      <skip_taskbar>yes</skip_taskbar>
+      <skip_pager>yes</skip_pager>
+      <focus>no</focus>
+    </application>
+  </applications>
+</openbox_config>
