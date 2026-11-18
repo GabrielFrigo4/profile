@@ -4,7 +4,7 @@
 # ----------------------------------------------------------------
 set -eu
 
-. "${SHELL_REPO_DIR:-${HOME}/.shell}/library/ui.sh"
+. "${SHELL_REPO_DIR:-${HOME}/.shell}/core/ui.sh"
 
 _ui_banner "Iniciando Operação"
 _ui_step "Verificando dependências do sistema..."

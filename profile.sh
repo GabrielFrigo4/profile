@@ -85,6 +85,11 @@ _profile_help() {
 
 _profile_update() {
 	_ui_step "Atualizando repositorio em: ${_PROFILE_ROOT}"
+	command git -C "${_PROFILE_ROOT}" diff --numstat 2> "/dev/null" | while IFS="$(printf '\t')" read -r _add _del _f; do
+		if [ "${_add}" = "0" ] && [ "${_del}" = "0" ] && [ -n "${_f}" ]; then
+			command git -C "${_PROFILE_ROOT}" checkout -- "${_f}" < "/dev/null" > "/dev/null" 2>&1 || true
+		fi
+	done
 	_status="$(command git -C "${_PROFILE_ROOT}" status --porcelain 2> "/dev/null" || true)"
 	_has_dirty=0
 	if [ -n "${_status}" ]; then
