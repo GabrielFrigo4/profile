@@ -17,7 +17,7 @@ if command -v python3 > "/dev/null" 2>&1; then
 import os, re, shutil, subprocess, sys
 
 repo_name = os.path.basename(os.getcwd())
-is_vault = repo_name.lower() == "vault"
+is_vault = repo_name.lower() == "vault" or os.path.isfile("vault.sh")
 
 non_exec_exts = {
     ".md", ".txt", ".json", ".jsonc", ".yml", ".yaml", ".toml", ".ini", ".conf",
@@ -180,7 +180,7 @@ for row in stage_out:
     if mode in ("120000", "160000"):
         continue
     tracked.append(path)
-    if not os.path.isfile(path) or is_vault:
+    if not os.path.isfile(path):
         continue
     expected = "100755" if is_entrypoint(path) else "100644"
     if mode != expected:
@@ -221,7 +221,7 @@ for path in tracked:
         except OSError:
             pass
 
-    if "/OSS/" in path or path.startswith("OSS/") or "node_modules/" in path or ".venv/" in path:
+    if "/Open Source/" in path or path.startswith("Open Source/") or "/OSS/" in path or path.startswith("OSS/") or "node_modules/" in path or ".venv/" in path:
         continue
 
     _, ext = os.path.splitext(path)
@@ -336,7 +336,7 @@ for raw in out:
     if not raw:
         continue
     p = raw.decode("utf-8", "replace")
-    if "/OSS/" in p or p.startswith("OSS/") or "node_modules/" in p or ".venv/" in p or not os.path.isfile(p):
+    if "/Open Source/" in p or p.startswith("Open Source/") or "/OSS/" in p or p.startswith("OSS/") or "node_modules/" in p or ".venv/" in p or not os.path.isfile(p):
         continue
     if p.endswith(".py"):
         py_targets.append(p)

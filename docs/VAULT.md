@@ -1,22 +1,26 @@
 # 🔒 The Vault
 
-O **[Vault](https://github.com/GabrielFrigo4/vault)** é o repositório privado da **Tríade de Produtividade**, responsável pelo gerenciamento de credenciais confidenciais, chaves SSH/PuTTY, tokens de autenticação, mapeamento de servidores e credenciais de rede.
+O **[Vault](https://github.com/GabrielFrigo4/vault)** é o repositório privado do **Quarteto de Produtividade**, responsável pelo gerenciamento de credenciais confidenciais, chaves SSH/PuTTY, tokens de autenticação, mapeamento de servidores e credenciais de rede.
 
-Sempre que um script de setup, configuração de Git ou ferramenta de terminal precisar de segredos, os dados serão lidos a partir do Vault local (`~/.vault`).
+Sempre que um script de setup, configuração de Git ou ferramenta de terminal precisar de segredos, os dados serão lidos em cascata a partir de `$VAULT_DIR`, `~/.local/share/vault` (XDG Data, canônico), `~/.config/vault` ou `~/.vault`.
 
 ---
 
 ## 📂 Localização e Permissões de Instalação
 
-O Vault deve ser clonado e posicionado no seguinte caminho seguro:
+O Vault deve ser clonado e posicionado no caminho canônico XDG:
+
+### UNIX (Linux, FreeBSD, macOS, MSYS2)
 
 ```sh
-# UNIX (Linux, FreeBSD, macOS, WSL2)
-git clone "https://github.com/GabrielFrigo4/vault" "${HOME}/.vault"
-chmod 0700 "${HOME}/.vault"
+git clone "https://github.com/GabrielFrigo4/vault" "${HOME}/.local/share/vault"
+chmod 0700 "${HOME}/.local/share/vault"
+```
 
-# Windows Nativo (Prompt de Comando ou PowerShell)
-git clone "https://github.com/GabrielFrigo4/vault" "%USERPROFILE%\.vault"
+### Windows Nativo (Prompt de Comando ou PowerShell)
+
+```cmd
+git clone "https://github.com/GabrielFrigo4/vault" "%USERPROFILE%\.local\share\vault"
 ```
 
 > [!IMPORTANT]
@@ -55,6 +59,6 @@ O Vault provê carregadores nativos para todos os ambientes do ecossistema:
 
 ## 🔗 Integração com o Universal Shell
 
-O **Universal Shell** detecta o diretório `~/.vault` automaticamente a cada nova sessão via `core/vault.sh`. Não é necessário fazer `source` manual em cada script — o ambiente carrega as variáveis de forma silenciosa e instantânea.
+O **Universal Shell** detecta o cofre automaticamente a cada nova sessão via `core/vault.sh` seguindo a cascata `$VAULT_DIR` $\rightarrow$ `~/.local/share/vault` $\rightarrow$ `~/.config/vault` $\rightarrow$ `~/.vault`. Não é necessário fazer `source` manual em cada script — o ambiente carrega as variáveis de forma silenciosa e instantânea.
 
 Em máquinas limpas recém-provisionadas ou ambientes anônimos onde o Vault não estiver clonado, o ecossistema opera normalmente em modo anônimo (degradação graciosa).

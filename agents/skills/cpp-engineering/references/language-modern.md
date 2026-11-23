@@ -27,7 +27,6 @@ enum class ConfigError {
     return std::string("config_payload");
 }
 
-// Encadeamento Funcional (.and_then / .or_else):
 auto parsed = read_config("settings.json")
     .and_then([](const std::string &content) {
         return parse_json(content);
@@ -44,7 +43,7 @@ Substitua `printf` (vulnerável a incompatibilidade de tipos) e `std::cout << ..
 #include <print>
 
 int main() {
-    std::string user = "Gabriel";
+    std::string user = "operator";
     int jobs = 16;
     std::println("Iniciando pool para '{}' com {} threads.", user, jobs);
     return 0;

@@ -21,14 +21,16 @@ Este diretório centraliza o arquivo canônico `settings.json` e o manifesto `ex
 
 ## 🚀 Como Usar / Sincronizar
 
-### Linux & FreeBSD:
+### Linux & FreeBSD (VS Code):
 
 ```sh
-# VS Code (Microsoft Oficial)
 mkdir -p "${HOME}/.config/Code/User"
 ln -sf "$(pwd)/settings.json" "${HOME}/.config/Code/User/settings.json"
+```
 
-# Code - OSS (FreeBSD Ports / Arch Linux)
+### Linux & FreeBSD (Code - OSS):
+
+```sh
 mkdir -p "${HOME}/.config/Code - OSS/User"
 ln -sf "$(pwd)/settings.json" "${HOME}/.config/Code - OSS/User/settings.json"
 ```

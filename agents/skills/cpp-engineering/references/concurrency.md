@@ -22,7 +22,6 @@ void background_worker(std::stop_token stoken, int id) {
 }
 
 int main() {
-    // Ao sair do escopo, jthread solicita parada cooperativa e faz join()!
     std::jthread worker(background_worker, 1);
     std::this_thread::sleep_for(std::chrono::seconds(1));
     return 0;
@@ -46,9 +45,8 @@ void init_subsystems(int thread_count) {
 
     for (int i = 0; i < thread_count; ++i) {
         pool.emplace_back([&start_gate, i] {
-            // Inicialização específica da thread...
             start_gate.count_down();
-            start_gate.wait(); // Aguarda todas estarem prontas
+            start_gate.wait();
         });
     }
 }

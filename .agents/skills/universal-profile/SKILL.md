@@ -16,15 +16,15 @@ Este guia detalha o fluxo operacional para estender, refatorar e auditar o repos
 
 Antes de criar qualquer arquivo, posicione-o na pasta correta:
 
-| Camada                | Diretório    | Papel & Responsabilidade                                      | Exemplos                                       |
-| :-------------------- | :----------- | :------------------------------------------------------------ | :--------------------------------------------- |
-| **Editores**          | `editors/`   | Configurações declarativas autocontidas por editor.           | Antigravity, VS Code, Zed, Emacs, Vim          |
-| **Terminais**         | `terminals/` | Perfis gráficos e scripts de inicialização de terminais.      | Konsole, Windows Terminal, NuShell, PowerShell |
-| **Linters & Tools**   | `tools/`     | Arquivos de configuração globais de formatação e LSP.         | `.clang-format`, `.prettierrc`, `.stylua.toml` |
-| **Navegadores**       | `browsers/`  | Ajustes de navegadores no host.                               | Firefox Wayland e clipboard                    |
-| **Habilidades de IA** | `skills/`    | Pacotes autocontidos de procedimentos para agentes autônomos. | `SKILL.md` com YAML Frontmatter                |
-| **Sincronização**     | `core/`      | Scripts em shell para orquestrar e sincronizar dotfiles.      | `core/sync.sh`, `./profile.sh sync`            |
-| **Documentação**      | `docs/`      | Manuais de arquitetura e filosofia do ecossistema.            | `ARCHITECTURE.md`, `PHILOSOPHY.md`             |
+| Camada                | Diretório    | Papel & Responsabilidade                                 | Exemplos                                       |
+| :-------------------- | :----------- | :------------------------------------------------------- | :--------------------------------------------- |
+| **Editores**          | `editors/`   | Configurações declarativas autocontidas por editor.      | Antigravity, VS Code, Zed, Emacs, Vim          |
+| **Terminais**         | `terminals/` | Perfis gráficos e scripts de inicialização de terminais. | Konsole, Windows Terminal, NuShell, PowerShell |
+| **Linters & Tools**   | `tools/`     | Arquivos de configuração globais de formatação e LSP.    | `.clang-format`, `.prettierrc`, `.stylua.toml` |
+| **Navegadores**       | `browsers/`  | Ajustes de navegadores no host.                          | Firefox Wayland e clipboard                    |
+| **Habilidades de IA** | `agents/`    | Skills portáteis (`skills/`) e rules (`rules/`) globais. | `SKILL.md` com YAML Frontmatter                |
+| **Sincronização**     | `core/`      | Scripts em shell para orquestrar e sincronizar dotfiles. | `core/sync.sh`, `sh profile.sh sync`           |
+| **Documentação**      | `docs/`      | Manuais de arquitetura e integração do ecossistema.      | `ARCHITECTURE.md`, `PROFILE.md`, `VAULT.md`    |
 
 ---
 
@@ -36,8 +36,8 @@ Antes de criar qualquer arquivo, posicione-o na pasta correta:
     - Preferência absoluta por JSON, TOML e YAML formatados.
 3. **Conformidade XDG:**
     - Todos os destinos devem seguir a especificação XDG Base Directory (`~/.config/`).
-4. **README em Todas as Pastas:**
-    - Todo subdiretório DEVE conter um `README.md` conciso com catálogo de arquivos e instruções de sincronização.
+4. **README em Domínios Principais:**
+    - Todo diretório de domínio (`editors/`, `terminals/`, `tools/`, `browsers/`, `agents/`, `docs/`) DEVE conter um `README.md` conciso com catálogo de arquivos e instruções de sincronização.
 
 ---
 
@@ -46,7 +46,8 @@ Antes de criar qualquer arquivo, posicione-o na pasta correta:
 ```sh
 git diff --check
 
-python3 .scripts/audit/all.py
+make format
+make ci
 
 ./.githooks/pre-commit
 ```

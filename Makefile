@@ -16,7 +16,6 @@ help:
 	_e=$$'\e'; \
 	cmd() { printf "    $${_e}[36mmake %-22s$${_e}[0m %s\n" "$$1" "$$2"; }; \
 	sec() { printf "\n  $${_e}[1;33m%s$${_e}[0m\n" "$$1"; }; \
-	sub() { printf "  $${_e}[1;34m  ── %s ──$${_e}[0m\n" "$$1"; }; \
 	printf "\n  $${_e}[1;37mUniversal Profile — Dotfiles Declarativos & Skills de IA$${_e}[0m\n"; \
 	printf "  ============================================================\n"; \
 	sec "Setup & Ganchos:"; \
@@ -28,6 +27,7 @@ help:
 	cmd "audit"          "Executa auditoria estática completa (JSON/YAML/TOML/links)"; \
 	cmd "format"         "Formata documentações Markdown com Prettier"; \
 	cmd "prettier"       "Formata documentações Markdown com Prettier"; \
+	cmd "fix-banners"    "Normaliza réguas de banners de cabeçalho e seções"; \
 	cmd "clean"          "Remove artefatos temporários, caches e ambientes virtuais (.venv)"; \
 	cmd "ci"             "Executa suite completa de CI local"; \
 	echo ""
@@ -53,7 +53,7 @@ sync:
 
 test:
 	echo "🧪 Validando sintaxe POSIX dos scripts..."
-	find . -name "*.sh" -not -path "*/.git/*" -exec sh -n {} +
+	find . -name "*.sh" -not -path "*/Open Source/*" -not -path "*/OSS/*" -not -path "*/.git/*" -exec sh -n {} +
 	echo "🎨 Verificando conformidade GTK 3/4 e limpeza de temas legados..."
 	test ! -e desktop/themes/Emacs-Doom-Dark
 	test ! -f editors/emacs/emacs.desktop
@@ -88,13 +88,13 @@ prettier:
 	echo "🎨 Formatando documentações e configurações com Prettier..."
 	if command -v prettier > "/dev/null" 2>&1; then \
 		find . -type f \( -name "*.md" -o -name "*.json" -o -name "*.jsonc" -o -name "*.yml" -o -name "*.yaml" -o -name "*.html" -o -name "*.css" \) \
-			-not -path "*/OSS/*" -not -path "*/.git/*" -not -path "*/.venv/*" -not -path "*/node_modules/*" \
+			-not -path "*/Open Source/*" -not -path "*/OSS/*" -not -path "*/.git/*" -not -path "*/.venv/*" -not -path "*/node_modules/*" \
 			-not -path "*/var/*" -not -path "*/tmp/*" -not -path "*/build/*" -not -path "*/dist/*" \
 			-not -path "*/target/*" -not -path "*/.cache/*" \
 			-exec prettier --write {} + 2> "/dev/null" || true; \
 	elif command -v npx > "/dev/null" 2>&1; then \
 		find . -type f \( -name "*.md" -o -name "*.json" -o -name "*.jsonc" -o -name "*.yml" -o -name "*.yaml" -o -name "*.html" -o -name "*.css" \) \
-			-not -path "*/OSS/*" -not -path "*/.git/*" -not -path "*/.venv/*" -not -path "*/node_modules/*" \
+			-not -path "*/Open Source/*" -not -path "*/OSS/*" -not -path "*/.git/*" -not -path "*/.venv/*" -not -path "*/node_modules/*" \
 			-not -path "*/var/*" -not -path "*/tmp/*" -not -path "*/build/*" -not -path "*/dist/*" \
 			-not -path "*/target/*" -not -path "*/.cache/*" \
 			-exec npx --yes prettier --write {} + 2> "/dev/null" || true; \

@@ -17,7 +17,6 @@ parse_port(std::string_view sv) noexcept {
 	return static_cast<uint32_t>(val);
 }
 
-/* Invariantes checadas em tempo de compilação */
 static_assert(parse_port("8080").value() == 8080);
 static_assert(parse_port("").error() == ParseError::EmptyInput);
 static_assert(parse_port("99999").error() == ParseError::Overflow);

@@ -21,7 +21,7 @@ _count_pids_by_bin() {
 
 _wait_cond() {
 	_max="$1"
-	shift
+	[ "$#" -ge 1 ] && shift
 	_i=0
 	while [ "${_i}" -lt "${_max}" ]; do
 		"$@" > "/dev/null" 2>&1 && return 0

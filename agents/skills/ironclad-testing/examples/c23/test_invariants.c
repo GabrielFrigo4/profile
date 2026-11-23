@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <stdckdint.h>
 
-/* Macro de asserção cirúrgica com diagnóstico exato */
 #define IRON_ASSERT(expr, msg) \
 	do { \
 		if (!(expr)) { \
@@ -12,19 +11,16 @@
 		} \
 	} while (0)
 
-/* Função sob teste com atributo obrigatório de retorno checado */
 [[nodiscard]] static int safe_multiply(int a, int b, int *result) {
 	if (result == nullptr) {
 		return -1;
 	}
-	/* C23: Detecção de overflow no nível do compilador */
 	if (ckd_mul(result, a, b)) {
-		return -2; /* Overflow detectado */
+		return -2;
 	}
 	return 0;
 }
 
-/* Caso de teste negativo: deve detectar overflow com segurança */
 static int test_integer_overflow_detection(void) {
 	int res = 0;
 	int status = safe_multiply(1000000, 1000000, &res);

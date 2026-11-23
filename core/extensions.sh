@@ -106,13 +106,24 @@ _profile_extensions() {
 		return 0
 	fi
 
-	_ui_step "Sincronizando extensões de ${_ext_target} (${_ext_cli})..."
+	_installed_exts=""
+	if [ "${_ext_act}" = "status" ]; then
+		_ui_step "Auditando extensões declaradas de ${_ext_target} (${_ext_cli})..."
+		_installed_exts="$("${_ext_cli}" --list-extensions 2> "/dev/null" | tr '[:upper:]' '[:lower:]' || true)"
+	else
+		_ui_step "Sincronizando extensões de ${_ext_target} (${_ext_cli})..."
+	fi
 	while IFS= read -r _line || [ -n "${_line}" ]; do
 		_line="$(echo "${_line}" | tr -d '\r' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
 		case "${_line}" in \#*|"") continue ;; esac
 
 		if [ "${_ext_act}" = "status" ]; then
-			_ui_sub "[DECLARADA] ${_line}"
+			_line_low="$(printf '%s\n' "${_line}" | tr '[:upper:]' '[:lower:]')"
+			if printf '%s\n' "${_installed_exts}" | grep -Fqx "${_line_low}"; then
+				_ui_ok "[INSTALLED] ${_line}"
+			else
+				_ui_warn "[MISSING] ${_line}"
+			fi
 		elif [ "${_ext_dry}" -eq 1 ]; then
 			_ui_sub "[DRY-RUN EXT] ${_ext_cli} --install-extension ${_line}"
 		else
@@ -120,5 +131,9 @@ _profile_extensions() {
 			_ui_ok "[EXT] ${_line}"
 		fi
 	done < "${_ext_file}"
-	_ui_ok "Sincronização de extensões concluída!"
+	if [ "${_ext_act}" = "status" ]; then
+		_ui_ok "Auditoria de extensões concluída!"
+	else
+		_ui_ok "Sincronização de extensões concluída!"
+	fi
 }

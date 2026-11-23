@@ -1,16 +1,16 @@
 ---
 name: ironclad-testing
 description: >-
-    Runbook cognitivo definitivo para engenharia de testes rigorosos, invariantes defensivas,
-    mentalidade adversarial (Advogado do Diabo) e barreiras intransigentes de contenção
-    contra código ruim em C Moderno (C23), C++23, POSIX Shell, Go, Python e Makefiles.
+    Engenharia de testes rigorosos, invariantes defensivas, mentalidade adversarial
+    (Advogado do Diabo) e barreiras de contenção contra regressões em C Moderno (C23),
+    C++23, POSIX Shell, Go, Python e Makefiles.
 ---
 
-# 🛡️ Ironclad Testing — Engenharia de Testes Rigorosos & Barreiras Anti-Regressão
+# 🛡️ Ironclad Testing — Engenharia de Testes & Barreiras Anti-Regressão
 
-Esta skill define o padrão supremo de qualidade, tolerância zero para fragilidade e engenharia de testes adversariais em todo o ecossistema.
+Esta skill define padrões de qualidade defensiva e testes adversariais para validação de software e automação.
 
-Quando solicitada a testar, auditar ou validar qualquer software, script ou componente, **a IA nunca deve agir como uma testemunha complacente que apenas confirma o caminho feliz**. Sua missão primordial é atuar como um **Advogado do Diabo (Engenheiro de QA Adversarial)**, buscando ativamente quebrar o código nas fronteiras, injetar falhas e provar matematicamente e na prática que nenhuma regressão passará despercebida.
+Quando solicitada a testar, auditar ou validar qualquer software, script ou componente, não confirme apenas o caminho feliz: atue como **Engenheiro de QA Adversarial**, testando fronteiras, injetando falhas e validando saída limpa diante de entradas inválidas.
 
 ---
 
@@ -77,8 +77,8 @@ Os testes canônicos e padrões de harness do ecossistema estão estruturados mo
 | **C Moderno (C23)**     | Aritmética segura `<stdckdint.h>`, `nullptr`, asserções cirúrgicas e sanitizers           | [`examples/c23/test_invariants.c`](./examples/c23/test_invariants.c)     |
 | **C++ Moderno (C++23)** | Retorno monádico `std::expected`, `std::print`, checagens `static_assert` em compile-time | [`examples/cpp23/test_expected.cpp`](./examples/cpp23/test_expected.cpp) |
 | **POSIX Shell (`sh`)**  | Test runner hermético puro, contenção com subshells, `trap` e zero dependências           | [`examples/posix_sh/test_runner.sh`](./examples/posix_sh/test_runner.sh) |
-| **Go (1.23+)**          | Testes paralelos table-driven (`t.Parallel()`), bordas zero/negativas e anti-leak         | [`examples/go/timeout_test.go`](./examples/go/timeout_test.go)           |
-| **Python (3.12+)**      | Parametrização adversarial (`@pytest.mark.parametrize`) e captura de exceções             | [`examples/python/test_parser.py`](./examples/python/test_parser.py)     |
+| **Go**                  | Testes paralelos table-driven (`t.Parallel()`), bordas zero/negativas e anti-leak         | [`examples/go/timeout_test.go`](./examples/go/timeout_test.go)           |
+| **Python**              | Parametrização adversarial (`@pytest.mark.parametrize`) e captura de exceções             | [`examples/python/test_parser.py`](./examples/python/test_parser.py)     |
 
 ---
 

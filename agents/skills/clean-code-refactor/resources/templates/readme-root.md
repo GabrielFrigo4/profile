@@ -1,17 +1,17 @@
-# [Emoji] [Nome do Repositório] — [Subtítulo Conciso]
+# [Emoji] [Nome do Projeto] — [Subtítulo Conciso]
 
 > [Declaração de missão institucional e invariantes do repositório em uma ou duas frases].
 
 ---
 
-## 🏛️ O Quarteto de Produtividade
+## 🏛️ Arquitetura & Escopo
 
-| Repositório                                             | Visibilidade | Papel Central                              | Escopo & Privilégios                         |
-| :------------------------------------------------------ | :----------- | :----------------------------------------- | :------------------------------------------- |
-| **[Setup](https://github.com/GabrielFrigo4/setup)**     | Público      | Provisionamento ativo de SO e pacotes      | Nível SO / Privilegiado (`root` / `ELEVATE`) |
-| **[Shell](https://github.com/GabrielFrigo4/shell)**     | Público      | Motor interativo de terminal e prompts     | Nível Shell / Sessão do Terminal             |
-| **Vault**                                               | Privado      | Cofre criptográfico, chaves SSH e segredos | Usuário Restrito (`0700` / `0600`)           |
-| **[Profile](https://github.com/GabrielFrigo4/profile)** | Público      | Dotfiles declarativos, editores e IA       | Nível Usuário (`$HOME`, sem privilégios)     |
+| Componente   | Papel Central                            | Escopo & Privilégios                    |
+| :----------- | :--------------------------------------- | :-------------------------------------- |
+| **Core**     | Lógica de negócio e núcleo executável    | Agnóstico de interface e determinístico |
+| **CLI / UI** | Interface de comando ou apresentação     | Emissão limpa em `stdout` e `stderr`    |
+| **Config**   | Arquivos declarativos de configuração    | XDG Base Directory (`~/.config/<app>/`) |
+| **Tests**    | Suítes unitárias, integração e auditoria | Execução hermética offline              |
 
 ---
 
@@ -25,12 +25,13 @@
 
 ## 🚀 Como Usar
 
-[Instruções concisas de clone ou execução].
+[Instruções concisas de clone, build ou execução].
 
 ---
 
 ## 🧪 Auditoria & Quality Gates
 
 ```sh
-python3 .scripts/audit/all.py
+make test
+make ci
 ```

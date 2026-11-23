@@ -1,15 +1,14 @@
 # ⚡ Gestão Assíncrona e Declarativa de Pacotes: Elpaca
 
-O gerenciador embutido clássico `package.el` opera de forma síncrona, bloqueando a interface e o loop de eventos principal durante compilação de bytecode, downloads de rede e clonagem Git. No Emacs 31+, adota-se o **Elpaca** como gerenciador declarativo e totalmente assíncrono.
+O gerenciador síncrono legado `package.el` bloqueia o loop de eventos durante downloads e compilação. Em configurações modernas, adota-se o **Elpaca** como gerenciador assíncrono declarativo.
 
 ---
 
 ## 🚀 Desativação de Pacotes Legados
 
-No arquivo `early-init.el`, a infraestrutura síncrona legada deve ser sumariamente desativada:
+No arquivo `early-init.el`, desative a inicialização síncrona do `package.el`:
 
 ```elisp
-;; early-init.el
 ;;; -*- lexical-binding: t -*-
 
 (setq package-enable-at-startup nil)
@@ -19,12 +18,11 @@ No arquivo `early-init.el`, a infraestrutura síncrona legada deve ser sumariame
 
 ## 📦 Bootstrap Hermético do Elpaca
 
-O instalador do Elpaca deve residir em arquivo isolado (ex: `etc/init/init-elpaca.el`), garantindo self-healing na primeira execução e congelamento estrito de lockfiles:
+Mantenha o bootstrap isolado (ex.: `etc/init/init-elpaca.el`), redirecionando caches para `var/cache/elpaca/` com auto-cura na primeira execução:
 
 ```elisp
 ;;; -*- lexical-binding: t -*-
 
-(defvar elpaca-installer-version 0.10)
 (defvar elpaca-directory (expand-file-name "var/cache/elpaca/" user-emacs-directory))
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
 (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
@@ -40,7 +38,6 @@ O instalador do Elpaca deve residir em arquivo isolado (ex: `etc/init/init-elpac
   (add-to-list 'load-path (if (file-exists-p build) build repo))
   (unless (file-exists-p repo)
     (make-directory repo t)
-    (when (<= emacs-major-version 28) (require 'subr-x))
     (condition-case-unless-debug err
         (if-let* ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
                   ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
@@ -69,32 +66,26 @@ O instalador do Elpaca deve residir em arquivo isolado (ex: `etc/init/init-elpac
 
 ## 🎯 Integração Declarativa com `use-package`
 
-O Elpaca suporta nativamente a macro `use-package` por meio da palavra-chave `:elpaca`:
-
 ```elisp
-;; Habilitar suporte declarativo
 (elpaca elpaca-use-package
   (elpaca-use-package-mode))
 
-;; Instalação e configuração de pacote assíncrono
-(use-package kanagawa-theme
-  :elpaca t
+(use-package modus-themes
+  :ensure t
   :config
-  (load-theme 'kanagawa-wave t))
+  (load-theme 'modus-vivendi t))
 
-;; Pacotes integrados do core NÃO devem ser instalados pelo Elpaca
 (use-package eglot
-  :elpaca nil
+  :ensure nil
   :hook ((c-ts-mode . eglot-ensure)))
 ```
 
 ---
 
-## 🛡️ Bloqueio e Sincronização Síncrona Controlada
+## 🛡️ Sincronização Controlada em Modo Batch
 
-Quando da execução de rotinas em modo batch ou testes de CI, podemos forçar a conclusão de toda a fila de downloads antes de prosseguir:
+Em scripts de CI ou batch que precisem aguardar a fila antes de prosseguir:
 
 ```elisp
-;; Forçar resolução completa das filas antes de operações críticas
-(elpaca-wait (elpaca-process-queues))
+(elpaca-wait)
 ```

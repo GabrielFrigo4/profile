@@ -26,7 +26,6 @@ assert_fails() {
 	_msg="${2:-Comando deve falhar com exit code não-zero}"
 	_tests_run=$((_tests_run + 1))
 
-	# Executa em subshell para conter set -e
 	if ( eval "${_cmd}" ) > "/dev/null" 2>&1; then
 		printf "❌ [FALHA] %s (o comando foi bem-sucedido inesperadamente)\n" "${_msg}" >&2
 		printf "   Comando: %s\n" "${_cmd}" >&2
@@ -34,12 +33,13 @@ assert_fails() {
 	fi
 }
 
-# --- Bateria de Testes ---
+### --------------------------------
+### BATERIA DE TESTES
+### --------------------------------
 test_directory_parsing() {
 	_temp_dir="$(mktemp -d 2> "/dev/null" || mktemp -d -t "test")"
 	trap 'rm -rf "${_temp_dir}"' EXIT INT TERM
 
-	# Borda: diretório com espaços e caracteres especiais
 	_weird_path="${_temp_dir}/pasta com espacos"
 	mkdir -p "${_weird_path}"
 

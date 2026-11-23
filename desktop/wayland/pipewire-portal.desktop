@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Name=PipeWire and XDG Desktop Portal Init
-Exec=sh -c "exec \"\$HOME/.config/autostart-scripts/pipewire-portal-init.sh\""
+Exec=sh -c "exec \"\$HOME/.local/bin/fix-wayland-screenshare.sh\""
 OnlyShowIn=KDE;
 X-KDE-autostart-phase=0
 StartupNotify=false

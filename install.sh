@@ -4,7 +4,7 @@
 # ----------------------------------------------------------------
 set -eu
 
-_repo_root="$(cd "$(dirname "$0")" && pwd)"
+_repo_root="$(CDPATH="" cd -P "$(dirname "$0")" && pwd -P)"
 
 ### ================================
 ### ANSI & SEMANTIC UI EMISSION
@@ -60,7 +60,7 @@ _ui_sub "Origem: ${_repo_root}"
 ### ================================
 ### SINCRONIZACAO DE DOTFILES
 ### ================================
-sh "${_repo_root}/profile.sh" sync "$@"
+PROFILE_DIR="${_repo_root}" sh "${_repo_root}/profile.sh" sync "$@"
 
 _ui_ok "Instalação e sincronização concluídas com sucesso!"
 exit 0

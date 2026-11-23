@@ -24,7 +24,6 @@ public:
         reset();
     }
 
-    // Move-only: Proíbe cópia acidental de descritor
     UniqueFd(const UniqueFd &) = delete;
     UniqueFd &operator=(const UniqueFd &) = delete;
 

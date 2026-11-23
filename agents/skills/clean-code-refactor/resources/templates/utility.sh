@@ -4,17 +4,41 @@
 # ----------------------------------------------------------------
 set -eu
 
-. "${SHELL_REPO_DIR:-${HOME}/.shell}/core/ui.sh"
+_has_tty_color() {
+	[ -t 1 ] && [ "${TERM:-dumb}" != "dumb" ]
+}
 
-_ui_banner "Iniciando Operação"
-_ui_step "Verificando dependências do sistema..."
-_ui_sub "Inspecionando executáveis no PATH..."
+_log_step() {
+	if _has_tty_color; then
+		echo -n $'\e[1;36m==>\e[0m '
+	else
+		echo -n "==> "
+	fi
+	echo "$*"
+}
 
+_log_ok() {
+	if _has_tty_color; then
+		echo -n $'\e[1;32m  OK\e[0m '
+	else
+		echo -n "  OK "
+	fi
+	echo "$*"
+}
+
+_log_err() {
+	if _has_tty_color; then
+		echo -n $'\e[1;31m  ERRO\e[0m ' >&2
+	else
+		echo -n "  ERRO " >&2
+	fi
+	echo "$*" >&2
+}
+
+_log_step "Verificando dependências do sistema..."
 if command -v git > "/dev/null" 2>&1; then
-	_ui_ok "Dependência verificada com sucesso!"
+	_log_ok "Dependência verificada com sucesso!"
 else
-	_ui_err "Git não encontrado no sistema."
+	_log_err "Git não encontrado no PATH."
 	exit 1
 fi
-
-_ui_banner "Operação Concluída com Sucesso"

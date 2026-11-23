@@ -78,26 +78,31 @@ def main():
     args = parser.parse_args()
 
     repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
-    skills_dir = None
+    skills_dirs = []
     for cand in ("agents/skills", ".agents/skills", "skills"):
         target_candidate = os.path.join(repo_root, cand)
         if os.path.isdir(target_candidate):
-            skills_dir = target_candidate
-            break
+            skills_dirs.append(target_candidate)
 
-    if not skills_dir or not os.path.exists(skills_dir):
+    if not skills_dirs:
         print("=" * 80)
         print("AUDITORIA DE SKILLS (Nenhum diretório de skills detectado)")
         print("=" * 80)
         print("\nSUCESSO: Repositório sem diretório de skills ([PASS]).")
         sys.exit(0)
 
-    errors, warnings, clean_skills = scan_skills(
-        skills_dir,
-        min_lines=args.min_lines,
-        sweet_spot=args.sweet_spot,
-        max_lines=args.max_lines
-    )
+    errors, warnings, clean_skills = [], [], []
+    for skills_dir in skills_dirs:
+        rel_dir = os.path.relpath(skills_dir, repo_root)
+        d_errors, d_warnings, d_clean = scan_skills(
+            skills_dir,
+            min_lines=args.min_lines,
+            sweet_spot=args.sweet_spot,
+            max_lines=args.max_lines
+        )
+        errors.extend(d_errors)
+        warnings.extend([(f"{rel_dir}/{name}/SKILL.md", count) for name, count in d_warnings])
+        clean_skills.extend(d_clean)
 
     print("=" * 80)
     print(f"AUDITORIA DE SKILLS (Piso: {args.min_lines} | Sweet Spot: <= {args.sweet_spot} | Teto: <= {args.max_lines} linhas)")
@@ -106,8 +111,8 @@ def main():
 
     if warnings:
         print(f"\n⚠️  {len(warnings)} SKILL(S) NA FAIXA DE DENSIDADE ({args.sweet_spot + 1} a {args.max_lines} linhas):")
-        for name, count in warnings:
-            print(f"   {count:4d} linhas -> {os.path.relpath(skills_dir, repo_root)}/{name}/SKILL.md")
+        for rel_path, count in warnings:
+            print(f"   {count:4d} linhas -> {rel_path}")
 
     if errors:
         print(f"\n❌ ERRO FATAL: {len(errors)} INCONFORMIDADE(S) ENCONTRADA(S):")

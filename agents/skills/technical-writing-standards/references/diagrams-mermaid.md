@@ -42,7 +42,7 @@ sequenceDiagram
     participant V as Vault (Segredos)
 
     Dev->>Sh: Executa login / novo terminal
-    Sh->>V: Inspeciona cofre em ~/.vault
+    Sh->>V: Inspeciona cofre de segredos
     V-->>Sh: Exporta chaves SSH silenciosamente
 ```
 

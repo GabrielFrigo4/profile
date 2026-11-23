@@ -14,6 +14,7 @@ IGNORE_DIRS = {
     ".venv",
     "venv",
     "node_modules",
+    "Open Source",
     "OSS",
     "elpaca",
     "elpa",
@@ -133,7 +134,15 @@ def check_code_lines(lines, prefixes, is_py=False, is_ps1=False, ext=""):
             issues.append((idx, "BATCH_NON_CANONICAL_SYNTAX", f"Uso de '::' em vez do canônico 'rem': '{line}'"))
             continue
 
-        if line.startswith("#!") or "shellcheck" in line or "noqa" in line or "type: ignore" in line or "-*- lexical-binding" in line:
+        if (
+            line.startswith("#!")
+            or "shellcheck" in line
+            or "noqa" in line
+            or "type: ignore" in line
+            or "-*- lexical-binding" in line
+            or any(line.startswith(p) for p in ("# PROVIDE:", "# REQUIRE:", "# BEFORE:", "# KEYWORD:"))
+            or (line == "#" and any(lines[i].strip().startswith(("# PROVIDE:", "# REQUIRE:", "# BEFORE:", "# KEYWORD:")) for i in (idx - 2, idx) if 0 <= i < len(lines)))
+        ):
             continue
 
         prev_line = lines[idx - 2].strip() if idx >= 2 else ""

@@ -50,10 +50,9 @@ Para consultar especificações detalhadas, implementações de referência e sn
 
 ## 🔨 Flags Canônicas de Compilação & Sanitizers
 
-Todo projeto em C++ Moderno deve ser compilado com o mais alto nível de rigor estático com Clang++ 19+ ou G++ 14+:
+Todo projeto em C++ Moderno deve ser compilado com rigor estático máximo com compiladores conformes a C++23 (Clang++ ou G++ modernos):
 
 ```makefile
-# Makefile Canônico para C++23
 CXX       ?= clang++
 CXXFLAGS  += -std=c++23 \
              -Wall -Wextra -Wpedantic \
@@ -66,7 +65,6 @@ CXXFLAGS  += -std=c++23 \
              -Wnull-dereference \
              -D_POSIX_C_SOURCE=202405L
 
-# Flags de Debug com Sanitizers:
 DEBUG_FLAGS = -g3 -O0 -fsanitize=address,undefined -fno-omit-frame-pointer
 ```
 

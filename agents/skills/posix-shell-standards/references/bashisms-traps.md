@@ -29,32 +29,23 @@ Extensões exclusivas do GNU Bash falham sob shells POSIX como FreeBSD `sh` ou O
 
 ### 1. Testes e Avaliações Lógicas
 
-```sh
-# Evite (Bashismo):
-if [[ -n "$target" && "$target" =~ ^[0-9]+$ ]]; then
-    ...
-fi
+Evite `[[ -n "$target" && "$target" =~ ^[0-9]+$ ]]`; use `case` POSIX:
 
-# Use (POSIX canônico):
+```sh
 if [ -n "$target" ]; then
     case "$target" in
-        *[!0-9]*) ;; # Contém não-dígito
-        *) ... ;;    # Apenas dígitos
+        *[!0-9]*) return 1 ;;
+        *) return 0 ;;
     esac
 fi
 ```
 
 ### 2. Iteração sem Arrays
 
-```sh
-# Evite (extensão não-portável):
-repos=("Setup" "Shell" "Profile")
-for r in "${repos[@]}"; do
-    git -C "$r" status
-done
+Evite arrays (`repos=("app" "lib" "cli")`); use parâmetros posicionais `set --`:
 
-# Use (parâmetros posicionais POSIX):
-set -- "Setup" "Shell" "Profile"
+```sh
+set -- "app" "lib" "cli"
 for r in "$@"; do
     git -C "$r" status
 done

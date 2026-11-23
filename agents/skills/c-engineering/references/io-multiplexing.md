@@ -34,7 +34,7 @@ void event_loop(int kq) {
         }
         for (int i = 0; i < nev; i++) {
             int fd = (int)events[i].ident;
-            // Processar leitura não-bloqueante no descritor fd
+            process_nonblocking_read(fd);
         }
     }
 }

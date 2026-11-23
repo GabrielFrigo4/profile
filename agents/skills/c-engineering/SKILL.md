@@ -50,10 +50,9 @@ Para consultar especificações detalhadas, implementações de referência e sn
 
 ## 🔨 Flags Canônicas de Compilação & Sanitizers
 
-Todo projeto em C Moderno deve compilar sem nenhum aviso com Clang 19+ ou GCC 14+:
+Todo projeto em C Moderno deve compilar sem avisos com compiladores conformes a C23 (Clang ou GCC modernos):
 
 ```makefile
-# Makefile Canônico para C23
 CC       ?= clang
 CFLAGS   += -std=c23 \
             -Wall -Wextra -Wpedantic \
@@ -64,7 +63,6 @@ CFLAGS   += -std=c23 \
             -Wundef \
             -D_POSIX_C_SOURCE=202405L
 
-# Flags de Debug com Sanitizers:
 DEBUG_FLAGS = -g3 -O0 -fsanitize=address,undefined -fno-omit-frame-pointer
 ```
 

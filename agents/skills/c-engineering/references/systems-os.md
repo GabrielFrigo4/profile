@@ -15,8 +15,6 @@ Em sistemas multithread e multiprocesso, descritores de arquivo devem ser aberto
 [[nodiscard]] int safe_open_file(const char *path) {
     if (path == nullptr) return -1;
 
-    // O_CLOEXEC: fecha automaticamente em execve()
-    // O_NOFOLLOW: rejeita links simbólicos contra race conditions
     int fd = open(path, O_RDONLY | O_CLOEXEC | O_NOFOLLOW);
     return fd;
 }
@@ -34,12 +32,14 @@ Sempre colha processos-filhos de forma assíncrona utilizando `sigaction` e `wai
 #include <signal.h>
 #include <sys/wait.h>
 
+static void reap_children([[maybe_unused]] int sig) {
+    [[maybe_unused]] int status = 0;
+    while (waitpid(-1, &status, WNOHANG) > 0) {}
+}
+
 void setup_child_reaper(void) {
     struct sigaction sa = {};
-    sa.sa_handler = [](int sig) {
-        [[maybe_unused]] int status;
-        while (waitpid(-1, &status, WNOHANG) > 0) {}
-    };
+    sa.sa_handler = reap_children;
     sigemptyset(&sa.sa_mask);
     sa.sa_flags = SA_RESTART | SA_NOCLDSTOP;
     sigaction(SIGCHLD, &sa, nullptr);
@@ -57,11 +57,10 @@ Evite o uso de APIs obsoletas sem verificação de limites:
 - `sprintf()`: Risco de buffer overflow (substitua por `snprintf`).
 
 ```c
-// [Padrão seguro e defensivo]
 char buffer[256] = {};
 int written = snprintf(buffer, sizeof(buffer), "User: %s, UID: %d", username, uid);
 if (written < 0 || (size_t)written >= sizeof(buffer)) {
-    // Tratar truncamento ou falha de codificação
+    return -1;
 }
 ```
 
@@ -84,6 +83,5 @@ static inline void auto_close_fd(int *fd) {
 void process_data(const char *path) {
     auto_fd int fd = open(path, O_RDONLY | O_CLOEXEC);
     if (fd < 0) return;
-    // O descritor é fechado garantidamente ao sair do escopo!
 }
 ```

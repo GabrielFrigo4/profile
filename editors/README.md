@@ -8,7 +8,7 @@
 
 Esta pasta reúne exclusivamente os **arquivos declarativos de configuração** (`settings.json`, `extensions.txt`, configs standalone) dos editores de código utilizados no Host, organizados de forma **autocontida por editor**.
 
-> ℹ️ **Scripts de Instalação, Frameworks e Sincronização:** Os scripts para sincronizar extensões (`sync-extensions.sh`), clonar repositórios de editores ou instalar frameworks residem no repositório **[Setup](https://github.com/GabrielFrigo4/setup)**.
+> ℹ️ **Sincronização de Extensões:** Utilize `sh profile.sh extensions` (ou `sh profile.sh sync --extensions`) via [`core/extensions.sh`](../core/extensions.sh) para instalar, exportar ou auditar extensões declaradas. Em instalações zero-clone, utilize o script complementar em **[Setup](https://github.com/GabrielFrigo4/setup)**.
 
 ---
 
@@ -25,12 +25,13 @@ Esta pasta reúne exclusivamente os **arquivos declarativos de configuração** 
 
 ---
 
-## 🚀 Como Usar via GitHub (Zero-Clone)
+## 🚀 Como Usar
 
-### 1. Sincronizar Extensões com o Setup
+### 1. Sincronizar Extensões Declaradas
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/GabrielFrigo4/setup/main/common/editors/sync-extensions.sh | sh
+sh profile.sh extensions status
+sh profile.sh extensions install
 ```
 
 ### 2. Configurações de Editores GUI

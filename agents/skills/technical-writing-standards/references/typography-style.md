@@ -9,7 +9,7 @@ Documentos técnicos devem ser visualmente limpos, confortáveis para longas lei
 - **Padrão Universal `sh`:** Todo bloco de comandos de terminal, clonagem git, chamadas de build (`make`) e comandos de pacotes (`pkg`, `apt`) deve usar `sh`:
     ````markdown
     ```sh
-    git clone "https://github.com/GabrielFrigo4/environment.git"
+    git clone "https://github.com/org/project.git"
     make install
     ```
     ````

@@ -32,6 +32,11 @@ def check_markdown_links(repo_root):
 
         content_no_code = re.sub(r"```[\s\S]*?```", "", content)
 
+        for block_m in re.finditer(r"```[\s\S]*?```", content):
+            for m in re.finditer(r"\[(https?://[^\]]+)\]\((https?://[^)]+)\)", block_m.group(0)):
+                total_links += 1
+                broken.append((rel_md, m.group(1), m.group(2), "URL Markdown dentro de bloco de código"))
+
         for m in link_pattern.finditer(content_no_code):
             text, link = m.groups()
             link = link.strip()

@@ -28,7 +28,7 @@ endif
 
 try|se cb^=unnamed,unnamedplus|colo habamax|catch|endtry
 au FileType javascript,typescript,javascriptreact,typescriptreact,lua,html,css,json,yaml setl ts=2 sw=2 sts=2 et
-au FileType python,org,go,asm,nasm,masm,fasm setl ts=4 sw=4 sts=4 noet
+au FileType org,go,asm,nasm,masm,fasm setl ts=4 sw=4 sts=4 noet
 au FileType c,cpp,rust,cs,java,zig,arduino setl ts=4 sw=4 sts=4 et
 let mapleader="\<Space>"|nn <space> <nop>|nn <leader>w :w<cr>|nn <leader>q :q<cr>
 nn <expr> <BS> col('.')==1?'kgJ':'X'

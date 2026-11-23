@@ -48,10 +48,10 @@ flowchart TD
     end
 
     subgraph TARGETS ["🎯 Alvos Gerenciados"]
-        ED["💻 Editores (VSCode, Zed, Antigravity)"]
-        TR["📟 Terminais (Konsole, Windows Terminal, NuShell)"]
-        TL["🛠️ Linters (.clang-format, prettier, stylua)"]
-        SK["🧠 Portable AI Skills (27 Runbooks)"]
+        ED["💻 Editores (VSCode, VSCodium, Zed, Antigravity)"]
+        TR["📟 Terminais (Foot, XTerm, Konsole, WT, Tmux, Zellij)"]
+        TL["🛠️ Linters (.clang-format, prettier, stylua, ruff)"]
+        SK["🧠 Portable AI Agents (19 Skills & 4 Rules)"]
     end
 
     PR_REPO --> SYNC
@@ -77,9 +77,9 @@ Diferente do **Setup** (que exige `sudo`/`root` para instalar pacotes no sistema
 - **[`profile.sh`](profile.sh)** — **Interface Unificada de Componente:** Entrypoint CLI para `sync`, `update`, `test`, `audit` e exportação de ambiente.
 - **[`desktop/`](desktop/)** — **Desktop, Toolkits GTK, Openbox & Atalhos (`.desktop`):** Templates adaptativos GTK 3/4 (light/dark por DE), `openbox/rc.xml` base, CSS de salvaguarda CSD e atalhos XDG centralizados em [`desktop/applications/`](desktop/applications/).
 - **[`editors/`](editors/README.md)** — **Configurações de Editores & IDEs Modernos:** Antigravity, VS Code, VSCodium e Zed (os editores modais Emacs, NeoVim, Vim e Helix operam como repositórios autônomos independentes).
-- **[`terminals/`](terminals/README.md)** — **Emuladores & Multiplexadores:** Konsole (KDE), Windows Terminal, Tmux e Zellij (os runtimes de shells alternativos pertencem ao Universal Shell).
-- **[`tools/`](tools/README.md)** — **Formatadores & Linters Globais:** `.clang-format`, `.prettierrc`, `.stylua.toml`, `clangd.yaml`.
-- **[`browsers/`](browsers/README.md)** — **Navegadores:** Ajustes e perfis de navegadores (Firefox).
+- **[`terminals/`](terminals/README.md)** — **Emuladores & Multiplexadores:** Foot, XTerm, Konsole, Windows Terminal, Tmux, Zellij e Terminfo (os runtimes de shells alternativos pertencem ao Universal Shell).
+- **[`tools/`](tools/README.md)** — **Formatadores & Linters Globais:** `.clang-format`, `.editorconfig`, `.prettierrc`, `.stylua.toml`, `clangd.yaml`, `ruff.toml` e configurações Mermaid.
+- **[`browsers/`](browsers/README.md)** — **Navegadores:** Ajustes e perfis de navegadores (Firefox e Chromium).
 - **[`agents/`](agents/README.md)** — **Artefatos de IA (Skills & Rules):** Catálogo de skills cognitivas e regras canônicas transversais para Google Antigravity/Gemini com sincronização automatizada.
 - **[`.scripts/audit/`](.scripts/audit/README.md)** — Suíte de validação estática de integridade, formatos e links.
 - **[`docs/`](docs/README.md)** — Documentação técnica completa da estação de trabalho e arquitetura.
@@ -166,13 +166,13 @@ Após clonar no caminho canônico (`$HOME\.local\share\profile`), execute em qua
 
 ## 🚀 Setup do Projeto & Ganchos Git
 
-Para configurar o ambiente de desenvolvimento local, ativar os quality gates automáticos e validar a integridade do repositório:
+Para configurar o ambiente de desenvolvimento local, ativar os quality gates automáticos e validar a integridade do repositório (`hooks`, `test`, `audit`, `format`, `fix-banners`, `ci`):
 
 ```sh
-make hooks   # Configura .githooks e permissões canônicas
-make test    # Valida sintaxe POSIX e integridade dos symlinks
-make audit   # Executa auditoria estática de dotfiles e linters
-make ci      # Bateria completa de validação local
+make hooks
+make test
+make audit
+make ci
 ```
 
 > 🤝 **Instruções Detalhadas:** Consulte o [CONTRIBUTING.md](CONTRIBUTING.md) para convenções de commits, regras de symlinks atômicos, portabilidade de dotfiles e diretrizes de desenvolvimento.

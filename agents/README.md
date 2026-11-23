@@ -17,76 +17,65 @@
 
 No ecossistema do **Quarteto de Produtividade**, o diretório **`agents/`** centraliza a inteligência e os guardrails cognitivos universais da estação de trabalho:
 
-1. **`rules/` (Regras Globais da Estação):** Guardrails cognitivos universais aplicados a todas as sessões e repositórios (tom técnico, economia de contexto, matriz de shells e escapes ANSI).
-2. **`skills/` (Habilidades & Runbooks sob Demanda):** Procedimentos procedimentais, fluxos de engenharia e runbooks carregados sob demanda via progressive disclosure.
+1. **`rules/` (4 Regras Globais da Estação):** Guardrails cognitivos transversais aplicados a todas as sessões e repositórios.
+2. **`skills/` (19 Skills Atemporais sob Demanda):** Runbooks cognitivos e fluxos de engenharia carregados sob demanda via progressive disclosure.
 
 | Camada                                                                                                         | Papel Central                           | Tipo de Conteúdo                                                                    | Destinatário / Consumidor                                                                   |
 | :------------------------------------------------------------------------------------------------------------- | :-------------------------------------- | :---------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------ |
 | **[Setup](https://github.com/GabrielFrigo4/setup)**                                                            | **O "COMO" (Provisionamento Ativo)**    | Receitas atômicas de automação e scripts de sistema (`.sh`, `.cmd`, `.ps1`).        | **Sistema Operacional** (com privilégios de administrador / root).                          |
 | **[`editors/`](../editors/README.md), [`terminals/`](../terminals/README.md), [`tools/`](../tools/README.md)** | **O "O QUÊ" (Estado Declarativo)**      | Arquivos estáticos puros (`.json`, `.toml`, `.yaml`, `.el`, `.vim`, `.profile`).    | **Usuário & Aplicações** (espaço do `$HOME`, zero sudo).                                    |
 | **`agents/`** _(esta pasta)_                                                                                   | **Inteligência de IA (Rules & Skills)** | Regras globais (`rules/`) e pacotes modulares de procedimentos guiados (`skills/`). | **Agentes de IA** (Antigravity, Gemini, OpenAI, Claude) para execução assistida e autônoma. |
-| **[`.scripts/audit/`](../.scripts/audit/README.md)**                                                           | **Auditoria & Quality Gates**           | Validação estática de integridade, links e formatos (`audit/`).                     | **Desenvolvedor** (execução pontual em linha de comando).                                   |
-| **[`docs/`](../docs/README.md)**                                                                               | **Documentação Humana**                 | Filosofia, arquitetura, manuais de SO e guias técnicos.                             | **Desenvolvedor** (leitura técnica e arquitetural).                                         |
+| **[`.scripts/audit/`](../.scripts/audit/README.md)**                                                           | **Auditoria & Quality Gates**           | Validação estática de integridade, links e formatos.                                | **Desenvolvedor** (execução pontual em linha de comando).                                   |
+| **[`docs/`](../docs/README.md)**                                                                               | **Documentação Humana**                 | Arquitetura, manuais de SO e guias técnicos.                                        | **Desenvolvedor** (leitura técnica e arquitetural).                                         |
 
 ---
 
-## 🎯 Regras Globais da Estação (`rules/`)
+## 🎯 Regras Globais da Estação (4 Rules em `rules/`)
 
-| Regra                                                            | Finalidade                                                                                                                                                   | Escopo / Aplicação                                                 |
-| :--------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------- |
-| [`tone-and-economy.md`](./rules/tone-and-economy.md)             | Tom técnico sóbrio, densidade de sinal por token, matriz real de shells (`zsh`, `bash`, FreeBSD `sh`, OpenBSD `ksh`) e escapes `$'\e'`.                      | Universal em todas as sessões e projetos na máquina (`always_on`). |
-| [`clarification-protocol.md`](./rules/clarification-protocol.md) | Protocolo bidirecional de alinhamento proativo e resolução de ambiguidades (`Master <-> User` via `ask_question`, `Worker <-> Master` via `send_message`).   | Universal em todas as sessões e projetos na máquina (`always_on`). |
-| [`oss-sovereignty.md`](./rules/oss-sovereignty.md)               | Invariante de isolamento soberano para forks e repositórios de terceiros em `**/OSS/**`, vetando aplicação de templates internos ou refatorações intrusivas. | Universal em todas as sessões e projetos na máquina (`always_on`). |
-| [`agentic-orchestration.md`](./rules/agentic-orchestration.md)   | Governança de orquestração multi-agente Argos, gatilho semântico e política de herança dinâmica de modelo (`Model: 'inherit'`).                              | Universal em todas as sessões e projetos na máquina (`always_on`). |
+| Regra                                                              | Finalidade                                                                                                                                              | Escopo / Aplicação                           |
+| :----------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------ | :------------------------------------------- |
+| [`tone-and-economy.md`](./rules/tone-and-economy.md)               | Tom técnico sóbrio, densidade de sinal por token, matriz real de shells (`zsh`, `bash`, FreeBSD `sh`, OpenBSD `ksh`) e escapes `$'\e'`.                 | Universal em todas as sessões (`always_on`). |
+| [`clarification-protocol.md`](./rules/clarification-protocol.md)   | Protocolo bidirecional de alinhamento proativo (`Master <-> User` e `Worker <-> Master` com template compacto `[CLARIFICATION REQUEST]`).               | Universal em todas as sessões (`always_on`). |
+| [`open-source-sovereignty.md`](./rules/open-source-sovereignty.md) | Invariante de isolamento soberano para forks e projetos de terceiros em `**/Open Source/**` (e legados `**/OSS/**`).                                    | Universal em todas as sessões (`always_on`). |
+| [`agentic-orchestration.md`](./rules/agentic-orchestration.md)     | Governança de orquestração multi-agente (`multi-agent-orchestration`), política de herança dinâmica (`Model: 'inherit'`) e bloqueio `swarm`/`schedule`. | Universal em todas as sessões (`always_on`). |
 
 ---
 
-## 📚 Catálogo Canônico de Skills Portáteis (28 Runbooks em `skills/`)
+## 📚 Catálogo Canônico de Skills Portáteis (19 Runbooks Atemporais em `skills/`)
 
-O ecossistema disponibiliza 28 habilidades cognitivas universais organizadas por domínio de especialidade:
-
-| Categoria                     | Skill                                                                                      | Descrição e Escopo de Ativação                                                                                                              | Gatilhos de Ativação / Cenários de Uso                                                                                               |
-| :---------------------------- | :----------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------ | :----------------------------------------------------------------------------------------------------------------------------------- |
-| **GNU Emacs 31+ & Elisp**     | [`emacs-engineering`](./skills/emacs-engineering/SKILL.md)                                 | Engenharia em GNU Emacs 31+, Tree-sitter nativo (ABI ≥ 14), compilação nativa (libgccjit), Elpaca assíncrono e Eglot LSP.                   | Desenvolvimento e depuração de configurações Elisp, compilação de gramáticas Tree-sitter, testes batch e otimização de boot.         |
-| **C Moderno & POSIX**         | [`c-engineering`](./skills/c-engineering/SKILL.md)                                         | Engenharia em C Moderno (C23) e sistemas POSIX.1-2024 / FreeBSD / Linux, aritmética com `<stdckdint.h>`, `[[nodiscard]]`, sanitizers e I/O. | Desenvolvimento e refatoração em C23, daemons Unix, kqueue/poll, sockets, pthreads, manipulação defensiva de descritores de arquivo. |
-| **C++23 & RAII de Sistemas**  | [`cpp-engineering`](./skills/cpp-engineering/SKILL.md)                                     | Engenharia em C++23 Moderno, erros monádicos (`std::expected`), `std::print`, ranges, concepts e wrappers RAII de SO.                       | Desenvolvimento de sistemas de alta performance em C++23, abstrações RAII de descritores e memória, I/O tipado sem exceções.         |
-| **Engenharia de Testes**      | [`ironclad-testing`](./skills/ironclad-testing/SKILL.md)                                   | Engenharia de testes rigorosos, invariantes defensivas, mindset adversarial (Advogado do Diabo) e barreiras anti-regressão.                 | Criação de testes unitários e de integração, testes negativos, barreiras pre-commit, sanitizers em C23/C++23 e suites POSIX sh.      |
-| **Arquitetura & Filosofia**   | [`unix-philosophy-auditor`](./skills/unix-philosophy-auditor/SKILL.md)                     | Auditoria e conformidade com os 17 Princípios UNIX de Eric S. Raymond + Soberania do Usuário.                                               | Criação de novas CLI, revisão de arquitetura, validação de regras de silêncio e transparência.                                       |
-| **Engenharia Antifrágil**     | [`antifragile-engineering`](./skills/antifragile-engineering/SKILL.md)                     | Engenharia de sistemas antifrágeis, auto-cura em tempo de execução, cascata ativa de descoberta e resiliência sob desordem.                 | Arquitetura adaptativa, resolução dinâmica de caminhos/chaves, auto-cura de permissões POSIX, eliminação de falhas cegas.            |
-| **Redação & Design Técnico**  | [`technical-writing-standards`](./skills/technical-writing-standards/SKILL.md)             | Padrões canônicos para redação técnica, arquitetura de READMEs (Shields.io, Mermaid), tipografia Reader-First e formatação via Prettier.    | Criação e refatoração de READMEs, especificações de design, documentação institucional e manuais conceituais.                        |
-| **Soberania & Cloud-Exit**    | [`cloud-sovereignty`](./skills/cloud-sovereignty/SKILL.md)                                 | Repatriação de nuvem para bare-metal com FreeBSD (Jails/Sylve), Linux (Proxmox/Incus), illumos (Oxide/Zones) e OpenBSD.                     | Migração para infraestrutura própria, redução de custos de nuvem pública, soberania digital e orquestração de servidores bare-metal. |
-| **Aplicações Anti-Inchaço**   | [`svelte-pocketbase-go`](./skills/svelte-pocketbase-go/SKILL.md)                           | Arquitetura minimalista fullstack em SvelteKit, PocketBase e Go, entrega em binário único, SQLite WAL e custo quase zero.                   | Criação de sistemas web ágeis, microsserviços sem node_modules em produção, painéis reativos leves.                                  |
-| **Governança & Curadoria AI** | [`agentic-governance-standards`](./skills/agentic-governance-standards/SKILL.md)           | Governança unificada da tríade AGENTS.md, .agents/rules/, arquitetura de skills em 2 tiers e curadoria proativa C.A.R.P.                    | Concepção de AGENTS.md, curadoria de skills locais/globais e preservação do hermetismo de produção (`rm -rf .agents`).               |
-| **Controle de Versão (VCS)**  | [`vcs-git-got`](./skills/vcs-git-got/SKILL.md)                                             | Gestão soberana de repositórios Git e Game of Trees (Got/tog), coexistência no `.git`, commits atômicos e inspeção no terminal.             | Uso de Git ou Got/tog, padronização de commits, visualização de histórico com `tog`, branchless dev e hooks POSIX.                   |
-| **Engenharia de CI/CD & VCS** | [`git-flow-github-actions`](./skills/git-flow-github-actions/SKILL.md)                     | Ciclo completo Git e GitHub: quality gates locais (.githooks), commits atômicos, pipelines resilientes no Actions e gh CLI.                 | Criação de hooks (.githooks/), elaboração de workflows CI/CD (.github/workflows/), depuração de falhas com gh CLI, pushs seguros.    |
-| **Editoração Científica**     | [`latex-typesetting`](./skills/latex-typesetting/SKILL.md)                                 | Editoração científica em LaTeX/TeX, compilação isolada com -outdir=build, listagens e Makefiles silenciosos.                                | Redação de papers, relatórios técnicos, compilação de monografias e eliminação de arquivos temporários.                              |
-| **Templates & Governança**    | [`repo-template-governance`](./skills/repo-template-governance/SKILL.md)                   | Gerador de repositórios e bootstrap unificado da tríade de governança por stack (`c-posix`, `shell`, `cpp`, `go`, `latex`).                 | Início de novos projetos, expansão do ecossistema, padronização de hooks de commit e governança institucional.                       |
-| **Padrões de Shell**          | [`posix-shell-standards`](./skills/posix-shell-standards/SKILL.md)                         | Manual e validador de Shell POSIX estrito com baseline no FreeBSD `sh`, taxonomia de saída e permissões octais.                             | Escrita e revisão de scripts `.sh`, eliminação de bashismos, padronização de sequências ANSI e quoting.                              |
-| **Makefiles Universais**      | [`posix-makefile-architect`](./skills/posix-makefile-architect/SKILL.md)                   | Construção de Makefiles silenciosos e portáteis entre BSD Make (`bmake`) e GNU Make (`gmake`).                                              | Criação de Makefiles, migração para `.POSIX: .SILENT:`, suporte à exceção `$(MAKE) -C`, remoção de `@`.                              |
-| **Multi-OS & Diagnósticos**   | [`system-crossplatforms-diagnostics`](./skills/system-crossplatforms-diagnostics/SKILL.md) | Guia multiplataforma (FreeBSD, Linux, macOS, OpenBSD, illumos) e diagnóstico de estações (Wayland, VA-API, PipeWire, logs).                 | Portabilidade entre SOs, tratamento de TTY headless e diagnóstico de hardware/áudio/vídeo/rede.                                      |
-| **Governança XDG & Dotfiles** | [`xdg-dotfiles-governance`](./skills/xdg-dotfiles-governance/SKILL.md)                     | Governança de dotfiles declarativos, integridade de symlinks, permissões octais e conformidade com a especificação XDG Base Directory.      | Auditoria de links simbólicos, sintaxe JSON/YAML/TOML e segregação de privilégios rootless.                                          |
-| **Pesquisa Ativa & Versões**  | [`deep-version-researcher`](./skills/deep-version-researcher/SKILL.md)                     | Investigação ativa na web por versões atuais, notas de lançamento (_release notes_) e breaking changes.                                     | Seleção de dependências, novas stacks, apuração de documentação oficial recente, anti-alucinação.                                    |
-| **Refatoração & Clean-Break** | [`clean-code-refactor`](./skills/clean-code-refactor/SKILL.md)                             | Auditoria de código POSIX, princípios UNIX + Clean Code e refatoração soberana Clean-Break / Zero-Cruft sem resíduos legados.               | Limpeza de código legado, erradicação de shims e wrappers, redução de complexidade ciclomática.                                      |
-| **Investigação Forense**      | [`deep-investigation`](./skills/deep-investigation/SKILL.md)                               | Lente global de investigação técnica de causa raiz e hierarquia de fontes primárias em qualquer projeto do ecossistema.                     | Falhas de schemas, quebras de ABI, divergências de documentação e incompatibilidades de compiladores.                                |
-| **Guardião Proativo**         | [`proactive-guardian`](./skills/proactive-guardian/SKILL.md)                               | Lente global de custódia proativa contínua, Boy Scout Rule, integridade de links e higiene de repositório.                                  | Auditoria contínua de integridade, reparo automático de pequenos desvios e prevenção de acúmulo de débito técnico.                   |
-| **Tipografia de Terminal**    | [`terminal-glyphs-typography`](./skills/terminal-glyphs-typography/SKILL.md)               | Tipografia de terminal, Nerd Fonts, glifos vetoriais, delimitadores de largura zero, geometria de prompts e cálculo de display width.       | Configuração de fontes, alinhamento de barras de status, correção de mojibake e geometria de prompts.                                |
-| **Orquestração Multi-Agente** | [`argos-multi-agent-orchestrator`](./skills/argos-multi-agent-orchestrator/SKILL.md)       | Orquestração _Master Orchestrator / Planner Agent_ e _Specialist Sub-Agent / Execution Worker_ com herança dinâmica e pool $\le 5$.         | Planos complexos decomponíveis, paralelização de refatorações ou testes, coordenação de sub-agentes efêmeros.                        |
-| **Alinhamento & Dúvidas**     | [`proactive-clarification-protocol`](./skills/proactive-clarification-protocol/SKILL.md)   | Protocolo bidirecional de alinhamento socrático e resolução de ambiguidades (`Master <-> User` e `Worker <-> Master`).                      | Decisões com múltiplos caminhos, refatorações com trade-offs, divergência entre contrato e código real.                              |
-| **Verificação Adversarial**   | [`argos-adversarial-crucible`](./skills/argos-adversarial-crucible/SKILL.md)               | Célula de verificação Red-Team vs Blue-Team, casos de borda extremos e compilação com sanitizers.                                           | Validação de parsers, protocolos de baixo nível, hardening de segurança e testes de estresse.                                        |
-| **Torneio Algorítmico**       | [`argos-speculative-tournament`](./skills/argos-speculative-tournament/SKILL.md)           | Torneio especulativo N-versões em Git worktrees isoladas, benchmarks determinísticos e seleção empírica.                                    | Otimização de solvers, algoritmos heurísticos, redução de frame-time e layouts de grafos.                                            |
-| **Sincronização Poliglota**   | [`argos-abi-contract-weaver`](./skills/argos-abi-contract-weaver/SKILL.md)                 | Propagação atômica de contratos e ABI: structs C23, migrações Go SQLite, stores Svelte 5 e shaders GLSL.                                    | Alterações de entidades centrais, sincronização full-stack de dados binários e paridade de structs.                                  |
+| Categoria                     | Skill                                                                          | Descrição e Escopo de Ativação                                                                                                               |
+| :---------------------------- | :----------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Governança Agentic & Repo** | [`agentic-repo-governance`](./skills/agentic-repo-governance/SKILL.md)         | Tríade `AGENTS.md`/`rules`/`skills`, 2 tiers, curadoria C.A.R.P., hermetismo `rm -rf .agents` e scaffold de repositórios multi-stack.        |
+| **Engenharia Antifrágil**     | [`antifragile-engineering`](./skills/antifragile-engineering/SKILL.md)         | Auto-cura em voo, cascata ativa XDG/FHS, zero falhas cegas e padrões multi-shell (POSIX `sh`, NuShell, PowerShell).                          |
+| **C Moderno & POSIX**         | [`c-engineering`](./skills/c-engineering/SKILL.md)                             | C23 (`nullptr`, `constexpr`, `<stdckdint.h>`, `[[nodiscard]]`), sanitizers, POSIX.1-2024, `kqueue`/`epoll`/`poll` e pthreads.                |
+| **Refatoração & Qualidade**   | [`clean-code-refactor`](./skills/clean-code-refactor/SKILL.md)                 | Auditoria POSIX, taxonomia tripartite de comentários, refatoração Clean-Break sem legado e custódia proativa Boy Scout Rule.                 |
+| **C++23 & RAII de Sistemas**  | [`cpp-engineering`](./skills/cpp-engineering/SKILL.md)                         | C++23 (`std::expected`, `<print>`, concepts, ranges), wrappers RAII (`UniqueFd`, `MMapRegion`), `kqueue`/`epoll` e `std::jthread`.           |
+| **Sistemas Multiplataforma**  | [`crossplatform-systems`](./skills/crossplatform-systems/SKILL.md)             | Portabilidade FreeBSD, Linux, macOS, OpenBSD, illumos e MSYS2, init neutrality, PTY em CI (`script -q /dev/null`) e TTYs de kernel.          |
+| **GNU Emacs & Elisp**         | [`emacs-engineering`](./skills/emacs-engineering/SKILL.md)                     | GNU Emacs moderno e Elisp lexicalmente vinculado, PGTK Wayland, `libgccjit`, Tree-sitter nativo, Elpaca assíncrono, Eglot LSP e batch tests. |
+| **Engenharia de Testes**      | [`ironclad-testing`](./skills/ironclad-testing/SKILL.md)                       | Testes adversariais (Advogado do Diabo), 5 barreiras de contenção, sanitizers e harnesses em C23, C++23, POSIX `sh`, Go e Python.            |
+| **Editoração Científica**     | [`latex-typesetting`](./skills/latex-typesetting/SKILL.md)                     | Compilação isolada `-outdir=build`, Makefiles POSIX silenciosos, listagens sincronizadas e redação acadêmica direta.                         |
+| **Orquestração Multi-Agente** | [`multi-agent-orchestration`](./skills/multi-agent-orchestration/SKILL.md)     | Coordenação Master-Worker (`Model: 'inherit'`), pool 2–8, tecelagem ABI, verificação Red/Blue-Team e torneios em worktrees.                  |
+| **Makefiles Universais**      | [`posix-makefile-architect`](./skills/posix-makefile-architect/SKILL.md)       | Makefiles silenciosos `.POSIX: .SILENT:` portáteis entre `bmake`, `gmake`, `pdpmake` e BusyBox com subshells `(cd dir && $(MAKE))`.          |
+| **Padrões de Shell POSIX**    | [`posix-shell-standards`](./skills/posix-shell-standards/SKILL.md)             | Baseline FreeBSD `sh`, eliminação de bashismos, escapes ANSI `$'\e'`/`\x1b` e práticas defensivas de runtime.                                |
+| **Investigação Primária**     | [`primary-source-research`](./skills/primary-source-research/SKILL.md)         | Diagnóstico de causa raiz e checagem ativa de versões contra código-fonte upstream, especificações formais, manpages e release notes.        |
+| **Infraestrutura Soberana**   | [`sovereign-infrastructure`](./skills/sovereign-infrastructure/SKILL.md)       | Cloud-Exit e bare-metal em FreeBSD, Linux, illumos e OpenBSD, além do padrão Single-Binary Embedded Web.                                     |
+| **Redação & Design Técnico**  | [`technical-writing-standards`](./skills/technical-writing-standards/SKILL.md) | Redação técnica Reader-First, READMEs com Shields.io, diagramação Mermaid e formatação Prettier.                                             |
+| **Tipografia & TTY**          | [`terminal-typography-tty`](./skills/terminal-typography-tty/SKILL.md)         | Nerd Fonts, `wcwidth`, delimitadores de largura zero, máscara XOR `0xee` (`0xee10`), DECSCUSR e mouse GPM/`moused`.                          |
+| **Filosofia UNIX**            | [`unix-philosophy-auditor`](./skills/unix-philosophy-auditor/SKILL.md)         | Auditoria estática e comportamental contra os 22 Princípios de Engenharia UNIX e Soberania.                                                  |
+| **VCS & CI/CD**               | [`vcs-and-ci-governance`](./skills/vcs-and-ci-governance/SKILL.md)             | Coexistência Git + Game of Trees (`got`/`tog`), Conventional Commits, hooks self-healing (`.githooks`) e CI multiplataforma.                 |
+| **Governança XDG & Dotfiles** | [`xdg-dotfiles-governance`](./skills/xdg-dotfiles-governance/SKILL.md)         | Segregação XDG Base Directory, precedência Local > Global, auditoria POSIX de symlinks, JSON/JSONC/YAML/TOML e permissões octais.            |
 
 ---
 
 ## 🌐 Escopos de Atuação: Global (Home) vs. Local (Projeto)
 
-O Antigravity e os agentes modernos suportam dois níveis de alcance para as skills:
+Os agentes modernos suportam dois níveis de alcance para as skills:
 
 ```mermaid
 flowchart TD
     subgraph SCOPES ["🏛️ Escopos de Habilidades"]
-        GLOBAL["🏠 Escopo Global da Máquina<br/>~/.gemini/config/skills/<br/>• Suas ferramentas e preferências pessoais<br/>• Disponível em qualquer pasta do SO"]
-        LOCAL["📂 Escopo Local do Projeto<br/>.agents/skills/<br/>• Regras de negócio e build do projeto<br/>• Versionado no Git com a equipe"]
+        GLOBAL["🏠 Escopo Global da Máquina<br/>~/.gemini/config/skills/<br/>• Ferramentas e preferências transversais<br/>• Disponível em qualquer pasta do SO"]
+        LOCAL["📂 Escopo Local do Projeto<br/>.agents/skills/<br/>• Regras e build específicos do projeto<br/>• Versionado no Git com o repositório"]
     end
 
     subgraph PRECEDENCE ["🏆 Ordem de Precedência (Override)"]
@@ -98,21 +87,7 @@ flowchart TD
     GLOBAL --> GLOB_FALL
 ```
 
-### 1. Escopo Global (`~/.gemini/config/skills/`)
-
-- **Onde fica:** Na pasta de configuração do usuário no `$HOME`.
-- **Como funciona:** O agente carrega essas skills em **qualquer projeto ou pasta** aberta no seu computador.
-- **Uso ideal:** Suas automações pessoais, rotinas universais de auditoria, formatação e preferências que você quer disponíveis em todo lugar.
-
-### 2. Escopo Local do Projeto (`.agents/skills/`)
-
-- **Onde fica:** Na raiz do projeto específico (ex: `meu-projeto/.agents/skills/<skill>/SKILL.md`).
-- **Como funciona:** Carregada exclusivamente quando você estiver trabalhando naquele repositório.
-- **Vantagem de Equipe:** Você pode commitar a pasta `.agents/` no Git. Assim, toda a equipe ou outros ambientes de CI/CD terão acesso imediato aos mesmos runbooks autônomos.
-
-### 3. Regra de Precedência (Sobrescrita Inteligente)
-
-Se existir uma skill com o **mesmo nome** na sua Home global e na pasta do Projeto:
+Se existir uma skill com o mesmo nome na Home global e no projeto local:
 
 $$\text{Skill do Projeto (.agents/skills/)} \quad \mathbf{> \text{ (sobrescreve)}} \quad \text{Skill Global da Home (~/.gemini/config/skills/)}$$
 
@@ -120,7 +95,7 @@ $$\text{Skill do Projeto (.agents/skills/)} \quad \mathbf{> \text{ (sobrescreve)
 
 ## 🔄 Fluxo de Descoberta & Progressive Disclosure
 
-Para evitar o consumo desnecessário da janela de contexto (_Context Window_) dos modelos de linguagem, as skills utilizam o padrão de **Divulgação Progressiva (_Progressive Disclosure_)**:
+Para preservar a janela de contexto dos modelos, as skills operam em **Progressive Disclosure**:
 
 ```mermaid
 flowchart TD
@@ -128,17 +103,17 @@ flowchart TD
         PROMPT["💬 Pergunta / Tarefa no Chat"]
     end
 
-    subgraph LLM ["🤖 Agente de IA (Gemini / OpenAI / Claude)"]
+    subgraph LLM ["🤖 Agente de IA"]
         METAS["🔍 Lê apenas o Frontmatter (name + description)"]
-        DECIDE{"🎯 É relevante para a tarefa?"}
-        LOAD["📖 Lê o arquivo 'SKILL.md' sob demanda"]
-        EXEC["⚡ Executa os passos / scripts descritos"]
+        DECIDE{"🎯 Relevante para a tarefa?"}
+        LOAD["📖 Lê SKILL.md sob demanda"]
+        EXEC["⚡ Executa os passos / referências"]
     end
 
     subgraph REPO ["⚙️ Repositório Profile"]
-        SKILLS_DIR["🧠 skills/<skill_name>/"]
+        SKILLS_DIR["🧠 agents/skills/<skill_name>/"]
         SKILL_MD["📄 SKILL.md"]
-        SCRIPTS["🛠️ scripts/ & references/"]
+        SCRIPTS["🛠️ references/ & resources/"]
     end
 
     PROMPT --> METAS
@@ -146,7 +121,7 @@ flowchart TD
     DECIDE -- "Não (Economiza Tokens)" --> EXEC
     DECIDE -- "Sim" --> LOAD
     LOAD -.->|carrega| SKILL_MD
-    LOAD -.->|consulta se necessário| SCRIPTS
+    LOAD -.->|consulta sob demanda| SCRIPTS
     LOAD --> EXEC
 ```
 
@@ -154,91 +129,35 @@ flowchart TD
 
 ## 🏗️ Anatomia Canônica de uma Skill Portátil
 
-Cada skill é um módulo **isolado e autocontido** em uma subpasta com seu respectivo nome:
-
 ```text
-skills/<nome_da_skill>/
-├── SKILL.md          # [OBRIGATÓRIO] Ponto de entrada com YAML Frontmatter e passo a passo
-├── scripts/          # [OPCIONAL] Scripts auxiliares que o modelo pode invocar
-├── references/       # [OPCIONAL] Documentações densas ou manuais de API lidos sob demanda
-├── examples/         # [OPCIONAL] Exemplos práticos de código ou saídas esperadas
-└── resources/        # [OPCIONAL] Templates, snippets, boilerplates ou schemas
+agents/skills/<nome_da_skill>/
+├── SKILL.md          # [OBRIGATÓRIO] Frontmatter YAML + workflow (17 a 128 linhas)
+├── scripts/          # [OPCIONAL] Scripts auxiliares determinísticos
+├── references/       # [OPCIONAL] Manuais densos lidos sob demanda
+├── examples/         # [OPCIONAL] Exemplos práticos de código
+└── resources/        # [OPCIONAL] Templates ou schemas
 ```
 
-### Cabeçalho Obrigatório (`YAML Frontmatter`)
-
-Todo arquivo `SKILL.md` inicia com o cabeçalho YAML delimitado por `---`:
-
-```markdown
----
-name: nome-da-skill
-description: >-
-    Explicação em terceira pessoa indicando O QUE a skill faz e EM QUAIS SITUAÇÕES
-    o agente de IA deve ativá-la automaticamente.
 ---
 
-# Título da Skill
+## 🚀 Instalação & Consumo
 
-Instruções claras e objetivas para o agente executar a tarefa.
+### 1. Instalação Dinâmica via Symlink (`profile.sh sync`)
 
-## 🎯 Procedimentos
-
-1. Verifique os pré-requisitos.
-2. Execute o script auxiliar: [setup.sh](./scripts/setup.sh)
-3. Valide a saída esperada.
-```
-
-- **`name`**: Identificador único em minúsculas com hífens (`kebab-case`).
-- **`description`**: O gatilho de ativação da IA. O agente lê esta descrição para decidir se precisa ler o restante do arquivo.
-
----
-
-## 🚀 Como Usar: O Modelo "Cookbook" de Portabilidade
-
-As skills deste repositório podem ser consumidas tanto pontualmente quanto vinculadas automaticamente ao seu ambiente de IA:
-
-### 1. Instalação Dinâmica via Symlink (Recomendado para Repositório Clonado)
-
-Se você clonou este repositório no seu computador, crie **links simbólicos** (`ln -sf`). A grande vantagem é que qualquer melhoria que você fizer ou baixar via `git pull` estará **instantaneamente atualizada** para seus agentes:
-
-Instalação global (disponível em qualquer workspace):
+O `profile.sh sync` vincula `agents/skills` e `agents/rules` automaticamente em `~/.gemini/config/`:
 
 ```sh
-mkdir -p "${HOME}/.gemini/config/skills"
-ln -sf "${HOME}/.local/share/profile/skills"/* "${HOME}/.gemini/config/skills/"
+mkdir -p "${HOME}/.gemini/config"
+ln -sfn "${HOME}/.local/share/profile/agents/skills" "${HOME}/.gemini/config/skills"
+ln -sfn "${HOME}/.local/share/profile/agents/rules" "${HOME}/.gemini/config/rules"
 ```
 
-Instalação em um projeto específico:
+### 2. Instalação Pontual em Projeto Local
 
 ```sh
 mkdir -p .agents/skills
-ln -sf "${HOME}/.local/share/profile/skills/minha-skill" .agents/skills/minha-skill
+cp -r "${HOME}/.local/share/profile/agents/skills/minha-skill" .agents/skills/
 ```
-
-### 2. Instalação Estática (Cópia Isolada ou Zero-Clone / RAW)
-
-Se você prefere cópias congeladas (isoladas de futuras alterações) ou está em uma máquina onde não clonou o repositório completo:
-
-Cópia estática local:
-
-```sh
-mkdir -p "${HOME}/.gemini/config/skills"
-cp -r "${HOME}/.local/share/profile/skills"/* "${HOME}/.gemini/config/skills/"
-```
-
-Cópia para projeto local compartilhável no Git:
-
-```sh
-mkdir -p .agents/skills
-cp -r "${HOME}/.local/share/profile/skills/minha-skill" .agents/skills/
-```
-
-### 3. Em Outros Ecossistemas (OpenAI / Claude / Copilot)
-
-Como o formato segue o padrão aberto Markdown + YAML Frontmatter:
-
-- **Copie a pasta da skill** para a pasta de prompts/instruções do seu projeto (ex: `.cursor/rules/`, `.github/copilot-instructions.md` ou `.agent/`).
-- Ou **anexe o `SKILL.md`** diretamente no contexto de ferramentas que suportam custom instructions ou GPTs com arquivos de conhecimento.
 
 ---
 
@@ -246,9 +165,7 @@ Como o formato segue o padrão aberto Markdown + YAML Frontmatter:
 
 Conforme estabelecido em [`../PRINCIPLES.md`](../PRINCIPLES.md):
 
-1. **Progressive Disclosure (Regra da Economia):** Mantenha o `SKILL.md` conciso (focado no workflow). Manuais extensos devem ficar em `references/`, permitindo que o modelo só consuma tokens quando estritamente necessário.
-2. **Permissões Canônicas em 4 Dígitos:** Documentos (`.md`, `.yaml`, `.json`) utilizam `chmod 0644`. Scripts executáveis em `.scripts/` utilizam `chmod 0755`.
-3. **Idempotência & Verificação:** Toda skill deve instruir a IA a validar o estado atual antes de aplicar alterações e verificar o resultado após a conclusão.
-4. **Desacoplamento Absoluto:** Cada skill deve ser autocontida, sem dependências ocultas de outras skills.
-5. **Orçamento de Linhas (Regra 17 – 128 – 256):** Toda skill deve ter $\ge 17$ linhas, mirar no _sweet spot_ executivo de $17\text{ a } 128$ linhas, admitir $129\text{ a } 256$ linhas apenas para matrizes densas e respeitar o limite máximo fatal de 256 linhas (monólito).
-6. **Invariante do Hermetismo (`rm -rf .agents`):** Código de produção NUNCA consome ou depende de skills. Se `.agents/` for sumariamente deletado, 100% do projeto continua compilando, testando e operando com perfeição.
+1. **Progressive Disclosure:** Mantenha `SKILL.md` no sweet spot de **17 a 128 linhas**, movendo tabelas densas e exemplos longos para `references/`.
+2. **Permissões Canônicas em 4 Dígitos:** Documentos (`.md`, `.yaml`, `.json`) utilizam `chmod 0644`; scripts executáveis utilizam `chmod 0755`.
+3. **Ativações Determinísticas:** Valide estado antes e depois de cada alteração.
+4. **Invariante do Hermetismo (`rm -rf .agents`):** Código de produção nunca consome ou depende de skills de IA.

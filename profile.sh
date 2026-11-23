@@ -20,24 +20,41 @@ if [ -z "${ZSH_VERSION:-}" ]; then
 	unset _esc_test
 fi
 
+_script_src="${0:-}"
+if [ -z "${_script_src}" ] || [ "${_script_src##*/}" != "profile.sh" ]; then
+	[ -n "${BASH_SOURCE:-}" ] && _script_src="${BASH_SOURCE}"
+fi
+if [ -L "${_script_src}" ] && command -v readlink > "/dev/null" 2>&1; then
+	_resolved_src="$(readlink -f "${_script_src}" 2> "/dev/null" || readlink "${_script_src}" 2> "/dev/null" || true)"
+	[ -n "${_resolved_src}" ] && _script_src="${_resolved_src}"
+	unset _resolved_src
+fi
+_script_dir=""
+case "${_script_src}" in
+	-*|"") ;;
+	*/*) _script_dir="${_script_src%/*}" ;;
+	profile.sh) _script_dir="." ;;
+esac
+if [ -n "${_script_dir}" ] && [ -d "${_script_dir}" ]; then
+	_script_dir="$(CDPATH="" cd -P "${_script_dir}" 2> "/dev/null" && pwd -P || true)"
+else
+	_script_dir=""
+fi
+
 if [ -n "${PROFILE_DIR:-}" ] && [ -d "${PROFILE_DIR}" ]; then
 	_PROFILE_ROOT="${PROFILE_DIR}"
+elif [ -n "${_script_dir}" ] && [ -f "${_script_dir}/core/sync.sh" ]; then
+	_PROFILE_ROOT="${_script_dir}"
 elif [ -d "${HOME}/.local/share/profile" ]; then
 	_PROFILE_ROOT="${HOME}/.local/share/profile"
 elif [ -d "${HOME}/.config/profile" ]; then
 	_PROFILE_ROOT="${HOME}/.config/profile"
+elif [ -d "${HOME}/.profile" ]; then
+	_PROFILE_ROOT="${HOME}/.profile"
 else
-	case "${0}" in
-		-*|"") _script_dir="" ;;
-		*/*)  _script_dir="${0%/*}" ;;
-		*)    _script_dir="." ;;
-	esac
-	if [ -n "${_script_dir}" ] && [ -d "${_script_dir}" ]; then
-		_PROFILE_ROOT="$(cd "${_script_dir}" && pwd)"
-	else
-		_PROFILE_ROOT="${PWD}"
-	fi
+	_PROFILE_ROOT="${PWD}"
 fi
+unset _script_src _script_dir
 export PROFILE_DIR="${_PROFILE_ROOT}"
 
 . "${_PROFILE_ROOT}/core/perms.sh"
@@ -116,7 +133,7 @@ _profile_test() {
 _profile_audit() {
 	_ui_step "Executando auditoria estatica..."
 	if command -v python3 > "/dev/null" 2>&1 && [ -f "${_PROFILE_ROOT}/.scripts/audit/all.py" ]; then
-		python3 "${_PROFILE_ROOT}/.scripts/audit/all.py"
+		PYTHONPYCACHEPREFIX="${PYTHONPYCACHEPREFIX:-${HOME}/.cache/pycache}" PYTHONDONTWRITEBYTECODE=1 python3 "${_PROFILE_ROOT}/.scripts/audit/all.py"
 	else
 		_ui_info "Python3 ou .scripts/audit/all.py ausente; executando apenas teste sintatico."
 		_profile_test

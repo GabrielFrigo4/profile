@@ -121,9 +121,16 @@ _display_sync_all() {
 	_display_sync_cursor_theme "${HOME}/.icons/default/index.theme" "${_action_mode}" "${_is_dry_run}" "${_use_backup}" "${_stamp}"
 	_display_sync_cursor_theme "${_target_data}/icons/default/index.theme" "${_action_mode}" "${_is_dry_run}" "${_use_backup}" "${_stamp}"
 	_profile_item "${_PROFILE_ROOT}/desktop/wayland/display.conf" "${_target_config}/environment.d/00-display.conf" "${_action_mode}" "${_is_dry_run}" "${_use_backup}" "${_stamp}"
-	_profile_item "${_PROFILE_ROOT}/desktop/wayland/portals.conf" "${_target_config}/xdg-desktop-portal/portals.conf" "${_action_mode}" "${_is_dry_run}" "${_use_backup}" "${_stamp}"
+	if [ "${_action_mode}" = "sync" ] && [ "${_is_dry_run}" -eq 0 ]; then
+		for _legacy_link in "${_target_config}/xdg-desktop-portal/portals.conf:${_PROFILE_ROOT}/desktop/wayland/portals.conf" "${_target_config}/autostart-scripts/pipewire-portal-init.sh:${_PROFILE_ROOT}/desktop/wayland/pipewire-portal-init.sh"; do
+			_l_dst="${_legacy_link%%:*}" _l_src="${_legacy_link#*:}"
+			if [ -L "${_l_dst}" ] && [ "$(readlink "${_l_dst}" 2> "/dev/null" || true)" = "${_l_src}" ]; then
+				rm -f "${_l_dst}" 2> "/dev/null" || unlink "${_l_dst}" 2> "/dev/null" || true
+			fi
+		done
+	fi
+	_profile_item "${_PROFILE_ROOT}/desktop/wayland/portals.conf" "${_target_config}/xdg-desktop-portal/kde-portals.conf" "${_action_mode}" "${_is_dry_run}" "${_use_backup}" "${_stamp}"
 	_profile_item "${_PROFILE_ROOT}/desktop/wayland/plasma-env.sh" "${_target_config}/plasma-workspace/env/00-wayland-portal.sh" "${_action_mode}" "${_is_dry_run}" "${_use_backup}" "${_stamp}"
-	_profile_item "${_PROFILE_ROOT}/desktop/wayland/pipewire-portal-init.sh" "${_target_config}/autostart-scripts/pipewire-portal-init.sh" "${_action_mode}" "${_is_dry_run}" "${_use_backup}" "${_stamp}"
 	_profile_item "${_PROFILE_ROOT}/desktop/wayland/pipewire-portal-init.sh" "${HOME}/.local/bin/fix-wayland-screenshare.sh" "${_action_mode}" "${_is_dry_run}" "${_use_backup}" "${_stamp}"
 	_profile_item "${_PROFILE_ROOT}/desktop/wayland/pipewire-portal.desktop" "${_target_config}/autostart/pipewire-portal.desktop" "${_action_mode}" "${_is_dry_run}" "${_use_backup}" "${_stamp}"
 	_display_ensure_xauthority "${_action_mode}" "${_is_dry_run}"

@@ -27,7 +27,7 @@ A documentação técnica do ecossistema deve proporcionar uma experiência impe
 - **Blocos de Terminal Universal:** Sempre use o identificador `sh` (```sh) para comandos de CLI, compilação e pacotes. Proibido usar `shell`, `console` ou `terminal`. Identificadores específicos (`zsh`, `bash`, `fish`, `pwsh`) são restritos a código que exige recursos exclusivos daquele interpretador.
 - **Formatação Mandatória Prettier:** Todo documento Markdown deve ser formatado com `npx prettier --write <arquivo>`.
 - **Zero Linhas em Branco no EOF:** Arquivos devem terminar com exatamente um `\n` final, sem linhas em branco extras (`git diff --check`).
-- **Simetria de Escopo & Não-Assimetria de Subgrupo:** Propriedades ou invariantes compartilhadas por todo um grupo devem ser documentadas na camada do grupo. Nunca documente um atributo universal em tabelas ou descrições de um sub-membro específico como se fosse exclusivo dele, sob pena de gerar falsas assimetrias. Sub-membros só detalham comportamentos se implementarem especializações ou otimizações técnicas relevantes.
+- **Simetria de Escopo & Não-Assimetria de Subgrupo:** Propriedades ou invariantes compartilhadas por todo um grupo devem ser documentadas na camada do grupo. Nunca documente um atributo universal em tabelas ou descrições de um sub-membro específico como se fosse exclusivo dele, evitando gerar falsas assimetrias. Sub-membros só detalham comportamentos se implementarem especializações ou otimizações técnicas relevantes.
 
 ---
 
@@ -38,7 +38,6 @@ Consulte as especificações detalhadas nos subarquivos dedicados:
 - **[readme-design.md](references/readme-design.md):** Engenharia de badges vetoriais com Shields.io e Simple Icons, improvisação canônica de slugs, hero sections, tabelas de catálogo e portais de repositórios.
 - **[diagrams-mermaid.md](references/diagrams-mermaid.md):** Diagramação em código Mermaid, hierarquia de 3 camadas (Mermaid > SVG > ASCII), prevenção do bug de listas ordenadas (`htmlLabels: false`), arquitetura híbrida (`flowchart TD` com `direction LR`) e pós-processamento SVG.
 - **[typography-style.md](references/typography-style.md):** Tipografia técnica, alinhamento de tabelas (`:---`, `:---:`, `---:`), admonitions do GitHub (`> [!NOTE]`, etc.), proteção de URLs com parênteses `<...>` e acessibilidade.
-- **[tone-and-economy.md](references/tone-and-economy.md):** Tom sóbrio, dicotomia de estilos (Sistema/IA vs Humano), gramática declarativa contrastiva e eliminação de token-bloat dramático.
 
 ---
 

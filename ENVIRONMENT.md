@@ -13,7 +13,7 @@ Em vez de um monólito caótico de dotfiles e scripts soltos, o ambiente é estr
 ```mermaid
 flowchart TD
     subgraph QUARTET ["🏛️ O Quarteto de Infraestrutura"]
-        SETUP["📦 1. Setup (Público)<br/>• Provisionamento Ativo de SO<br/>• Pacotes de Sistema, Drivers, Kernel<br/>• Jails, Containers (Incus/Podman)<br/>• Cookbook Zero-Clone (GitHub)"]
+        SETUP["📦 1. Setup (Público)<br/>• Provisionamento Ativo de SO<br/>• Pacotes de Sistema, Drivers, Kernel<br/>• Jails, Containers (Incus/Podman)<br/>• Clone Soberano + bootstrap.sh (1 linha)"]
         SHELL["🐚 2. Shell (Público)<br/>• Motor Interativo de Terminal<br/>• Prompts Ultra-rápidos (&lt; 64ms)<br/>• Aliases e Funções de Linha de Comando<br/>• Targets de SO e Contextos"]
         VAULT["🔐 3. Vault (Privado)<br/>• Chaves SSH / PuTTY PPK<br/>• Segredos e Variáveis .env<br/>• Senhas Wi-Fi e Mapeamento de Hosts<br/>• Loaders Multi-Shell (sh, ps1, cmd, nu)"]
         PROFILE["🎨 4. Profile (Público)<br/>• Dotfiles Declarativos de Usuário<br/>• IDEs Modernas & Perfis de Terminal<br/>• Linters, Formatadores e Skills de IA"]
@@ -94,7 +94,7 @@ flowchart TD
     3. **Universal Profile & Vault:** `~/.local/share/<repo>` (XDG Data) $\rightarrow$ `~/.config/<repo>` (XDG Config) $\rightarrow$ `~/.<repo>` $\rightarrow$ `/usr/local/share/<repo>` (global defensivo, não recomendado para dados do usuário).
 - **Resolução em Portable AI Skills & Agentes:**
     1. **Projeto Local (`<repo>/.agents/skills/`):** Máxima prioridade. Permite que um projeto defina runbooks e regras específicas que sobrescrevem qualquer padrão global sem poluir a máquina do usuário.
-    2. **Usuário Global (`~/.gemini/config/skills/` via `Profile/skills/`):** Habilidades perenes da estação de trabalho, compartilhadas entre projetos.
+    2. **Usuário Global (`~/.gemini/config/skills/` via `Profile/agents/skills/`):** Habilidades perenes da estação de trabalho, compartilhadas entre projetos.
     3. **Built-in da IDE (`builtin/skills`):** Habilidades nativas de fábrica como fallback de último nível.
 
 ### 3. Sinergia Oportunística e Degradação Graciosa
@@ -104,7 +104,7 @@ Quando os repositórios coexistem no mesmo sistema, eles **detectam-se automatic
 - **Emacs ↔ Vault / IA:** Se o Emacs detectar o Vault em `~/.local/share/vault`, `~/.config/vault`, `~/.vault` ou `/usr/local/share/vault` (ou credenciais em variáveis de ambiente), ativa automaticamente seus módulos de IA (`gptel`, `ellama`, `minuet`, `org-ai`). Se ausente, inicializa instantaneamente em modo limpo (< 50ms) sem erros.
 - **Emacs ↔ EAF:** Se o Emacs estiver em modo gráfico com a pasta do EAF e `python3` disponíveis, ativa a integração. Caso contrário, opera normalmente em modo texto ou terminal sem falhas de D-Bus.
 - **Shell ↔ Vault:** O Shell detecta silenciosamente o cofre e injeta chaves SSH e variáveis. Se o cofre não for encontrado, roda normalmente em modo anônimo.
-- **Profile ↔ Skills de IA:** O Profile cria um link simbólico unificado de diretório (`~/.gemini/config/skills -> Profile/skills`). Qualquer nova skill adicionada ao repositório fica imediatamente disponível no IDE após um `git pull`, sem necessidade de novos links manuais.
+- **Profile ↔ Skills de IA:** O Profile cria um link simbólico unificado de diretório (`~/.gemini/config/skills -> Profile/agents/skills`). Qualquer nova skill adicionada ao repositório fica imediatamente disponível no IDE após um `git pull`, sem necessidade de novos links manuais.
 - **Profile ↔ Editores de Texto:** O Profile **NÃO** gerencia nem cria links para editores de texto modais (`~/.emacs.d`, `~/.config/nvim`, etc.). Esses editores gerenciam-se a si mesmos em seus diretórios canônicos.
 - **Shells Nativos Windows ↔ Auto-Cura de Perfis:** Quando o usuário executa `upsh` ou `resh` em qualquer dos shells nativos no Windows (PowerShell, NuShell, CMD), o atualizador detecta os diretórios de configuração dos demais e propaga atomicamente os perfis físicos em disco (`Documents\PowerShell`, `%APPDATA%\nushell`, `%LOCALAPPDATA%\clink`), garantindo auto-cura reentrante sem qualquer intervenção manual de cópia.
 - **NuShell ↔ GitHub CLI (HTTPS Auth):** O NuShell detecta dinamicamente a presença do binário `gh.exe` e injeta explicitamente o helper de credenciais HTTPS (`-c credential.https://github.com.helper=...`) ao sincronizar repositórios privados como o Vault, operando com isolamento estrito contra falhas de lookup de subshells e sem depender de chaves SSH para o GitHub.
@@ -115,12 +115,12 @@ Quando os repositórios coexistem no mesmo sistema, eles **detectam-se automatic
 
 ### 🏛️ O Quarteto de Infraestrutura (Core)
 
-| Repositório                                             | Visibilidade | Papel Central                                                                                                               | Escopo & Privilégios                                                 | Modelo de Instalação                                                                                                                       | Local Canônico                                     |
-| :------------------------------------------------------ | :----------- | :-------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------- |
-| **[Setup](https://github.com/GabrielFrigo4/setup)**     | Público      | **1. O "COMO" (Sistema)**: Provisionamento de pacotes, drivers, containers, hypervisors e serviços base.                    | Nível SO / Privilegiado (`root` / `sudo` / `ELEVATE` / Admin)        | **Cookbook Efêmero (Zero-Clone)**: Execução direta via GitHub web ou `curl \| sh`.                                                         | Efêmero / Não requer clone residente               |
-| **[Shell](https://github.com/GabrielFrigo4/shell)**     | Público      | **2. A "INTERAÇÃO" (Linha de Comando)**: Prompts instantâneos, aliases, cascading de editores e funções POSIX.              | Nível Shell / Sessão (disponível para todos os usuários e `root`)    | **Residente do Sistema**: Clonado e atualizado via `git pull` contínuo.                                                                    | `/usr/local/share/shell` ou `~/.local/share/shell` |
-| **[Vault](https://github.com/GabrielFrigo4/vault)**     | **Privado**  | **3. O "SEGREDO" (Cofre Criptográfico)**: Chaves SSH/PuTTY, tokens de API, credenciais Wi-Fi e endpoints de hosts.          | Usuário Restrito (Permissões estritas `0700` e `0600`, zero-leakage) | **Residente Privado**: Clonado exclusivamente em máquinas autorizadas.                                                                     | `~/.local/share/vault` ou `~/.vault`               |
-| **[Profile](https://github.com/GabrielFrigo4/profile)** | Público      | **4. O "O QUÊ" (Identidade)**: Dotfiles declarativos, editores, terminais, linters, links de sync e skills portáteis de IA. | Nível Usuário (`$HOME`, zero privilégios administrativos)            | **Residente Sincronizado**: Symlinks (`ln -sf`) para dotfiles estáticos e cópia adaptativa para `gtk.css`, `settings.ini` e `index.theme`. | `~/.local/share/profile` ou `~/.profile`           |
+| Repositório                                             | Visibilidade | Papel Central                                                                                                               | Escopo & Privilégios                                                 | Modelo de Instalação                                                                                 | Local Canônico                                     |
+| :------------------------------------------------------ | :----------- | :-------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------- | :------------------------------------------------- |
+| **[Setup](https://github.com/GabrielFrigo4/setup)**     | Público      | **1. O "COMO" (Sistema)**: Provisionamento de pacotes, drivers, containers, hypervisors e serviços base.                    | Nível SO / Privilegiado (`root` / `sudo` / `ELEVATE` / Admin)        | **Clone Soberano (`bootstrap.sh`)**: Bootstrap em 1 linha (`curl \| sh`) clona e dispara `setup.sh`. | `~/.local/share/setup` ou `/usr/local/share/setup` |
+| **[Shell](https://github.com/GabrielFrigo4/shell)**     | Público      | **2. A "INTERAÇÃO" (Linha de Comando)**: Prompts instantâneos, aliases, cascading de editores e funções POSIX.              | Nível Shell / Sessão (disponível para todos os usuários e `root`)    | **Residente do Sistema**: Clonado e atualizado via `git pull` contínuo.                              | `/usr/local/share/shell` ou `~/.local/share/shell` |
+| **[Vault](https://github.com/GabrielFrigo4/vault)**     | **Privado**  | **3. O "SEGREDO" (Cofre Criptográfico)**: Chaves SSH/PuTTY, tokens de API, credenciais Wi-Fi e endpoints de hosts.          | Usuário Restrito (Permissões estritas `0700` e `0600`, zero-leakage) | **Residente Privado**: Clonado exclusivamente em máquinas autorizadas.                               | `~/.local/share/vault` ou `~/.vault`               |
+| **[Profile](https://github.com/GabrielFrigo4/profile)** | Público      | **4. O "O QUÊ" (Identidade)**: Dotfiles declarativos, editores, terminais, linters, links de sync e skills portáteis de IA. | Nível Usuário (`$HOME`, zero privilégios administrativos)            | **Residente Sincronizado**: Cloned no `$HOME`, sincronizado via links simbólicos (`ln -sf`).         | `~/.local/share/profile` ou `~/.profile`           |
 
 ### 📝 A Suíte de Editores (Tools)
 
@@ -147,18 +147,18 @@ sequenceDiagram
     participant P as 🎨 4. Profile (Dotfiles / $HOME)
     participant Ed as 📝 5. Editores (Ferramentas)
 
-    Dev->>S: 1. Executa receita de bootstrap da distro (ex: fedora.sh / kde.sh)
+    Dev->>S: 1. Executa bootstrap do Setup (curl | sh -> ~/.local/share/setup/setup.sh)
     Note over S: Instala pacotes, drivers, ZFS, Wayland e base de containers.
     Dev->>Sh: 2. Clona Shell em /usr/local/share/shell e instala (.zshrc / .bashrc)
     Note over Sh: Configura prompts, bibliotecas POSIX, aliases e detecção de SO.
-    Dev->>V: 3. Clona Vault em ~/.vault (se ambiente autorizado)
+    Dev->>V: 3. Clona Vault em ~/.local/share/vault (se ambiente autorizado)
     Note over V: Aplica vault-perms (0700/0600) e disponibiliza loaders.
     Dev->>P: 4. Clona Profile e executa sincronizador de dotfiles
-    Note over P: Cria symlinks para formatadores, IDEs, terminais e skills de IA; materializa gtk.css, settings.ini e index.theme por cópia adaptativa.
+    Note over P: Cria symlinks para formatadores, IDEs (Zed, VSCode), terminais e link unificado de skills de IA.
     Dev->>Ed: 5. Clona editores necessários (~/.emacs.d, ~/.config/nvim, etc.)
     Note over Ed: Editores operam de imediato e detectam Vault/EAF silenciosamente.
     Dev->>Sh: 6. Abre nova aba de terminal interativo
-    Sh->>V: Detecta ~/.vault/vault.sh silenciosamente
+    Sh->>V: Detecta ~/.local/share/vault/vault.sh silenciosamente
     V-->>Sh: Injeta variáveis de ambiente e chaves SSH (ssh-agent) em silêncio absoluto
     Note over Sh: Prompt renderizado em menos de 64ms pronto para produção!
 ```
@@ -249,9 +249,9 @@ Baseados nos 17 Princípios UNIX (_The Art of UNIX Programming_, Eric S. Raymond
 
 Em estações de trabalho FreeBSD, ferramentas e agentes de IA que demandam runtimes Go avançados com HTTP/2 ou loops `epoll`/`fsnotify` (como o **Google Antigravity CLI**) operam sob um subsistema dedicado e isolado de virtualização via Bhyve:
 
-- **Host Soberano (FreeBSD):** Workstation desktop (KDE/Wayland), terminais interativos, storage primário em ZFS (`zroot`), firewall PF com NAT e servidor NFSv3 exportando `/home/gabrielf` com `-mapall=gabrielf`.
-- **Guest Linux (Debian 13.7 em Bhyve):** Máquina virtual com kernel 6.12 nativo, UID/GID 1001 alinhado e ponto de montagem NFSv3 em `/home/gabrielf`.
-- **Camada de Integração do Shell:** Biblioteca universal `library/hypervisor.sh` provendo orquestração multiplataforma de VMs e Containers (`fb`, `lx`, `ob`, `nt`), integrada no FreeBSD via `target/freebsd/bhyve.sh` e `compat.sh` com funções POSIX `linux-host` (aliases: `linux`, `lx`, `debian`, `deb`), `agy-lx` (alias: `agy`), `agy-compat` (alias: `agy-cp`) e rotina `update-linux` (`uplx`, `updeb`), garantindo navegação com paridade de diretórios e fallback silencioso para a home.
+- **Host Soberano (FreeBSD):** Workstation desktop (KDE/Wayland), terminais interativos, storage primário em ZFS (`zroot`), firewall PF com NAT e servidor NFSv3 exportando `${HOME}` com `-mapall=<user>`.
+- **Guest Linux (Debian em Bhyve):** Máquina virtual com kernel Linux nativo, UID/GID alinhado e ponto de montagem NFSv3 em `${HOME}`.
+- **Camada de Integração do Shell:** Biblioteca universal `library/hypervisor.sh` provendo orquestração multiplataforma de VMs e Containers (`fb`, `lx`, `ob`, `nb`), integrada no FreeBSD via `target/freebsd/bhyve.sh` e `compat.sh` com funções POSIX `linux-host` (aliases: `linux`, `lx`, `debian`, `deb`), `agy-lx` (alias: `agy`), `agy-compat` (alias: `agy-cp`) e rotina `update-linux` (`uplx`, `updeb`), garantindo navegação com paridade de diretórios e fallback silencioso para a home.
 - **Documentação Canônica:** Série modular de runbooks documentada no Environment em [`docs/virtualization/bhyve/`](https://github.com/GabrielFrigo4/environment/tree/main/docs/virtualization/bhyve).
 
 ### 8. Arquitetura Tri-Modal de Terminal & Suíte de Editores (GUI, PTY 24-Bit e Console Kernel TTY 16-Color)

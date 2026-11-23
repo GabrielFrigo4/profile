@@ -9,11 +9,6 @@ Este documento aprofunda os recursos introduzidos pelo padrão **ISO/IEC 9899:20
 Substitua a macro `NULL` ou literal `0` pela palavra-chave nativa `nullptr` (tipo `nullptr_t`). Ela é fortemente tipada e elimina ambiguidades em ponteiros e sobrecargas:
 
 ```c
-// [Evite - Arcaico]
-void *p = NULL;
-int *q = 0;
-
-// [Use - C23]
 void *p = nullptr;
 int *q = nullptr;
 ```
@@ -25,10 +20,6 @@ int *q = nullptr;
 Substitua macros `#define` por `constexpr` para valores numéricos e arrays imutáveis. Utilize `typeof` para inferência de tipos limpa e segura:
 
 ```c
-// [Evite - Macros inseguras]
-#define BUFFER_SIZE 4096
-
-// [Use - C23]
 constexpr size_t buffer_size = 4096;
 typeof(buffer_size) allocated_bytes = 0;
 ```
@@ -45,7 +36,6 @@ No C23, qualquer operação aritmética com risco de overflow de inteiros deve s
 
 [[nodiscard]] bool safe_buffer_grow(size_t current, size_t added, size_t *out_total) {
     if (ckd_add(out_total, current, added)) {
-        // Overflow detectado com segurança absoluta!
         return false;
     }
     return true;
@@ -68,9 +58,7 @@ Exija que chamadores inspecionem retornos críticos (status de erro, ponteiros a
 [[nodiscard]] int initialize_subsystem(void);
 [[nodiscard]] void *safe_allocate(size_t count, size_t elem_size);
 
-void handle_signal([[maybe_unused]] int sig) {
-    // Parâmetro deliberadamente ignorado
-}
+void handle_signal([[maybe_unused]] int sig) {}
 ```
 
 ---

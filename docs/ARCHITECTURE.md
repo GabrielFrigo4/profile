@@ -12,7 +12,7 @@ flowchart TD
         SETUP["📦 Setup (Público)<br/>• Bootstrap do Host (SO/Root)<br/>• Jails & Containers (Incus/Podman)<br/>• Drivers e Desktop Wayland<br/>• Catálogo Cookbook Zero-Clone"]
         PROFILE["🎨 Profile (Público)<br/>• Dotfiles Estáticos ($HOME)<br/>• Editores (VSCode, Zed, Antigravity)<br/>• Terminais e Formatadores<br/>• Portable AI Skills"]
         SHELL["🐚 Shell (Público)<br/>• Motor Interativo do Terminal<br/>• Prompts Rápidos (&lt; 64ms)<br/>• Aliases e Funções (Library)<br/>• Contextos (Desktop, Server, WSL)"]
-        VAULT["🔐 Vault (Privado: ~/.vault)<br/>• Chaves SSH / PuTTY PPK<br/>• Variáveis .env de Credenciais<br/>• Senhas Wi-Fi / Mapeamento Hosts<br/>• Loaders Multi-Shell (sh, ps1, nu, cmd)"]
+        VAULT["🔐 Vault (Privado: ~/.local/share/vault)<br/>• Chaves SSH / PuTTY PPK<br/>• Variáveis .env de Credenciais<br/>• Senhas Wi-Fi / Mapeamento Hosts<br/>• Loaders Multi-Shell (sh, ps1, nu, cmd)"]
     end
 
     subgraph HOST ["💻 Sistema Operacional Host (Clean Host)"]
@@ -38,13 +38,13 @@ flowchart TD
 
 ## 📋 Matriz de Responsabilidades
 
-| Aspecto                 | `Setup`                            | `Profile`                          | `Shell`                           | `Vault`                             |
-| :---------------------- | :--------------------------------- | :--------------------------------- | :-------------------------------- | :---------------------------------- |
-| **Visibilidade**        | Público (GitHub)                   | Público (GitHub)                   | Público (GitHub)                  | **Privado** (Local/GitHub)          |
-| **Natureza**            | Provisionamento Ativo de SO (Root) | Dotfiles Declarativos e IA ($HOME) | Motor Dinâmico de Terminal        | Cofre Criptográfico de Segredos     |
-| **Local Canônico**      | Efêmero / Zero-Clone               | `~/.config/profile`                | `/usr/local/share/shell`          | `${HOME}/.vault`                    |
-| **Privilégios**         | `root` / `sudo` / `ELEVATE`        | Zero-Sudo (Usuário comum)          | Sessão do usuário / terminal      | Permissões estritas `0700` / `0600` |
-| **Tolerância a Falhas** | Receitas atômicas e idempotentes   | Symlinks atômicos reversíveis      | Degrada graciosamente sem o Vault | Audita permissões e protege chaves  |
+| Aspecto                 | `Setup`                            | `Profile`                                       | `Shell`                           | `Vault`                              |
+| :---------------------- | :--------------------------------- | :---------------------------------------------- | :-------------------------------- | :----------------------------------- |
+| **Visibilidade**        | Público (GitHub)                   | Público (GitHub)                                | Público (GitHub)                  | **Privado** (Local/GitHub)           |
+| **Natureza**            | Provisionamento Ativo de SO (Root) | Dotfiles Declarativos e IA ($HOME)              | Motor Dinâmico de Terminal        | Cofre Criptográfico de Segredos      |
+| **Local Canônico**      | Efêmero / Zero-Clone               | `~/.local/share/profile` ou `~/.config/profile` | `/usr/local/share/shell`          | `~/.local/share/vault` ou `~/.vault` |
+| **Privilégios**         | `root` / `sudo` / `ELEVATE`        | Zero-Sudo (Usuário comum)                       | Sessão do usuário / terminal      | Permissões estritas `0700` / `0600`  |
+| **Tolerância a Falhas** | Receitas atômicas e idempotentes   | Symlinks atômicos reversíveis                   | Degrada graciosamente sem o Vault | Audita permissões e protege chaves   |
 
 ---
 
@@ -59,6 +59,6 @@ flowchart TD
 3. **Ativação da Linha de Comando (`Shell`):**
     - O `Shell` é clonado para `/usr/local/share/shell` e instalado via `sh install.sh --context desktop`.
 4. **Cofre Seguro (`Vault`):**
-    - O `Vault` é clonado em `~/.vault` e protegido com permissões restritas `0700`/`0600`.
+    - O `Vault` é clonado em `~/.local/share/vault` e protegido com permissões restritas `0700`/`0600`.
 5. **Sessão Interativa:**
-    - O terminal inicia carregando `Shell/core/environment.sh`, que detecta `~/.vault/vault.sh` e exporta variáveis em silêncio absoluto.
+    - O terminal inicia carregando `Shell/core/environment.sh`, que detecta o Vault silenciosamente (`vault.sh`) e exporta variáveis em silêncio absoluto.

@@ -58,9 +58,9 @@ Se você precisa rodar os formatadores diretamente no terminal fora da IDE:
 Todas as ferramentas estão padronizadas para respeitar as mesmas diretrizes:
 
 - **Limite de Colunas:** 96 caracteres
-- **Hard Tabs (4):** Go, Assembly, Makefiles
-- **Soft Tabs (2 espaços):** JS, TS, HTML, CSS, JSON, Lua, YAML, Markdown
-- **Soft Tabs (4 espaços):** C, C++, Rust, Python, Java
+- **Hard Tabs (4):** C, C++, Lua, JS, TS, HTML, CSS, JSON, Markdown, Go, Shell, Makefiles
+- **Soft Tabs (2 espaços):** YAML (`*.yml`, `*.yaml`)
+- **Soft Tabs (4 espaços):** Python (`ruff.toml`)
 
 ---
 

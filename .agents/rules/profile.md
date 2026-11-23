@@ -1,3 +1,9 @@
+---
+description: Diretrizes de engenharia, pureza declarativa, XDG e governança de agentes para o repositório Universal Profile.
+globs: "**/*"
+always_on: true
+---
+
 # Universal Profile — Engineering Rules & Constraints
 
 Essas diretrizes são de aplicação obrigatória para qualquer modificação ou extensão neste repositório (`Profile`).
@@ -12,9 +18,9 @@ Essas diretrizes são de aplicação obrigatória para qualquer modificação ou
 ## 2. Pureza Declarativa & Formatos Abertos
 
 - Todas as configurações de editores e ferramentas devem utilizar formatos declarativos legíveis pela indústria:
-    - JSON / JSONC com 2 espaços de indentação.
+    - JSON / JSONC e configurações gerais com tabs de largura 4 (`tools/.prettierrc`, `.editorconfig`).
+    - YAML limpo com 2 espaços de indentação.
     - TOML estruturado por tabelas.
-    - YAML limpo com 2 espaços.
     - Elisp e Vimscript enxutos e sem dependências de plugins externos em `lite.*`.
 - Comentários narrativos inline óbvios são estritamente proibidos; use separação por linhas em branco.
 
@@ -25,22 +31,22 @@ Essas diretrizes são de aplicação obrigatória para qualquer modificação ou
     - `~/.local/share/<ferramenta>/` para dados persistentes.
 - NUNCA polua a raiz de `$HOME` com diretórios fora do padrão.
 
-## 4. Progressive Disclosure para Skills de IA (`skills/`)
+## 4. Progressive Disclosure para Skills de IA (`agents/skills/`)
 
 - Toda nova skill portátil para IA DEVE conter:
-    - Cabeçalho `YAML Frontmatter` conciso (`name` e `description` rica para ativação sob demanda).
-    - Documento `SKILL.md` com procedimentos diretos e orientados a ação.
+    - Cabeçalho `YAML Frontmatter` conciso (`name` idêntico ao diretório e `description` rica para ativação sob demanda).
+    - Documento `SKILL.md` entre 17 e 128 linhas com procedimentos diretos e orientados a ação.
     - Manuais densos ou tabelas auxiliares segregadas em `references/`.
 
 ## 5. Permissões Canônicas em 4 Dígitos
 
-- `chmod 0755` para diretórios e scripts executáveis (`scripts/sync/*.sh`).
+- `chmod 0755` para diretórios e scripts executáveis (`profile.sh`, `install.sh`, `core/*.sh`, `desktop/wayland/*.sh`, `.githooks/*`, `.scripts/audit/*.py`).
 - `chmod 0644` para arquivos de configuração, dotfiles declarativos e Markdown.
-- Redirecionamentos para `/dev/null` sempre com aspas: `> "/dev/null"`.
+- Redirecionamentos para `/dev/null` sempre com aspas: `> "/dev/null" 2>&1`.
 
 ## 6. Limites de Linhas & Arquitetura de Comentários
 
-- **Orçamento de Linhas (Regra 8 - 128):** Piso de 8 linhas e teto de 128 linhas úteis.
+- **Orçamento de Linhas:** Scripts entre 8 e 256 linhas (sweet spot 16–128); arquivos `SKILL.md` entre 17 e 128 linhas.
 - **Camada 1 (Header Banner):** Exclusivo para linhas 2 a 4 de scripts utilitários, delimitado por 64 hífens (`# ----------------------------------------------------------------`).
 - **Camada 2 (Delimitadores Estruturais de Corpo):** Réguas simétricas de 32 caracteres (`### ================================` ou `### --------------------------------`). O título DEVE ter no máximo 32 caracteres e JAMAIS vazar além da régua (total de 36 colunas com `### `).
 - **Camada 3 (Zero Comentários Narrativos):** Evite comentários narrativos ou inline em scripts, dotfiles, templates e documentações. Separe blocos lógicos por linhas em branco.
@@ -55,5 +61,5 @@ Essas diretrizes são de aplicação obrigatória para qualquer modificação ou
 Antes de concluir qualquer alteração no Profile:
 
 1. `git diff --check` (deve retornar 0 erros).
-2. `./.githooks/pre-commit` (deve passar 100%).
-3. `python3 .scripts/audit/all.py` (deve aprovar 100% dos testes).
+2. `make format && make ci` (deve passar 100%, com 0 avisos em `skills.py`).
+3. `./.githooks/pre-commit` (deve aprovar 100% dos checks).

@@ -27,7 +27,6 @@ Consulte as regras detalhadas e especificações técnicas nos subarquivos:
 - **[bashisms-traps.md](references/bashisms-traps.md):** Catálogo de armadilhas não-portáteis (`[[ ]]` vs `[ ]`, arrays vs parâmetros posicionais, `source` vs `.`, `&>` vs `> ... 2>&1`, substituição de processo).
 - **[ansi-sequences.md](references/ansi-sequences.md):** Engenharia de sequências ANSI e escapes, supressão de `printf` supérfluo, peculiaridades de prompt no OpenBSD `ksh` (`\x01`) e diretrizes de terminal TTY.
 - **[defensive-runtime.md](references/defensive-runtime.md):** Práticas de tempo de execução (traps de saída, arquivos temporários com `mktemp`, sanitização de caminhos, subshells em pipelines e verificação via `command -v`).
-- **[ui-framework.md](references/ui-framework.md):** Padrão universal de emissão de interface `_ui_*` (`_ui_step`, `_ui_ok`, `_ui_err`, `_ui_warn`, `_ui_banner`), detecção de cores e paridade multiplataforma (Windows PowerShell/NuShell).
 
 ---
 

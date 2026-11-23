@@ -136,14 +136,7 @@ _profile_sync() {
 				_win_home="$(cygpath -u "${USERPROFILE:-/c/Users/${USER}}")"
 				_win_appdata="$(cygpath -u "${APPDATA:-${_win_home}/AppData/Roaming}")"
 				_win_localappdata="$(cygpath -u "${LOCALAPPDATA:-${_win_home}/AppData/Local}")"
-				_win_onedrive="$(cygpath -u "${OneDriveConsumer:-${OneDrive:-${USERPROFILE}\\OneDrive}}")"
-			else
-				_win_onedrive="${_win_home}/OneDrive"
 			fi
-			_win_documents="${_win_home}/Documents"
-			for _candidate_dir in "${_win_onedrive}/Documents" "${_win_onedrive}/Documentos" "${_win_home}/Documentos"; do
-				[ -d "${_candidate_dir}" ] && _win_documents="${_candidate_dir}" && break
-			done
 			;;
 	esac
 
@@ -170,17 +163,25 @@ _profile_sync() {
 	done
 	_sync "tools/mermaid-puppeteer.json" "${HOME}/.mermaid-puppeteer-config.json"
 	_sync "tools/mermaid-theme.json" "${HOME}/.mermaid-theme-config.json"
+	if [ "${_is_windows}" -eq 1 ] && [ "${_win_home}" != "${HOME}" ]; then
+		_sync "tools/mermaid-puppeteer.json" "${_win_home}/.mermaid-puppeteer-config.json"
+		_sync "tools/mermaid-theme.json" "${_win_home}/.mermaid-theme-config.json"
+	fi
 	_clangd_target="${_config_dir}/clangd/config.yaml" && _ruff_target="${_config_dir}/ruff/ruff.toml"
 	[ "${_is_windows}" -eq 1 ] && _clangd_target="${_win_localappdata}/clangd/config.yaml" && _ruff_target="${_win_appdata}/ruff/ruff.toml"
 	_sync "tools/clangd.yaml" "${_clangd_target}" && _sync "tools/ruff.toml" "${_ruff_target}"
 
 	_ui_step "Editores modernos (Zed, VSCode, VSCodium, Antigravity IDE)..."
-	_sync "editors/zed/settings.json" "${_config_dir}/zed/settings.json"
 	_editor_dir="${_config_dir}" && [ "${_os_type}" = "Darwin" ] && _editor_dir="${HOME}/Library/Application Support"
 	[ "${_is_windows}" -eq 1 ] && _editor_dir="${_win_appdata}"
+	if [ "${_is_windows}" -eq 1 ]; then
+		_sync "editors/zed/settings.json" "${_editor_dir}/Zed/settings.json"
+	else
+		_sync "editors/zed/settings.json" "${_config_dir}/zed/settings.json"
+	fi
 	_sync "editors/vscode/settings.json" "${_editor_dir}/Code/User/settings.json"
 	[ "${_os_type}" != "Darwin" ] && [ "${_is_windows}" -eq 0 ] && _sync "editors/vscode/settings.json" "${_config_dir}/Code - OSS/User/settings.json"
-	_sync "editors/vscodium/settings.json" "${_editor_dir}/VSCodium/User/settings.json" && _sync "editors/antigravity/settings.json" "${_editor_dir}/Antigravity IDE/User/settings.json"
+	_sync "editors/vscodium/settings.json" "${_editor_dir}/VSCodium/User/settings.json" && _sync "editors/antigravity/settings.json" "${_editor_dir}/Antigravity/User/settings.json"
 	_vimfiles_dir=""
 	if [ -d "${_win_home}/vimfiles" ]; then _vimfiles_dir="${_win_home}/vimfiles"; elif [ -d "${HOME}/vimfiles" ]; then _vimfiles_dir="${HOME}/vimfiles"; fi
 	if [ "${_is_windows}" -eq 1 ] && [ "${_mode}" != "pull" ] && [ -n "${_vimfiles_dir}" ]; then

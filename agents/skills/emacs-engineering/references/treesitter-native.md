@@ -1,12 +1,10 @@
-# 🌳 Tree-sitter Nativo Integrado (ABI ≥ 14)
+# 🌳 Tree-sitter Nativo Integrado
 
-A partir do Emacs 29 e consolidado no Emacs 30 e 31+, o parser sintático Tree-sitter está integrado diretamente no código C do editor via `treesit.c`. Isto elimina completamente o overhead de pacotes Elisp externos legados e regex backtracking.
+Em versões modernas do GNU Emacs, o parser sintático Tree-sitter integra-se diretamente no núcleo C via `treesit.c`, eliminando dependências externas legadas e gargalos de regex backtracking.
 
 ---
 
 ## 🔍 Verificação de Suporte do Runtime
-
-Antes de aplicar modos Tree-sitter, verifique a compilação nativa da biblioteca:
 
 ```elisp
 (when (and (fboundp 'treesit-available-p)
@@ -18,7 +16,7 @@ Antes de aplicar modos Tree-sitter, verifique a compilação nativa da bibliotec
 
 ## 🗺️ Fontes de Gramáticas e Instalação Automatizada
 
-As gramáticas compartilhadas (`libtree-sitter-<lang>.so` no Linux, `.dylib` no macOS, `.dll` no Windows) podem ser declaradas via `treesit-language-source-alist`:
+Declare as gramáticas compartilhadas via `treesit-language-source-alist`:
 
 ```elisp
 (setq treesit-language-source-alist
@@ -33,9 +31,8 @@ As gramáticas compartilhadas (`libtree-sitter-<lang>.so` no Linux, `.dylib` no 
         (rust       . ("https://github.com/tree-sitter/tree-sitter-rust"))
         (elisp      . ("https://github.com/Wilfred/tree-sitter-elisp"))))
 
-;; Função utilitária para instalar gramáticas ausentes
 (defun my/treesit-install-all-grammars ()
-  "Instala todas as gramáticas declaradas caso não existam em tree-sitter/."
+  "Instala todas as gramáticas declaradas quando ausentes no runtime."
   (interactive)
   (dolist (lang (mapcar #'car treesit-language-source-alist))
     (unless (treesit-language-available-p lang)
@@ -46,7 +43,7 @@ As gramáticas compartilhadas (`libtree-sitter-<lang>.so` no Linux, `.dylib` no 
 
 ## 🔄 Remapeamento Universal de Modos Principais
 
-Emacs 31+ fornece modos dedicados terminados em `-ts-mode`. O redirecionamento canônico sem alterar atalhos de buffer se dá com `major-mode-remap-alist`:
+Redirecione os modos clássicos para variantes `-ts-mode` usando `major-mode-remap-alist`:
 
 ```elisp
 (when (and (fboundp 'treesit-available-p) (treesit-available-p))
@@ -65,11 +62,10 @@ Emacs 31+ fornece modos dedicados terminados em `-ts-mode`. O redirecionamento c
 
 ---
 
-## ⚡ Níveis de Font-Lock (Destaque Sintático)
+## ⚡ Níveis de Font-Lock
 
-O Tree-sitter no Emacs organiza o realce em 4 níveis (1 = básico, 4 = máximo com tipos, operadores e atributos):
+Configure o nível máximo (`4`) para destaque semântico completo de tipos, operadores e atributos:
 
 ```elisp
-;; Nível 4: coloração semântica completa e detalhada
 (setq treesit-font-lock-level 4)
 ```
