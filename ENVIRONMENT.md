@@ -243,15 +243,15 @@ Baseados nos 17 Princípios UNIX (_The Art of UNIX Programming_, Eric S. Raymond
 - Todo repositório do ecossistema possui:
     - `.githooks/pre-commit` executável e atômico para validar integridade, sintaxe e formatação antes do commit.
     - `.agents/rules/principles.md` com diretrizes de engenharia específicas do seu domínio.
-    - `.agents/skills/` com runbooks cognitivos padronizados (`universal-*`, `proactive-guardian`, `deep-investigation`).
+    - `.agents/skills/` com runbooks cognitivos padronizados (`universal-*`, `agentic-repo-governance`, `primary-source-research`).
 
-### 7. Arquitetura Híbrida Host/Guest (FreeBSD Workstation + Bhyve Linux Runtime)
+### 7. Virtualização Sob Demanda no FreeBSD (Bhyve Linux Runtime)
 
-Em estações de trabalho FreeBSD, ferramentas e agentes de IA que demandam runtimes Go avançados com HTTP/2 ou loops `epoll`/`fsnotify` (como o **Google Antigravity CLI**) operam sob um subsistema dedicado e isolado de virtualização via Bhyve:
+No FreeBSD, o shell, editores e agentes de IA (`agy`) operam **nativamente no sistema operacional hospedeiro** por padrão. Para cargas de trabalho opcionais que demandam kernel Linux nativo (containers Linux, toolchains específicas ou execução isolada opcional), o ecossistema oferece suporte sob demanda via Bhyve e Linuxulator:
 
-- **Host Soberano (FreeBSD):** Workstation desktop (KDE/Wayland), terminais interativos, storage primário em ZFS (`zroot`), firewall PF com NAT e servidor NFSv3 exportando `${HOME}` com `-mapall=<user>`.
-- **Guest Linux (Debian em Bhyve):** Máquina virtual com kernel Linux nativo, UID/GID alinhado e ponto de montagem NFSv3 em `${HOME}`.
-- **Camada de Integração do Shell:** Biblioteca universal `library/hypervisor.sh` provendo orquestração multiplataforma de VMs e Containers (`fb`, `lx`, `ob`, `nb`), integrada no FreeBSD via `target/freebsd/bhyve.sh` e `compat.sh` com funções POSIX `linux-host` (aliases: `linux`, `lx`, `debian`, `deb`), `agy-lx` (alias: `agy`), `agy-compat` (alias: `agy-cp`) e rotina `update-linux` (`uplx`, `updeb`), garantindo navegação com paridade de diretórios e fallback silencioso para a home.
+- **Host Soberano (FreeBSD):** Workstation desktop (KDE/Wayland), runtime principal de ferramentas e agentes, storage primário em ZFS (`zroot`), firewall PF com NAT e exportação opcional NFSv3 de `${HOME}` (`-mapall=<user>`).
+- **Guest Linux Opcional (Debian em Bhyve):** Máquina virtual sob demanda configurada via [`Setup/freebsd/container/bhyve.sh`](https://github.com/GabrielFrigo4/setup/blob/main/freebsd/container/bhyve.sh) com kernel Linux nativo, UID/GID alinhado e ponto de montagem NFSv3 em `${HOME}`.
+- **Camada de Integração do Shell:** Biblioteca universal `library/hypervisor.sh` provendo orquestração multiplataforma de VMs e Containers (`fb`, `lx`, `ob`, `nb`), integrada no FreeBSD via `target/freebsd/bhyve.sh` e `compat.sh` com funções POSIX `linux-host` (aliases: `linux`, `lx`, `debian`, `deb`), despacho opcional `agy-lx` (ativável como padrão via `BHYVE_AGY_DEFAULT=1` ou fallback automático sem binário local), wrapper Linuxulator `agy-compat` (alias: `agy-cp`) e rotina `update-linux` (`uplx`, `updeb`), garantindo navegação com paridade de diretórios e fallback silencioso para a home.
 - **Documentação Canônica:** Série modular de runbooks documentada no Environment em [`docs/virtualization/bhyve/`](https://github.com/GabrielFrigo4/environment/tree/main/docs/virtualization/bhyve).
 
 ### 8. Arquitetura Tri-Modal de Terminal & Suíte de Editores (GUI, PTY 24-Bit e Console Kernel TTY 16-Color)
