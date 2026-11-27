@@ -17,7 +17,7 @@ O repositório **[Setup](https://github.com/GabrielFrigo4/setup)** é o pilar de
 
 ## 🚀 Como o Profile se Conecta ao Setup
 
-1. O **Setup** é executado primeiro no ciclo de vida da máquina (modelo _Zero-Clone_ via GitHub web ou `curl | sh`).
+1. O **Setup** é executado primeiro no ciclo de vida da máquina (modelo **Clone Soberano** via `bootstrap.sh` clonando em `~/.local/share/setup`).
 2. O **Setup** instala os editores gráficos (VS Code, Zed, Antigravity) e dependências básicas de sistema.
 3. Em seguida, o **Profile** entra em ação no espaço do usuário (`$HOME`), aplicando symlinks atômicos (`ln -sf`) para dotfiles estáticos e runbooks cognitivos, e materializando por cópia adaptativa (`0644`) os arquivos dependentes de ambiente (`gtk.css`, `settings.ini` e `index.theme`).
 

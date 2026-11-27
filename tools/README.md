@@ -25,7 +25,7 @@ Se você precisa rodar os formatadores diretamente no terminal fora da IDE:
 
 ### 1. Prettier
 
-- **Receita Automática:** `curl -fsSL https://raw.githubusercontent.com/GabrielFrigo4/setup/main/common/linters/prettier.sh | sh`
+- **Receita Automática (Clone Soberano):** `sh "${XDG_DATA_HOME:-${HOME}/.local/share}/setup/common/linters/prettier.sh"`
 - **FreeBSD:** `doas pkg install node npm && npm install --global prettier`
 - **Fedora:** `sudo dnf install --assumeyes nodejs npm && sudo npm install --global prettier`
 - **Arch Linux:** `sudo pacman -S prettier`
@@ -44,7 +44,7 @@ Se você precisa rodar os formatadores diretamente no terminal fora da IDE:
 
 ### 4. Ruff
 
-- **Receita Automática:** `curl -fsSL https://raw.githubusercontent.com/GabrielFrigo4/setup/main/common/linters/ruff.sh | sh`
+- **Receita Automática (Clone Soberano):** `sh "${XDG_DATA_HOME:-${HOME}/.local/share}/setup/common/linters/ruff.sh"`
 - **FreeBSD:** `doas pkg install py311-ruff` (ou `devel/py-ruff`)
 - **Fedora:** `sudo dnf install --assumeyes ruff`
 - **Arch Linux:** `sudo pacman -S ruff`
@@ -64,10 +64,13 @@ Todas as ferramentas estão padronizadas para respeitar as mesmas diretrizes:
 
 ---
 
-## 🚀 Implantação Rápida dos Dotfiles (Zero-Clone)
+## 🚀 Implantação Rápida dos Dotfiles & Linters (Clone Soberano)
 
-Execute a receita canônica do repositório:
+Sincronize os dotfiles no `$HOME` pelo `profile.sh` e instale os binários CLI pelas receitas individuais do **Setup** (`common/linters/{prettier,ruff,mermaid}.sh`):
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/GabrielFrigo4/setup/main/common/linters/linters.sh | sh
+sh "${XDG_DATA_HOME:-${HOME}/.local/share}/profile/profile.sh" sync
+sh "${XDG_DATA_HOME:-${HOME}/.local/share}/setup/common/linters/prettier.sh"
+sh "${XDG_DATA_HOME:-${HOME}/.local/share}/setup/common/linters/ruff.sh"
+sh "${XDG_DATA_HOME:-${HOME}/.local/share}/setup/common/linters/mermaid.sh"
 ```

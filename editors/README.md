@@ -8,7 +8,7 @@
 
 Esta pasta reúne exclusivamente os **arquivos declarativos de configuração** (`settings.json`, `extensions.txt`, configs standalone) dos editores de código utilizados no Host, organizados de forma **autocontida por editor**.
 
-> ℹ️ **Sincronização de Extensões:** Utilize `sh profile.sh extensions` (ou `sh profile.sh sync --extensions`) via [`core/extensions.sh`](../core/extensions.sh) para instalar, exportar ou auditar extensões declaradas. Em instalações zero-clone, utilize o script complementar em **[Setup](https://github.com/GabrielFrigo4/setup)**.
+> ℹ️ **Sincronização de Extensões:** Utilize `sh profile.sh extensions` (ou `sh profile.sh sync --extensions`) via [`core/extensions.sh`](../core/extensions.sh) para instalar, exportar ou auditar extensões declaradas. Para pacotes de editores no host, utilize [`common/editors/install.sh`](https://github.com/GabrielFrigo4/setup/blob/main/common/editors/install.sh) no **[Setup](https://github.com/GabrielFrigo4/setup)**.
 
 ---
 
