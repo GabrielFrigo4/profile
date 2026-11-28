@@ -67,8 +67,8 @@ O ecossistema adota dois axiomas fundamentais que governam a engenharia de todos
 2. **O Papel do Environment (Bancada de Desenvolvimento & Hub do Arquiteto):**
     - O **Environment** (`~/Documents/Environment`) é **estritamente uma bancada de desenvolvimento e orquestração**. Ele **NÃO** deve ser referenciado diretamente por inicializadores de shell (`.bashrc`, `.zshrc`) ou dotfiles.
     - Ele centraliza os submódulos para que o desenvolvedor/arquiteto possa inspecionar e evoluir todo o ecossistema de forma unificada.
-    - Serve para executar suítes globais de testes (`make test`), auditorias estáticas cruzadas (`make audit`), validação de formatação (`make lint-md`), normalização de banners (`make fix-banners`) e propagação da documentação canônica (`make sync-docs`).
-    - O comando `make install` (ou `./environment.sh install`) é o ponto de entrada canônico para provisionar a máquina: ele clona cada repositório em suas localizações canônicas de sistema e dispara a sincronização a partir do clone soberano do Profile (`~/.config/profile/profile.sh sync`), garantindo zero acoplamento com a pasta de desenvolvimento.
+    - Serve para executar suítes globais de testes (`make test`), auditorias estáticas cruzadas (`make audit`), validação de formatação (`make lint-format`), normalização de banners (`make fix-banners`) e propagação da documentação canônica (`make sync-docs`).
+    - O comando `make install` (ou `./environment.sh install`) é o ponto de entrada canônico para provisionar a máquina: ele clona cada repositório em suas localizações canônicas de sistema e dispara a sincronização a partir do clone soberano do Profile (`~/.local/share/profile/profile.sh sync`), garantindo zero acoplamento com a pasta de desenvolvimento.
 
 ### 2. O Axioma da Precedência Local sobre Global (Local > Global)
 
@@ -91,7 +91,8 @@ flowchart TD
 - **Resolução em Scripts e Loaders:**
     1. Variável explícita de ambiente (`$SHELL_REPO_DIR`, `$PROFILE_DIR`, `$VAULT_DIR`).
     2. **Universal Shell:** `/usr/local/share/shell` (padrão de sistema) $\rightarrow$ `~/.local/share/shell` (recomendado rootless) $\rightarrow$ `~/.config/shell` $\rightarrow$ `~/.shell`.
-    3. **Universal Profile & Vault:** `~/.local/share/<repo>` (XDG Data) $\rightarrow$ `~/.config/<repo>` (XDG Config) $\rightarrow$ `~/.<repo>` $\rightarrow$ `/usr/local/share/<repo>` (global defensivo, não recomendado para dados do usuário).
+    3. **Universal Profile:** `~/.local/share/profile` (XDG Data) $\rightarrow$ `~/.config/profile` (XDG Config) $\rightarrow$ `~/.profile` $\rightarrow$ `/usr/local/share/profile`.
+    4. **Universal Vault:** `~/.local/share/vault` (XDG Data) $\rightarrow$ `~/.config/vault` (XDG Config) $\rightarrow$ `~/.vault` (caminhos globais `/usr/local/share/vault` são proibidos por segurança).
 - **Resolução em Portable AI Skills & Agentes:**
     1. **Projeto Local (`<repo>/.agents/skills/`):** Máxima prioridade. Permite que um projeto defina runbooks e regras específicas que sobrescrevem qualquer padrão global sem poluir a máquina do usuário.
     2. **Usuário Global (`~/.gemini/config/skills/` via `Profile/agents/skills/`):** Habilidades perenes da estação de trabalho, compartilhadas entre projetos.
@@ -101,13 +102,13 @@ flowchart TD
 
 Quando os repositórios coexistem no mesmo sistema, eles **detectam-se automaticamente e ativam capacidades adicionais em silêncio absoluto**:
 
-- **Emacs ↔ Vault / IA:** Se o Emacs detectar o Vault em `~/.local/share/vault`, `~/.config/vault`, `~/.vault` ou `/usr/local/share/vault` (ou credenciais em variáveis de ambiente), ativa automaticamente seus módulos de IA (`gptel`, `ellama`, `minuet`, `org-ai`). Se ausente, inicializa instantaneamente em modo limpo (< 50ms) sem erros.
+- **Emacs ↔ Vault / IA:** Se o Emacs detectar o Vault em `~/.local/share/vault`, `~/.config/vault` ou `~/.vault` (ou credenciais em variáveis de ambiente), ativa automaticamente seus módulos de IA (`gptel`, `ellama`, `minuet`, `org-ai`). Se ausente, inicializa instantaneamente em modo limpo (< 50ms) sem erros.
 - **Emacs ↔ EAF:** Se o Emacs estiver em modo gráfico com a pasta do EAF e `python3` disponíveis, ativa a integração. Caso contrário, opera normalmente em modo texto ou terminal sem falhas de D-Bus.
-- **Shell ↔ Vault:** O Shell detecta silenciosamente o cofre e injeta chaves SSH e variáveis. Se o cofre não for encontrado, roda normalmente em modo anônimo.
+- **Shell ↔ Vault:** O Shell detecta silenciosamente o cofre e injeta chaves SSH (`vault-keys`/`vault-ssh-config`, deduplicadas por fingerprint com invalidação reativa via `ssh_keys_sig`) e variáveis. Se o cofre não for encontrado, roda normalmente em modo anônimo.
 - **Profile ↔ Skills de IA:** O Profile cria um link simbólico unificado de diretório (`~/.gemini/config/skills -> Profile/agents/skills`). Qualquer nova skill adicionada ao repositório fica imediatamente disponível no IDE após um `git pull`, sem necessidade de novos links manuais.
 - **Profile ↔ Editores de Texto:** O Profile **NÃO** gerencia nem cria links para editores de texto modais (`~/.emacs.d`, `~/.config/nvim`, etc.). Esses editores gerenciam-se a si mesmos em seus diretórios canônicos.
 - **Shells Nativos Windows ↔ Auto-Cura de Perfis:** Quando o usuário executa `upsh` ou `resh` em qualquer dos shells nativos no Windows (PowerShell, NuShell, CMD), o atualizador detecta os diretórios de configuração dos demais e propaga atomicamente os perfis físicos em disco (`Documents\PowerShell`, `%APPDATA%\nushell`, `%LOCALAPPDATA%\clink`), garantindo auto-cura reentrante sem qualquer intervenção manual de cópia.
-- **NuShell ↔ GitHub CLI (HTTPS Auth):** O NuShell detecta dinamicamente a presença do binário `gh.exe` e injeta explicitamente o helper de credenciais HTTPS (`-c credential.https://github.com.helper=...`) ao sincronizar repositórios privados como o Vault, operando com isolamento estrito contra falhas de lookup de subshells e sem depender de chaves SSH para o GitHub.
+- **NuShell ↔ GitHub CLI & SSH:** O NuShell detecta dinamicamente o binário `gh.exe` (helper HTTPS) ao sincronizar repositórios privados como o Vault e também aciona a sincronização deduplicada de chaves SSH (`vault-keys` / `vault-ssh-config`) para operações diretas via SSH com `git` e `got`.
 
 ---
 
@@ -124,12 +125,12 @@ Quando os repositórios coexistem no mesmo sistema, eles **detectam-se automatic
 
 ### 📝 A Suíte de Editores (Tools)
 
-| Repositório                                           | Visibilidade | Papel Central                                                                                                  | Linguagem & Motor       | Modelo de Operação / Instalação                          | Local Canônico            |
-| :---------------------------------------------------- | :----------- | :------------------------------------------------------------------------------------------------------------- | :---------------------- | :------------------------------------------------------- | :------------------------ |
-| **[Emacs](https://github.com/GabrielFrigo4/emacs)**   | Público      | **Ambiente Extensível Lisp**: Org-mode, Elpaca package manager, EAF, árvore sintática e IA.                    | Emacs Lisp (Elisp)      | Autônomo reentrante com autodetecção de EAF e Vault      | `~/.emacs.d`              |
-| **[Helix](https://github.com/GabrielFrigo4/helix)**   | Público      | **Editor Modal Pós-Moderno**: Mapeamentos ergonômicos, seleção múltipla nativa, Tree-sitter e zero-plugin LSP. | TOML declarativo / Rust | Autônomo reentrante puro e zero-dependência              | `~/.config/helix`         |
-| **[NeoVim](https://github.com/GabrielFrigo4/neovim)** | Público      | **Editor Modal Moderno**: Arquitetura modular FHS em Lua, Lazy.nvim, Mason LSP, Telescope e tema Kanagawa.     | Lua / Neovim runtime    | Autônomo reentrante com autoinstalação Lazy.nvim         | `~/.config/nvim`          |
-| **[Vim](https://github.com/GabrielFrigo4/vim)**       | Público      | **Editor Clássico Resiliente**: Onipresença UNIX, Vim-Plug, syntax highlighting, CodeDark e fallback seguro.   | Vimscript puro          | Autônomo reentrante com fallback nativo sem dependências | `~/vimfiles` e `~/.vimrc` |
+| Repositório                                           | Visibilidade | Papel Central                                                                                                  | Linguagem & Motor       | Modelo de Operação / Instalação                          | Local Canônico                                     |
+| :---------------------------------------------------- | :----------- | :------------------------------------------------------------------------------------------------------------- | :---------------------- | :------------------------------------------------------- | :------------------------------------------------- |
+| **[Emacs](https://github.com/GabrielFrigo4/emacs)**   | Público      | **Ambiente Extensível Lisp**: Org-mode, Elpaca package manager, EAF, árvore sintática e IA.                    | Emacs Lisp (Elisp)      | Autônomo reentrante com autodetecção de EAF e Vault      | `~/.emacs.d`                                       |
+| **[Helix](https://github.com/GabrielFrigo4/helix)**   | Público      | **Editor Modal Pós-Moderno**: Mapeamentos ergonômicos, seleção múltipla nativa, Tree-sitter e zero-plugin LSP. | TOML declarativo / Rust | Autônomo reentrante puro e zero-dependência              | `~/.config/helix`                                  |
+| **[NeoVim](https://github.com/GabrielFrigo4/neovim)** | Público      | **Editor Modal Moderno**: Arquitetura modular FHS em Lua, Lazy.nvim, Mason LSP, Telescope e tema Kanagawa.     | Lua / Neovim runtime    | Autônomo reentrante com autoinstalação Lazy.nvim         | `~/.config/nvim`                                   |
+| **[Vim](https://github.com/GabrielFrigo4/vim)**       | Público      | **Editor Clássico Resiliente**: Onipresença UNIX, Vim-Plug, syntax highlighting, CodeDark e fallback seguro.   | Vimscript puro          | Autônomo reentrante com fallback nativo sem dependências | `~/.vim` / `~/.vimrc` (ou `~/vimfiles` no Windows) |
 
 ---
 
@@ -171,11 +172,13 @@ Cada módulo possui seu próprio utilitário de atualização individual, garant
 
 | Comando   | Alias                | Repositório Alvo          | Escopo & Comportamento                                                                                             |
 | :-------- | :------------------- | :------------------------ | :----------------------------------------------------------------------------------------------------------------- |
+| `upstp`   | `update-setup`       | **Setup**                 | Atualiza o clone local do Setup (`$SETUP_DIR`, `~/.local/share/setup`) com auto-cura sem rodar receitas.           |
+| `setup`   | `setup-run`          | **Setup**                 | Executa o orquestrador `~/.local/share/setup/setup.sh` a partir de qualquer diretório (auto-clona se ausente).     |
 | `upsh`    | `update-shell`       | **Shell**                 | Atualiza o repositório ativo (`$SHELL_REPO_DIR`, `~/.shell` local ou `/usr/local/share/shell` global) e recarrega. |
-| `upvt`    | `update-vault`       | **Vault**                 | Atualiza o cofre (`$VAULT_DIR`, `~/.vault` local ou `/usr/local/share/vault` global) e recarrega chaves SSH.       |
-| `uped`    | `update-editors`     | **Editores**              | Inspeciona e atualiza individualmente `~/.emacs.d`, `~/.config/nvim`, `~/.config/helix`, `~/vimfiles`.             |
+| `upvt`    | `update-vault`       | **Vault**                 | Atualiza o cofre (`$VAULT_DIR`, `~/.local/share/vault`, `~/.config/vault` ou `~/.vault`) e recarrega chaves SSH.   |
+| `uped`    | `update-editors`     | **Editores**              | Inspeciona e atualiza individualmente `~/.emacs.d`, `~/.config/nvim`, `~/.config/helix`, `~/.vim` / `~/vimfiles`.  |
 | `upmodes` | `update-emacs-modes` | **Modos Elisp**           | Sincroniza diretamente os submódulos Elisp locais (`~/.emacs.d/usr/local/*`) com os branches upstream remotos.     |
-| `uprc`    | `update-profile`     | **Profile**               | Atualiza `~/.config/profile` e reaplica links de dotfiles e skills de IA.                                          |
+| `uprc`    | `update-profile`     | **Profile**               | Atualiza `~/.local/share/profile` e reaplica links de dotfiles e skills de IA.                                     |
 | `upgit`   | `update-git`         | **Todos Git**             | Busca e atualiza recursivamente todos os repositórios Git no diretório corrente.                                   |
 | `upall`   | `update-all`         | **Sistema + Ecossistema** | Atualiza pacotes do SO (`dnf`, `apt`, `pkg`, `aur`) e, oportunisticamente, os módulos instalados.                  |
 
@@ -242,6 +245,7 @@ Baseados nos 17 Princípios UNIX (_The Art of UNIX Programming_, Eric S. Raymond
 
 - Todo repositório do ecossistema possui:
     - `.githooks/pre-commit` executável e atômico para validar integridade, sintaxe e formatação antes do commit.
+    - `AGENTS.md` uniforme sincronizado via `make sync-template` quando inicia com `<!-- template:sync -->` (permitindo congelamento opt-out em hubs customizados ao remover o marcador).
     - `.agents/rules/principles.md` com diretrizes de engenharia específicas do seu domínio.
     - `.agents/skills/` com runbooks cognitivos padronizados (`universal-*`, `agentic-repo-governance`, `primary-source-research`).
 

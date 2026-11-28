@@ -6,7 +6,7 @@ Este documento detalha a arquitetura interna do projeto Nerd Fonts, a distribui�
 
 ## 📜 Histórico e Origem do Prefixo `nf-linux-*`
 
-Uma dúvida frequente de engenharia é por que ícones de sistemas não-Linux (como FreeBSD ` `, macOS ` `, OpenBSD ` ` ou Windows ` `) aparecem catalogados com prefixo `nf-linux-*` no Nerd Fonts:
+Uma dúvida frequente de engenharia é por que ícones de sistemas não-Linux (como FreeBSD ` `, macOS ` `, OpenBSD ` ` ou Windows ` `) aparecem catalogados com prefixo `nf-linux-*` no Nerd Fonts:
 
 1. **A Fonte Original `font-linux`:**
     - Criada por Lukasz Fiszer, a `font-linux` nasceu como uma fonte de ícones vetoriais dedicada exclusivamente a distribuições GNU/Linux (Tux, Debian, Arch, Ubuntu, Fedora).

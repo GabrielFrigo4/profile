@@ -310,6 +310,45 @@ if leaked:
     for err in leaked[:20]:
         sys.stderr.write(f"   - {err}\n")
     sys.exit(1)
+
+if is_vault:
+    def is_sensitive_vault_path(path):
+        low = path.lower()
+        if low.endswith((".pub", ".md")):
+            return False
+        base = os.path.basename(low)
+        if base in ("vault.key", "age.key"):
+            return False
+        return low.endswith((".key", ".ppk", ".pem", ".env")) or path.startswith("tokens/")
+
+    unencrypted_attr = []
+    for path in sorted(set(tracked) | set(staged_acm)):
+        if not os.path.isfile(path) or not is_sensitive_vault_path(path):
+            continue
+        info = staged_attrs.get(path) or tracked_attrs.get(path) or {}
+        if info.get("filter") != "git-crypt":
+            unencrypted_attr.append(path)
+    if unencrypted_attr:
+        sys.stderr.write("❌ [pre-commit] Sensitive Vault file missing filter=git-crypt in .gitattributes:\n")
+        for err in unencrypted_attr[:20]:
+            sys.stderr.write(f"   - {err}\n")
+        sys.exit(1)
+
+    git_crypt_bin = shutil.which("git-crypt")
+    if git_crypt_bin:
+        gc_res = subprocess.run([git_crypt_bin, "status"], capture_output=True, text=True)
+        if gc_res.returncode == 0:
+            plain_leaks = []
+            for line in gc_res.stdout.splitlines():
+                if line.startswith("not encrypted: "):
+                    p = line[len("not encrypted: "):].strip()
+                    if is_sensitive_vault_path(p):
+                        plain_leaks.append(p)
+            if plain_leaks:
+                sys.stderr.write("❌ [pre-commit] Sensitive Vault file not encrypted by git-crypt:\n")
+                for err in plain_leaks[:20]:
+                    sys.stderr.write(f"   - {err}\n")
+                sys.exit(1)
 '
 fi
 
@@ -331,7 +370,7 @@ def resolve_shell(name):
 out = subprocess.check_output(["git", "-c", "core.quotePath=false", "ls-files", "-z"]).split(b"\0")
 sh_compat = subprocess.run(["sh", "-c", "f-f() { :; }"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0
 
-bash_targets, zsh_targets, sh_targets, ksh_targets, fish_targets, py_targets = [], [], [], [], [], []
+bash_targets, zsh_targets, sh_targets, ksh_targets, fish_targets, py_targets, lua_targets = [], [], [], [], [], [], []
 for raw in out:
     if not raw:
         continue
@@ -340,6 +379,9 @@ for raw in out:
         continue
     if p.endswith(".py"):
         py_targets.append(p)
+        continue
+    if p.endswith(".lua"):
+        lua_targets.append(p)
         continue
     if p.endswith(".fish"):
         fish_targets.append(p)
@@ -353,10 +395,14 @@ for raw in out:
     if p.endswith(".bash"):
         bash_targets.append(p)
         continue
-    if not (p.endswith(".sh") or p.startswith(".githooks/")):
+    if not (p.endswith(".sh") or p.startswith(".githooks/") or p.startswith(".scripts/")):
         continue
     with open(p, "rb") as fp:
         first = fp.readline().decode("utf-8", "replace").strip()
+    if p.startswith(".scripts/") and not p.endswith(".sh") and not first.startswith("#!"):
+        continue
+    if "python" in first or "fish" in first:
+        continue
     if p.startswith(".githooks/") or first == "#!/usr/bin/env sh" or first == "#!/bin/sh":
         sh_targets.append(p)
     if "zsh" in first:
@@ -398,6 +444,13 @@ for p in py_targets:
     except py_compile.PyCompileError as exc:
         sys.stderr.write(f"❌ [pre-commit] Python syntax error in {exc.msg}\n")
         sys.exit(1)
+
+luac_bin = shutil.which("luac")
+if luac_bin and lua_targets:
+    for p in lua_targets:
+        r = subprocess.run([luac_bin, "-p", p])
+        if r.returncode != 0:
+            sys.exit(r.returncode)
 '
 fi
 

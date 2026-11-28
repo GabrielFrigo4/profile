@@ -1,3 +1,5 @@
+<!-- template:sync -->
+
 # 🤖 AI Agent Briefing
 
 > Diretrizes canônicas, invariantes de engenharia, governança autônoma e protocolo operacional para agentes de inteligência artificial em repositórios do ecossistema.
@@ -49,7 +51,8 @@ Subagentes de execução que identificarem qualquer dúvida de escopo, divergên
     - Simetria de escopo e não-assimetria de subgrupo na documentação.
     - Emissão semântica de UI via rotinas canônicas `_ui_*`.
     - **Boy Scout Rule:** Ao identificar qualquer inconformidade com os padrões estabelecidos, notifique concisamente o usuário e aplique a correção de forma proativa.
-7. **Governança Multi-Agente (Orquestração):**
+7. **Filosofia do `AGENTS.md` Uniforme (`<!-- template:sync -->`):** Repositórios padrão do ecossistema compartilham o mesmo `AGENTS.md` canônico propagado por `make sync-template` sempre que o marcador `<!-- template:sync -->` estiver presente no topo do arquivo. Repositórios sem o marcador (como o hub `Environment`) preservam seu briefing customizado congelado.
+8. **Governança Multi-Agente (Orquestração):**
     - _Gatilho Semântico de Orquestração:_ Ao identificar requisições de delegação multi-agente ou paralelização de execução em subagentes, carregue e siga obrigatoriamente a skill global `multi-agent-orchestration` ANTES de invocar qualquer tool de delegação.
     - _Bloqueio de `native_swarm` e Polling via Cron:_ É vedado invocar a tool `swarm` por iniciativa própria (restrita a pedidos com a palavra literal `"swarm"`). É proibido utilizar `schedule` (cron) para monitoramento periódico de agentes.
     - _Herança Dinâmica & Papéis Semânticos Agnósticos:_ Em chamadas de delegação (`invoke_subagent`, `swarm`), utilize por padrão a herança nativa do modelo ativo da sessão (`Model: 'inherit'` ou omissão explícita) — ou o tier rápido nativo exposto pelo runtime atual, sem fixar nomes comerciais ou versões. Estruture a delegação nos papéis _Master Orchestrator / Planner Agent_, _Specialist Sub-Agent / Execution Worker_ e _Adversarial Verifier / QA Agent_.
