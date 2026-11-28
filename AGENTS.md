@@ -29,7 +29,7 @@ Ancore toda decisão na documentação canônica local, consultando nesta ordem:
 
 1. **Isolamento Open Source (`**/Open Source/**`):** Projetos de terceiros sob `Open Source/` (ou `OSS/`) são estritamente somente-leitura para automações globais, formatação, auditoria e templates.
 2. **Bancada vs. Produção, Fallback & Zero-Dirty:**
-    - **Resolução da Bancada:** Considere `$XDG_DOCUMENTS_DIR`, `~/Documents/`, `~/Documentos/` ou o próprio repositório autônomo quando não houver clone de runtime separado.
+    - **Resolução da Bancada:** Considere `$WORKSPACE_DIR`, `~/Workspace/` ou o próprio repositório autônomo quando não houver clone de runtime separado.
     - **Proibição de Runtime Sujo:** Nunca edite clones de produção diretamente (`~/.local/share/*`, `/usr/local/share/*`, `~/.config/*`, `~/.emacs.d`, `~/.vim`) nem os symlinks `~/.gemini/config/skills` e `~/.gemini/config/rules` (edite fisicamente na bancada do `Profile`).
     - **Cascata de Fallback:** (a) Existindo bancada local para o componente, edite/valide/comite/envie lá e propague à produção exclusivamente via `git pull` mantendo `git status` 100% limpo (_Zero-Dirty_); (b) Repositórios de projeto independentes já são a própria bancada; (c) Em servidores/containers sem bancada local, edite/comite/envie no clone isolado mantendo o repo limpo; (d) Em caso de dúvida sobre a topologia, pergunte ao usuário via `ask_question` antes de alterar o runtime.
 3. **Hermetismo (`rm -rf .agents`):** Código de produção não depende de `.agents/` nem `skills/`; se removidos, tudo opera com 100% de integridade.

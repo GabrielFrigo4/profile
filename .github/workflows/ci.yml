@@ -284,8 +284,8 @@ jobs:
 
                   for shell_bin, targets in ((resolve_shell("bash"), bash_targets), (resolve_shell("zsh"), zsh_targets), (resolve_shell("sh"), sh_targets), (resolve_shell("ksh") or resolve_shell("oksh"), ksh_targets), (resolve_shell("fish"), fish_targets)):
                       if shell_bin and targets:
-                          for i in range(0, len(targets), 100):
-                              r = subprocess.run([shell_bin, "-n", *targets[i:i + 100]])
+                          for p in targets:
+                              r = subprocess.run([shell_bin, "-n", p])
                               if r.returncode != 0:
                                   sys.exit(r.returncode)
 

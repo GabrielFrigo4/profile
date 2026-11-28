@@ -26,7 +26,7 @@ make ci
 
 Todo o fluxo de desenvolvimento segue o desacoplamento estrito entre a bancada de trabalho e os runtimes de produção:
 
-1. **Bancada de Edição:** Alterações devem ocorrer exclusivamente na bancada em `~/Documents/`. Nunca altere clones ou diretórios de produção diretamente.
+1. **Bancada de Edição:** Alterações devem ocorrer exclusivamente na bancada em `~/Workspace/`. Nunca altere clones ou diretórios de produção diretamente.
 2. **Implementação Limpa:** Desenvolva mantendo o código autoexplicativo, respeitando a Taxonomia Tripartite de Comentários e a portabilidade POSIX.
 3. **Quality Gates Locais:** Valide seu trabalho localmente executando `make format`, `make audit`, `make test` e `make ci`.
 4. **Commit Semântico:** Registre alterações atômicas seguindo a convenção de commits semânticos, protegida pelos ganchos Git com auto-cura.

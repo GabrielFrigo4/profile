@@ -65,7 +65,7 @@ O ecossistema adota dois axiomas fundamentais que governam a engenharia de todos
     - **Zero Dependências Obrigatórias:** Nenhum repositório exige que outro esteja presente para funcionar com perfeição.
     - **Zero Ruído:** Não há mensagens de erro, alertas de "módulo ausente" ou avisos se os outros repositórios não existirem. A experiência isolada é cidadã de primeira classe.
 2. **O Papel do Environment (Bancada de Desenvolvimento & Hub do Arquiteto):**
-    - O **Environment** (`~/Documents/Environment`) é **estritamente uma bancada de desenvolvimento e orquestração**. Ele **NÃO** deve ser referenciado diretamente por inicializadores de shell (`.bashrc`, `.zshrc`) ou dotfiles.
+    - O **Environment** (`~/Workspace/Environment`) é **estritamente uma bancada de desenvolvimento e orquestração**. Ele **NÃO** deve ser referenciado diretamente por inicializadores de shell (`.bashrc`, `.zshrc`) ou dotfiles.
     - Ele centraliza os submódulos para que o desenvolvedor/arquiteto possa inspecionar e evoluir todo o ecossistema de forma unificada.
     - Serve para executar suítes globais de testes (`make test`), auditorias estáticas cruzadas (`make audit`), validação de formatação (`make lint-format`), normalização de banners (`make fix-banners`) e propagação da documentação canônica (`make sync-docs`).
     - O comando `make install` (ou `./environment.sh install`) é o ponto de entrada canônico para provisionar a máquina: ele clona cada repositório em suas localizações canônicas de sistema e dispara a sincronização a partir do clone soberano do Profile (`~/.local/share/profile/profile.sh sync`), garantindo zero acoplamento com a pasta de desenvolvimento.
