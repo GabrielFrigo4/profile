@@ -110,13 +110,17 @@ _profile_update() {
 	_status="$(command git -C "${_PROFILE_ROOT}" status --porcelain 2> "/dev/null" || true)"
 	_has_dirty=0
 	if [ -n "${_status}" ]; then
-		_has_dirty=1
+		_stash_before="$(command git -C "${_PROFILE_ROOT}" rev-parse -q --verify refs/stash 2> "/dev/null" || true)"
 		_ui_warn "Alteracoes locais detectadas em ${_PROFILE_ROOT} (criando auto-stash)..."
 		command git -C "${_PROFILE_ROOT}" stash push -u -m "autostash-before-update-$(date +%s)" > "/dev/null" 2>&1 || true
+		_stash_after="$(command git -C "${_PROFILE_ROOT}" rev-parse -q --verify refs/stash 2> "/dev/null" || true)"
+		if [ -n "${_stash_after}" ] && [ "${_stash_before}" != "${_stash_after}" ]; then
+			_has_dirty=1
+		fi
 	fi
 	command git -C "${_PROFILE_ROOT}" pull --ff-only 2> "/dev/null" || command git -C "${_PROFILE_ROOT}" pull --rebase 2> "/dev/null" || command git -C "${_PROFILE_ROOT}" pull
 	if [ "${_has_dirty}" -eq 1 ]; then
-		command git -C "${_PROFILE_ROOT}" stash pop > "/dev/null" 2>&1 || true
+		_ui_warn "Alteracoes anomalas em producao isoladas em 'git stash list' (Zero-Dirty preservado)."
 	fi
 	if [ -d "${_PROFILE_ROOT}/.githooks" ]; then
 		chmod 0755 "${_PROFILE_ROOT}/.githooks/"* 2> "/dev/null" || true

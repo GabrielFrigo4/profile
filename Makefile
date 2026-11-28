@@ -79,6 +79,13 @@ test:
 		echo "❌ Erro: __pycache__ ou *.pyc encontrados!"; \
 		exit 1; \
 	fi
+	echo "🧪 Validando isolamento de cópias gerenciadas (_profile_item)..."
+	_tmp_sync=$$(mktemp -d); \
+	trap 'rm -rf "$$_tmp_sync"' EXIT; \
+	printf '{"a":1}\n' > "$${_tmp_sync}/src.json"; \
+	ln -s "$${_tmp_sync}/src.json" "$${_tmp_sync}/dst.json"; \
+	_PROFILE_ROOT="." sh -c '_s="$$1" _d="$$2" _l="$$3"; set --; . ./core/ui.sh; . ./core/sync.sh; _profile_item "$${_s}" "$${_d}" sync 0 0 "" 1; printf "{\"b\":2}\n" > "$${_d}"; grep -q "\"a\":1" "$${_s}" && test -f "$${_d}" && test ! -L "$${_d}" && _profile_item "$${_s}" "$${_l}" sync 0 0 "" 0 && test -L "$${_l}"' _ "$${_tmp_sync}/src.json" "$${_tmp_sync}/dst.json" "$${_tmp_sync}/link.json"; \
+	rm -rf "$${_tmp_sync}"
 	echo "✅ Todos os testes do Profile foram aprovados!"
 
 format: prettier

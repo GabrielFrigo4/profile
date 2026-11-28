@@ -11,12 +11,17 @@ set -eu
 ### SUBCOMANDOS DE LINHA
 ### ================================
 _profile_item() {
-	_source_path="$1" _target_path="$2" _action_mode="${3:-sync}" _is_dry_run="${4:-0}" _use_backup="${5:-0}" _timestamp="${6:-}"
+	_source_path="$1" _target_path="$2" _action_mode="${3:-sync}" _is_dry_run="${4:-0}" _use_backup="${5:-0}" _timestamp="${6:-}" _copy_only="${7:-0}"
 	[ ! -e "${_source_path}" ] && return 0
 
 	if [ "${_action_mode}" = "status" ]; then
 		[ ! -e "${_target_path}" ] && [ ! -L "${_target_path}" ] && { _ui_warn "[MISSING] ${_target_path}"; return 0; }
-		[ -L "${_target_path}" ] && { [ "$(readlink "${_target_path}" 2> "/dev/null" || true)" = "${_source_path}" ] && _ui_ok "[IN-SYNC] ${_target_path}" || _ui_warn "[DRIFT] ${_target_path}"; return 0; }
+		if [ "${_copy_only}" -eq 1 ]; then
+			[ -L "${_target_path}" ] && { _ui_warn "[DRIFT-LINK] ${_target_path}"; return 0; }
+		elif [ -L "${_target_path}" ]; then
+			[ "$(readlink "${_target_path}" 2> "/dev/null" || true)" = "${_source_path}" ] && _ui_ok "[IN-SYNC] ${_target_path}" || _ui_warn "[DRIFT] ${_target_path}"
+			return 0
+		fi
 		[ -d "${_source_path}" ] && [ -d "${_target_path}" ] && { diff -rq "${_source_path}" "${_target_path}" > "/dev/null" 2>&1 && _ui_ok "[IN-SYNC-DIR] ${_target_path}" || _ui_warn "[DRIFT-DIR] ${_target_path}"; return 0; }
 		cmp -s "${_source_path}" "${_target_path}" 2> "/dev/null" && _ui_ok "[IN-SYNC] ${_target_path}" || _ui_warn "[DRIFT] ${_target_path}"
 		return 0
@@ -34,11 +39,16 @@ _profile_item() {
 		return 0
 	fi
 
-	[ "${_is_dry_run}" -eq 1 ] && { _ui_sub "[DRY-RUN] ${_source_path} -> ${_target_path}"; return 0; }
+	if [ "${_is_dry_run}" -eq 1 ]; then
+		[ "${_copy_only}" -eq 1 ] && _ui_sub "[DRY-RUN COPY] ${_source_path} -> ${_target_path}" || _ui_sub "[DRY-RUN] ${_source_path} -> ${_target_path}"
+		return 0
+	fi
 
 	mkdir -p "$(dirname "${_target_path}")"
 	if [ -L "${_target_path}" ]; then
-		[ "$(readlink "${_target_path}" 2> "/dev/null" || true)" = "${_source_path}" ] && { _ui_sub "[OK] ${_target_path}"; return 0; }
+		if [ "${_copy_only}" -eq 0 ] && [ "$(readlink "${_target_path}" 2> "/dev/null" || true)" = "${_source_path}" ]; then
+			_ui_sub "[OK] ${_target_path}"; return 0
+		fi
 		rm -rf "${_target_path}" 2> "/dev/null" || unlink "${_target_path}" 2> "/dev/null" || true
 	elif [ -e "${_target_path}" ]; then
 		if [ -d "${_source_path}" ] && [ -d "${_target_path}" ]; then
@@ -47,6 +57,13 @@ _profile_item() {
 			cmp -s "${_source_path}" "${_target_path}" 2> "/dev/null" && { _ui_sub "[OK] ${_target_path}"; return 0; }
 		fi
 		[ "${_use_backup}" -eq 1 ] && { mv "${_target_path}" "${_target_path}.bak.${_timestamp}" 2> "/dev/null" && _ui_warn "[BACKUP] ${_target_path}.bak.${_timestamp}" || { _ui_err "Falha ao criar backup de ${_target_path}"; return 1; }; } || rm -rf "${_target_path}"
+	fi
+
+	if [ "${_copy_only}" -eq 1 ]; then
+		cp -rf "${_source_path}" "${_target_path}"
+		[ -f "${_target_path}" ] && chmod 0644 "${_target_path}" 2> "/dev/null" || true
+		_ui_ok "[COPY] ${_target_path}"
+		return 0
 	fi
 
 	export MSYS="winsymlinks:nativestrict"
@@ -153,6 +170,7 @@ _profile_sync() {
 	done
 
 	_sync() { _profile_item "${_PROFILE_ROOT}/$1" "$2" "${_mode}" "${_dry_run}" "${_backup}" "${_timestamp}"; }
+	_sync_copy() { _profile_item "${_PROFILE_ROOT}/$1" "$2" "${_mode}" "${_dry_run}" "${_backup}" "${_timestamp}" 1; }
 	_ui_step "Sincronizando ecossistema (${_os_type} - ${_mode}) a partir de: ${_PROFILE_ROOT}"
 	[ "${_dry_run}" -eq 1 ] && _ui_warn "Modo DRY-RUN ativado (nenhum arquivo sera modificado)."
 
@@ -175,13 +193,16 @@ _profile_sync() {
 	_editor_dir="${_config_dir}" && [ "${_os_type}" = "Darwin" ] && _editor_dir="${HOME}/Library/Application Support"
 	[ "${_is_windows}" -eq 1 ] && _editor_dir="${_win_appdata}"
 	if [ "${_is_windows}" -eq 1 ]; then
-		_sync "editors/zed/settings.json" "${_editor_dir}/Zed/settings.json"
+		_sync_copy "editors/zed/settings.json" "${_editor_dir}/Zed/settings.json"
 	else
-		_sync "editors/zed/settings.json" "${_config_dir}/zed/settings.json"
+		_sync_copy "editors/zed/settings.json" "${_config_dir}/zed/settings.json"
 	fi
-	_sync "editors/vscode/settings.json" "${_editor_dir}/Code/User/settings.json"
-	[ "${_os_type}" != "Darwin" ] && [ "${_is_windows}" -eq 0 ] && _sync "editors/vscode/settings.json" "${_config_dir}/Code - OSS/User/settings.json"
-	_sync "editors/vscodium/settings.json" "${_editor_dir}/VSCodium/User/settings.json" && _sync "editors/antigravity/settings.json" "${_editor_dir}/Antigravity/User/settings.json"
+	_sync_copy "editors/vscode/settings.json" "${_editor_dir}/Code/User/settings.json"
+	[ "${_os_type}" != "Darwin" ] && [ "${_is_windows}" -eq 0 ] && _sync_copy "editors/vscode/settings.json" "${_config_dir}/Code - OSS/User/settings.json"
+	_sync_copy "editors/vscodium/settings.json" "${_editor_dir}/VSCodium/User/settings.json" && _sync_copy "editors/antigravity/settings.json" "${_editor_dir}/Antigravity/User/settings.json"
+	if [ -d "${_editor_dir}/Antigravity IDE/User" ] || [ -L "${_editor_dir}/Antigravity IDE/User/settings.json" ]; then
+		_sync_copy "editors/antigravity/settings.json" "${_editor_dir}/Antigravity IDE/User/settings.json"
+	fi
 	_vimfiles_dir=""
 	if [ -d "${_win_home}/vimfiles" ]; then _vimfiles_dir="${_win_home}/vimfiles"; elif [ -d "${HOME}/vimfiles" ]; then _vimfiles_dir="${HOME}/vimfiles"; fi
 	if [ "${_is_windows}" -eq 1 ] && [ "${_mode}" != "pull" ] && [ -n "${_vimfiles_dir}" ]; then
@@ -194,12 +215,12 @@ _profile_sync() {
 	_ui_step "Emuladores de terminal e multiplexadores..."
 	_sync "terminals/tmux/tmux.conf" "${_config_dir}/tmux/tmux.conf" && _sync "terminals/tmux/tmux.conf" "${HOME}/.tmux.conf"
 	if [ "${_is_windows}" -eq 1 ]; then
-		_sync "terminals/windows-terminal/settings.json" "${_win_localappdata}/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json"
+		_sync_copy "terminals/windows-terminal/settings.json" "${_win_localappdata}/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json"
 		_sync "terminals/zellij/config.kdl" "${_win_appdata}/zellij/config.kdl"
 	else
 		_sync "terminals/zellij/config.kdl" "${_config_dir}/zellij/config.kdl" && _sync "terminals/foot/foot.ini" "${_config_dir}/foot/foot.ini"
 		for _xresources_file in .Xresources .Xdefaults; do _sync "terminals/xterm/Xresources" "${HOME}/${_xresources_file}"; done
-		for _konsole_profile in Bash Shell Zsh; do _sync "terminals/konsole/${_konsole_profile}.profile" "${_data_dir}/konsole/${_konsole_profile}.profile"; done
+		for _konsole_profile in Bash Shell Zsh; do _sync_copy "terminals/konsole/${_konsole_profile}.profile" "${_data_dir}/konsole/${_konsole_profile}.profile"; done
 		[ -f "${_PROFILE_ROOT}/terminals/terminfo/linux.terminfo" ] && command -v tic > "/dev/null" 2>&1 && tic -o "${HOME}/.terminfo" "${_PROFILE_ROOT}/terminals/terminfo/linux.terminfo" 2> "/dev/null" || true
 		[ -n "${DISPLAY:-}" ] && [ -f "${HOME}/.Xresources" ] && command -v xrdb > "/dev/null" 2>&1 && xrdb -merge "${HOME}/.Xresources" 2> "/dev/null" || true
 		_display_sync_all
