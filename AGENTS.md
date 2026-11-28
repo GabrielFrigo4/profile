@@ -2,79 +2,61 @@
 
 # 🤖 AI Agent Briefing
 
-> Diretrizes canônicas, invariantes de engenharia, governança autônoma e protocolo operacional para agentes de inteligência artificial em repositórios do ecossistema.
+> Diretrizes canônicas, invariantes de engenharia e protocolo operacional para agentes de IA nos repositórios do ecossistema.
 
 ---
 
 ## 🧭 Identidade & Fonte de Contexto
 
-Todo agente de IA que atua neste repositório deve ancorar suas decisões na documentação canônica local antes de executar qualquer alteração. Consulte rigorosamente nesta ordem:
+Ancore toda decisão na documentação canônica local, consultando nesta ordem:
 
-1. [README.md](README.md) — Arquitetura, stack técnica, topologia de diretórios e comandos operacionais específicos do repositório.
-2. [TODO.md](TODO.md) — Matriz de status operacional, cobertura de implementação e roadmap de engenharia.
-3. [PRINCIPLES.md](PRINCIPLES.md) — Os 22 Princípios de Engenharia UNIX e diretrizes estritas de Clean Code.
-4. [CONTRIBUTING.md](CONTRIBUTING.md) — Fluxo Git soberano, convenção de commits semânticos e qualidade local.
-5. `ENVIRONMENT.md` — Arquitetura federada do ecossistema (quando presente na raiz do repositório, como no hub `Environment` e seus submódulos centrais).
+1. [README.md](README.md) — Arquitetura, stack técnica, topologia e comandos do repositório.
+2. [TODO.md](TODO.md) — Status operacional, matriz de cobertura e roadmap.
+3. [PRINCIPLES.md](PRINCIPLES.md) — Os 22 Princípios de Engenharia UNIX e Clean Code.
+4. [CONTRIBUTING.md](CONTRIBUTING.md) — Fluxo Git, commits semânticos e quality gates.
+5. `ENVIRONMENT.md` — Arquitetura federada do ecossistema (quando presente na raiz).
 
 ---
 
-## 🤝 Protocolo Bidirecional de Esclarecimento Proativo
+## 🤝 Protocolo Bidirecional de Esclarecimento
 
-A autonomia operacional do agente é guiada pelo princípio de alinhamento contínuo: nunca assuma silenciosamente suposições ambíguas.
-
-### 🏛️ Alinhamento Socrático (Master -> User)
-
-Qualquer ambiguidade, inconsistência de requisitos, trade-off arquitetural crítico ou especificação incompleta DEVE ser esclarecido proativamente com o usuário via `ask_question` antes do início da execução em massa. É expressamente proibido adotar suposições silenciosas sobre escopo ou tomar ações destrutivas sem validação prévia.
-
-### ⚡ Escalonamento de Subagentes (Worker -> Master)
-
-Subagentes de execução que identificarem qualquer dúvida de escopo, divergência entre especificação e código real, ou risco de efeito colateral inesperado DEVEM interromper a mutação de arquivos e questionar imediatamente o agente orquestrador pai via `send_message`.
+- **Master -> User:** Toda ambiguidade de escopo, trade-off arquitetural crítico ou risco colateral DEVE ser esclarecido proativamente via `ask_question` antes da execução.
+- **Worker -> Master:** Subagentes devem interromper mutações e escalonar ao orquestrador pai via `send_message` diante de divergência entre plano e código real.
 
 ---
 
 ## ⚠️ Regras Críticas & Invariantes Soberanas
 
-1. **Soberania e Isolamento de Repositórios Open Source (`**/Open Source/**`):** Projetos de terceiros sob diretórios `Open Source/` (ou legados `OSS/`) são estritamente somente-leitura para operações globais, templates, formatação ou auditoria, só podendo ser editados sob ordem explícita e nominal do usuário e seguindo as regras do upstream.
-2. **Desacoplamento Bancada vs. Produção & Zero-Dirty Invariant:** Nunca edite clones de produção diretamente (`~/.local/share/*`, `~/.config/*`, `~/.emacs.d`, etc.). Edite exclusivamente na bancada em `~/Documents/`, valide localmente (`make test`, `make ci`), comite e envie via `git push`. A produção recebe atualizações exclusivamente via `git pull` e DEVE manter `git status` 100% limpo a todo momento (Invariante Zero-Dirty).
-3. **Hermetismo de Produção (`rm -rf .agents`):** O ecossistema é soberano e independente de ferramentas de IA. Código de produção (scripts, Makefiles, hooks, dotfiles, compiladores) não depende de `.agents/` ou `skills/`. Se o diretório `.agents/` for deletado, o repositório opera com 100% de sua integridade.
-4. **Invariante Out-of-the-Box (`0755` / `0644` / `0700` / `0600`):** O repositório deve funcionar imediatamente após um simples `git clone`, sem etapas manuais pós-clone. Permissões octais canônicas devem estar registradas no Git Index (`0755` para executáveis/scripts/hooks, `0644` para arquivos de configuração e documentação, `0700`/`0600` para Vault e chaves). Scripts devem aplicar self-healing de permissões em tempo de execução.
-5. **Taxonomia Tripartite de Comentários:** O código adota estritamente três categorias:
-    - _Comentários de Sistema:_ PERMITIDOS (shebangs, pragmas, linters).
-    - _Comentários Estruturais de 64/32 colunas:_ PERMITIDOS (cabeçalhos de 64 `-` `# ----------------------------------------------------------------`, seções de 32 colunas `### ================================` e `### --------------------------------` com títulos em MAIÚSCULO, réguas de 64 `=` em `.gitignore` `# ================================================================` com títulos em MAIÚSCULO, sem vazamento lateral).
-    - _Comentários Explicativos/Narrativos:_ PROIBIDOS em código, arquivos de configuração e blocos de código dentro de Markdowns.
-6. **Portabilidade POSIX, Makefiles Silenciosos & Boy Scout Rule:**
-    - Sintaxe estrita POSIX `sh` (`#!/usr/bin/env sh`, sem bashismos).
-    - Makefiles silenciosos com `.POSIX: .SILENT:`, `MAKEFLAGS += --no-print-directory -s`, subshells `(cd dir && $(MAKE))` e zero `@` redundante.
-    - Sequências ANSI via `$'\e'` ou notação hexadecimal `\x1b` (nunca octal `\033`).
-    - Redirecionamento seguro envolvendo destinos em aspas duplas (ex: `> "/dev/null" 2>&1`).
-    - Refatoração Clean-Break sem legado (expurgar shims, aliases obsoletos e variáveis mortas).
-    - Simetria de escopo e não-assimetria de subgrupo na documentação.
-    - Emissão semântica de UI via rotinas canônicas `_ui_*`.
-    - **Boy Scout Rule:** Ao identificar qualquer inconformidade com os padrões estabelecidos, notifique concisamente o usuário e aplique a correção de forma proativa.
-7. **Filosofia do `AGENTS.md` Uniforme (`<!-- template:sync -->`):** Repositórios padrão do ecossistema compartilham o mesmo `AGENTS.md` canônico propagado por `make sync-template` sempre que o marcador `<!-- template:sync -->` estiver presente no topo do arquivo. Repositórios sem o marcador (como o hub `Environment`) preservam seu briefing customizado congelado.
-8. **Governança Multi-Agente (Orquestração):**
-    - _Gatilho Semântico de Orquestração:_ Ao identificar requisições de delegação multi-agente ou paralelização de execução em subagentes, carregue e siga obrigatoriamente a skill global `multi-agent-orchestration` ANTES de invocar qualquer tool de delegação.
-    - _Bloqueio de `native_swarm` e Polling via Cron:_ É vedado invocar a tool `swarm` por iniciativa própria (restrita a pedidos com a palavra literal `"swarm"`). É proibido utilizar `schedule` (cron) para monitoramento periódico de agentes.
-    - _Herança Dinâmica & Papéis Semânticos Agnósticos:_ Em chamadas de delegação (`invoke_subagent`, `swarm`), utilize por padrão a herança nativa do modelo ativo da sessão (`Model: 'inherit'` ou omissão explícita) — ou o tier rápido nativo exposto pelo runtime atual, sem fixar nomes comerciais ou versões. Estruture a delegação nos papéis _Master Orchestrator / Planner Agent_, _Specialist Sub-Agent / Execution Worker_ e _Adversarial Verifier / QA Agent_.
+1. **Isolamento Open Source (`**/Open Source/**`):** Projetos de terceiros sob `Open Source/` (ou `OSS/`) são estritamente somente-leitura para automações globais, formatação, auditoria e templates.
+2. **Bancada vs. Produção, Fallback & Zero-Dirty:**
+    - **Resolução da Bancada:** Considere `$XDG_DOCUMENTS_DIR`, `~/Documents/`, `~/Documentos/` ou o próprio repositório autônomo quando não houver clone de runtime separado.
+    - **Proibição de Runtime Sujo:** Nunca edite clones de produção diretamente (`~/.local/share/*`, `/usr/local/share/*`, `~/.config/*`, `~/.emacs.d`, `~/.vim`) nem os symlinks `~/.gemini/config/skills` e `~/.gemini/config/rules` (edite fisicamente na bancada do `Profile`).
+    - **Cascata de Fallback:** (a) Existindo bancada local para o componente, edite/valide/comite/envie lá e propague à produção exclusivamente via `git pull` mantendo `git status` 100% limpo (_Zero-Dirty_); (b) Repositórios de projeto independentes já são a própria bancada; (c) Em servidores/containers sem bancada local, edite/comite/envie no clone isolado mantendo o repo limpo; (d) Em caso de dúvida sobre a topologia, pergunte ao usuário via `ask_question` antes de alterar o runtime.
+3. **Hermetismo (`rm -rf .agents`):** Código de produção não depende de `.agents/` nem `skills/`; se removidos, tudo opera com 100% de integridade.
+4. **Invariante Out-of-the-Box (`0755`/`0644`/`0700`/`0600`):** O repo deve funcionar logo após `git clone`, com modos corretos no Git Index e self-healing de permissões em runtime (`0700`/`0600` em cofres e chaves).
+5. **Taxonomia Tripartite de Comentários:** Permitidos apenas _Sistema_ (shebangs, pragmas, linters) e _Estruturais 64/32_ (64 `-`, `### ===`/`### ---` 32 cols e `.gitignore` 64 `=` em MAIÚSCULO). Comentários explicativos/narrativos são PROIBIDOS em código, configs e blocos de código dentro de Markdowns.
+6. **Portabilidade, VCS & Boy Scout Rule:**
+    - **SO & Transporte VCS:** Execute nativamente com detecção dinâmica de SO (`uname -s`, diferenças BSD/GNU). Prefira `gh` com fallback SSH no GitHub, SSH (ou `glab`) no GitLab e SSH no `got`, mantendo paridade Git/Got.
+    - **Padrões de Código (quando aplicável ao stack):** POSIX `sh` (`#!/usr/bin/env sh`); Makefiles com `.POSIX: .SILENT:`, `MAKEFLAGS += --no-print-directory -s`, `(cd dir && $(MAKE))` e zero `@`; ANSI via `$'\e'` ou `\x1b` (nunca `\033`); redirecionamentos entre aspas (`> "/dev/null" 2>&1`); `if [ "$(id -u)" -ne 0 ]` para `ELEVATE` e `[ "$#" -ge N ] && shift N`; UI via `_ui_*`; refatoração Clean-Break sem legado; simetria de documentação por grupo.
+    - **Boy Scout Rule:** Notifique concisamente e corrija desvios proativamente ao detectá-los.
+7. **`AGENTS.md` Uniforme (`<!-- template:sync -->`):** Repos padrão compartilham este `AGENTS.md` via `make sync-template`; remover o marcador do topo congela customizações locais.
+8. **Governança Multi-Agente:** Carregue `multi-agent-orchestration` antes de delegar; proibido acionar `swarm` sem pedido literal `"swarm"` ou polling com `schedule`; use `Model: 'inherit'` (ou tier rápido nativo) com papéis _Master / Worker / Verifier_.
 
 ---
 
-## 🚀 Comandos Canônicos de Verificação (Quality Gates)
+## 🚀 Comandos Canônicos (Quality Gates)
 
-| Comando       | Finalidade Operacional                                           |
-| :------------ | :--------------------------------------------------------------- |
-| `make help`   | Exibe o catálogo interativo de comandos disponíveis              |
-| `make test`   | Executa a suíte automatizada de testes locais                    |
-| `make audit`  | Executa as suítes de auditoria estática de padrões e integridade |
-| `make format` | Formata código-fonte e documentações com Prettier e linters      |
-| `make ci`     | Executa a pipeline local completa de validação integrada         |
-| `make hooks`  | Configura e ativa os ganchos Git com permissões canônicas (0755) |
+| Comando       | Finalidade Operacional                                    |
+| :------------ | :-------------------------------------------------------- |
+| `make help`   | Exibe o catálogo interativo de comandos disponíveis       |
+| `make test`   | Executa a suíte automatizada de testes locais             |
+| `make audit`  | Executa auditoria estática de padrões e integridade       |
+| `make format` | Formata código-fonte e documentações com Prettier/linters |
+| `make ci`     | Executa a pipeline local completa de validação integrada  |
+| `make hooks`  | Configura os ganchos Git com permissões canônicas (0755)  |
 
 ---
 
-## 📖 Referências Obrigatórias
+## 📖 Referências
 
-- [README.md](README.md) — Visão geral, arquitetura e stack técnica
-- [TODO.md](TODO.md) — Roadmap de tarefas e matriz de cobertura
-- [PRINCIPLES.md](PRINCIPLES.md) — Os 22 Princípios de Engenharia Soberanos
-- [CONTRIBUTING.md](CONTRIBUTING.md) — Guia de contribuição, fluxo Git e convenções
+- [README.md](README.md) · [TODO.md](TODO.md) · [PRINCIPLES.md](PRINCIPLES.md) · [CONTRIBUTING.md](CONTRIBUTING.md)

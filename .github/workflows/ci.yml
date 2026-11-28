@@ -38,10 +38,10 @@ jobs:
                     esac
                   done
 
-            - name: Install Shell Interpreters
+            - name: Install Shell & Lua Interpreters
               run: |
                   sudo apt-get update
-                  sudo apt-get install -y zsh fish
+                  sudo apt-get install -y zsh fish lua5.4
 
             - name: Check Whitespace & Conflict Markers
               run: |
@@ -212,7 +212,7 @@ jobs:
                   print("✅ Static policy audit passed cleanly.")
                   '
 
-            - name: Validate Shell & Python Syntax
+            - name: Validate Shell, Lua & Python Syntax
               run: |
                   PYTHONDONTWRITEBYTECODE=1 python3 -c '
                   import os, py_compile, shutil, subprocess, sys
@@ -228,7 +228,7 @@ jobs:
                   out = subprocess.check_output(["git", "-c", "core.quotePath=false", "ls-files", "-z"]).split(b"\0")
                   sh_compat = subprocess.run(["sh", "-c", "f-f() { :; }"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0
 
-                  bash_targets, zsh_targets, sh_targets, ksh_targets, fish_targets, py_targets = [], [], [], [], [], []
+                  bash_targets, zsh_targets, sh_targets, ksh_targets, fish_targets, lua_targets, py_targets = [], [], [], [], [], [], []
                   for raw in out:
                       if not raw:
                           continue
@@ -237,6 +237,9 @@ jobs:
                           continue
                       if p.endswith(".py"):
                           py_targets.append(p)
+                          continue
+                      if p.endswith(".lua"):
+                          lua_targets.append(p)
                           continue
                       if p.endswith(".fish"):
                           fish_targets.append(p)
@@ -250,10 +253,11 @@ jobs:
                       if p.endswith(".bash"):
                           bash_targets.append(p)
                           continue
-                      if not (p.endswith(".sh") or p.startswith(".githooks/")):
-                          continue
                       with open(p, "rb") as fp:
                           first = fp.readline().decode("utf-8", "replace").strip()
+                      is_script_shebang = p.startswith(".scripts/") and first.startswith("#!") and any(s in first for s in ("sh", "bash", "zsh", "ksh", "fish"))
+                      if not (p.endswith(".sh") or p.startswith(".githooks/") or is_script_shebang):
+                          continue
                       if p.startswith(".githooks/") or first == "#!/usr/bin/env sh" or first == "#!/bin/sh":
                           sh_targets.append(p)
                       if "zsh" in first:
@@ -262,7 +266,9 @@ jobs:
                           bash_targets.append(p)
                       elif "ksh" in first:
                           ksh_targets.append(p)
-                      elif "python" in first or "fish" in first:
+                      elif "fish" in first:
+                          fish_targets.append(p)
+                      elif "python" in first:
                           continue
                       else:
                           segs = f"/{p}"
@@ -283,9 +289,16 @@ jobs:
                               if r.returncode != 0:
                                   sys.exit(r.returncode)
 
+                  luac_bin = shutil.which("luac") or shutil.which("luac5.4")
+                  if luac_bin and lua_targets:
+                      for p in lua_targets:
+                          r = subprocess.run([luac_bin, "-p", p])
+                          if r.returncode != 0:
+                              sys.exit(r.returncode)
+
                   for p in py_targets:
                       py_compile.compile(p, doraise=True)
-                  print("✅ Shell and Python syntax checks passed.")
+                  print("✅ Shell, Lua and Python syntax checks passed.")
                   '
 
             - name: Setup Node.js & Prettier
